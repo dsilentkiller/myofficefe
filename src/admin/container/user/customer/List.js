@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function CustomerList(customers) {
   return (
@@ -11,12 +12,15 @@ export default function CustomerList(customers) {
               <div className="container-fluid">
                 <h5 className="navbar-brand">Customer List</h5>
                 <div className="navbar-nav ml-auto">
-                  <a href="customer/create" className="nav-link btn btn-info">
+                  <Link
+                    href="customer/create/"
+                    className="nav-link btn btn-info"
+                  >
                     <h5>Add Customer</h5>
-                  </a>
+                  </Link>
                   <form
                     method="get"
-                    action="/customer/search"
+                    action="/customer/search/"
                     className="form-inline ml-3"
                   >
                     <div className="input-group">
@@ -78,7 +82,7 @@ export default function CustomerList(customers) {
                               customers.map((customer) => (
                                 <tr key={customer.id}>
                                   <td>{customer.id}</td>
-                                  <td>{customer.name}</td>
+                                  <td>{customer.customer_name}</td>
                                   <td>{customer.pri_phone}</td>
                                   <td>{customer.email}</td>
                                   <td>{customer.department}</td>

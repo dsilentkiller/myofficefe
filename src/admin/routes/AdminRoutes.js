@@ -12,6 +12,14 @@ import ServiceListing from "./components/ServiceListing";
 // import Team from "./components/Team";
 import CustomerForm from "../container/user/customer/CustomerForm";
 import CustomerList from "../container/user/customer/List";
+import CountryList from "../base/country/CountryList";
+import CountryForm from "../base/country/Country";
+import CustomerVisitPeriodForm from "../base/customer_visit/Form";
+import CustomerVisitPeriodList from "../base/customer_visit/List";
+import DayForm from "../base/day/Form";
+import DayList from "../base/day/List";
+import DesignationList from "../base/designation/DesignationList";
+import DesignationForm from "../base/designation/DesignationForm";
 // import Project from "./components/Project"; // Uncomment if Project component is available
 
 const AdminRoutes = () => {
@@ -26,13 +34,32 @@ const AdminRoutes = () => {
         <Route path="/employee/list/" element={<EmployeeList />} />
         <Route path="admin/employee/create/" element={<Form />} />
         {/* ----------------------------customer------------------------ */}
-        <Route path="/employee/new" element={<CustomerForm />} />
-        <Route path="/list" element={<CustomerList />} />
+        <Route path="/customer/create/" element={<CustomerForm />} />
+        <Route path="/customer/list/" element={<CustomerList />} />
 
-        <Route path="/service" element={<ServiceListing />} />
+        {/* <Route path="/service" element={<ServiceListing />} /> */}
         {/* <Route path="/contact" element={<Contact />} /> */}
         {/* <Route path="/testimonial" element={<Testimonial />} /> */}
         <Route path="/" element={<Home />} />
+        <Route path="/country/create/" element={<CountryForm />} />
+        <Route path="/country/list/" element={<CountryList />} />
+        <Route
+          path="customer-visit-period/"
+          element={<CustomerVisitPeriodForm />}
+        />
+        <Route
+          path="customer-visit-period-list/"
+          element={<CustomerVisitPeriodList />}
+        />
+
+        <Route path="day/form/" element={<DayForm />} />
+
+        <Route path="day/list/" element={<DayList />} />
+
+        {/* designation */}
+        <Route path="designation/form/" element={<DesignationForm />} />
+        <Route path="designation/list/" element={<DesignationList />} />
+
         {/* <Route path="/about" element={<About />} />
         <Route path="/banner" element={<Banner />} />
         <Route path="/service" element={<ServiceListing />} />

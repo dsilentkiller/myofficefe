@@ -1,25 +1,58 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const UserHeader = () => {
+const SetupHeader = () => {
   return (
     <div>
       <nav className="main-header navbar navbar-expand navbar-white navbar-light">
         {/* <!-- Left navbar links --> */}
         <ul className="navbar-nav">
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/employee/list" className="nav-link">
-              Employee
+            <Link to="country-list/" className="nav-link">
+              Country
             </Link>
           </li>
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/customer/list/" className="nav-link">
-              Customer
+            <Link to="/admin/setup/district-list" className="nav-link">
+              District
+            </Link>
+          </li>
+          <li className="nav-item d-none d-sm-inline-block">
+            <Link to="/admin/setup/province-list/" className="nav-link">
+              Province
+            </Link>
+          </li>
+          <li className="nav-item d-none d-sm-inline-block">
+            <Link to="/admin/setup/zone-list" className="nav-link">
+              Zone
             </Link>
           </li>
           {/* enquiry */}
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/enquiry/list/" className="nav-link">
-              Enquiry
+            <Link to="/admin/setup/municipality-list/" className="nav-link">
+              Municipality
+            </Link>
+          </li>
+
+          <li className="nav-item d-none d-sm-inline-block">
+            <Link to="/admin/setup/designation-list/" className="nav-link">
+              designation
+            </Link>
+          </li>
+          {/* enquiry */}
+          <li className="nav-item d-none d-sm-inline-block">
+            <Link to="/admin/setup/department-list/" className="nav-link">
+              Department
+            </Link>
+          </li>
+          <li className="nav-item d-none d-sm-inline-block">
+            <Link to="/admin/setup/grade-list/" className="nav-link">
+              Grade
+            </Link>
+          </li>
+          {/* enquiry */}
+          <li className="nav-item d-none d-sm-inline-block">
+            <Link to="/admin/setup/working-list/" className="nav-link">
+              Working
             </Link>
           </li>
         </ul>
@@ -66,4 +99,4 @@ const UserHeader = () => {
     </div>
   );
 };
-export default UserHeader;
+export default SetupHeader;

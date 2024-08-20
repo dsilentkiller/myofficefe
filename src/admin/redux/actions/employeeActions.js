@@ -6,12 +6,13 @@
 // export const ADD_EMPLOYEE_FAILURE = "ADD_EMPLOYEE_FAILURE";
 
 import axios from "axios";
-import { ADD_EMPLOYEE } from "./types"; // Define your action types
+import { ADD_EMPLOYEE } from "../constants/action-types"; // Define your action types
+// import employeeReducer from "../reducers/employeeReducer";
 
 export const addEmployee = (employeeData) => async (dispatch) => {
   try {
     const res = await axios.post(
-      "http://localhost:8000/api/employee/",
+      "http://localhost:8000/api/employee/list/",
       employeeData
     );
     dispatch({

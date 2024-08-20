@@ -65,6 +65,12 @@ const Sidebar = () => {
                 {/* <li className="nav-item">
                   <Link to="#" className="nav-link">
                     <i className="far fa-circle nav-icon"></i>
+                    <p>Customer</p>
+                  </Link>
+                </li> */}
+                {/* <li className="nav-item">
+                  <Link to="#" className="nav-link">
+                    <i className="far fa-circle nav-icon"></i>
                     <p>User</p>
                   </Link>
                 </li> */}

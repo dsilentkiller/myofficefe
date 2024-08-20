@@ -23,7 +23,6 @@ const UserDashboard = () => {
           <div className="flex flex-col flex-grow bg-light">
             <Footer />
           </div>
-          {/* <Footer /> */}
         </div>
       </div>
     </div>

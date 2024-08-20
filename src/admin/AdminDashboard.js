@@ -84,47 +84,48 @@ const AdminDashboard = () => {
                 element={<CustomerList customers={employees} />}
               />
               <Route path="customer/create/" element={<CustomerForm />} />
-
+              {/*--------------setup ---  base ------------------------- */}
               {/* country */}
               <Route
-                path="country-list"
+                path="country-list/"
                 element={<CountryList countries={countries} />}
               />
               {/* province */}
               <Route
-                path="province-list"
+                path="province-list/"
                 element={<ProvinceList provinces={provinces} />}
               />
               {/* designation */}
               <Route
-                path="designation-list"
+                path="designation-list/"
                 element={<DesignationList designations={designations} />}
               />
               {/* zone */}
-              <Route path="zone-list" element={<ZoneList zones={zones} />} />
+              <Route path="zone-list/" element={<ZoneList zones={zones} />} />
               {/* municipality */}
-              <Route path="municipality-list" element={<MunicipalityList />} />
+              <Route path="municipality-list/" element={<MunicipalityList />} />
               {/* dustrict */}
-              <Route path="district-list" element={<DistrictList />} />
+              <Route path="district-list/" element={<DistrictList />} />
               {/* day */}
-              <Route path="day-form" element={<DayForm />} />
+              <Route path="day-form/" element={<DayForm />} />
               {/* customer visit period */}
               <Route
-                path="customer-visit-period-list"
+                path="customer-visit-period-list/"
                 element={<CustomerVisitPeriodList />}
               />
               <Route
-                path="customer-visit-period-form"
+                path="customer-visit-period-form/"
                 element={<CustomerVisitPeriodForm />}
               />
               {/* working form */}
-              <Route path="working-form" element={<WorkingForm />} />
-              <Route path="working-list" element={<WorkingList />} />
+              <Route path="working-form/" element={<WorkingForm />} />
+              <Route path="working-list/" element={<WorkingList />} />
               {/* assign grade */}
               <Route
-                path="assign-grade-form-and-list"
+                path="assign-grade-form-and-list/"
                 element={<AssignGradeFormAndList />}
               />
+              {/*------------------ setup end ---------------------------------- */}
             </Routes>
           </div>
           <div className="flex flex-col bg-light absolute bottom-0 w-full">

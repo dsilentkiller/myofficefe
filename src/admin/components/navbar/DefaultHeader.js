@@ -1,6 +1,45 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const DefaultHeader = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/logout/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"), // Include CSRF token
+        },
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        // Redirect to login page or home page after successful logout
+        navigate("/login");
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+  // Helper function to get CSRF token from cookies
+  const getCookie = (name) => {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  };
+
   return (
     <div>
       <nav className="main-header navbar navbar-expand navbar-white navbar-light">
@@ -201,6 +240,13 @@ const DefaultHeader = () => {
             >
               <i className="fas fa-th-large"></i>
             </Link>
+          </li>
+
+          {/* Logout Button */}
+          <li className="nav-item">
+            <button className="nav-link btn" onClick={handleLogout}>
+              <i className="fas fa-sign-out-alt"></i> Logout
+            </button>
           </li>
         </ul>
       </nav>
