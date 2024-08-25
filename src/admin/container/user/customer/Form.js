@@ -135,7 +135,10 @@ const CustomerForm = ({ addEmployee }) => {
                 <div className="container-fluid">
                   <h5 className="navbar-brand">Add Customer</h5>
                   <div className="navbar-nav ml-auto">
-                    <Link to="customer/list/" className="nav-link btn btn-info">
+                    <Link
+                      to="/admin/customer/"
+                      className="nav-link btn btn-info"
+                    >
                       <h5>Customer List</h5>
                     </Link>
                   </div>
@@ -775,7 +778,7 @@ const CustomerForm = ({ addEmployee }) => {
 
                   <div className="form-group">
                     <button type="submit" className="btn btn-primary">
-                      Add Employee
+                      Add customer
                     </button>
                   </div>
                 </form>

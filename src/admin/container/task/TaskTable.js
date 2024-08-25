@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const EmployeeList = ({ employees = [] }) => {
+
+const TaskTable = ({ tasks }) => {
   return (
     <div className="content-wrapper">
       <div className="row justify-content-center">
@@ -9,14 +10,17 @@ const EmployeeList = ({ employees = [] }) => {
             {/* heading */}
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
               <div className="container-fluid">
-                <h5 className="navbar-brand">Employee List</h5>
+                <h5 className="navbar-brand">task List</h5>
                 <div className="navbar-nav ml-auto">
-                  <Link to="create" className="nav-link btn btn-info">
-                    <h5>Add Employee</h5>
+                  <Link
+                    to="/admin/task/create/"
+                    className="nav-link btn btn-info"
+                  >
+                    <h5>Add task</h5>
                   </Link>
                   <form
                     method="get"
-                    action="/employee/search"
+                    action="/task/search"
                     className="form-inline ml-3"
                   >
                     <div className="input-group">
@@ -41,7 +45,7 @@ const EmployeeList = ({ employees = [] }) => {
                   <ul className="navbar-nav mr-30">
                     <li className="nav-item ">
                       <button
-                        id="employeeTable"
+                        id="taskTable"
                         className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
                       >
                         <i className="fas fa-file-csv"></i>
@@ -74,32 +78,26 @@ const EmployeeList = ({ employees = [] }) => {
                             </tr>
                           </thead>
                           <tbody>
-                            {employees.length > 0 ? (
-                              employees.map((employee) => (
-                                <tr key={employee.id}>
-                                  <td>{employee.id}</td>
-                                  <td>{employee.name}</td>
-                                  <td>{employee.pri_phone}</td>
-                                  <td>{employee.email}</td>
-                                  <td>{employee.department}</td>
-                                  <td>{employee.designation}</td>
-                                  <td>{employee.salary}</td>
+                            {tasks.length > 0 ? (
+                              tasks.map((task) => (
+                                <tr key={task.id}>
+                                  <td>{task.id}</td>
+                                  <td>{task.name}</td>
+                                  <td>{task.pri_phone}</td>
+                                  <td>{task.email}</td>
+                                  <td>{task.department}</td>
+                                  <td>{task.designation}</td>
+                                  <td>{task.salary}</td>
                                   <td>
-                                    <Link
-                                      to={`/employee/update/${employee.id}`}
-                                    >
+                                    <Link to={`/task/update/${task.id}`}>
                                       Edit
                                     </Link>
                                     |
-                                    <Link
-                                      to={`/employee/detail/${employee.id}`}
-                                    >
+                                    <Link to={`/task/detail/${task.id}`}>
                                       View
                                     </Link>
                                     |
-                                    <Link
-                                      to={`/employee/delete/${employee.id}`}
-                                    >
+                                    <Link to={`/task/delete/${task.id}`}>
                                       Delete
                                     </Link>
                                   </td>
@@ -107,7 +105,7 @@ const EmployeeList = ({ employees = [] }) => {
                               ))
                             ) : (
                               <tr>
-                                <td colSpan="8">No employees found</td>
+                                <td colSpan="8">No tasks found</td>
                               </tr>
                             )}
                           </tbody>
@@ -125,4 +123,4 @@ const EmployeeList = ({ employees = [] }) => {
   );
 };
 
-export default EmployeeList;
+export default TaskTable;

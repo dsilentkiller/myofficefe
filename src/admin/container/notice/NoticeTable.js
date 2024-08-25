@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const EmployeeList = ({ employees = [] }) => {
+
+const ProjectTable = ({ projects }) => {
   return (
     <div className="content-wrapper">
       <div className="row justify-content-center">
@@ -9,14 +10,17 @@ const EmployeeList = ({ employees = [] }) => {
             {/* heading */}
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
               <div className="container-fluid">
-                <h5 className="navbar-brand">Employee List</h5>
+                <h5 className="navbar-brand">projects Table</h5>
                 <div className="navbar-nav ml-auto">
-                  <Link to="create" className="nav-link btn btn-info">
-                    <h5>Add Employee</h5>
+                  <Link
+                    to="/admin/projects/create/"
+                    className="nav-link btn btn-info"
+                  >
+                    <h5>Add projects</h5>
                   </Link>
                   <form
                     method="get"
-                    action="/employee/search"
+                    action="/projects/search"
                     className="form-inline ml-3"
                   >
                     <div className="input-group">
@@ -41,7 +45,7 @@ const EmployeeList = ({ employees = [] }) => {
                   <ul className="navbar-nav mr-30">
                     <li className="nav-item ">
                       <button
-                        id="employeeTable"
+                        id="projectsTable"
                         className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
                       >
                         <i className="fas fa-file-csv"></i>
@@ -63,42 +67,40 @@ const EmployeeList = ({ employees = [] }) => {
                         <table className="table table-bordered">
                           <thead>
                             <tr>
-                              <th>#</th>
-                              <th>Name</th>
-                              <th>Phone</th>
-                              <th>Email</th>
-                              <th>Department</th>
-                              <th>Designation</th>
-                              <th>Salary</th>
-                              <th>Action</th>
+                              <th>Client ID</th>
+                              <th>Project Name</th>
+                              <th>Description</th>
+                              <th>Start Date</th>
+                              <th>End Date</th>
+                              <th>Status</th>
+                              <th>Actions</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {employees.length > 0 ? (
-                              employees.map((employee) => (
-                                <tr key={employee.id}>
-                                  <td>{employee.id}</td>
-                                  <td>{employee.name}</td>
-                                  <td>{employee.pri_phone}</td>
-                                  <td>{employee.email}</td>
-                                  <td>{employee.department}</td>
-                                  <td>{employee.designation}</td>
-                                  <td>{employee.salary}</td>
+                            {projects.length > 0 ? (
+                              projects.map((project, index) => (
+                                <tr key={index}>
+                                  <td>{project.client_id}</td>
+                                  <td>{project.project_name}</td>
+                                  <td>{project.description}</td>
+                                  <td>{project.start_date}</td>
+                                  <td>{project.end_date}</td>
+                                  <td>{project.status}</td>
                                   <td>
                                     <Link
-                                      to={`/employee/update/${employee.id}`}
+                                      to={`/projects/update/${projects.id}`}
                                     >
                                       Edit
                                     </Link>
                                     |
                                     <Link
-                                      to={`/employee/detail/${employee.id}`}
+                                      to={`/projects/detail/${projects.id}`}
                                     >
                                       View
                                     </Link>
                                     |
                                     <Link
-                                      to={`/employee/delete/${employee.id}`}
+                                      to={`/projects/delete/${projects.id}`}
                                     >
                                       Delete
                                     </Link>
@@ -107,7 +109,7 @@ const EmployeeList = ({ employees = [] }) => {
                               ))
                             ) : (
                               <tr>
-                                <td colSpan="8">No employees found</td>
+                                <td colSpan="8">No projects found</td>
                               </tr>
                             )}
                           </tbody>
@@ -125,4 +127,4 @@ const EmployeeList = ({ employees = [] }) => {
   );
 };
 
-export default EmployeeList;
+export default ProjectTable;

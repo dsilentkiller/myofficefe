@@ -1,27 +1,22 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const UserHeader = () => {
+const AccountHeader = () => {
   return (
     <div>
       <nav className="main-header navbar navbar-expand navbar-white navbar-light">
         {/* <!-- Left navbar links --> */}
         <ul className="navbar-nav">
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="employee" className="nav-link">
-              Employee
+            <Link to="/admin/purchase/purchase-list/" className="nav-link">
+              Purchase
             </Link>
           </li>
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="customer" className="nav-link">
-              Customer
+            <Link to="/admin/expanse/expanse-list/" className="nav-link">
+              Expanse
             </Link>
           </li>
           {/* enquiry */}
-          <li className="nav-item d-none d-sm-inline-block">
-            <Link to="enquiry" className="nav-link">
-              Enquiry
-            </Link>
-          </li>
         </ul>
 
         {/* <!-- Right navbar links --> */}
@@ -66,4 +61,4 @@ const UserHeader = () => {
     </div>
   );
 };
-export default UserHeader;
+export default AccountHeader;

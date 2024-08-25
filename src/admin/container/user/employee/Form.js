@@ -44,6 +44,30 @@ const EmployeeForm = ({ addEmployee }) => {
     });
   };
 
+  function handleSameAddress(event) {
+    if (event.target.checked) {
+      setFormData({
+        ...formData,
+        temp_province: formData.province,
+        temp_zone: formData.zone,
+        temp_district: formData.district,
+        temp_municipality: formData.municipality,
+        temp_ward_no: formData.ward_no,
+        temp_tole_name: formData.tole_name,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        temp_province: "",
+        temp_zone: "",
+        temp_district: "",
+        temp_municipality: "",
+        temp_ward_no: "",
+        temp_tole_name: "",
+      });
+    }
+  }
+
   // const handleSubmit = (e) => {
   //   e.preventDefault();
   //   addEmployee(formData);
@@ -103,7 +127,7 @@ const EmployeeForm = ({ addEmployee }) => {
                 <div className="container-fluid">
                   <h5 className="navbar-brand">Add Employee</h5>
                   <div className="navbar-nav ml-auto">
-                    <Link to="employee/list/" className="nav-link btn btn-info">
+                    <Link to="/admin/employee/list/">
                       <h5>Employee List</h5>
                     </Link>
                   </div>
@@ -240,7 +264,12 @@ const EmployeeForm = ({ addEmployee }) => {
             <div className="card">
               <div className="card-body">
                 <form>
+                  <div className="row mt-3">
+                    <h5 className="btn btn-info mb-2">Permanent Address</h5>
+                  </div>
                   <div className="row">
+                    {/* Permanent Address Fields */}
+
                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="province">Province:</label>
@@ -322,6 +351,113 @@ const EmployeeForm = ({ addEmployee }) => {
                           id="tole_name"
                           name="tole_name"
                           value={formData.tole_name}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* "Same as Permanent Address" Checkbox */}
+                  <div className="form-group mt-3">
+                    <input
+                      type="checkbox"
+                      id="sameAddressCheckbox"
+                      onChange={handleSameAddress}
+                    />
+                    <label htmlFor="sameAddressCheckbox" className="ml-2">
+                      Same as Permanent Address
+                    </label>
+                  </div>
+
+                  {/* Temporary Address Fields */}
+                  <div className="row mt-3">
+                    <h5 className="btn btn-info mb-2">Temporary Address</h5>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="temp_province">Province:</label>
+                        <input
+                          type="text"
+                          id="temp_province"
+                          name="temp_province"
+                          value={formData.temp_province}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="temp_zone">Zone:</label>
+                        <input
+                          type="text"
+                          id="temp_zone"
+                          name="temp_zone"
+                          value={formData.temp_zone}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="temp_district">District:</label>
+                        <input
+                          type="text"
+                          id="temp_district"
+                          name="temp_district"
+                          value={formData.temp_district}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="temp_municipality">Municipality:</label>
+                        <input
+                          type="text"
+                          id="temp_municipality"
+                          name="temp_municipality"
+                          value={formData.temp_municipality}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="temp_ward_no">Ward No:</label>
+                        <input
+                          type="text"
+                          id="temp_ward_no"
+                          name="temp_ward_no"
+                          value={formData.temp_ward_no}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="temp_tole_name">Tole Name:</label>
+                        <input
+                          type="text"
+                          id="temp_tole_name"
+                          name="temp_tole_name"
+                          value={formData.temp_tole_name}
                           onChange={handleChange}
                           className="form-control"
                           required

@@ -1,0 +1,17 @@
+in above , my project syructure is  admin >components>( footer >Footer.js,navbar>DefaultHeader.js and UserHeader.js,sidebar>Sidebar.js  )
+inside UserHeader(Employee,Customer ....) when click on employee , it goes to EmployeeList.js(inside EmployeeList.js , AddEmployee where click in Add EMployee it goes to employee Form.js
+)
+admin>container>user>employee>(EmployeeList.js,Detail.js,Form.js)
+admin>layouts>UserDashboard.js (this is dashboard with DefaultHeader,Userheader , EmployeeList table ,Footer)
+admin>layouts>AssetsDashboard.js 
+admin>container>assets>(AssignAssetsList.js,AssignAssetsForm.js )(AssetsForm.js,AssetsList.js)
+admin>routes>AdminRoute.js  
+App.js 
+
+
+###------------
+accoring to sidebar title make => list,form , dashboard , admin url and view page properly.
+
+# Remaining 
+1.added navbar for every app in backend
+2.added crud page for every navabar title with dashboard header,route 

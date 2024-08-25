@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const EmployeeList = ({ employees = [] }) => {
+const LeaveList = ({ leaves = [] }) => {
   return (
     <div className="content-wrapper">
       <div className="row justify-content-center">
@@ -9,14 +9,17 @@ const EmployeeList = ({ employees = [] }) => {
             {/* heading */}
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
               <div className="container-fluid">
-                <h5 className="navbar-brand">Employee List</h5>
+                <h5 className="navbar-brand">Leave List</h5>
                 <div className="navbar-nav ml-auto">
-                  <Link to="create" className="nav-link btn btn-info">
-                    <h5>Add Employee</h5>
+                  <Link
+                    to="/admin/leave/create/"
+                    className="nav-link btn btn-info"
+                  >
+                    <h5>Add Leave</h5>
                   </Link>
                   <form
                     method="get"
-                    action="/employee/search"
+                    action="/leave/search"
                     className="form-inline ml-3"
                   >
                     <div className="input-group">
@@ -41,7 +44,7 @@ const EmployeeList = ({ employees = [] }) => {
                   <ul className="navbar-nav mr-30">
                     <li className="nav-item ">
                       <button
-                        id="employeeTable"
+                        id="LeaveTable"
                         className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
                       >
                         <i className="fas fa-file-csv"></i>
@@ -64,42 +67,44 @@ const EmployeeList = ({ employees = [] }) => {
                           <thead>
                             <tr>
                               <th>#</th>
-                              <th>Name</th>
-                              <th>Phone</th>
-                              <th>Email</th>
-                              <th>Department</th>
-                              <th>Designation</th>
-                              <th>Salary</th>
+                              <th>start_date</th>
+                              <th>end_date</th>
+                              <th>leave_category</th>
+                              <th>leave_period</th>
+                              <th>status</th>
+                              <th>allocated_day</th>
+                              <th>is_approved</th>
+                              <th>default_days</th>
+                              <th>reason</th>
                               <th>Action</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {employees.length > 0 ? (
-                              employees.map((employee) => (
-                                <tr key={employee.id}>
-                                  <td>{employee.id}</td>
-                                  <td>{employee.name}</td>
-                                  <td>{employee.pri_phone}</td>
-                                  <td>{employee.email}</td>
-                                  <td>{employee.department}</td>
-                                  <td>{employee.designation}</td>
-                                  <td>{employee.salary}</td>
+                            {leaves.length > 0 ? (
+                              leaves.map((leave) => (
+                                <tr key={leave.id}>
+                                  <td>{leave.id}</td>
+                                  <td>{leave.name}</td>
+                                  <td>{leave.start_date}</td>
+                                  <td>{leave.end_date}</td>
+                                  <td>{leave.leave_category}</td>
+                                  <td>{leave.leave_period}</td>
+                                  <td>{leave.status}</td>
+                                  <td>{leave.allocated_day}</td>
+                                  <td>{leave.is_approved}</td>
+                                  <td>{leave.default_days}</td>
+                                  <td>{leave.reason}</td>
+
                                   <td>
-                                    <Link
-                                      to={`/employee/update/${employee.id}`}
-                                    >
+                                    <Link to={`/leave/update/${leave.id}`}>
                                       Edit
                                     </Link>
                                     |
-                                    <Link
-                                      to={`/employee/detail/${employee.id}`}
-                                    >
+                                    <Link to={`/leave/detail/${leave.id}`}>
                                       View
                                     </Link>
                                     |
-                                    <Link
-                                      to={`/employee/delete/${employee.id}`}
-                                    >
+                                    <Link to={`/leave/delete/${leave.id}`}>
                                       Delete
                                     </Link>
                                   </td>
@@ -107,7 +112,7 @@ const EmployeeList = ({ employees = [] }) => {
                               ))
                             ) : (
                               <tr>
-                                <td colSpan="8">No employees found</td>
+                                <td colSpan="8">No Leaves found</td>
                               </tr>
                             )}
                           </tbody>
@@ -125,4 +130,4 @@ const EmployeeList = ({ employees = [] }) => {
   );
 };
 
-export default EmployeeList;
+export default LeaveList;

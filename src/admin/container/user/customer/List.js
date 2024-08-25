@@ -12,10 +12,7 @@ export default function CustomerList(customers) {
               <div className="container-fluid">
                 <h5 className="navbar-brand">Customer List</h5>
                 <div className="navbar-nav ml-auto">
-                  <Link
-                    href="customer/create/"
-                    className="nav-link btn btn-info"
-                  >
+                  <Link to="create" className="nav-link btn btn-info">
                     <h5>Add Customer</h5>
                   </Link>
                   <form

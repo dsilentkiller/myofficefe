@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const EmployeeList = ({ employees = [] }) => {
+const AssignAssetsList = ({ assign_assets }) => {
   return (
     <div className="content-wrapper">
       <div className="row justify-content-center">
@@ -9,14 +9,17 @@ const EmployeeList = ({ employees = [] }) => {
             {/* heading */}
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
               <div className="container-fluid">
-                <h5 className="navbar-brand">Employee List</h5>
+                <h5 className="navbar-brand">AssignAssets List</h5>
                 <div className="navbar-nav ml-auto">
-                  <Link to="create" className="nav-link btn btn-info">
-                    <h5>Add Employee</h5>
+                  <Link
+                    to="/admin/assign-assets/create/"
+                    className="nav-link btn btn-info"
+                  >
+                    <h5>Add AssignAssets</h5>
                   </Link>
                   <form
                     method="get"
-                    action="/employee/search"
+                    action="admin/assign-assets/search"
                     className="form-inline ml-3"
                   >
                     <div className="input-group">
@@ -41,7 +44,7 @@ const EmployeeList = ({ employees = [] }) => {
                   <ul className="navbar-nav mr-30">
                     <li className="nav-item ">
                       <button
-                        id="employeeTable"
+                        id="AssignAssetsTable"
                         className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
                       >
                         <i className="fas fa-file-csv"></i>
@@ -64,41 +67,40 @@ const EmployeeList = ({ employees = [] }) => {
                           <thead>
                             <tr>
                               <th>#</th>
-                              <th>Name</th>
-                              <th>Phone</th>
-                              <th>Email</th>
+                              <th>Assets Name</th>
                               <th>Department</th>
-                              <th>Designation</th>
-                              <th>Salary</th>
+                              <th>employee</th>
+                              <th>assign_date</th>
+                              <th>created</th>
                               <th>Action</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {employees.length > 0 ? (
-                              employees.map((employee) => (
-                                <tr key={employee.id}>
-                                  <td>{employee.id}</td>
-                                  <td>{employee.name}</td>
-                                  <td>{employee.pri_phone}</td>
-                                  <td>{employee.email}</td>
-                                  <td>{employee.department}</td>
-                                  <td>{employee.designation}</td>
-                                  <td>{employee.salary}</td>
+                            {assign_assets.length > 0 ? (
+                              assign_assets.map((assign_assets) => (
+                                <tr key={assign_assets.id}>
+                                  <td>{assign_assets.id}</td>
+                                  <td>{assign_assets.assets_name}</td>
+                                  <td>{assign_assets.department}</td>
+                                  <td>{assign_assets.employee}</td>
+                                  <td>{assign_assets.assign_date}</td>
+                                  <td>{assign_assets.created}</td>
+
                                   <td>
                                     <Link
-                                      to={`/employee/update/${employee.id}`}
+                                      to={`assign-assets/update/${assign_assets.id}`}
                                     >
                                       Edit
                                     </Link>
                                     |
                                     <Link
-                                      to={`/employee/detail/${employee.id}`}
+                                      to={`assign-assets/detail/${assign_assets.id}`}
                                     >
                                       View
                                     </Link>
                                     |
                                     <Link
-                                      to={`/employee/delete/${employee.id}`}
+                                      to={`assign-assets/delete/${assign_assets.id}`}
                                     >
                                       Delete
                                     </Link>
@@ -107,7 +109,7 @@ const EmployeeList = ({ employees = [] }) => {
                               ))
                             ) : (
                               <tr>
-                                <td colSpan="8">No employees found</td>
+                                <td colSpan="8">No AssignAssets found</td>
                               </tr>
                             )}
                           </tbody>
@@ -125,4 +127,4 @@ const EmployeeList = ({ employees = [] }) => {
   );
 };
 
-export default EmployeeList;
+export default AssignAssetsList;

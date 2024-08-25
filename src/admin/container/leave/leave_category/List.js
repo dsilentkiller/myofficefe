@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const EmployeeList = ({ employees = [] }) => {
+const LeaveCategoryList = ({ leave_category }) => {
   return (
     <div className="content-wrapper">
       <div className="row justify-content-center">
@@ -9,14 +9,17 @@ const EmployeeList = ({ employees = [] }) => {
             {/* heading */}
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
               <div className="container-fluid">
-                <h5 className="navbar-brand">Employee List</h5>
+                <h5 className="navbar-brand">Leave Category List</h5>
                 <div className="navbar-nav ml-auto">
-                  <Link to="create" className="nav-link btn btn-info">
-                    <h5>Add Employee</h5>
+                  <Link
+                    to="/admin/leave_category/create/"
+                    className="nav-link btn btn-info"
+                  >
+                    <h5>Add leave_category</h5>
                   </Link>
                   <form
                     method="get"
-                    action="/employee/search"
+                    action="admin/leave_category/search"
                     className="form-inline ml-3"
                   >
                     <div className="input-group">
@@ -41,7 +44,7 @@ const EmployeeList = ({ employees = [] }) => {
                   <ul className="navbar-nav mr-30">
                     <li className="nav-item ">
                       <button
-                        id="employeeTable"
+                        id="leave_categoryTable"
                         className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
                       >
                         <i className="fas fa-file-csv"></i>
@@ -64,41 +67,41 @@ const EmployeeList = ({ employees = [] }) => {
                           <thead>
                             <tr>
                               <th>#</th>
-                              <th>Name</th>
-                              <th>Phone</th>
-                              <th>Email</th>
-                              <th>Department</th>
-                              <th>Designation</th>
-                              <th>Salary</th>
+                              <th>Leave Category Name</th>
+                              <th>status</th>
+                              <th>leave type</th>
+                              <th>leave day</th>
+                              <th>max leave duration</th>
+                              <th>description</th>
                               <th>Action</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {employees.length > 0 ? (
-                              employees.map((employee) => (
-                                <tr key={employee.id}>
-                                  <td>{employee.id}</td>
-                                  <td>{employee.name}</td>
-                                  <td>{employee.pri_phone}</td>
-                                  <td>{employee.email}</td>
-                                  <td>{employee.department}</td>
-                                  <td>{employee.designation}</td>
-                                  <td>{employee.salary}</td>
+                            {leave_category.length > 0 ? (
+                              leave_category.map((leave_category) => (
+                                <tr key={leave_category.id}>
+                                  <td>{leave_category.id}</td>
+                                  <td>{leave_category.category_name}</td>
+                                  <td>{leave_category.status}</td>
+                                  <td>{leave_category.leave_type}</td>
+                                  <td>{leave_category.leave_day}</td>
+                                  <td>{leave_category.max_leave_duration}</td>
+                                  <td>{leave_category.description}</td>
                                   <td>
                                     <Link
-                                      to={`/employee/update/${employee.id}`}
+                                      to={`/leave_category/update/${leave_category.id}`}
                                     >
                                       Edit
                                     </Link>
                                     |
                                     <Link
-                                      to={`/employee/detail/${employee.id}`}
+                                      to={`/leave_category/detail/${leave_category.id}`}
                                     >
                                       View
                                     </Link>
                                     |
                                     <Link
-                                      to={`/employee/delete/${employee.id}`}
+                                      to={`/leave_category/delete/${leave_category.id}`}
                                     >
                                       Delete
                                     </Link>
@@ -107,7 +110,7 @@ const EmployeeList = ({ employees = [] }) => {
                               ))
                             ) : (
                               <tr>
-                                <td colSpan="8">No employees found</td>
+                                <td colSpan="8">No leave_category found</td>
                               </tr>
                             )}
                           </tbody>
@@ -125,4 +128,4 @@ const EmployeeList = ({ employees = [] }) => {
   );
 };
 
-export default EmployeeList;
+export default LeaveCategoryList;

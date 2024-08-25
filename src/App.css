@@ -36,3 +36,81 @@
     transform: rotate(360deg);
   }
 }
+
+#----------------header.css -------------------
+/* Navbar container */
+.navbar {
+  background-color: #343a40;
+  padding: 10px 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Navbar inner container */
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Navbar brand/logo */
+.navbar-brand {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Navbar menu */
+.navbar-menu {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar items */
+.nav-item {
+  position: relative;
+}
+
+/* Navbar links */
+.nav-link {
+  color: #adb5bd;
+  font-size: 18px;
+  text-decoration: none;
+  padding: 5px 10px;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #f8f9fa;
+}
+
+/* Active state (optional, if you want to highlight the active page) */
+.nav-link.active {
+  color: #f8f9fa;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+/* #---------------assets.css ------------------ */
+.assets-dashboard .main-content {
+  padding: 20px;
+  margin-left: 250px; /* Assuming sidebar is 250px wide */
+  background-color: #f8f9fa;
+}
+
+.assets-dashboard h3 {
+  font-weight: bold;
+  color: #333;
+}
+
+.assets-dashboard .form-control {
+  border-radius: 0;
+}
+
+.assets-dashboard .btn-primary {
+  background-color: #007bff;
+  border: none;
+  padding: 10px 20px;
+}

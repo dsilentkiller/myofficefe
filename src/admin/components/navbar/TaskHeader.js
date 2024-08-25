@@ -1,21 +1,27 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const DhitoHeader = () => {
+const TaskHeader = () => {
   return (
     <div>
       <nav className="main-header navbar navbar-expand navbar-white navbar-light">
         {/* <!-- Left navbar links --> */}
         <ul className="navbar-nav">
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/enquiry-list" className="nav-link">
+            <Link to="/admin/task/" className="nav-link">
+              Task
+            </Link>
+          </li>
+          {/* <li className="nav-item d-none d-sm-inline-block">
+            <Link to="/admin/customer/" className="nav-link">
+              Customer
+            </Link>
+          </li>
+          {/* enquiry */}
+          {/* <li className="nav-item d-none d-sm-inline-block">
+            <Link to="/admin/enquiry/" className="nav-link">
               Enquiry
             </Link>
-          </li>
-          <li className="nav-item d-none d-sm-inline-block">
-            <Link to="dhito-list/" className="nav-link">
-              Dhito
-            </Link>
-          </li>
+          </li> */}
         </ul>
 
         {/* <!-- Right navbar links --> */}
@@ -60,4 +66,4 @@ const DhitoHeader = () => {
     </div>
   );
 };
-export default DhitoHeader;
+export default TaskHeader;

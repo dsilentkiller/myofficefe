@@ -44,35 +44,53 @@ const SetupDashboard = () => {
         />
         {/* countries={countries}  */}
         {/* province */}
-        <Route path="province-list/" element={<ProvinceList />} />
+        <Route
+          path="/admin/setup/province/province-list/"
+          element={<ProvinceList />}
+        />
         {/* provinces={provinces} */}
         {/* designation */}
-        <Route path="designation-list/" element={<DesignationList />} />
+        <Route
+          path="/admin/setup/designation/designation-list/"
+          element={<DesignationList />}
+        />
         {/* designations={designations} */}
         {/* zone */}
-        <Route path="zone-list/" element={<ZoneList />} />
+        <Route path="/admin/setup/zone/zone-list/" element={<ZoneList />} />
         {/* zones={zones} */}
         {/* municipality */}
-        <Route path="municipality-list/" element={<MunicipalityList />} />
+        <Route
+          path="/admin/setup/municipality/municipality-list/"
+          element={<MunicipalityList />}
+        />
         {/* dustrict */}
-        <Route path="district-list/" element={<DistrictList />} />
+        <Route
+          path="/admin/setup/district/district-list/"
+          element={<DistrictList />}
+        />
         {/* day */}
-        <Route path="day-form/" element={<DayForm />} />
+        <Route path="/admin/setup/day/day-form/" element={<DayForm />} />
         {/* customer visit period */}
         <Route
-          path="customer-visit-period-list/"
+          path="/admin/setup/customer-visit/customer-visit-period-list/"
           element={<CustomerVisitPeriodList />}
         />
         <Route
-          path="customer-visit-period-form/"
+          path="/admin/setup/customer-visit/customer-visit-period-form/"
           element={<CustomerVisitPeriodForm />}
         />
         {/* working form */}
-        <Route path="working-form/" element={<WorkingForm />} />
-        <Route path="working-list/" element={<WorkingList />} />
+        <Route
+          path="/admin/setup/working/working-form/"
+          element={<WorkingForm />}
+        />
+        <Route
+          path="/admin/setup/working/working-list/"
+          element={<WorkingList />}
+        />
         {/* assign grade */}
         <Route
-          path="assign-grade-form-and-list/"
+          path="/admin/setup/grade/assign_grade/assign-grade-form-and-list/"
           element={<AssignGradeFormAndList />}
         />
       </Routes>

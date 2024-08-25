@@ -77,11 +77,11 @@ const Sidebar = () => {
               </li> */}
 
               <li className="nav-item">
-                <Link to="employee-list/" className="nav-link">
+                <Link to="user/" className="nav-link">
                   <i className="nav-icon fas fa-user"></i>
                   <p>
                     User
-                    <i className="fas fa-angle-left right"></i>
+                    {/* <i className="fas fa-angle-left right"></i> */}
                   </p>
                 </Link>
                 {/* <ul className="nav nav-treeview">
@@ -105,6 +105,15 @@ const Sidebar = () => {
                   </li>
                 </ul> */}
               </li>
+              {/* <li className="nav-item">
+                <Link to="shift" className="nav-link">
+                  <i className="nav-icon fas fa-th"></i>
+                  <p>
+                    Shift
+                    {/* <span className="right badge badge-danger">New</span> */}
+              {/* </p>
+                </Link>
+              </li>  */}
               {/* leave */}
               <li className="nav-item">
                 <Link to="leave/" className="nav-link">
@@ -117,7 +126,7 @@ const Sidebar = () => {
               </li>
               {/* assets */}
               <li className="nav-item">
-                <Link to="assets/" className="nav-link">
+                <Link to="admin/assets/assign-asset/" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Assets
@@ -155,9 +164,19 @@ const Sidebar = () => {
                   </p>
                 </Link>
               </li>
+              {/* notice */}
+              <li className="nav-item">
+                <Link to="admin/notice/" className="nav-link">
+                  <i className="nav-icon fas fa-th"></i>
+                  <p>
+                    Notice
+                    {/* <span className="right badge badge-danger">New</span> */}
+                  </p>
+                </Link>
+              </li>
               {/* setup */}
               <li className="nav-item">
-                <Link to="setup/" className="nav-link">
+                <Link to="/admin/setup/" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Setup
@@ -165,46 +184,7 @@ const Sidebar = () => {
                   </p>
                 </Link>
               </li>
-              {/* ,,,, */}
-              {/* <li className={`nav-item ${userMenuOpen ? "menu-open" : ""}`}>
-                <Link to="#" className="nav-link" onClick={toggleUserMenu}>
-                  <i className="nav-icon fas fa-user"></i>
-                  <p>
-                    User
-                    <i className="fas fa-angle-left right"></i>
-                  </p>
-                </Link>
-                <ul
-                  className="nav nav-treeview"
-                  style={{ display: userMenuOpen ? "block" : "none" }}
-                >
-                  <li className="nav-item">
-                    <Link to="employee-list/" className="nav-link">
-                      {/* Update anchor tag to Link */}
-                      {/* <i className="far fa-circle nav-icon"></i>
-                      <p>Employee</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="#" className="nav-link">
-                      <i className="far fa-circle nav-icon"></i>
-                      <p>Customer</p>
-                    </Link>
-                  </li> */}
-                  {/* <li className="nav-item">
-                  <Link to="#" className="nav-link">
-                    <i className="far fa-circle nav-icon"></i>
-                    <p>Customer</p>
-                  </Link>
-                </li> */}
-                  {/* <li className="nav-item">
-                  <Link to="#" className="nav-link">
-                    <i className="far fa-circle nav-icon"></i>
-                    <p>User</p>
-                  </Link>
-                </li> */}
-                {/* </ul>
-              </li> */} 
+
               {/* settings */}
               <li className="nav-item">
                 <Link to="settings/" className="nav-link">
