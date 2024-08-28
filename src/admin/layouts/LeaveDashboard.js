@@ -23,14 +23,6 @@ function LeaveDashboard() {
             <div className="flex flex-col bg-light fixed-position">
               <LeaveHeader />
             </div>
-            <Route
-              path="category/create/"
-              element={LeaveCategoryForm}
-            />
-            <Route path="leave/category/" element={LeaveCategoryList} />
-            {/* leave */}
-            <Route path="leave/create/" element={LeaveForm} />
-            <Route path="leave/" element={LeaveList} />
 
             <Outlet />
             <div className="flex-grow flex justify-center items-center p-3"></div>

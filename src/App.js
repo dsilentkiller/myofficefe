@@ -14,46 +14,87 @@ import AssetsForm from "./admin/container/assets/AssetsForm";
 import AssetsList from "./admin/container/assets/AssetList";
 import AssignAssetsForm from "./admin/container/assets/AssignAssetsForm";
 import AssignAssetsList from "./admin/container/assets/AssignAssetsList";
-
+import LeaveCategoryForm from "./admin/container/leave/leave_category/Form";
+import LeaveList from "./admin/container/leave/List";
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
           {/* Admin Dashboard Route */}
-          <Route path="/" element={<AdminDashboard />} />
+          <Route path="/dashboard">
+            {/* main route nested parent dashboard route */}
+            <Route index element={<AdminDashboard />} />
+            {/* this give main dashboard page */}
+            {/* User Routes : user/employee gives employeelist*/}
+            <Route path="user" element={<UserDashboard />}>
+              <Route path="employee" element={<EmployeeList />} />
+              <Route path="employee/create" element={<EmployeeForm />} />
+              <Route path="customer" element={<CustomerList />} />
+              <Route path="customer/create" element={<CustomerForm />} />
+              {/* Catch-all for /user routes */}
+              {/* <Route path="*" element={<Navigate to="/user" replace />} /> */}
+            </Route>
 
-          {/* User Routes */}
-          <Route path="/user/*" element={<UserDashboard />}>
-            <Route path="employee" element={<EmployeeList />} />
-            <Route path="employee/create" element={<EmployeeForm />} />
-            <Route path="customer" element={<CustomerList />} />
-            <Route path="customer/create" element={<CustomerForm />} />
-            {/* Catch-all for /user routes */}
-            {/* <Route path="*" element={<Navigate to="/user" replace />} /> */}
+            {/* Leave Routes */}
+            <Route path="leave" element={<LeaveDashboard />}>
+              <Route path="list" element={<LeaveList />} />
+              {/* <Route path="create" element={<LeaveForm />} /> */}
+              <Route path="category/list" element={<LeaveCategoryList />} />
+              {/* <Route path="category/create" element={<LeaveCategoryForm />} /> */}
+            </Route>
+            {/* -------------- Assets -------- */}
+            <Route path="assets" element={<AssetsDashboard />}>
+              <Route path="list" element={<AssetsList />} />
+              <Route path="create" element={<AssetsForm />} />
+              <Route path="assign/list" element={<AssignAssetsList />} />
+              <Route path="assign/create" element={<AssignAssetsForm />} />
+              {/* Catch-all for /user routes */}
+              {/* <Route path="*" element={<Navigate to="/user" replace />} /> */}
+            </Route>
           </Route>
-
-          {/* Leave Routes */}
-          <Route path="/leave/*" element={<LeaveDashboard />}>
-            <Route path="create" element={<LeaveForm />} />
-            <Route path="category/list" element={<LeaveCategoryList />} />
-            <Route path="category/create" element={<LeaveForm />} />
-            {/* Catch-all for /leave routes */}
-            {/* <Route path="*" element={<Navigate to="/leave" replace />} /> */}
-          </Route>
+          {/* ---------------- Students------------------------------ */}
+          {/* <Route path="students" element={<Outlet />}> */}
+          {/* <Route
+                index
+                element={<LeaveList firstTab="list" secondTab="create" />}
+              /> */}
+          {/* <Route
+                path="create"
+                element={<AdminForm firstTab="students" secondTab="create" />}
+              />
+              <Route path="update/:id" element={<UpdateStudent />} />
+              <Route path=":id" element={<ReadSpecificStudent />} /> */}
+          {/* </Route> */}
+          {/* --------------- Subjects------------------------------------ */}
+          {/* <Route path="subjects" element={<Outlet />}>
+              <Route
+                index
+                element={
+                  <AdminForm firstTab="subjects" secondTab="subjectList" />
+                }
+              />
+              <Route
+                path="create"
+                element={<AdminForm firstTab="subjects" secondTab="create" />}
+              />
+              <Route path="update/:id" element={<UpdateSubject />} />
+              <Route path=":id" element={<ReadSpecificSubject />} />
+            </Route> */}
+          {/* </Route> */}
 
           {/* Asset Routes */}
-          <Route path="/asset/*" element={<AssetsDashboard />}>
+          {/* <Route path="/asset/*" element={<AssetsDashboard />}>
             <Route path="assign/list" element={<AssignAssetsList />} />
             <Route path="assign/create" element={<AssignAssetsForm />} />
             <Route path="create" element={<AssetsForm />} />
             <Route path="list" element={<AssetsList />} />
             {/* Catch-all for /asset routes */}
-            {/* <Route path="*" element={<Navigate to="/asset" replace />} /> */}
-          </Route>
+          {/* <Route path="*" element={<Navigate to="/asset" replace />} /> */}
+          {/* </Route>  */}
 
           {/* Catch-all for other routes */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
         </Routes>
       </BrowserRouter>
     </div>

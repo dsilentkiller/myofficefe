@@ -42,7 +42,7 @@ export default function LeaveCategoryForm() {
             <div className="container-fluid">
               <h5 className="navbar-brand">Add Leave Category</h5>
               <div className="navbar-nav ml-auto">
-                <Link to="/admin/leave/list/">
+                <Link to="dashboard/leave/list/">
                   <h5>Leave Category List</h5>
                 </Link>
               </div>

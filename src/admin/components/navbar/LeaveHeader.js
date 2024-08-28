@@ -9,12 +9,12 @@ const LeaveHeader = () => {
         {/* <!-- Left navbar links --> */}
         <ul className="navbar-nav">
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="leave/category" className="nav-link">
+            <Link to="category/list" className="nav-link">
               Leave Category
             </Link>
           </li>
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="leave" className="nav-link">
+            <Link to="list" className="nav-link">
               Leave
             </Link>
           </li>

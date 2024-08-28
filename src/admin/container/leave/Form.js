@@ -45,7 +45,7 @@ export default function LeaveForm() {
             <div className="container-fluid">
               <h5 className="navbar-brand">Add Leave </h5>
               <div className="navbar-nav ml-auto">
-                <Link to="/admin/leave/list/">
+                <Link to="leave/list">
                   <h5>Leave List</h5>
                 </Link>
               </div>

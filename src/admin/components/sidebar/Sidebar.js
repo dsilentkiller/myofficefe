@@ -5,7 +5,7 @@ const Sidebar = () => {
     <div>
       <aside className="main-sidebar sidebar-dark-primary elevation-4">
         {/* <!-- Brand Logo --> */}
-        <Link to="index3.html" className="brand-link">
+        <Link to="/dashboard" className="brand-link">
           {/* <img
             src="dist/img/AdminLTELogo.png"
             alt="AdminLTE Logo"
@@ -61,7 +61,7 @@ const Sidebar = () => {
               {/* <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library --> */}
               <li className="nav-item menu-open">
-                <Link to="#" className="nav-link active">
+                <Link to="/dashboard" className="nav-link active">
                   <i className="nav-icon fas fa-tachometer-alt"></i>
                   <p>
                     Dashboard
@@ -77,46 +77,17 @@ const Sidebar = () => {
               </li> */}
 
               <li className="nav-item">
-                <Link to="user/" className="nav-link">
+                <Link to="/dashboard/user/employee" className="nav-link">
                   <i className="nav-icon fas fa-user"></i>
                   <p>
                     User
                     {/* <i className="fas fa-angle-left right"></i> */}
                   </p>
                 </Link>
-                {/* <ul className="nav nav-treeview">
-                  <li className="nav-item">
-                    <Link to="#" className="nav-link">
-                      <i className="far fa-circle nav-icon"></i>
-                      <p>Employee</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="#" className="nav-link">
-                      <i className="far fa-circle nav-icon"></i>
-                      <p>Customer</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="#" className="nav-link">
-                      <i className="far fa-circle nav-icon"></i>
-                      <p>User</p>
-                    </Link>
-                  </li>
-                </ul> */}
               </li>
-              {/* <li className="nav-item">
-                <Link to="shift" className="nav-link">
-                  <i className="nav-icon fas fa-th"></i>
-                  <p>
-                    Shift
-                    {/* <span className="right badge badge-danger">New</span> */}
-              {/* </p>
-                </Link>
-              </li>  */}
               {/* leave */}
               <li className="nav-item">
-                <Link to="leave/" className="nav-link">
+                <Link to="/dashboard/leave" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Leave
@@ -126,7 +97,7 @@ const Sidebar = () => {
               </li>
               {/* assets */}
               <li className="nav-item">
-                <Link to="asset/list" className="nav-link">
+                <Link to="dashboard/asset/list" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Assets

@@ -70,7 +70,7 @@ const AdminDashboard = () => {
           {/* <div className="flex flex-col bg-light fixed-position">
             <UserHeader />
           </div> */}
-          <p>hello,this is user dashboard</p>
+          <p>hello,this is Admin dashboard ,working more </p>
           <div className="flex-grow flex justify-center items-center p-3"></div>
           <div className="flex flex-col bg-light absolute bottom-0 w-full">
             <Footer />

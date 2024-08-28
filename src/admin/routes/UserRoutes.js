@@ -1,3 +1,30 @@
+import React from "react";
+import UserDashboard from "../layouts/UserDashboard";
+import CustomerForm from "../container/user/customer/Form";
+import CustomerList from "../container/user/customer/List";
+import EmployeeForm from "../container/user/employee/Form";
+import EmployeeList from "../container/user/employee/EmployeeList";
+import { Route } from "react-router-dom";
+
+
+function UserRoutes() {
+  return (
+    <div>
+      {/* User Routes */}
+      <Route path="/user" element={<UserDashboard />}>
+        <Route path="employee" element={<EmployeeList />} />
+        <Route path="employee/create" element={<EmployeeForm />} />
+        <Route path="customer" element={<CustomerList />} />
+        <Route path="customer/create" element={<CustomerForm />} />
+        {/* Catch-all for /user routes */}
+        {/* <Route path="*" element={<Navigate to="/user" replace />} /> */}
+      </Route>
+    </div>
+  );
+}
+
+export default UserRoutes;
+
 // import {
 //   BrowserRouter,
 //   Navigate,

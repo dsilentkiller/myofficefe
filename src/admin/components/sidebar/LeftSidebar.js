@@ -62,6 +62,37 @@ const Sidebar = () => {
                     <p>Customer</p>
                   </Link>
                 </li>
+
+                {/* <ul className="nav nav-treeview">
+                  <li className="nav-item">
+                    <Link to="#" className="nav-link">
+                      <i className="far fa-circle nav-icon"></i>
+                      <p>Employee</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="#" className="nav-link">
+                      <i className="far fa-circle nav-icon"></i>
+                      <p>Customer</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="#" className="nav-link">
+                      <i className="far fa-circle nav-icon"></i>
+                      <p>User</p>
+                    </Link>
+                  </li>
+                </ul> */}
+
+                {/* <li className="nav-item">
+                <Link to="shift" className="nav-link">
+                  <i className="nav-icon fas fa-th"></i>
+                  <p>
+                    Shift
+                    {/* <span className="right badge badge-danger">New</span> */}
+                {/* </p>
+                </Link>
+              </li>  */}
                 {/* <li className="nav-item">
                   <Link to="#" className="nav-link">
                     <i className="far fa-circle nav-icon"></i>

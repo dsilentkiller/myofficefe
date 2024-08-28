@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const LeaveCategoryList = ({ leave_category }) => {
+const LeaveCategoryList = ({ categories = [] }) => {
   return (
     <div className="content-wrapper">
       <div className="row justify-content-center">
@@ -12,14 +12,14 @@ const LeaveCategoryList = ({ leave_category }) => {
                 <h5 className="navbar-brand">Leave Category List</h5>
                 <div className="navbar-nav ml-auto">
                   <Link
-                    to="/admin/leave_category/create/"
+                    to="dashboard/leave/category/create"
                     className="nav-link btn btn-info"
                   >
-                    <h5>Add leave_category</h5>
+                    <h5>Add Leave Category</h5>
                   </Link>
                   <form
                     method="get"
-                    action="admin/leave_category/search"
+                    action="admin/category/search"
                     className="form-inline ml-3"
                   >
                     <div className="input-group">
@@ -44,7 +44,7 @@ const LeaveCategoryList = ({ leave_category }) => {
                   <ul className="navbar-nav mr-30">
                     <li className="nav-item ">
                       <button
-                        id="leave_categoryTable"
+                        id="categoryTable"
                         className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
                       >
                         <i className="fas fa-file-csv"></i>
@@ -77,31 +77,31 @@ const LeaveCategoryList = ({ leave_category }) => {
                             </tr>
                           </thead>
                           <tbody>
-                            {leave_category.length > 0 ? (
-                              leave_category.map((leave_category) => (
-                                <tr key={leave_category.id}>
-                                  <td>{leave_category.id}</td>
-                                  <td>{leave_category.category_name}</td>
-                                  <td>{leave_category.status}</td>
-                                  <td>{leave_category.leave_type}</td>
-                                  <td>{leave_category.leave_day}</td>
-                                  <td>{leave_category.max_leave_duration}</td>
-                                  <td>{leave_category.description}</td>
+                            {categories.length > 0 ? (
+                              categories.map((category) => (
+                                <tr key={category.id}>
+                                  <td>{category.id}</td>
+                                  <td>{category.category_name}</td>
+                                  <td>{category.status}</td>
+                                  <td>{category.leave_type}</td>
+                                  <td>{category.leave_day}</td>
+                                  <td>{category.max_leave_duration}</td>
+                                  <td>{category.description}</td>
                                   <td>
                                     <Link
-                                      to={`/leave_category/update/${leave_category.id}`}
+                                      to={`/category/update/${category.id}`}
                                     >
                                       Edit
                                     </Link>
                                     |
                                     <Link
-                                      to={`/leave_category/detail/${leave_category.id}`}
+                                      to={`/category/detail/${category.id}`}
                                     >
                                       View
                                     </Link>
                                     |
                                     <Link
-                                      to={`/leave_category/delete/${leave_category.id}`}
+                                      to={`/category/delete/${category.id}`}
                                     >
                                       Delete
                                     </Link>
@@ -110,7 +110,7 @@ const LeaveCategoryList = ({ leave_category }) => {
                               ))
                             ) : (
                               <tr>
-                                <td colSpan="8">No leave_category found</td>
+                                <td colSpan="8">No category found</td>
                               </tr>
                             )}
                           </tbody>

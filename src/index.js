@@ -1,21 +1,27 @@
-// import React from 'react';
-// import ReactDOM from 'react-dom/client';
-// import { createBrowserRouter,RouterProvider } from 'react-router-dom';
+// import React from "react";
+// import ReactDOM from "react-dom/client";
+// import { createBrowserRouter, RouterProvider } from "react-router-dom";
+// import AdminDashboard from "./admin/AdminDashboard";
+// import EmployeeList from "./admin/container/user/employee/EmployeeList";
 
+// const router = createBrowserRouter(
+//   {
+//     path: "/",
+//     element: <AdminDashboard />,
+//   },
+//   {
+//     path: "user",
+//     element: <EmployeeList />,
+//   }
+// );
 
-// const router=createBrower
-
-
-
-
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
 // import reportWebVitals from './reportWebVitals';
 
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <App />
