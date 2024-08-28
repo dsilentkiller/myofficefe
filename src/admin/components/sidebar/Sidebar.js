@@ -126,7 +126,7 @@ const Sidebar = () => {
               </li>
               {/* assets */}
               <li className="nav-item">
-                <Link to="admin/assets/assign-asset/" className="nav-link">
+                <Link to="asset/list" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Assets

@@ -7,13 +7,13 @@ const AssetHeader = () => {
         {/* <!-- Left navbar links --> */}
         <ul className="navbar-nav">
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/asset/asset-list/" className="nav-link">
-              Asset
+            <Link to="list/" className="nav-link">
+              Assets
             </Link>
           </li>
-          {/* <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/customer/" className="nav-link">
-              Customer
+          <li className="nav-item d-none d-sm-inline-block">
+            <Link to="assign/list" className="nav-link">
+              Assign Asset
             </Link>
           </li>
           {/* enquiry */}

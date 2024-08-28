@@ -11,10 +11,7 @@ const LeaveList = ({ leaves = [] }) => {
               <div className="container-fluid">
                 <h5 className="navbar-brand">Leave List</h5>
                 <div className="navbar-nav ml-auto">
-                  <Link
-                    to="/admin/leave/create/"
-                    className="nav-link btn btn-info"
-                  >
+                  <Link to="leave/create/" className="nav-link btn btn-info">
                     <h5>Add Leave</h5>
                   </Link>
                   <form
