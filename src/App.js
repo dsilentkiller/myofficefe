@@ -9,13 +9,15 @@ import CustomerForm from "./admin/container/user/customer/Form";
 import LeaveCategoryList from "./admin/container/leave/leave_category/List";
 import LeaveForm from "./admin/container/leave/Form";
 import LeaveDashboard from "./admin/layouts/LeaveDashboard";
-import AssetsDashboard from "./admin/layouts/AssetDashboard";
+// import AssetsDashboard from "./admin/layouts/AssetDashboard";
 import AssetsForm from "./admin/container/assets/AssetsForm";
 import AssetsList from "./admin/container/assets/AssetList";
 import AssignAssetsForm from "./admin/container/assets/AssignAssetsForm";
 import AssignAssetsList from "./admin/container/assets/AssignAssetsList";
 import LeaveCategoryForm from "./admin/container/leave/leave_category/Form";
 import LeaveList from "./admin/container/leave/List";
+import AssetDashboard from "./admin/layouts/AssetDashboard";
+// import AttendanceList from "./admin"
 function App() {
   return (
     <div className="App">
@@ -36,15 +38,15 @@ function App() {
               {/* <Route path="*" element={<Navigate to="/user" replace />} /> */}
             </Route>
 
-            {/* Leave Routes */}
+            {/* ----  Leave Routes---- */}
             <Route path="leave" element={<LeaveDashboard />}>
               <Route path="list" element={<LeaveList />} />
-              {/* <Route path="create" element={<LeaveForm />} /> */}
+              <Route path="create" element={<LeaveForm />} />
               <Route path="category/list" element={<LeaveCategoryList />} />
-              {/* <Route path="category/create" element={<LeaveCategoryForm />} /> */}
+              <Route path="category/create" element={<LeaveCategoryForm />} />
             </Route>
             {/* -------------- Assets -------- */}
-            <Route path="assets" element={<AssetsDashboard />}>
+            <Route path="assets" element={<AssetDashboard />}>
               <Route path="list" element={<AssetsList />} />
               <Route path="create" element={<AssetsForm />} />
               <Route path="assign/list" element={<AssignAssetsList />} />
@@ -53,19 +55,26 @@ function App() {
               {/* <Route path="*" element={<Navigate to="/user" replace />} /> */}
             </Route>
           </Route>
-          {/* ---------------- Students------------------------------ */}
-          {/* <Route path="students" element={<Outlet />}> */}
-          {/* <Route
-                index
-                element={<LeaveList firstTab="list" secondTab="create" />}
-              /> */}
-          {/* <Route
-                path="create"
-                element={<AdminForm firstTab="students" secondTab="create" />}
-              />
-              <Route path="update/:id" element={<UpdateStudent />} />
-              <Route path=":id" element={<ReadSpecificStudent />} /> */}
-          {/* </Route> */}
+
+          {/* ---- Attendance---- */}
+          <Route path="attendance">
+            <Route path="list" element={<AssetsList />} />
+            <Route path="create" element={<AssetsForm />} />
+            {/* <Route path="assign/list" element={<AssignAssetsList />} />
+              <Route path="assign/create" element={<AssignAssetsForm />} /> */}
+            {/* Catch-all for /user routes */}
+            {/* <Route path="*" element={<Navigate to="/user" replace />} /> */}
+          </Route>
+          {/* ---------------- project------------------------------ */}
+          <Route path="user" element={<UserDashboard />}>
+              <Route path="employee" element={<EmployeeList />} />
+              <Route path="employee/create" element={<EmployeeForm />} />
+              <Route path="customer" element={<CustomerList />} />
+              <Route path="customer/create" element={<CustomerForm />} />
+              {/* Catch-all for /user routes */}
+              {/* <Route path="*" element={<Navigate to="/user" replace />} /> */}
+            </Route>
+
           {/* --------------- Subjects------------------------------------ */}
           {/* <Route path="subjects" element={<Outlet />}>
               <Route

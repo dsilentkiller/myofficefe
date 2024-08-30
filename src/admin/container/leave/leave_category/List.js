@@ -12,7 +12,7 @@ const LeaveCategoryList = ({ categories = [] }) => {
                 <h5 className="navbar-brand">Leave Category List</h5>
                 <div className="navbar-nav ml-auto">
                   <Link
-                    to="dashboard/leave/category/create"
+                    to="/dashboard/leave/category/create/"
                     className="nav-link btn btn-info"
                   >
                     <h5>Add Leave Category</h5>

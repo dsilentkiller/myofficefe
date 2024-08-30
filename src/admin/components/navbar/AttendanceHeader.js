@@ -7,18 +7,18 @@ const AttendanceHeader = () => {
         {/* <!-- Left navbar links --> */}
         <ul className="navbar-nav">
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/attendance/attendance-list/" className="nav-link">
+            <Link to="/dashboard/attendance/list" className="nav-link">
               Attendance
             </Link>
           </li>
           {/* <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/customer/" className="nav-link">
+            <Link to="/dashboard/customer/" className="nav-link">
               Customer
             </Link>
           </li>
           {/* enquiry */}
           {/* <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/enquiry/" className="nav-link">
+            <Link to="/dashboard/enquiry/" className="nav-link">
               Enquiry
             </Link>
           </li> */}

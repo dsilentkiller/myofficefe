@@ -7,7 +7,7 @@ const AssetHeader = () => {
         {/* <!-- Left navbar links --> */}
         <ul className="navbar-nav">
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="list/" className="nav-link">
+            <Link to="list" className="nav-link">
               Assets
             </Link>
           </li>

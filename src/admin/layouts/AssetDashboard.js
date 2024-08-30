@@ -5,6 +5,7 @@ import Sidebar from "../components/sidebar/Sidebar";
 import Footer from "../components/footer/Footer";
 
 import AssetHeader from "../components/navbar/AssetHeader";
+// import AssetsList from "../container/assets/AssetList";
 
 const AssetDashboard = () => {
   return (

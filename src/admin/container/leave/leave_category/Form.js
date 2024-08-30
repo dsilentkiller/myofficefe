@@ -88,7 +88,7 @@ export default function LeaveCategoryForm() {
                 {/* status */}
                 <div className="col-md-4">
                   <div className="form-group">
-                    <label htmlFor="staus">leave_type:</label>
+                    <label htmlFor="status">leave_type:</label>
                     <select
                       id="leave_type"
                       name="leave_type"

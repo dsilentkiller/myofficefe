@@ -42,7 +42,7 @@ function AssetsForm() {
           <div className="container-fluid">
             <h5 className="navbar-brand">Add Assets</h5>
             <div className="navbar-nav ml-auto">
-              <Link to="/admin/assets/list/">
+              <Link to="/dashboard/assets/list/">
                 <h5>Assets List</h5>
               </Link>
             </div>

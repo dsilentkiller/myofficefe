@@ -7,12 +7,12 @@ const AccountHeader = () => {
         {/* <!-- Left navbar links --> */}
         <ul className="navbar-nav">
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/purchase/purchase-list/" className="nav-link">
+            <Link to="/dashboard/purchase/purchase-list/" className="nav-link">
               Purchase
             </Link>
           </li>
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/expanse/expanse-list/" className="nav-link">
+            <Link to="/dashboard/expanse/expanse-list/" className="nav-link">
               Expanse
             </Link>
           </li>

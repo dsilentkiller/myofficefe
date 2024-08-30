@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import classnames from "classnames";
 import { Link } from "react-router-dom";
@@ -8,22 +8,29 @@ import axios from "axios";
 
 const EmployeeForm = ({ addEmployee }) => {
   const [activeTab, setActiveTab] = useState("1");
-
-  const toggle = (tab) => {
-    if (activeTab !== tab) setActiveTab(tab);
-  };
+  const [departments, setDepartments] = useState([]);
+  const [designations, setDesignations] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
     employee_type: "",
     role: "",
     date_issued: "",
+
     province: "",
     zone: "",
     district: "",
     municipality: "",
     ward_no: "",
     tole_name: "",
+
+    temp_province: "",
+    temp_zone: "",
+    temp_district: "",
+    temp_municipality: "",
+    temp_ward_no: "",
+    temp_tole_name: "",
+
     pri_phone: "",
     sec_phone: "",
     email: "",
@@ -68,17 +75,41 @@ const EmployeeForm = ({ addEmployee }) => {
     }
   }
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   addEmployee(formData);
-  //   alert("Employee created successfully!");
-  // };
-  // api
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/department/"
+        );
+        setDepartments(response.data);
+      } catch (error) {
+        console.error("There was an error fetching the departments!", error);
+      }
+    };
+
+    const fetchDesignations = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/designation/"
+        );
+        setDesignations(response.data);
+      } catch (error) {
+        console.error("There was an error fetching the designations!", error);
+      }
+    };
+
+    fetchDepartments();
+    fetchDesignations();
+  }, []);
+
+  const toggle = (tab) => {
+    if (activeTab !== tab) setActiveTab(tab);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/employees",
+        "http://127.0.0.1:8000/api/employee/new/",
         formData
       );
       console.log(response.data);
@@ -127,7 +158,7 @@ const EmployeeForm = ({ addEmployee }) => {
                 <div className="container-fluid">
                   <h5 className="navbar-brand">Add Employee</h5>
                   <div className="navbar-nav ml-auto">
-                    <Link to="/admin/employee/list/">
+                    <Link to="dashboard/user/employee">
                       <h5>Employee List</h5>
                     </Link>
                   </div>

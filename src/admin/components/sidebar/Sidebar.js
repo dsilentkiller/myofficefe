@@ -97,7 +97,7 @@ const Sidebar = () => {
               </li>
               {/* assets */}
               <li className="nav-item">
-                <Link to="dashboard/asset/list" className="nav-link">
+                <Link to="/dashboard/assets" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Assets
@@ -107,7 +107,7 @@ const Sidebar = () => {
               </li>
               {/* Attendance */}
               <li className="nav-item">
-                <Link to="attendance/" className="nav-link">
+                <Link to="/dashboard/attendance" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Attendance
@@ -117,7 +117,7 @@ const Sidebar = () => {
               </li>
               {/* task */}
               <li className="nav-item">
-                <Link to="tax/" className="nav-link">
+                <Link to="/dashboard/tax" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Tax
@@ -127,7 +127,7 @@ const Sidebar = () => {
               </li>
               {/* project */}
               <li className="nav-item">
-                <Link to="project/" className="nav-link">
+                <Link to="/dashboard/project" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Project
@@ -137,7 +137,7 @@ const Sidebar = () => {
               </li>
               {/* notice */}
               <li className="nav-item">
-                <Link to="admin/notice/" className="nav-link">
+                <Link to="/dashboard/notice" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Notice
@@ -147,7 +147,7 @@ const Sidebar = () => {
               </li>
               {/* setup */}
               <li className="nav-item">
-                <Link to="/admin/setup/" className="nav-link">
+                <Link to="/dashboard/setup" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Setup
@@ -158,7 +158,7 @@ const Sidebar = () => {
 
               {/* settings */}
               <li className="nav-item">
-                <Link to="settings/" className="nav-link">
+                <Link to="/dashboard/settings" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Settings
