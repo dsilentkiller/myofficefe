@@ -8,8 +8,16 @@ import axios from "axios";
 
 const EmployeeForm = ({ addEmployee }) => {
   const [activeTab, setActiveTab] = useState("1");
+  // const [departments, setDepartments] = useState([]);
   const [departments, setDepartments] = useState([]);
+
   const [designations, setDesignations] = useState([]);
+  const [provinces, setProvinces] = useState([]);
+  const [zones, setZones] = useState([]);
+
+  const [districts, setDistricts] = useState([]);
+
+  const [municipalities, setMunicipalities] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -17,14 +25,14 @@ const EmployeeForm = ({ addEmployee }) => {
     role: "",
     date_issued: "",
 
-    province: "",
+    department: "",
     zone: "",
     district: "",
     municipality: "",
     ward_no: "",
     tole_name: "",
 
-    temp_province: "",
+    temp_department: "",
     temp_zone: "",
     temp_district: "",
     temp_municipality: "",
@@ -55,7 +63,7 @@ const EmployeeForm = ({ addEmployee }) => {
     if (event.target.checked) {
       setFormData({
         ...formData,
-        temp_province: formData.province,
+        temp_department: formData.department,
         temp_zone: formData.zone,
         temp_district: formData.district,
         temp_municipality: formData.municipality,
@@ -65,7 +73,7 @@ const EmployeeForm = ({ addEmployee }) => {
     } else {
       setFormData({
         ...formData,
-        temp_province: "",
+        temp_department: "",
         temp_zone: "",
         temp_district: "",
         temp_municipality: "",
@@ -74,14 +82,19 @@ const EmployeeForm = ({ addEmployee }) => {
       });
     }
   }
-
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/department/"
+          "http://127.0.0.1:8000/api/setup/department/"
         );
-        setDepartments(response.data);
+        if (Array.isArray(response.data)) {
+          setDepartments(response.data); // Set departments if response.data is an array
+        } else if (Array.isArray(response.data.departments)) {
+          setDepartments(response.data.departments); // Handle nested array if necessary
+        } else {
+          console.error("Unexpected data format", response.data);
+        }
       } catch (error) {
         console.error("There was an error fetching the departments!", error);
       }
@@ -90,17 +103,135 @@ const EmployeeForm = ({ addEmployee }) => {
     const fetchDesignations = async () => {
       try {
         const response = await axios.get(
-          "http://127.0.0.1:8000/api/designation/"
+          "http://127.0.0.1:8000/api/setup/designation/"
         );
         setDesignations(response.data);
       } catch (error) {
         console.error("There was an error fetching the designations!", error);
       }
     };
+    const fetchZones = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/setup/zones/"
+        );
+        console.log(response.data); // Log the response data to inspect its structure
+        setZones(response.data); // Assuming response.data should be an array
+      } catch (error) {
+        console.error("There was an error fetching the zones!", error);
+      }
+    };
+    const fetchDistricts = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/setup/districts/"
+        );
+        console.log(response.data); // Check the structure of the response
+
+        // Assuming the response should be an array or have an array inside it
+        if (Array.isArray(response.data)) {
+          setDistricts(response.data);
+        } else if (Array.isArray(response.data.districts)) {
+          setDistricts(response.data.districts);
+        } else {
+          console.error("Unexpected data format", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching districts", error);
+      }
+    };
+
+    const fetchMunicipalities = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/setup/municipalities/"
+        );
+        console.log(response.data); // Inspect the response data
+        if (Array.isArray(response.data)) {
+          setMunicipalities(response.data); // Set municipalities if response.data is an array
+        } else if (Array.isArray(response.data.municipalities)) {
+          setMunicipalities(response.data.municipalities); // Handle nested array if necessary
+        } else {
+          console.error("Unexpected data format", response.data);
+        }
+      } catch (error) {
+        console.error("There was an error fetching the municipalities!", error);
+      }
+    };
 
     fetchDepartments();
     fetchDesignations();
+    fetchZones();
+    fetchDistricts();
+    fetchMunicipalities();
   }, []);
+
+  // useEffect(() => {
+  // Fetch departments data
+
+  // Fetch zones data
+
+  // const fetchZone = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "http://127.0.0.1:8000/api/setup/zone/create/"
+  //     );
+  //     setZones(response.data);
+  //   } catch (error) {
+  //     console.error("There was an error fetching the zones!", error);
+  //   }
+  // };
+
+  // Fetch districts data
+  //   const fetchDistricts = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "http://127.0.0.1:8000/api/setup/district/"
+  //       );
+  //       setDistricts(response.data);
+  //     } catch (error) {
+  //       console.error("There was an error fetching the district!", error);
+  //     }
+  //   };
+
+  //   // Fetch municipalities data
+  //   const fetchMunicipalities = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "http://127.0.0.1:8000/api/setup/municipality/"
+  //       );
+  //       setMunicipalities(response.data);
+  //     } catch (error) {
+  //       console.error("There was an error fetching the municipality!", error);
+  //     }
+  //   };
+
+  //   const fetchDepartments = async () => {
+  //     try {
+  //       const response = await axios.get("api/setup/department/create/");
+  //       setDepartments(response.data);
+  //     } catch (error) {
+  //       console.error("There was an error fetching the departments!", error);
+  //     }
+  //   };
+
+  //   const fetchDesignations = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "http://127.0.0.1:8000/api/setup/designation/create/"
+  //       );
+  //       setDesignations(response.data);
+  //     } catch (error) {
+  //       console.error("There was an error fetching the designations!", error);
+  //     }
+  //   };
+
+  //   fetchDepartments();
+  //   fetchDesignations();
+  //   fetchMunicipalities();
+  //   fetchDistricts();
+  //   fetchZone();
+  // }, []);
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -304,62 +435,92 @@ const EmployeeForm = ({ addEmployee }) => {
                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="province">Province:</label>
-                        <input
-                          type="text"
+                        <select
                           id="province"
                           name="province"
                           value={formData.province}
                           onChange={handleChange}
                           className="form-control"
                           required
-                        />
+                        >
+                          <option value="">Select province</option>
+                          {provinces.map((province) => (
+                            <option key={province.id} value={province.id}>
+                              {province.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
+
                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="zone">Zone:</label>
-                        <input
-                          type="text"
+                        <select
                           id="zone"
                           name="zone"
                           value={formData.zone}
                           onChange={handleChange}
                           className="form-control"
                           required
-                        />
+                        >
+                          <option value="">Select Zone</option>
+                          {zones.map((zone) => (
+                            <option key={zone.id} value={zone.id}>
+                              {zone.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
+                    {/* district */}
                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="district">District:</label>
-                        <input
-                          type="text"
+                        <select
                           id="district"
                           name="district"
                           value={formData.district}
                           onChange={handleChange}
                           className="form-control"
                           required
-                        />
+                        >
+                          <option value="">Select District</option>
+                          {districts.map((district) => (
+                            <option key={district.id} value={district.id}>
+                              {district.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                   </div>
-
+                  {/* municuipality */}
                   <div className="row">
                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="municipality">Municipality:</label>
-                        <input
-                          type="text"
+                        <select
                           id="municipality"
                           name="municipality"
                           value={formData.municipality}
                           onChange={handleChange}
                           className="form-control"
                           required
-                        />
+                        >
+                          <option value="">Select Municipality</option>
+                          {municipalities.map((municipality) => (
+                            <option
+                              key={municipality.id}
+                              value={municipality.id}
+                            >
+                              {municipality.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
+                    {/*  */}
                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="ward_no">Ward No:</label>
@@ -410,44 +571,62 @@ const EmployeeForm = ({ addEmployee }) => {
                   <div className="row">
                     <div className="col-md-4">
                       <div className="form-group">
-                        <label htmlFor="temp_province">Province:</label>
-                        <input
-                          type="text"
-                          id="temp_province"
-                          name="temp_province"
-                          value={formData.temp_province}
+                        <label htmlFor="temp_department">department:</label>
+                        <select
+                          id="temp_department"
+                          name="temp_department"
+                          value={formData.temp_department}
                           onChange={handleChange}
                           className="form-control"
                           required
-                        />
+                        >
+                          <option value="">Select department</option>
+                          {departments.map((department) => (
+                            <option key={department.id} value={department.id}>
+                              {department.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="temp_zone">Zone:</label>
-                        <input
-                          type="text"
+                        <select
                           id="temp_zone"
                           name="temp_zone"
                           value={formData.temp_zone}
                           onChange={handleChange}
                           className="form-control"
                           required
-                        />
+                        >
+                          <option value="">Select Zone</option>
+                          {zones.map((zone) => (
+                            <option key={zone.id} value={zone.id}>
+                              {zone.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="temp_district">District:</label>
-                        <input
-                          type="text"
+                        <select
                           id="temp_district"
                           name="temp_district"
                           value={formData.temp_district}
                           onChange={handleChange}
                           className="form-control"
                           required
-                        />
+                        >
+                          <option value="">Select District</option>
+                          {districts.map((district) => (
+                            <option key={district.id} value={district.id}>
+                              {district.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                   </div>
@@ -456,15 +635,24 @@ const EmployeeForm = ({ addEmployee }) => {
                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="temp_municipality">Municipality:</label>
-                        <input
-                          type="text"
+                        <select
                           id="temp_municipality"
                           name="temp_municipality"
                           value={formData.temp_municipality}
                           onChange={handleChange}
                           className="form-control"
                           required
-                        />
+                        >
+                          <option value="">Select Municipality</option>
+                          {municipalities.map((municipality) => (
+                            <option
+                              key={municipality.id}
+                              value={municipality.id}
+                            >
+                              {municipality.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                     <div className="col-md-4">
@@ -518,16 +706,22 @@ const EmployeeForm = ({ addEmployee }) => {
                   <div className="row">
                     <div className="col-md-4">
                       <div className="form-group">
-                        <label htmlFor="department">Department:</label>
-                        <input
-                          type="text"
+                        <label htmlFor="department">Departments:</label>
+                        <select
                           id="department"
                           name="department"
                           value={formData.department}
                           onChange={handleChange}
                           className="form-control"
                           required
-                        />
+                        >
+                          <option value="">Select department</option>
+                          {departments.map((department) => (
+                            <option key={department.id} value={department.id}>
+                              {department.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                     <div className="col-md-4">

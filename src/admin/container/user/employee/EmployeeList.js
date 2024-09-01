@@ -104,6 +104,7 @@ const EmployeeList = () => {
                   <thead>
                     <tr>
                       <th>#</th>
+
                       <th>Employee Name</th>
                       <th>Phone</th>
                       <th>Email</th>
@@ -132,9 +133,11 @@ const EmployeeList = () => {
                   </thead>
                   <tbody>
                     {employees.length > 0 ? (
-                      employees.map((employee) => (
+                      employees.map((employee, index) => (
                         <tr key={employee.id}>
-                          <td>{employee.id}</td>
+                          <td>
+                            {(currentPage - 1) * itemsPerPage + index + 1}
+                          </td>
                           <td>{employee.name}</td>
                           <td>{employee.pri_phone}</td>
                           <td>{employee.email}</td>
