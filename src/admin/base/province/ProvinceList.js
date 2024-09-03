@@ -10,7 +10,7 @@ const ProvinceList = () => {
   // Function to fetch the list of provinces from the backend
   const fetchProvinces = async () => {
     try {
-      const response = await axios.get("/api/provinces/");
+      const response = await axios.get("/setup/api/province/");
       setProvinces(response.data);
     } catch (error) {
       console.error("Error fetching provinces:", error);
@@ -26,7 +26,9 @@ const ProvinceList = () => {
         return;
       }
       // Send a POST request to add the new province
-      await axios.post("/api/provinces/", { name: newProvinceName.trim() });
+      await axios.post("/api/setup/province/", {
+        name: newProvinceName.trim(),
+      });
       // Fetch the updated list of provinces
       fetchProvinces();
       // Clear the input field after adding the province

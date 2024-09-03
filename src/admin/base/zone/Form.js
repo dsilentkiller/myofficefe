@@ -20,7 +20,7 @@ const ZoneForm = () => {
     e.preventDefault();
     try {
       // Send a POST request to create a new zone
-      await axios.post("/api/zones/", formData);
+      await axios.post("http://127.0.0.1:8000/api/setup/zones/", formData);
       // Clear form fields after submission
       setFormData({
         name: "",

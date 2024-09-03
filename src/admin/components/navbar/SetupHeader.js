@@ -9,63 +9,51 @@ const SetupHeader = () => {
         {/* <!-- Left navbar links --> */}
         <ul className="navbar-nav">
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/setup/country/country-list/" className="nav-link">
+            <Link to="country" className="nav-link">
               Country
             </Link>
           </li>
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/setup/district/district-list" className="nav-link">
+            <Link to="district" className="nav-link">
               District
             </Link>
           </li>
           <li className="nav-item d-none d-sm-inline-block">
-            <Link
-              to="/admin/setup/province/province-list/"
-              className="nav-link"
-            >
+            <Link to="province" className="nav-link">
               Province
             </Link>
           </li>
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/setup/zone/zone-list" className="nav-link">
+            <Link to="zone" className="nav-link">
               Zone
             </Link>
           </li>
           {/* enquiry */}
           <li className="nav-item d-none d-sm-inline-block">
-            <Link
-              to="/admin/setup/municipality/municipality-list/"
-              className="nav-link"
-            >
+            <Link to="municipality" className="nav-link">
               Municipality
             </Link>
           </li>
 
           <li className="nav-item d-none d-sm-inline-block">
-            <Link
-              to="/admin/setup/designation/designation-list/"
-              className="nav-link"
-            >
+            <Link to="designation" className="nav-link">
               designation
             </Link>
           </li>
           {/* enquiry */}
           <li className="nav-item d-none d-sm-inline-block">
-            <Link
-              to="/admin/setup/department/department-list/"
-              className="nav-link"
-            >
+            <Link to="department" className="nav-link">
               Department
             </Link>
           </li>
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/setup/grade/grade-list/" className="nav-link">
+            <Link to="grade" className="nav-link">
               Grade
             </Link>
           </li>
           {/* enquiry */}
           <li className="nav-item d-none d-sm-inline-block">
-            <Link to="/admin/setup/working/working-list/" className="nav-link">
+            <Link to="working" className="nav-link">
               Working
             </Link>
           </li>

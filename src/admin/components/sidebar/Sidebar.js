@@ -147,7 +147,7 @@ const Sidebar = () => {
               </li>
               {/* setup */}
               <li className="nav-item">
-                <Link to="/dashboard/setup" className="nav-link">
+                <Link to="setup/" className="nav-link">
                   <i className="nav-icon fas fa-th"></i>
                   <p>
                     Setup

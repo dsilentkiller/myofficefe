@@ -1,65 +1,56 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { createDistrict } from "../../redux/slice/districtSlice";
 
 const DistrictForm = () => {
-  // State to store form data
-  const [formData, setFormData] = useState({
-    name: "",
-  });
+  const [formData, setFormData] = useState({ name: "" });
+  const dispatch = useDispatch();
+  const createStatus = useSelector((state) => state.districts.createStatus);
+  const createError = useSelector((state) => state.districts.createError);
 
-  // Function to handle form field changes
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Function to handle form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      // Send a POST request to create a new district
-      await axios.post("/api/districts/", formData);
-      // Clear form fields after submission
-      setFormData({
-        name: "",
-      });
-      // Optionally, you can add a success message or redirect the user
-    } catch (error) {
-      console.error("Error creating district:", error);
-      // Optionally, you can display an error message to the user
-    }
+    dispatch(createDistrict(formData));
+    setFormData({ name: "" });
   };
 
   return (
     <div className="content-wrapper">
-      <div class="section">
-        <div class="container">
-          <div class="container-fluid">
-            <div class="card">
-              <div class="card-header">
+      <div className="section">
+        <div className="container">
+          <div className="container-fluid">
+            <div className="card">
+              <div className="card-header">
                 <h4>Add District</h4>
               </div>
-              <div class="card-body">
-                <div class="form group row">
-                  <div class="col-md-8">
-                    <form onSubmit={handleSubmit}>
-                      <label htmlFor="name">Name:</label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        className="form-control"
-                        onChange={handleChange}
-                        required
-                      />
-
-                      <button type="submit">save me</button>
-                    </form>
+              <div className="card-body">
+                <form onSubmit={handleSubmit}>
+                  <div className="form-group">
+                    <label htmlFor="name">Name:</label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      className="form-control"
+                      onChange={handleChange}
+                      required
+                    />
                   </div>
-                </div>
+                  <button type="submit" className="btn btn-primary">
+                    Save
+                  </button>
+                  {createStatus === "loading" && <p>Saving...</p>}
+                  {createStatus === "failed" && (
+                    <p className="error">
+                      Error: {createError.message || "An error occurred"}
+                    </p>
+                  )}
+                </form>
               </div>
             </div>
           </div>
@@ -70,3 +61,61 @@ const DistrictForm = () => {
 };
 
 export default DistrictForm;
+
+// const DistrictForm = () => {
+//   const [formData, setFormData] = useState({ name: "" });
+//   const dispatch = useDispatch();
+//   const createStatus = useSelector((state) => state.districts.createStatus);
+//   const createError = useSelector((state) => state.districts.createError);
+
+//   const handleChange = (e) => {
+//     setFormData({ ...formData, [e.target.name]: e.target.value });
+//   };
+
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     dispatch(createDistrict(formData));
+//     setFormData({ name: "" });
+//   };
+
+//   return (
+//     <div className="content-wrapper">
+//       <div className="section">
+//         <div className="container">
+//           <div className="container-fluid">
+//             <div className="card">
+//               <div className="card-header">
+//                 <h4>Add District</h4>
+//               </div>
+//               <div className="card-body">
+//                 <form onSubmit={handleSubmit}>
+//                   <div className="form-group">
+//                     <label htmlFor="name">Name:</label>
+//                     <input
+//                       type="text"
+//                       id="name"
+//                       name="name"
+//                       value={formData.name}
+//                       className="form-control"
+//                       onChange={handleChange}
+//                       required
+//                     />
+//                   </div>
+//                   <button type="submit" className="btn btn-primary">
+//                     Save
+//                   </button>
+//                   {createStatus === "loading" && <p>Saving...</p>}
+//                   {createStatus === "failed" && (
+//                     <p className="error">Error: {createError}</p>
+//                   )}
+//                 </form>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default DistrictForm;
