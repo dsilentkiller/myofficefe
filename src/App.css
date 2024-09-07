@@ -123,7 +123,7 @@
   min-width: 1000px; /* Adjust as needed to fit all columns */
 }
 
-.table-wrapper {
+.table-container {
   overflow-x: auto; /* Enables horizontal scrolling */
 }
 
@@ -189,3 +189,4 @@
 .page-link:focus {
   box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
 }
+

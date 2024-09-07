@@ -8,11 +8,11 @@ const SetupHeader = () => {
       <nav className="main-header navbar navbar-expand navbar-white navbar-light">
         {/* <!-- Left navbar links --> */}
         <ul className="navbar-nav">
-          <li className="nav-item d-none d-sm-inline-block">
+          {/* <li className="nav-item d-none d-sm-inline-block">
             <Link to="country" className="nav-link">
               Country
             </Link>
-          </li>
+          </li> */}
           <li className="nav-item d-none d-sm-inline-block">
             <Link to="district" className="nav-link">
               District
@@ -23,11 +23,11 @@ const SetupHeader = () => {
               Province
             </Link>
           </li>
-          <li className="nav-item d-none d-sm-inline-block">
+          {/* <li className="nav-item d-none d-sm-inline-block">
             <Link to="zone" className="nav-link">
               Zone
             </Link>
-          </li>
+          </li> */}
           {/* enquiry */}
           <li className="nav-item d-none d-sm-inline-block">
             <Link to="municipality" className="nav-link">

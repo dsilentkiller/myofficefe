@@ -21,12 +21,19 @@ import SetupDashboard from "./admin/layouts/SetupDashboard";
 import ZoneList from "./admin/base/zone/List";
 import ZoneForm from "./admin/base/zone/Form";
 import ProvinceList from "./admin/base/province/ProvinceList";
-import ProvinceForm from "./admin/base/province/ProvinceForm";
+
 import DesignationList from "./admin/base/designation/DesignationList";
 import DesignationForm from "./admin/base/designation/DesignationForm";
 import DistrictList from "./admin/base/district/List";
 import DistrictForm from "./admin/base/district/Form";
-// import AttendanceList from "./admin"
+import UpdateProvince from "./admin/base/province/UpdateProvince";
+import DeleteProvince from "./admin/base/province/DeleteProvince";
+import MunicipalityList from "./admin/base/municipality/List";
+import DeleteMunicipality from "./admin/base/municipality/Delete";
+import UpdateMunicipality from "./admin/base/municipality/Update";
+import MunicipalityForm from "./admin/base/municipality/Form";
+import UpdateDistrict from "./admin/base/district/UpdateDistrict";
+import DeleteDistrict from "./admin/base/district/DeleteDistrict";
 function App() {
   return (
     <div className="App">
@@ -73,17 +80,28 @@ function App() {
               <Route path="zone" element={<ZoneList />} />
               <Route path="zone/create" element={<ZoneForm />} />
               {/* <Route path="municipality" element={<MunicipalityList />} /> */}
-              / <Route path="district" element={<DistrictList />} />
+              <Route path="district" element={<DistrictList />} />
               <Route path="district/create" element={<DistrictForm />} />
-              {/* added field */}
+              <Route path="district/update/:id/" element={<UpdateDistrict />} />
+              <Route path="district/delete/:id/" element={<DeleteDistrict />} />
+              {/* municipality */}
+              <Route path="municipality" element={<MunicipalityList />} />
+              <Route
+                path="municipality/create"
+                element={<MunicipalityForm />}
+              />
+              <Route
+                path="municipality/update/:id"
+                element={<UpdateMunicipality />}
+              />
+              <Route
+                path="municipality/delete/:id"
+                element={<DeleteMunicipality />}
+              />
               {/* <Route path="zone" element={<ZoneList />} /> */}
               <Route path="province" element={<ProvinceList />} />
-              <Route path="province/create" element={<ProvinceForm />} />
-              {/* <Route path="designation" element={<ProvinceList />} /> */}
-              {/* <Route
-              path="customer-visit/list"
-              element={<CustomerVisitPeriodList />}
-            /> */}
+              <Route path="province/update/:id" element={<UpdateProvince />} />
+              <Route path="province/delete/:id" element={<DeleteProvince />} />
             </Route>
           </Route>
         </Routes>

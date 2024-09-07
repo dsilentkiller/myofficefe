@@ -1,0 +1,139 @@
+.table-container {
+    max-height: 400px; /* Adjust the height as needed */
+    overflow: auto; /* Enables both horizontal and vertical scrolling */
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Ensures columns are of equal width */
+  }
+  
+  .table th {
+    position: sticky; /* Keeps the header fixed at the top */
+    top: 0;
+    background: #f8f9fa; /* Light background color for header */
+    z-index: 2;
+  }
+  
+  .table td {
+    word-wrap: break-word; /* Wrap text within cells */
+  }
+  
+
+/* Pagination container styles */
+.pagination-wrapper {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Pagination info styles */
+.pagination-info {
+    margin-bottom: 10px;
+}
+
+.pagination-info label {
+    margin-right: 10px;
+}
+
+.pagination-info select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+/* Pagination button styles */
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.page-item {
+    margin: 0;
+}
+
+.page-item.disabled .page-link {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.page-link {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: white;
+}
+
+.page-link:hover {
+    background-color: #f1f1f1;
+}
+
+.page-link:focus {
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+
+#------------- form design province -----------
+/* Form styling */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between input and button */
+}
+
+.input-group input {
+    font-size: 1.2rem; /* Larger font size for the input field */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 300px; /* Wider input field */
+}
+
+.input-group button {
+    font-size: 1.2rem; /* Larger font size for the button */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff; /* Primary button color */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.input-group button:hover {
+    background-color: #0056b3; /* Darker shade for hover */
+}
+
+.error {
+    color: red;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+/* Font styling */
+body {
+    font-family: 'Arial', sans-serif; /* Attractive font for the page */
+}
+
+h5.dashboard-title {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Attractive font for headings */
+    font-size: 1.5rem; /* Larger font size for headings */
+    color: violet; /* Attractive color for headings */
+}

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createDistrict } from "../../redux/slice/districtSlice";
-
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
 const DistrictForm = () => {
   const [formData, setFormData] = useState({ name: "" });
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize useNavigate
   const createStatus = useSelector((state) => state.districts.createStatus);
   const createError = useSelector((state) => state.districts.createError);
 
@@ -15,9 +18,17 @@ const DistrictForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(createDistrict(formData));
-    setFormData({ name: "" });
+    // setFormData({ name: "" });
   };
-
+  // Redirect on successful creation
+  useEffect(() => {
+    if (createStatus === "succeeded") {
+      // Optionally, you can display a success message here
+      alert("District created successfully!");
+      // Redirect to the DistrictList component
+      navigate("/dashboard/setup/district"); // Adjust the path as needed
+    }
+  }, [createStatus, navigate]);
   return (
     <div className="content-wrapper">
       <div className="section">
@@ -25,7 +36,9 @@ const DistrictForm = () => {
           <div className="container-fluid">
             <div className="card">
               <div className="card-header">
-                <h4>Add District</h4>
+                <Link to="create" className="nav-link btn btn-info">
+                  <h5>Add District</h5>
+                </Link>
               </div>
               <div className="card-body">
                 <form onSubmit={handleSubmit}>

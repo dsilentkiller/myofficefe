@@ -1,19 +1,35 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDistricts } from "../../redux/slice/districtSlice";
+import { fetchDistrict } from "../../redux/slice/districtSlice";
 import { Link } from "react-router-dom";
-
+import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
+import "../../../admin/css/Table.css";
 const DistrictList = () => {
   const dispatch = useDispatch();
-  const {
-    list: districts,
-    isLoading,
-    error,
-  } = useSelector((state) => state.districts);
+  // const {
+  //   list: districts,
+  //   isLoading,
+  //   error,
+  // } = useSelector((state) => state.districts);
+  const { list, isLoading, error } = useSelector((state) => state.districts);
 
   useEffect(() => {
-    dispatch(fetchDistricts());
+    dispatch(fetchDistrict());
   }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchDistricts()).unwrap();
+  // .then((data) => {
+  //   console.log("Fetched districts:", data); // Inspect the data
+  // })
+  // .catch((error) => {
+  //   console.error("Fetch failed:", error);
+  // });
+  // }, [dispatch]);
+  // Function to capitalize the first letter of a name and make the rest lowercase
+  const formatName = (name) => {
+    if (!name) return "";
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  };
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -54,7 +70,8 @@ const DistrictList = () => {
                 </div>
               </div>
             </nav>
-            <div className="card-body">
+            {/* <div className="card-body"> */}
+            <div className="table-container">
               <table className="table table-bordered">
                 <thead>
                   <tr>
@@ -64,18 +81,25 @@ const DistrictList = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {districts.length > 0 ? (
-                    districts.map((district) => (
+                  {list.length > 0 ? (
+                    list.map((district, index) => (
                       <tr key={district.id}>
-                        <td>{district.id}</td>
-                        <td>{district.name}</td>
+                        <td>{index + 1}</td>
+                        <td>{formatName(district.name)}</td>
+
                         <td>
-                          <Link to={`/district/update/${district.id}`}>
-                            Edit
-                          </Link>{" "}
-                          |{" "}
-                          <Link to={`/district/delete/${district.id}`}>
-                            Delete
+                          <Link
+                            to={`update/${district.id}`}
+                            className="action-button edit"
+                          >
+                            <FaEdit />
+                          </Link>
+                          <span> | </span>
+                          <Link
+                            to={`delete/${district.id}`}
+                            className="action-button delete"
+                          >
+                            <FaTrash />
                           </Link>
                         </td>
                       </tr>
@@ -92,6 +116,7 @@ const DistrictList = () => {
         </div>
       </div>
     </div>
+    // </div>
   );
 };
 
