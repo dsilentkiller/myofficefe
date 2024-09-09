@@ -5,7 +5,7 @@ import Sidebar from "../components/sidebar/Sidebar";
 import Footer from "../components/footer/Footer";
 
 import AssetHeader from "../components/navbar/AssetHeader";
-// import AssetsList from "../container/assets/AssetList";
+import AssetsList from "../container/assets/AssetList";
 
 const AssetDashboard = () => {
   return (
@@ -17,6 +17,8 @@ const AssetDashboard = () => {
             <DefaultHeader />
           </div>
           <AssetHeader />
+
+          {/* <AssetsList /> */}
 
           <div className="flex flex-col flex-grow bg-light">
             <Footer />

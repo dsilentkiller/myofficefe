@@ -12,7 +12,7 @@
   .table th {
     position: sticky; /* Keeps the header fixed at the top */
     top: 0;
-    background: #f8f9fa; /* Light background color for header */
+    background: #f0f3f7; /* Light background color for header */
     z-index: 2;
   }
   

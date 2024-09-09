@@ -8,7 +8,7 @@ import DesignationList from "../base/designation/DesignationList";
 import ZoneList from "../base/zone/List";
 import MunicipalityList from "../base/municipality/List";
 import DayForm from "../base/day/Form";
-import DistrictList from "../base/district/List";
+import DistrictTable from "../base/district/DistrictTable";
 import CustomerVisitPeriodList from "../base/customer_visit/List";
 import CustomerVisitPeriodForm from "../base/customer_visit/Form";
 import WorkingList from "../base/working/List";

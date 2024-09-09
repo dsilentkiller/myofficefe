@@ -59,14 +59,15 @@ export const updateMunicipality = createAsyncThunk(
   }
 );
 //delete municipality
+// Thunk for deleting a municipality
 export const deleteMunicipality = createAsyncThunk(
   "municipalities/deleteMunicipality",
   async (id, thunkAPI) => {
     try {
       await axios.delete(`http://127.0.0.1:8000/api/setup/municipality/${id}/`);
-      // return id; // Return the ID of the deleted municipality
+      return id; // Return the ID of the deleted municipality
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.result.data);
     }
   }
 );

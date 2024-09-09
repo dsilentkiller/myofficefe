@@ -1,0 +1,64 @@
+.delete-district-container {
+    border: 2px solid red;
+    font-family: 'Arial', sans-serif; /* Attractive font for the page */
+    padding: 20px;
+    background-color: #ffe6e6;
+    border-radius: 8px;
+    max-width: 400px;
+    margin: 20px auto;
+    text-align: center;
+  }
+  
+  .delete-district-header {
+    color: rgb(8, 1, 11);
+    margin-bottom: 20px;
+  }
+  
+  .delete-district-actions {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .delete-button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .delete-button:hover {
+    background-color: darkred;
+  }
+  
+  .cancel-button {
+    background-color: #ccc;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .cancel-button:hover {
+    background-color: #999;
+  }
+  
+
+  /* delete.css */
+
+.modal.show {
+  display: block;
+}
+
+.modal-dialog {
+  display: flex;
+  align-items: center;
+  min-height: calc(100% - 1.75rem);
+}
+
+.modal-content {
+  margin: auto;
+}
