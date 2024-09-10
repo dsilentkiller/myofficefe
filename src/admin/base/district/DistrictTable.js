@@ -23,11 +23,16 @@ const DistrictList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredDistricts, setFilteredDistricts] = useState([]);
   const [districtToDelete, setDistrictToDelete] = useState(null);
-
+  // const navigate = useNavigate();
   //-----Fetching data from database o api call using fetchDistrict  -------------
   useEffect(() => {
     dispatch(fetchDistrict());
   }, [dispatch]);
+
+  // const handleAddDistrict = () => {
+  //   navigate("create");
+  // };
+
   //-----update status toast--------
   useEffect(() => {
     if (updateStatus === "succeeded") {
@@ -98,8 +103,9 @@ const DistrictList = () => {
                 <h5 className="navbar-brand">District List</h5>
                 <div className="navbar-nav ml-auto">
                   <Link
-                    to="/dashboard/setup/district/create"
+                    to="create"
                     className="nav-link btn btn-primary"
+                    // onClick={handleAddDistrict}
                   >
                     <h5>Add District</h5>
                   </Link>

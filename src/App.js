@@ -81,7 +81,7 @@ function App() {
               <Route path="zone/create" element={<ZoneForm />} />
               {/* district route=>localhost/dashboard/setup/district*/}
               <Route path="district" element={<DistrictTable />} />
-              <Route path="district/create" element={<DistrictForm />} />
+              <Route path="district/create/" element={<DistrictForm />} />
               <Route path="district/update/:id/" element={<UpdateDistrict />} />
               <Route path="district/delete/:id/" element={<DeleteDistrict />} />
               {/* municipality  route -> localhost/dashboard/setup/municipality*/}

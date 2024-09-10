@@ -28,6 +28,7 @@ const SetupDashboard = () => {
         </div>
         <div className="flex-grow p-3">
           {/* Define Routes for different setup components */}
+          {/* <DistrictTable /> */}
           <Outlet />
         </div>
         <Footer />

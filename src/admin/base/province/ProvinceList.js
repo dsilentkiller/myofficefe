@@ -1,11 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProvince, createProvince } from "../../redux/slice/provinceSlice";
+import {
+  fetchProvince,
+  createProvince,
+  updateStatus,
+  updateError,
+} from "../../redux/slice/provinceSlice";
 import "../../../admin/css/Table.css"; // Make sure this includes necessary styles
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+
 const ProvinceList = () => {
   const [newProvinceName, setNewProvinceName] = useState("");
+  // Access updateStatus state property
+  const updateStatus = useSelector((state) => state.districts.updateStatus);
+  const updateError = useSelector((state) => state.districts.updateError);
+  const [editId, setEditId] = useState(null);
+  const [newName, setNewName] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredProvinces, setFilteredProvinces] = useState([]);
+  const [provinceToDelete, setProvinceToDelete] = useState(null);
   const dispatch = useDispatch();
 
   // Select state from Redux store
@@ -33,6 +48,11 @@ const ProvinceList = () => {
     dispatch(fetchProvince());
   }, [dispatch]);
 
+  //--- handle searchitem in a table ----
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
   // Show success or error messages based on status
   useEffect(() => {
     if (createStatus === "succeeded") {
@@ -42,6 +62,30 @@ const ProvinceList = () => {
       alert(`Error: ${createError?.message || "An error occurred"}`);
     }
   }, [createStatus, createError, dispatch]);
+
+  //-----update status toast--------
+  useEffect(() => {
+    if (updateStatus === "succeeded") {
+      toast.success("Province updated successfully!");
+    } else if (updateStatus === "failed") {
+      toast.error(
+        `Failed to update province: ${updateError || "Unknown error"}`
+      );
+    }
+  }, [updateStatus, updateError]);
+
+  //------------ this is filtered provincename  in search table ---------
+  useEffect(() => {
+    if (searchTerm) {
+      setFilteredProvinces(
+        provinces.filter((province) =>
+          province.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredProvinces(provinces);
+    }
+  }, [searchTerm, provinces]);
 
   return (
     <div className="content-wrapper">
@@ -71,6 +115,25 @@ const ProvinceList = () => {
                 </p>
               )}
             </div>
+            <form className="form-inline ml-3">
+              <div className="input-group">
+                <input
+                  type="search"
+                  id="default-search"
+                  name="search_term"
+                  className="form-control"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  required
+                />
+                <div className="input-group-append">
+                  <button type="submit" className="btn btn-info">
+                    Search
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
 
           <div className="card-body">
@@ -112,6 +175,33 @@ const ProvinceList = () => {
                                 <FaTrash /> Delete
                               </Link>
                             </td>
+
+                            <td>
+                              {editId === province.id ? (
+                                <button
+                                  onClick={handleUpdate}
+                                  className="btn btn-success"
+                                >
+                                  Save
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() =>
+                                    handleEdit(province.id, province.name)
+                                  }
+                                  className="btn btn-primary"
+                                >
+                                  <FaEdit />
+                                </button>
+                              )}
+                              <span> </span>
+                              <button
+                                onClick={() => setProvinceToDelete(province.id)}
+                                className="btn btn-danger"
+                              >
+                                <FaTrash />
+                              </button>
+                            </td>
                           </tr>
                         ))
                       ) : (
@@ -132,4 +222,3 @@ const ProvinceList = () => {
 };
 
 export default ProvinceList;
-

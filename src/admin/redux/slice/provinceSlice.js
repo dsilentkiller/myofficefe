@@ -60,13 +60,23 @@ export const updateProvince = createAsyncThunk(
     }
   }
 );
+// search
+export const searchProvince = createAsyncThunk(
+  "province/searchProvince",
+  async (searchTerm) => {
+    const response = await axios.get(
+      `http://127.0.0.1:8000/api/setup/province/?search=${searchTerm}`
+    );
+    return response.data.result.data;
+  }
+);
 
 export const deleteProvince = createAsyncThunk(
   "provinces/deleteProvince",
   async (id, thunkAPI) => {
     try {
       await axios.delete(`http://127.0.0.1:8000/api/setup/province/${id}/`);
-      // return id; // Return the ID of the deleted province
+      return id; // Return the ID of the deleted province
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -81,6 +91,8 @@ const provinceSlice = createSlice({
     error: null,
     createStatus: "idle",
     createError: null,
+    updateStatus: "idle",
+    updateError: null,
     deleteStatus: "idle",
     deleteError: null,
   },
@@ -140,6 +152,18 @@ const provinceSlice = createSlice({
       .addCase(updateProvince.rejected, (state, action) => {
         state.updateStatus = "failed";
         state.updateError = action.error.message;
+      })
+      // search district name
+      .addCase(searchProvince.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(searchProvince.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.list = action.payload;
+      })
+      .addCase(searchProvince.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
       });
     //delete province
     // Delete Province
