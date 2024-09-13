@@ -34,6 +34,9 @@ import UpdateMunicipality from "./admin/base/municipality/Update";
 import MunicipalityForm from "./admin/base/municipality/Form";
 import UpdateDistrict from "./admin/base/district/UpdateDistrict";
 import DeleteDistrict from "./admin/base/district/DeleteDistrict";
+
+import DeleteProvince from "./admin/base/province/DeleteProvince";
+import ProvinceForm from "./admin/base/province/ProvinceForm";
 function App() {
   return (
     <div className="App">
@@ -100,8 +103,9 @@ function App() {
               />
               {/* province route -> localhost/dashboard/setup/province*/}
               <Route path="province" element={<ProvinceList />} />
+              <Route path="province/create/" element={<ProvinceForm />} />
               <Route path="province/update/:id" element={<UpdateProvince />} />
-              {/* <Route path="province/delete/:id" element={<DeleteProvince />} /> */}
+              <Route path="province/delete/:id" element={<DeleteProvince />} />
             </Route>
           </Route>
         </Routes>

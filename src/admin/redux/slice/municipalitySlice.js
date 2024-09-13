@@ -1,6 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
+// search
+export const searchMunicipality = createAsyncThunk(
+  "municipality/searchMunicipality",
+  async (searchTerm) => {
+    const response = await axios.get(
+      `http://127.0.0.1:8000/api/setup/municipality/?search=${searchTerm}`
+    );
+    return response.data.result.data;
+  }
+);
 // Fetch all municipalities action
 export const fetchMunicipality = createAsyncThunk(
   "municipalities/fetchMunicipality",
@@ -23,9 +32,9 @@ export const createMunicipality = createAsyncThunk(
         "http://127.0.0.1:8000/api/setup/municipality/create/",
         municipalityData
       );
-      return response.data.result; // Adjust this based on your actual API response structure
+      return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.result.data);
     }
   }
 );
@@ -37,7 +46,7 @@ export const fetchMunicipalityById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/setup/municipality/${id}/`
       );
-      return response.data; // Adjust this based on your actual API response structure
+      return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -45,32 +54,57 @@ export const fetchMunicipalityById = createAsyncThunk(
 );
 // // Update municipality
 export const updateMunicipality = createAsyncThunk(
-  "municipalities/updateMunicipality",
+  "municipality/updateMunicipality",
   async ({ id, name }, thunkAPI) => {
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/setup/municipality/${id}/`,
+        `http://127.0.0.1:8000/api/setup/municipality/update/${id}/`,
         { name }
       );
-      return response.data;
+      return response.data.result.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      const message =
+        error.response?.data?.message || error.message || "An error occurred";
+      return thunkAPI.rejectWithValue(message);
     }
   }
 );
-//delete municipality
-// Thunk for deleting a municipality
+
 export const deleteMunicipality = createAsyncThunk(
   "municipalities/deleteMunicipality",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/setup/municipality/${id}/`);
+      // Make sure this URL is correct
+      await axios.delete(
+        `http://127.0.0.1:8000/api/setup/municipality/delete/${id}/`
+      );
       return id; // Return the ID of the deleted municipality
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.result.data);
+      // Log the entire error to understand its structure
+      console.error("Delete request failed:", error);
+
+      // Return a more descriptive error message
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          "An unknown error occurred"
+      );
     }
   }
 );
+
+// export const deleteMunicipality = createAsyncThunk(
+//   "municipalities/deleteMunicipality",
+//   async (id, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.delete(`/api/municipalities/${id}`);
+//       return id; // Return the ID of the deleted municipality
+//     } catch (error) {
+//       // Use rejectWithValue to return a custom error message
+//       return rejectWithValue(error.response?.data || error.message);
+//     }
+//   }
+// );
 
 const municipalitySlice = createSlice({
   name: "municipalities",
@@ -165,7 +199,19 @@ const municipalitySlice = createSlice({
       })
       .addCase(deleteMunicipality.rejected, (state, action) => {
         state.deleteStatus = "failed";
-        state.deleteError = action.payload;
+        state.deleteError = action.payload || "Failed to delete municipality";
+      })
+      // search MusearchMunicipality name
+      .addCase(searchMunicipality.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(searchMunicipality.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.list = action.payload;
+      })
+      .addCase(searchMunicipality.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
       });
   },
 });

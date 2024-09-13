@@ -1,15 +1,30 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify"; // Import toast
+import { useSelector } from "react-redux";
 const MunicipalityForm = () => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({ name: "" });
+  const createStatus = useSelector((state) => state.districts.createStatus);
+  const createError = useSelector((state) => state.districts.createError);
 
   const handleChange = (e) => {
     setName(e.target.value);
   };
+
+  useEffect(() => {
+    if (createStatus === "succeeded") {
+      toast.success("Municipality created successfully!"); // Use toast for success message
+      setFormData({ name: "" }); // Reset form data
+      // dispatch(resetCreateStatus()); // Reset status after showing the message
+      navigate("/dashboard/setup/municipality"); // Redirect to the MunicipalityList component
+    }
+  }, [createStatus, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +35,7 @@ const MunicipalityForm = () => {
         name,
       });
       setName(""); // Clear the input field after submission
-      alert("Municipality added successfully!");
+      // alert("Municipality added successfully!");
       navigate("/dashboard/setup/municipality"); // Redirect to the municipality list page
     } catch (error) {
       // Set error message with more detailed information
@@ -46,7 +61,7 @@ const MunicipalityForm = () => {
         <div className="container-fluid">
           <div className="card">
             <div className="card-header">
-              <h4>Add Municipality</h4>
+              <h4 className="btn btn-primary">Add Municipality</h4>
             </div>
             <div className="card-body">
               {error && <p className="text-danger">{error}</p>}

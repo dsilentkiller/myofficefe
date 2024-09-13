@@ -23,7 +23,7 @@ export const createProvince = createAsyncThunk(
         "http://127.0.0.1:8000/api/setup/province/create/",
         provinceData
       );
-      return response.data.result; // Adjust this based on your actual API response structure
+      return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -37,7 +37,7 @@ export const fetchProvinceById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/setup/province/${id}/`
       );
-      return response.data;
+      return response.data.result.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -54,7 +54,7 @@ export const updateProvince = createAsyncThunk(
         `http://127.0.0.1:8000/api/setup/province/${id}/`,
         { name }
       );
-      return response.data;
+      return response.data.result.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
