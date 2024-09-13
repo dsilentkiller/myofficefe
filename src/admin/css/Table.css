@@ -1,6 +1,8 @@
 .table-container {
-    max-height: 400px; /* Adjust the height as needed */
+    max-height: 600px; /* Adjust the height as needed */
     overflow: auto; /* Enables both horizontal and vertical scrolling */
+    position: relative; 
+
   }
   
   .table {
@@ -13,7 +15,7 @@
     position: sticky; /* Keeps the header fixed at the top */
     top: 0;
     background: #f0f3f7; /* Light background color for header */
-    z-index: 2;
+    z-index: 0.5;
   }
   
   .table td {

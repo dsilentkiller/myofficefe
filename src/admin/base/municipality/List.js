@@ -12,7 +12,11 @@ import "../../../admin/css/Table.css"; // Ensure this includes necessary styles
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
 import DeleteMunicipality from "./Delete";
 import { toast } from "react-toastify"; // Import toast for error messages
-
+import "../../css/Table.css";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable"; // Import the autoTable plugin
+import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
 const MunicipalityList = () => {
   const dispatch = useDispatch();
   const [editId, setEditId] = useState(null);
@@ -90,6 +94,41 @@ const MunicipalityList = () => {
         );
       });
   };
+  //--- handle searchitem in a table ----
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+  // Export to Excel
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      municipalities.map((municipality) => ({
+        ID: municipality.id,
+        Name: municipality.name,
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Municipalities");
+    XLSX.writeFile(workbook, "municipalities.xlsx");
+  };
+
+  // Export to PDF
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Municipalities List", 20, 10);
+
+    const tableColumn = ["ID", "Name"];
+    const tableRows = municipalities.map((municipality) => [
+      municipality.id,
+      municipality.name,
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+    doc.save("municipalities.pdf");
+  };
 
   return (
     <div className="content-wrapper">
@@ -100,7 +139,7 @@ const MunicipalityList = () => {
               <div className="container-fluid">
                 <h5 className="navbar-brand">Municipality List</h5>
                 <div className="navbar-nav ml-auto">
-                  <Link to="create" className="nav-link btn btn-info">
+                  <Link to="create" className="nav-link btn btn-primary">
                     <h5>Add Municipality</h5>
                   </Link>
                   <form
@@ -111,24 +150,27 @@ const MunicipalityList = () => {
                     className="form-inline ml-3"
                   >
                     <div className="input-group">
+                      search
                       <input
                         type="search"
                         id="default-search"
-                        name="q"
+                        name="search_term"
+                        value={searchTerm}
                         className="form-control"
                         placeholder="Search Municipalities..."
+                        onChange={handleSearchChange}
                         required
                       />
-                      <div className="input-group-append">
-                        <button type="submit" className="btn btn-info">
+                      {/* <div className="input-group-append"> */}
+                      {/* <button type="submit" className="btn btn-info">
                           Search
-                        </button>
-                      </div>
+                        </button> */}
+                      {/* </div> */}
                     </div>
                   </form>
                 </div>
 
-                <div className="form-inline ml-4" id="navbarSupportedContent">
+                {/* <div className="form-inline ml-4" id="navbarSupportedContent">
                   <ul className="navbar-nav mr-30">
                     <li className="nav-item">
                       <button
@@ -139,6 +181,30 @@ const MunicipalityList = () => {
                       </button>
                     </li>
                     {/* Add other export buttons here */}
+                {/* </ul>
+                </div>
+              </div>
+            </nav> */}
+                <div className="form-inline ml-4" id="navbarSupportedContent">
+                  <ul className="navbar-nav mr-30">
+                    <li className="nav-item">
+                      <button
+                        id="exportExcel"
+                        className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
+                        onClick={exportToExcel}
+                      >
+                        Export Excel
+                      </button>
+                    </li>
+                    <li className="nav-item">
+                      <button
+                        id="exportPDF"
+                        className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
+                        onClick={exportToPDF}
+                      >
+                        Export PDF
+                      </button>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -155,72 +221,76 @@ const MunicipalityList = () => {
                         ) : error ? (
                           <p>Error: {error}</p>
                         ) : (
-                          <table className="table table-bordered">
-                            <thead>
-                              <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {municipalities
-                                .filter((municipality) =>
-                                  municipality.name
-                                    .toLowerCase()
-                                    .includes(searchTerm.toLowerCase())
-                                )
-                                .map((municipality, index) => (
-                                  <tr key={municipality.id}>
-                                    <td>{index + 1}</td>
-                                    <td>
-                                      {editId === municipality.id ? (
-                                        <input
-                                          type="text"
-                                          value={newName}
-                                          onChange={(e) =>
-                                            setNewName(e.target.value)
-                                          }
-                                        />
-                                      ) : (
-                                        formatName(municipality.name)
-                                      )}
-                                    </td>
-                                    <td>
-                                      {editId === municipality.id ? (
-                                        <button
-                                          onClick={handleUpdate}
-                                          className="btn btn-success"
-                                        >
-                                          Save
-                                        </button>
-                                      ) : (
+                          // <div className="card-body">
+                          <div className="table-container">
+                            <table className="table table-bordered">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Name</th>
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {municipalities
+                                  .filter((municipality) =>
+                                    municipality.name
+                                      .toLowerCase()
+                                      .includes(searchTerm.toLowerCase())
+                                  )
+                                  .map((municipality, index) => (
+                                    <tr key={municipality.id}>
+                                      <td>{index + 1}</td>
+                                      <td>
+                                        {editId === municipality.id ? (
+                                          <input
+                                            type="text"
+                                            value={newName}
+                                            onChange={(e) =>
+                                              setNewName(e.target.value)
+                                            }
+                                          />
+                                        ) : (
+                                          formatName(municipality.name)
+                                        )}
+                                      </td>
+                                      <td>
+                                        {editId === municipality.id ? (
+                                          <button
+                                            onClick={handleUpdate}
+                                            className="btn btn-success"
+                                          >
+                                            Save
+                                          </button>
+                                        ) : (
+                                          <button
+                                            onClick={() =>
+                                              handleEdit(
+                                                municipality.id,
+                                                municipality.name
+                                              )
+                                            }
+                                            className="btn btn-primary"
+                                          >
+                                            <FaEdit />
+                                          </button>
+                                        )}
+                                        <span> </span>
                                         <button
                                           onClick={() =>
-                                            handleEdit(
-                                              municipality.id,
-                                              municipality.name
-                                            )
+                                            handleDelete(municipality.id)
                                           }
-                                          className="btn btn-primary"
+                                          className="btn btn-danger"
                                         >
-                                          <FaEdit />
+                                          <FaTrash />
                                         </button>
-                                      )}
-                                      <span> </span>
-                                      <button
-                                        onClick={() =>
-                                          handleDelete(municipality.id)
-                                        }
-                                        className="btn btn-danger"
-                                      >
-                                        <FaTrash />
-                                      </button>
-                                    </td>
-                                  </tr>
-                                ))}
-                            </tbody>
-                          </table>
+                                      </td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                          </div>
+                          // </div>
                         )}
                       </div>
                     </div>

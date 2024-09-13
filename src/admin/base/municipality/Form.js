@@ -1,58 +1,39 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify"; // Import toast
-import { useSelector } from "react-redux";
-const MunicipalityForm = () => {
-  const [name, setName] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({ name: "" });
-  const createStatus = useSelector((state) => state.districts.createStatus);
-  const createError = useSelector((state) => state.districts.createError);
+import { toast } from "react-toastify";
+import { createMunicipality } from "../../redux/slice/municipalitySlice";
 
-  const handleChange = (e) => {
-    setName(e.target.value);
-  };
+const MunicipalityForm = () => {
+  const [formData, setFormData] = useState({ name: "" });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const createStatus = useSelector(
+    (state) => state.municipalities.createStatus
+  );
+  const createError = useSelector((state) => state.municipalities.createError);
 
   useEffect(() => {
     if (createStatus === "succeeded") {
-      toast.success("Municipality created successfully!"); // Use toast for success message
-      setFormData({ name: "" }); // Reset form data
-      // dispatch(resetCreateStatus()); // Reset status after showing the message
-      navigate("/dashboard/setup/municipality"); // Redirect to the MunicipalityList component
+      toast.success("Municipality created successfully!");
+      setFormData({ name: "" });
+      navigate("/dashboard/setup/municipality");
     }
   }, [createStatus, navigate]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(""); // Reset error message before submission
-    try {
-      // Ensure the correct API endpoint is used
-      await axios.post("http://localhost:3000/api/setup/municipality/", {
-        name,
-      });
-      setName(""); // Clear the input field after submission
-      // alert("Municipality added successfully!");
-      navigate("/dashboard/setup/municipality"); // Redirect to the municipality list page
-    } catch (error) {
-      // Set error message with more detailed information
-      if (error.response) {
-        // Server responded with a status code outside the 2xx range
-        setError(
-          `Error: ${error.response.data.message || error.response.statusText}`
-        );
-      } else if (error.request) {
-        // Request was made but no response was received
-        setError("No response from server. Please check your network.");
-      } else {
-        // Something happened in setting up the request
-        setError("Error adding municipality. Please try again.");
-      }
-      console.error("Error adding municipality:", error);
+  useEffect(() => {
+    if (createStatus === "failed") {
+      toast.error(`Error: ${createError.message || "An error occurred"}`);
     }
+  }, [createStatus, createError]);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(createMunicipality(formData));
   };
 
   return (
@@ -64,16 +45,17 @@ const MunicipalityForm = () => {
               <h4 className="btn btn-primary">Add Municipality</h4>
             </div>
             <div className="card-body">
-              {error && <p className="text-danger">{error}</p>}
+              {createError && <p className="text-danger">{createError}</p>}
               <form onSubmit={handleSubmit}>
                 <div className="form-group">
                   <label htmlFor="name">Name:</label>
                   <input
                     type="text"
                     id="name"
-                    value={name}
-                    onChange={handleChange}
+                    name="name"
+                    value={formData.name}
                     className="form-control"
+                    onChange={handleChange}
                     required
                   />
                 </div>
