@@ -24,8 +24,10 @@ const MunicipalityList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [municipalityToDelete, setMunicipalityToDelete] = useState(null);
   // Access updateStatus state property
-  const updateStatus = useSelector((state) => state.districts.updateStatus);
-  const updateError = useSelector((state) => state.districts.updateError);
+  const updateStatus = useSelector(
+    (state) => state.municipalities.updateStatus
+  );
+  const updateError = useSelector((state) => state.municipalities.updateError);
   const {
     list: municipalities,
     isLoading,
@@ -56,10 +58,10 @@ const MunicipalityList = () => {
   //-----update status toast--------
   useEffect(() => {
     if (updateStatus === "succeeded") {
-      toast.success("District updated successfully!");
+      toast.success("municipalities updated successfully!");
     } else if (updateStatus === "failed") {
       toast.error(
-        `Failed to update district: ${updateError || "Unknown error"}`
+        `Failed to update municipalitie: ${updateError || "Unknown error"}`
       );
     }
   }, [updateStatus, updateError]);
@@ -781,7 +783,7 @@ export default MunicipalityList;
 //   const [municipalityToDelete, setMunicipalityToDelete] = useState(null);
 //   // const [searchTerm, setSearchTerm] = useState("");
 //   const [filteredMunicipalities, setFilteredMunicipalities] = useState([]);
-//   // const [districtToDelete, setDistrictToDelete] = useState(null);
+//   // const [municipalitieToDelete, setmunicipalitieToDelete] = useState(null);
 //   const {
 //     list: municipalities,
 //     isLoading,
@@ -822,12 +824,12 @@ export default MunicipalityList;
 //       dispatch(deleteMunicipality(id));
 //     }
 //   };
-//   //------------ this is filtered district name  in search table ---------
+//   //------------ this is filtered municipalitie name  in search table ---------
 //   useEffect(() => {
 //     if (searchTerm) {
 //       setFilteredMunicipalities(
-//         municipalities.filter((district) =>
-//           district.name.toLowerCase().includes(searchTerm.toLowerCase())
+//         municipalities.filter((municipalitie) =>
+//           municipalitie.name.toLowerCase().includes(searchTerm.toLowerCase())
 //         )
 //       );
 //     } else {
@@ -973,7 +975,7 @@ export default MunicipalityList;
 //                                 ))
 //                               ) : (
 //                                 <tr>
-//                                   <td colSpan="3">No districts found</td>
+//                                   <td colSpan="3">No municipalities found</td>
 //                                 </tr>
 //                               )}
 
@@ -1022,8 +1024,8 @@ export default MunicipalityList;
 //   const dispatch = useDispatch();
 
 //   // Access updateStatus state property
-//   const updateStatus = useSelector((state) => state.districts.updateStatus);
-//   const updateError = useSelector((state) => state.districts.updateError);
+//   const updateStatus = useSelector((state) => state.municipalities.updateStatus);
+//   const updateError = useSelector((state) => state.municipalities.updateError);
 //   const [editId, setEditId] = useState(null);
 //   const [newName, setNewName] = useState("");
 //   const [searchTerm, setSearchTerm] = useState("");
@@ -1188,7 +1190,7 @@ export default MunicipalityList;
 //                       ))
 //                     ) : (
 //                       <tr>
-//                         <td colSpan="3">No districts found</td>
+//                         <td colSpan="3">No municipalities found</td>
 //                       </tr>
 //                     )}
 //                   </tbody>

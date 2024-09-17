@@ -22,7 +22,7 @@ import ZoneList from "./admin/base/zone/List";
 import ZoneForm from "./admin/base/zone/Form";
 import ProvinceList from "./admin/base/province/ProvinceList";
 
-import DesignationList from "./admin/base/designation/DesignationList";
+import DesignationTable from "./admin/base/designation/DesignationTable";
 import DesignationForm from "./admin/base/designation/DesignationForm";
 import DistrictTable from "./admin/base/district/DistrictTable";
 import DistrictForm from "./admin/base/district/Form";
@@ -37,6 +37,9 @@ import DeleteDistrict from "./admin/base/district/DeleteDistrict";
 
 import DeleteProvince from "./admin/base/province/DeleteProvince";
 import ProvinceForm from "./admin/base/province/ProvinceForm";
+import DepartmentTable from "./admin/base/department/DepartmentTable";
+import DepartmentForm from "./admin/base/department/DepartmentForm";
+import DepartmentDelete from "./admin/base/department/DepartmentDelete";
 function App() {
   return (
     <div className="App">
@@ -78,8 +81,20 @@ function App() {
             {/* ---------------- setup------------------------------ */}
             {/* localhost/dashboard/setup/zone */}
             <Route path="setup" element={<SetupDashboard />}>
-              <Route path="designation" element={<DesignationList />} />
+              <Route path="designation" element={<DesignationTable />} />
               <Route path="designation/create" element={<DesignationForm />} />
+              {/* department */}
+              <Route path="department" element={<DepartmentTable />} />
+              <Route path="department/create" element={<DepartmentForm />} />
+              {/* <Route
+                path="department/update/:id"
+                element={<UpdateMunicipality />}
+              /> */}
+              <Route
+                path="department/delete/:id"
+                element={<DepartmentDelete />}
+              />
+              {/* zone */}
               <Route path="zone" element={<ZoneList />} />
               <Route path="zone/create" element={<ZoneForm />} />
               {/* district route=>localhost/dashboard/setup/district*/}
@@ -101,6 +116,7 @@ function App() {
                 path="municipality/delete/:id"
                 element={<DeleteMunicipality />}
               />
+
               {/* province route -> localhost/dashboard/setup/province*/}
               <Route path="province" element={<ProvinceList />} />
               <Route path="province/create/" element={<ProvinceForm />} />

@@ -3,20 +3,20 @@ import { Outlet, Route, Routes } from "react-router-dom";
 import Footer from "../components/footer/Footer";
 import SetupHeader from "../components/navbar/SetupHeader";
 import Sidebar from "../components/sidebar/Sidebar";
-import ProvinceList from "../base/province/ProvinceList";
-import DesignationList from "../base/designation/DesignationList";
-import ZoneList from "../base/zone/List";
-import MunicipalityList from "../base/municipality/List";
-import DayForm from "../base/day/Form";
-import DistrictTable from "../base/district/DistrictTable";
-import CustomerVisitPeriodList from "../base/customer_visit/List";
-import CustomerVisitPeriodForm from "../base/customer_visit/Form";
-import WorkingList from "../base/working/List";
-import WorkingForm from "../base/working/Form";
-import AssignGradeFormAndList from "../base/grade/assign_grade/List";
+// import ProvinceList from "../base/province/ProvinceList";
+
+// import ZoneList from "../base/zone/List";
+// import MunicipalityList from "../base/municipality/List";
+// import DayForm from "../base/day/Form";
+// import DistrictTable from "../base/district/DistrictTable";
+// import CustomerVisitPeriodList from "../base/customer_visit/List";
+// import CustomerVisitPeriodForm from "../base/customer_visit/Form";
+// import WorkingList from "../base/working/List";
+// import WorkingForm from "../base/working/Form";
+// import AssignGradeFormAndList from "../base/grade/assign_grade/List";
 import DefaultHeader from "../components/navbar/DefaultHeader";
-import ProvinceForm from "../base/province/ProvinceForm";
-import ZoneForm from "../base/zone/Form";
+// import ProvinceForm from "../base/province/ProvinceForm";
+// import ZoneForm from "../base/zone/Form";
 const SetupDashboard = () => {
   return (
     <div className="flex min-h-screen bg-light">
