@@ -2,22 +2,25 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { createVisitPeriod } from "../../redux/slice/municipalitySlice";
+import { createDay, fetchDay } from "../../redux/slice/daySlice";
 
-const VisitPeriodForm = () => {
+const DayForm = () => {
   const [formData, setFormData] = useState({ name: "" });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const createStatus = useSelector(
-    (state) => state.municipalities.createStatus
-  );
-  const createError = useSelector((state) => state.municipalities.createError);
+  const createStatus = useSelector((state) => state.days.createStatus);
+  const createError = useSelector((state) => state.days.createError);
+  const days = useSelector((state) => state.days.list || []);
+
+  useEffect(() => {
+    dispatch(fetchDay()); // Ensure days are fetched on component mount
+  }, [dispatch]);
 
   useEffect(() => {
     if (createStatus === "succeeded") {
-      toast.success("Municipality created successfully!");
-      setFormData({ name: "" });
-      navigate("/dashboard/setup/visit-period");
+      toast.success("Day created successfully!");
+      setFormData({ name: "" }); // Clear the form after successful creation
+      navigate("/dashboard/setup/day");
     }
   }, [createStatus, navigate]);
 
@@ -33,7 +36,27 @@ const VisitPeriodForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(createVisitPeriod(formData));
+    if (formData.name.trim() === "") return; // Prevent empty name submission
+
+    // Check if Day name already exists
+    const existingDay = days.some(
+      (day) =>
+        day.name && day.name.toLowerCase() === formData.name.toLowerCase()
+    );
+
+    if (existingDay) {
+      toast.error("Day with this name already exists.");
+      return;
+    }
+
+    dispatch(createDay(formData))
+      .unwrap()
+      .then(() => {
+        setFormData({ name: "" }); // Clear the form after successful creation
+      })
+      .catch((error) => {
+        console.error("Create Error:", error);
+      });
   };
 
   return (
@@ -42,7 +65,7 @@ const VisitPeriodForm = () => {
         <div className="container-fluid">
           <div className="card">
             <div className="card-header">
-              <h4 className="btn btn-primary"> Add VisitPeriod</h4>
+              <h4 className="btn btn-primary">Add Day</h4>
             </div>
             <div className="card-body">
               {createError && <p className="text-danger">{createError}</p>}
@@ -55,8 +78,8 @@ const VisitPeriodForm = () => {
                     name="name"
                     value={formData.name}
                     className="form-control"
+                    placeholder="Enter day Sunday ,Monday.. "
                     onChange={handleChange}
-                    placeholder="daily,weekly,monthly,every Monday"
                     required
                   />
                 </div>
@@ -72,4 +95,4 @@ const VisitPeriodForm = () => {
   );
 };
 
-export default VisitPeriodForm;
+export default DayForm;

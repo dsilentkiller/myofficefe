@@ -1,29 +1,25 @@
+// export default ProjectDelete;
+
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
-import {
-  deleteDesignation,
-  deleteError,
-  deleteStatus,
-} from "../../redux/slice/designationSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "../../css/delete.css"; // Ensure this file contains proper CSS
-const DeleteDesignation = ({ id, onClose }) => {
-  // const { id } = useParams();
+import "../../css/delete.css";
+import { deleteProject } from "../../redux/slice/projectSlice";
+
+const ProjectDelete = ({ id, onClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const deleteStatus = useSelector((state) => state.Designations.deleteStatus);
-  const deleteError = useSelector((state) => state.Designations.deleteError);
 
   const handleDelete = () => {
-    dispatch(deleteDesignation(id))
-      .unwrap() // Ensure you're using unwrap() to handle promise rejections
+    dispatch(deleteProject(id))
+      .unwrap()
       .then(() => {
-        toast.success("Designation deleted successfully!");
-        navigate("/dashboard/setup/designation");
+        toast.success("Project  deleted successfully!");
+        navigate("/dashboard/setup/project"); // Adjust this route as needed
       })
       .catch((error) => {
-        toast.error(`Failed to delete Designation: ${error.message}`);
+        toast.error(`Failed to delete project: ${error.message}`);
       })
       .finally(() => {
         onClose(); // Close the modal after deletion
@@ -57,7 +53,7 @@ const DeleteDesignation = ({ id, onClose }) => {
             </button>
           </div>
           <div className="modal-body">
-            Are you sure you want to delete this Designation?
+            Are you sure you want to delete this project?
           </div>
           <div className="modal-footer">
             <button
@@ -82,4 +78,4 @@ const DeleteDesignation = ({ id, onClose }) => {
   );
 };
 
-export default DeleteDesignation;
+export default ProjectDelete;

@@ -40,6 +40,15 @@ import ProvinceForm from "./admin/base/province/ProvinceForm";
 import DepartmentTable from "./admin/base/department/DepartmentTable";
 import DepartmentForm from "./admin/base/department/DepartmentForm";
 import DepartmentDelete from "./admin/base/department/DepartmentDelete";
+import DayDelete from "./admin/base/day/DayDelete";
+import DayTable from "./admin/base/day/DayTable";
+import DayForm from "./admin/base/day/DayForm";
+import CrmDashboard from "./admin/layouts/CrmDashboard";
+import ProjectTable from "./admin/crm/project/ProjectTable";
+import ProjectDelete from "./admin/crm/project/ProjectDelete";
+import ProjectForm from "./admin/crm/project/ProjectForm";
+import ProjectDetail from "./admin/crm/project/ProjectDetail";
+// import ProjectForm from "./admin/"
 function App() {
   return (
     <div className="App">
@@ -49,6 +58,21 @@ function App() {
           <Route path="/dashboard">
             {/*localhost/dashboard */}
             <Route index element={<AdminDashboard />} />
+            <Route path="crm" element={<CrmDashboard />}>
+              {/* localhost/dashbaord/crm/enquiry */}
+              <Route path="enquiry" element={<EmployeeList />} />
+              <Route path="enquiry/create" element={<EmployeeForm />} />
+              <Route path="enquiry/update/:id/" element={<UpdateDistrict />} />
+              <Route path="enquiry/delete/:id/" element={<DeleteDistrict />} />
+              <Route path="enquiry/detail/:id/" element={<UpdateDistrict />} />
+              {/*  {/* localhost/dashbaord/crm/project */}
+              <Route path="project" element={<ProjectTable />} />
+              <Route path="project/create" element={<ProjectForm />} />
+              <Route path="project/update/:id/" element={<ProjectForm />} />
+              <Route path="project/delete/:id/" element={<ProjectDelete />} />
+              <Route path="project/detail/:id/" element={<ProjectDetail />} />
+            </Route>
+
             {/* localhost/dashboard/user */}
             <Route path="user" element={<UserDashboard />}>
               {/* localhost/dashbaord/user/employee */}
@@ -122,6 +146,15 @@ function App() {
               <Route path="province/create/" element={<ProvinceForm />} />
               <Route path="province/update/:id" element={<UpdateProvince />} />
               <Route path="province/delete/:id" element={<DeleteProvince />} />
+              {/* day route */}
+              <Route path="day" element={<DayTable />} />
+              <Route path="day/create" element={<DayForm />} />
+              {/* <Route
+                path="department/update/:id"
+                element={<UpdateMunicipality />}
+              /> */}
+              <Route path="day/delete/:id" element={<DayDelete />} />
+              {/* crm dashboard */}
             </Route>
           </Route>
         </Routes>

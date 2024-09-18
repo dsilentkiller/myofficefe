@@ -75,6 +75,15 @@ const Sidebar = () => {
 
                 </Link>
               </li> */}
+              <li className="nav-item">
+                <Link to="/dashboard/crm/" className="nav-link">
+                  <i className="nav-icon fas fa-th"></i>
+                  <p>
+                    CRM
+                    {/* <span className="right badge badge-danger">New</span> */}
+                  </p>
+                </Link>
+              </li>
 
               <li className="nav-item">
                 <Link to="/dashboard/user/employee" className="nav-link">

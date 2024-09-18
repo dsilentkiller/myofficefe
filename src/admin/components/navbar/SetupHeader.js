@@ -57,6 +57,19 @@ const SetupHeader = () => {
               Working
             </Link>
           </li>
+          {/* day */}
+          {/* enquiry */}
+          <li className="nav-item d-none d-sm-inline-block">
+            <Link to="day" className="nav-link">
+              Day
+            </Link>
+          </li>
+          {/* tax */}
+          <li className="nav-item d-none d-sm-inline-block">
+            <Link to="tax" className="nav-link">
+              Tax
+            </Link>
+          </li>
         </ul>
 
         {/* <!-- Right navbar links --> */}

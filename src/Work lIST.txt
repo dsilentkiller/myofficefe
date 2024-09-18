@@ -1,0 +1,4 @@
+1.create ProjectForm   2.Create ProjectTable  3.projectSlice   
+note: 1> project list can be search  2> projectlist can be edit and delete
+  3> Toast Message must be shown after created , updated ,deleted 
+   4> duplicate data entry  show already exist message
