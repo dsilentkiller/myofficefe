@@ -48,6 +48,11 @@ import ProjectTable from "./admin/crm/project/ProjectTable";
 import ProjectDelete from "./admin/crm/project/ProjectDelete";
 import ProjectForm from "./admin/crm/project/ProjectForm";
 import ProjectDetail from "./admin/crm/project/ProjectDetail";
+import EventSystem from "./admin/crm/event/EventSystem";
+import AttendeeCreate from "./admin/crm/event/attendee/AttendeeCreate";
+import AttendeesTable from "./admin/crm/event/attendee/AttendeeTable";
+import MeetingUpdateTable from "./admin/crm/event/meetingupdate/MeetingUpdateTable";
+import MeetingUpdateForm from "./admin/crm/event/meetingupdate/MeetingUpdateForm";
 // import ProjectForm from "./admin/"
 function App() {
   return (
@@ -71,6 +76,37 @@ function App() {
               <Route path="project/update/:id/" element={<ProjectForm />} />
               <Route path="project/delete/:id/" element={<ProjectDelete />} />
               <Route path="project/detail/:id/" element={<ProjectDetail />} />
+              {/*  {/* localhost/dashbaord/crm/event */}
+              <Route path="event" element={<EventSystem />} />
+              <Route path="event/create" element={<ProjectForm />} />
+              <Route path="event/update/:id/" element={<ProjectForm />} />
+              <Route path="event/cancel/:id/" element={<ProjectDelete />} />
+              <Route path="event/detail/:id/" element={<ProjectDetail />} />
+              {/* dashboard/crm/attendees */}
+              <Route path="attendee" element={<AttendeesTable />} />
+              <Route path="attendee/create/" element={<AttendeeCreate />} />
+              {/* {/* <Route path="event/create" element={<ProjectForm />} /> */}
+              <Route path="attendee/update/:id/" element={<AttendeeCreate />} />
+              <Route path="attendee/cancel/:id/" element={<AttendeesTable />} />
+              <Route path="attendee/detail/:id/" element={<AttendeesTable />} />
+              {/* meeting update */}
+              <Route path="meeting-update" element={<MeetingUpdateTable />} />
+              <Route
+                path="meeting-update/create"
+                element={<MeetingUpdateForm />}
+              />
+              <Route
+                path="meeting-update/update/:id/"
+                element={<MeetingUpdateForm />}
+              />
+              <Route
+                path="meeting-update/cancel/:id/"
+                element={<ProjectDelete />}
+              />
+              {/* <Route
+                path="meeting-update/detail/:id/"
+                element={<MeetingUpdateDetail />}
+              /> */}
             </Route>
 
             {/* localhost/dashboard/user */}

@@ -2,3 +2,26 @@
 note: 1> project list can be search  2> projectlist can be edit and delete
   3> Toast Message must be shown after created , updated ,deleted 
    4> duplicate data entry  show already exist message
+
+
+Event 
+1.beautiful design 
+2.event can create,view,update and cancel by user 
+7.Event Detail can be view by User
+3.no of attendances can be multiple (also add attendees Modal where we can add attendees name ,email,whatno,phone,organization name,organizationdetail,meetingpurpose,requirements,meeting_status(firsttime,sec time,thirdtime...),remarks)
+4.Toast message For Create,Update,cancel 
+5.send auto email to attendance mail 
+6.notification in a system and email/whatapp before few time(like 1 hour ,1/2 hour,15 minute,0 minute) for starting meeting
+7.add attendees on 
+Steps:
+1.Move the event creation form into a CreateEventModal component.
+2.Add a modal for adding attendees with multiple fields (name, email, phone, organization, etc.).
+3.Enable CRUD operations (create, view, update, delete) on events.
+4.Display event details with additional attendees information.
+5.Integrate toast messages for Create, Update, and Cancel actions.
+6.Send auto-email to attendees upon event creation or update.
+7.Allow multiple attendees to be added with extra information.
+
+3.ENQUIRY
+1.enquiry create,update,cancel,mark as lost,listascustomer,ongoing
+2.fields personal detail(name,phone,email,Temporaryaddress,permanentaddress)professional(organization name,organization address,phone,organizationdetail,enquiry_purpose,requirements,problem_faced)meeting(time)

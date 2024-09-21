@@ -4,8 +4,8 @@ import {
   fetchDepartment,
   updateDepartment,
   deleteDepartment,
-  updateStatus,
-  updateError,
+  // updateStatus,
+  // updateError,
 } from "../../redux/slice/departmentSlice";
 import { Link } from "react-router-dom";
 import "../../../admin/css/Table.css"; // Ensure this includes necessary styles
@@ -30,7 +30,7 @@ const DepartmentTable = () => {
     list: departments,
     isLoading,
     error,
-    deleteStatus,
+    // deleteStatus,
     deleteError,
   } = useSelector((state) => state.departments || {});
 
