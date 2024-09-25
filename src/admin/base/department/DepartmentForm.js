@@ -57,6 +57,7 @@ const DepartmentForm = () => {
       .then(() => {
         setFormData({ name: "" }); // Clear the form after successful creation
       })
+
       .catch((error) => {
         console.error("Create Error:", error);
       });
@@ -99,7 +100,6 @@ const DepartmentForm = () => {
 };
 
 export default DepartmentForm;
-
 //v2
 // import React, { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";

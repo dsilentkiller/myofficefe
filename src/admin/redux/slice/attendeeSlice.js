@@ -1,23 +1,22 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { toast } from "react-toastify";
 // search
 export const searchAttendee = createAsyncThunk(
   "attendee/searchAttendee",
   async (searchTerm) => {
     const response = await axios.get(
-      `http://127.0.0.1:8000/api/crm/attendee/?search=${searchTerm}`
+      `http://127.0.0.1:8000/api/attendee/?search=${searchTerm}`
     );
     return response.data.result.data;
   }
 );
-// Fetch all"attendee action
+// Fetch all"attendees action
 export const fetchAttendee = createAsyncThunk(
-  "attendee/fetchAttendee",
+  "attendees/fetchAttendee",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/crm/attendee/"
-      );
+      const response = await axios.get("http://127.0.0.1:8000/api/attendee/");
       return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -25,12 +24,12 @@ export const fetchAttendee = createAsyncThunk(
   }
 );
 // export const createAttendee = createAsyncThunk(
-//   "attendee/createAttendee",
-//   async (attendeeData, thunkAPI) => {
+//   "attendees/createAttendee",
+//   async (formData, thunkAPI) => {
 //     try {
 //       const response = await axios.post(
-//         "http://127.0.0.1:8000/api/crm/attendee/create/",
-//         attendeeData
+//         "http://127.0.0.1:8000/api/attendee/create/",
+//         formData
 //       );
 //       return response.data.result.data; // Adjust this based on your actual API response structure
 //     } catch (error) {
@@ -39,32 +38,55 @@ export const fetchAttendee = createAsyncThunk(
 //   }
 // );
 
+// export const createAttendee = createAsyncThunk(
+//   "attendees/createAttendee",
+//   async (formData, thunkAPI) => {
+//     try {
+//       const response = await axios.post(
+//         "http://127.0.0.1:8000/api/attendee/create/",
+//         formData
+//       );
+//       if (response.status === 201) {
+//         // Ensure it's a successful creation response
+//         return response.data.result.data;
+//       } else {
+//         return thunkAPI.rejectWithValue("Failed to create attendee.");
+//       }
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
+//     }
+//   }
+// );
 export const createAttendee = createAsyncThunk(
   "attendee/createAttendee",
-  async (attendeeData, thunkAPI) => {
+  async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/crm/attendee/create/",
-        attendeeData
+        "http://127.0.0.1:8000/api/attendee/create/",
+        formData
       );
-      if (response.status === 201) {
-        // Ensure it's a successful creation response
-        return response.data.result.data;
-      } else {
-        return thunkAPI.rejectWithValue("Failed to create attendee.");
-      }
+      toast.success("Attendee created successfully!");
+      return response.data.result; // Adjust based on actual response structure
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+      // Log or display the server error message
+      if (error.response && error.response.data) {
+        toast.error(
+          error.response.data.message || "Failed to create attendee."
+        );
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
+      return rejectWithValue(error.response.data);
     }
   }
 );
 // Fetch a single attendee by ID action
 export const fetchAttendeeById = createAsyncThunk(
-  "attendee/fetchAttendeeById",
+  "attendees/fetchAttendeeById",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/crm/attendee/${id}/`
+        `http://127.0.0.1:8000/api/attendee/${id}/`
       );
       return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
@@ -78,7 +100,7 @@ export const updateAttendee = createAsyncThunk(
   async ({ id, name }, thunkAPI) => {
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/crm/attendee/update/${id}/`,
+        `http://127.0.0.1:8000/api/attendee/update/${id}/`,
         { name }
       );
       return response.data.result.data;
@@ -91,13 +113,11 @@ export const updateAttendee = createAsyncThunk(
 );
 
 export const deleteAttendee = createAsyncThunk(
-  "attendee/deleteAttendee",
+  "attendees/deleteAttendee",
   async (id, thunkAPI) => {
     try {
       // Make sure this URL is correct
-      await axios.delete(
-        `http://127.0.0.1:8000/api/crm/attendee/delete/${id}/`
-      );
+      await axios.delete(`http://127.0.0.1:8000/api/attendee/delete/${id}/`);
       return id; // Return the ID of the deleted attendee
     } catch (error) {
       // Log the entire error to understand its structure
@@ -114,7 +134,7 @@ export const deleteAttendee = createAsyncThunk(
 );
 
 const attendeeSlice = createSlice({
-  name: "attendee",
+  name: "attendees",
   initialState: {
     list: [],
     isLoading: false,
@@ -130,7 +150,7 @@ const attendeeSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Fetch all"attendee
+      // Fetch all"attendees
       .addCase(fetchAttendee.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -223,3 +243,90 @@ const attendeeSlice = createSlice({
   },
 });
 export default attendeeSlice.reducer;
+
+// // src/store/attendeeSlice.js
+// import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+// import axios from "axios";
+
+// const initialState = {
+//   attendees: [],
+//   loading: false,
+//   error: null,
+// };
+
+// // Async thunks for API calls
+// export const fetchAttendees = createAsyncThunk(
+//   "attendees/fetchAttendees",
+//   async () => {
+//     const response = await axios.get("http://localhost:8000/attendee/");
+//     return response.data.result;
+//   }
+// );
+
+// export const addAttendee = createAsyncThunk(
+//   "attendees/addAttendee",
+//   async (attendee) => {
+//     const response = await axios.post(
+//       "http://localhost:8000/attendee/create/",
+//       attendee
+//     );
+//     return response.data.result;
+//   }
+// );
+
+// export const updateAttendee = createAsyncThunk(
+//   "attendees/updateAttendee",
+//   async ({ id, attendee }) => {
+//     const response = await axios.put(
+//       `http://localhost:8000/attendee/update/${id}/`,
+//       attendee
+//     );
+//     return response.data.result;
+//   }
+// );
+
+// export const deleteAttendee = createAsyncThunk(
+//   "attendees/deleteAttendee",
+//   async (id) => {
+//     await axios.delete(`http://localhost:8000/attendee/delete/${id}/`);
+//     return id;
+//   }
+// );
+
+// const attendeeSlice = createSlice({
+//   name: "attendees",
+//   initialState,
+//   reducers: {},
+//   extraReducers: (builder) => {
+//     builder
+//       .addCase(fetchAttendees.pending, (state) => {
+//         state.loading = true;
+//       })
+//       .addCase(fetchAttendees.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.attendees = action.payload;
+//       })
+//       .addCase(fetchAttendees.rejected, (state, action) => {
+//         state.loading = false;
+//         state.error = action.error.message;
+//       })
+//       .addCase(addAttendee.fulfilled, (state, action) => {
+//         state.attendees.push(action.payload);
+//       })
+//       .addCase(updateAttendee.fulfilled, (state, action) => {
+//         const index = state.attendees.findIndex(
+//           (attendee) => attendee.id === action.payload.id
+//         );
+//         if (index !== -1) {
+//           state.attendees[index] = action.payload;
+//         }
+//       })
+//       .addCase(deleteAttendee.fulfilled, (state, action) => {
+//         state.attendees = state.attendees.filter(
+//           (attendee) => attendee.id !== action.payload
+//         );
+//       });
+//   },
+// });
+
+// export default attendeeSlice.reducer;

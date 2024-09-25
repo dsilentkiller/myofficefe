@@ -8,6 +8,7 @@ import workingReducer from "./admin/redux/slice/workingSlice";
 import departmentReducer from "./admin/redux/slice/departmentSlice";
 import projectReducer from "./admin/redux/slice/projectSlice";
 import eventReducer from "./admin/redux/slice/eventSlice";
+import attendeeReducer from "./admin/redux/slice/attendeeSlice";
 const store = configureStore({
   reducer: {
     districts: districtReducer,
@@ -18,6 +19,7 @@ const store = configureStore({
     departments: departmentReducer,
     projects: projectReducer,
     events: eventReducer,
+    attendees: attendeeReducer, // Add the attendee slice here
   },
 });
 

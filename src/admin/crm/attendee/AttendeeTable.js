@@ -6,11 +6,11 @@ import {
   deleteAttendee,
   // updateStatus,
   // updateError,
-} from "../../../redux/slice/attendeeSlice";
+} from "../../redux/slice/attendeeSlice";
 import { Link } from "react-router-dom";
 
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
-import AttendeeDelete from "./AttendeeDelete";
+// import AttendeeDelete from "./AttendeeDelete";
 import { toast } from "react-toastify"; // Import toast for error messages
 // import "../../../css/Table.css";
 import jsPDF from "jspdf";
@@ -219,7 +219,7 @@ const AttendeeTable = () => {
                           <td>{formatName(attendee.name)}</td>
                           <td>{formatName(attendee.email)}</td>
                           <td>{attendee.whatsapp}</td>
-                          <td>{attendee.phone}</td>
+                          <td>{attendee.pri_phone}</td>
                           <td>{attendee.organization}</td>
                           <td>{attendee.organizationDetail}</td>
                           <td>
@@ -250,13 +250,13 @@ const AttendeeTable = () => {
           </div>
         </div>
         {/* Delete Confirmation Modal */}
-        {attendeeToDelete !== null && (
+        {/* {attendeeToDelete !== null && (
           <AttendeeDelete
             id={attendeeToDelete}
             onClose={() => setAttendeeToDelete(null)}
             onConfirm={() => confirmDelete(attendeeToDelete)}
           />
-        )}
+        )} */}
       </section>
     </div>
   );

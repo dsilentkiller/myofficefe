@@ -4,8 +4,9 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "../../../css/delete.css";
-import { deleteAttendee } from "../../../redux/slice/attendeeSlice";
+import "../../css/delete.css";
+// import { deleteAttendee } from "../../redux/slice/attendeeSlice";
+import { deleteAttendee } from "../../redux/slice/attendeeSlice";
 
 const AttendeeDelete = ({ id, onClose }) => {
   const dispatch = useDispatch();
@@ -15,11 +16,11 @@ const AttendeeDelete = ({ id, onClose }) => {
     dispatch(deleteAttendee(id))
       .unwrap()
       .then(() => {
-        toast.success("Attendee deleted successfully!");
-        navigate("/dashboard/crm/attendee"); // Adjust this route as needed
+        toast.success("attendee deleted successfully!");
+        navigate("/dashboard/crmnpm start/attendee"); // Adjust this route as needed
       })
       .catch((error) => {
-        toast.error(`Failed to delete Attendee: ${error.message}`);
+        toast.error(`Failed to delete attendee: ${error.message}`);
       })
       .finally(() => {
         onClose(); // Close the modal after deletion
@@ -53,7 +54,7 @@ const AttendeeDelete = ({ id, onClose }) => {
             </button>
           </div>
           <div className="modal-body">
-            Are you sure you want to delete this Attendee?
+            Are you sure you want to delete this attendee?
           </div>
           <div className="modal-footer">
             <button

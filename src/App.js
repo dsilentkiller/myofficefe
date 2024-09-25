@@ -49,8 +49,8 @@ import ProjectDelete from "./admin/crm/project/ProjectDelete";
 import ProjectForm from "./admin/crm/project/ProjectForm";
 import ProjectDetail from "./admin/crm/project/ProjectDetail";
 import EventSystem from "./admin/crm/event/EventSystem";
-import AttendeeCreate from "./admin/crm/event/attendee/AttendeeCreate";
-import AttendeesTable from "./admin/crm/event/attendee/AttendeeTable";
+import AttendeeForm from "./admin/crm/attendee/AttendeeForm";
+import AttendeeTable from "./admin/crm/attendee/AttendeeTable";
 import MeetingUpdateTable from "./admin/crm/event/meetingupdate/MeetingUpdateTable";
 import MeetingUpdateForm from "./admin/crm/event/meetingupdate/MeetingUpdateForm";
 // import ProjectForm from "./admin/"
@@ -83,12 +83,12 @@ function App() {
               <Route path="event/cancel/:id/" element={<ProjectDelete />} />
               <Route path="event/detail/:id/" element={<ProjectDetail />} />
               {/* dashboard/crm/attendees */}
-              <Route path="attendee" element={<AttendeesTable />} />
-              <Route path="attendee/create/" element={<AttendeeCreate />} />
+              <Route path="attendee" element={<AttendeeTable />} />
+              <Route path="attendee/create/" element={<AttendeeForm />} />
               {/* {/* <Route path="event/create" element={<ProjectForm />} /> */}
-              <Route path="attendee/update/:id/" element={<AttendeeCreate />} />
-              <Route path="attendee/cancel/:id/" element={<AttendeesTable />} />
-              <Route path="attendee/detail/:id/" element={<AttendeesTable />} />
+              <Route path="attendee/update/:id/" element={<AttendeeForm />} />
+              {/* <Route path="attendee/cancel/:id/" element={<AttendeesTable />} /> */}
+              {/* <Route path="attendee/detail/:id/" element={<AttendeesTable />} /> */}
               {/* meeting update */}
               <Route path="meeting-update" element={<MeetingUpdateTable />} />
               <Route
