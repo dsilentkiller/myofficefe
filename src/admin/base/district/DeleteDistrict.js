@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { deleteDistrict } from "../../redux/slice/districtSlice";
+import { deleteDistrict } from "../../redux/slice/base/districtSlice";
 import { toast } from "react-toastify";
 import "../../css/delete.css"; // Ensure this file contains proper CSS
 

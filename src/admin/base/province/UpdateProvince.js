@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   fetchProvinceById,
   updateProvince,
-} from "../../redux/slice/provinceSlice";
+} from "../../redux/slice/base/provinceSlice";
 import { toast, ToastContainer } from "react-toastify"; // Import toast
 import "react-toastify/dist/ReactToastify.css"; // Import styles
 

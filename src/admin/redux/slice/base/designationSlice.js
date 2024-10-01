@@ -2,37 +2,37 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 // search
 export const searchDesignation = createAsyncThunk(
-  "designation/searchDesignation",
+  "designations/searchDesignation",
   async (searchTerm) => {
     const response = await axios.get(
       `http://127.0.0.1:8000/api/setup/designation/?search=${searchTerm}`
     );
-    return response.data.result.data;
+    return response.data.result;
   }
 );
 // Fetch all designation action
-export const fetchDesignation = createAsyncThunk(
-  "designation/fetchDesignation",
+export const fetchDesignations = createAsyncThunk(
+  "designations/fetchDesignations",
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(
         "http://127.0.0.1:8000/api/setup/designation/"
       );
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
 export const createDesignation = createAsyncThunk(
-  "designation/createDesignation",
+  "designations/createDesignation",
   async (DesignationData, thunkAPI) => {
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/api/setup/designation/create/",
         DesignationData
       );
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.result.data);
     }
@@ -40,13 +40,13 @@ export const createDesignation = createAsyncThunk(
 );
 // Fetch a single Designation by ID action
 export const fetchDesignationById = createAsyncThunk(
-  "designation/fetchDesignationById",
+  "designations/fetchDesignationById",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
         `http://127.0.0.1:8000/api/setup/designation/${id}/`
       );
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -54,14 +54,14 @@ export const fetchDesignationById = createAsyncThunk(
 );
 // // Update Designation
 export const updateDesignation = createAsyncThunk(
-  "designation/updateDesignation",
+  "designations/updateDesignation",
   async ({ id, name }, thunkAPI) => {
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/api/setup/designation/update/${id}/`,
         { name }
       );
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       const message =
         error.response?.data?.message || error.message || "An error occurred";
@@ -71,7 +71,7 @@ export const updateDesignation = createAsyncThunk(
 );
 
 export const deleteDesignation = createAsyncThunk(
-  "designation/deleteDesignation",
+  "designations/deleteDesignation",
   async (id, thunkAPI) => {
     try {
       // Make sure this URL is correct
@@ -124,15 +124,15 @@ const designationSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Fetch all designation
-      .addCase(fetchDesignation.pending, (state) => {
+      .addCase(fetchDesignations.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchDesignation.fulfilled, (state, action) => {
+      .addCase(fetchDesignations.fulfilled, (state, action) => {
         state.isLoading = false;
         state.list = action.payload;
       })
-      .addCase(fetchDesignation.rejected, (state, action) => {
+      .addCase(fetchDesignations.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
       })

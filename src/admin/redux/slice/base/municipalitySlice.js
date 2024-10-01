@@ -7,18 +7,18 @@ export const searchMunicipality = createAsyncThunk(
     const response = await axios.get(
       `http://127.0.0.1:8000/api/setup/municipality/?search=${searchTerm}`
     );
-    return response.data.result.data;
+    return response.data.result;
   }
 );
 // Fetch all municipalities action
-export const fetchMunicipality = createAsyncThunk(
-  "municipalities/fetchMunicipality",
+export const fetchMunicipalities = createAsyncThunk(
+  "municipalities/fetchMunicipalities",
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(
         "http://127.0.0.1:8000/api/setup/municipality/"
       );
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -32,7 +32,7 @@ export const createMunicipality = createAsyncThunk(
         "http://127.0.0.1:8000/api/setup/municipality/create/",
         municipalityData
       );
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.result.data);
     }
@@ -46,7 +46,7 @@ export const fetchMunicipalityById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/setup/municipality/${id}/`
       );
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -54,14 +54,14 @@ export const fetchMunicipalityById = createAsyncThunk(
 );
 // // Update municipality
 export const updateMunicipality = createAsyncThunk(
-  "municipality/updateMunicipality",
+  "municipalities/updateMunicipality",
   async ({ id, name }, thunkAPI) => {
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/api/setup/municipality/update/${id}/`,
         { name }
       );
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       const message =
         error.response?.data?.message || error.message || "An error occurred";
@@ -124,15 +124,15 @@ const municipalitySlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Fetch all municipalities
-      .addCase(fetchMunicipality.pending, (state) => {
+      .addCase(fetchMunicipalities.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchMunicipality.fulfilled, (state, action) => {
+      .addCase(fetchMunicipalities.fulfilled, (state, action) => {
         state.isLoading = false;
         state.list = action.payload;
       })
-      .addCase(fetchMunicipality.rejected, (state, action) => {
+      .addCase(fetchMunicipalities.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
       })

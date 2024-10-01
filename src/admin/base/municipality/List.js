@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchMunicipality,
+  fetchMunicipalities,
   updateMunicipality,
   deleteMunicipality,
   updateStatus,
   updateError,
-} from "../../redux/slice/municipalitySlice";
+} from "../../redux/slice/base/municipalitySlice";
 import { Link } from "react-router-dom";
 import "../../../admin/css/Table.css"; // Ensure this includes necessary styles
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
@@ -37,7 +37,7 @@ const MunicipalityList = () => {
   } = useSelector((state) => state.municipalities);
 
   useEffect(() => {
-    dispatch(fetchMunicipality());
+    dispatch(fetchMunicipalities());
   }, [dispatch]);
 
   // To update item in the table
@@ -84,7 +84,7 @@ const MunicipalityList = () => {
       .then(() => {
         toast.success("Municipality deleted successfully!");
         setMunicipalityToDelete(null); // Close the modal after successful deletion
-        dispatch(fetchMunicipality()); // Refresh the list
+        dispatch(fetchMunicipalities()); // Refresh the list
       })
       .catch((error) => {
         // Handle and log the error more robustly

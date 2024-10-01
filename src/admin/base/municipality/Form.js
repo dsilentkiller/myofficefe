@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { createMunicipality } from "../../redux/slice/municipalitySlice";
+import { createMunicipality } from "../../redux/slice/base/municipalitySlice";
 
 const MunicipalityForm = () => {
   const [formData, setFormData] = useState({ name: "" });

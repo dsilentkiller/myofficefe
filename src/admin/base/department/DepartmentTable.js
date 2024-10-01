@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchDepartment,
+  fetchDepartments,
   updateDepartment,
   deleteDepartment,
   // updateStatus,
   // updateError,
-} from "../../redux/slice/departmentSlice";
+} from "../../redux/slice/base/departmentSlice";
 import { Link } from "react-router-dom";
 import "../../../admin/css/Table.css"; // Ensure this includes necessary styles
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
@@ -35,7 +35,7 @@ const DepartmentTable = () => {
   } = useSelector((state) => state.departments || {});
 
   useEffect(() => {
-    dispatch(fetchDepartment());
+    dispatch(fetchDepartments());
   }, [dispatch]);
 
   // To update item in the table
@@ -82,7 +82,7 @@ const DepartmentTable = () => {
       .then(() => {
         toast.success("department deleted successfully!");
         setDepartmentToDelete(null); // Close the modal after successful deletion
-        dispatch(fetchDepartment()); // Refresh the list
+        dispatch(fetchDepartments()); // Refresh the list
       })
       .catch((error) => {
         // Handle and log the error more robustly
@@ -211,63 +211,6 @@ const DepartmentTable = () => {
                                   <th>Action</th>
                                 </tr>
                               </thead>
-                              {/* <tbody>
-                                {departments
-                                  .filter((department) =>
-                                    department.name
-                                      .toLowerCase()
-                                      .includes(searchTerm.toLowerCase())
-                                  )
-                                  .map((department, index) => (
-                                    <tr key={department.id}>
-                                      <td>{index + 1}</td>
-                                      <td>
-                                        {editId === department.id ? (
-                                          <input
-                                            type="text"
-                                            value={newName}
-                                            onChange={(e) =>
-                                              setNewName(e.target.value)
-                                            }
-                                          />
-                                        ) : (
-                                          formatName(department.name)
-                                        )}
-                                      </td>
-                                      <td>
-                                        {editId === department.id ? (
-                                          <button
-                                            onClick={handleUpdate}
-                                            className="btn btn-success"
-                                          >
-                                            Save
-                                          </button>
-                                        ) : (
-                                          <button
-                                            onClick={() =>
-                                              handleEdit(
-                                                department.id,
-                                                department.name
-                                              )
-                                            }
-                                            className="btn btn-primary"
-                                          >
-                                            <FaEdit />
-                                          </button>
-                                        )}
-                                        <span> </span>
-                                        <button
-                                          onClick={() =>
-                                            handleDelete(department.id)
-                                          }
-                                          className="btn btn-danger"
-                                        >
-                                          <FaTrash />
-                                        </button>
-                                      </td>
-                                    </tr>
-                                  ))}
-                              </tbody> */}
 
                               <tbody>
                                 {departments

@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "../../css/delete.css";
-import { deleteProject } from "../../redux/slice/projectSlice";
+import { deleteProject } from "../../redux/slice/crm/projectSlice";
 
 const ProjectDelete = ({ id, onClose }) => {
   const dispatch = useDispatch();
@@ -16,7 +16,7 @@ const ProjectDelete = ({ id, onClose }) => {
       .unwrap()
       .then(() => {
         toast.success("Project  deleted successfully!");
-        navigate("/dashboard/setup/project"); // Adjust this route as needed
+        navigate("/dashboard/crm/project"); // Adjust this route as needed
       })
       .catch((error) => {
         toast.error(`Failed to delete project: ${error.message}`);

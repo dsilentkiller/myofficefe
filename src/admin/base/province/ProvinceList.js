@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchProvince,
   createProvince,
   updateProvince,
-  deleteProvince, // Import the delete action correctly
-} from "../../redux/slice/provinceSlice";
+  deleteProvince,
+  fetchProvinces, // Import the delete action correctly
+} from "../../redux/slice/base/provinceSlice";
 import "../../../admin/css/Table.css"; // Make sure this includes necessary styles
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
 import { toast } from "react-toastify";
@@ -25,7 +25,7 @@ const ProvinceList = () => {
   //
   //-----Fetching data from database o api call using fetchDistrict  -------------
   useEffect(() => {
-    dispatch(fetchProvince());
+    dispatch(fetchProvinces());
   }, [dispatch]);
 
   // const handleAddDistrict = () => {
@@ -59,7 +59,7 @@ const ProvinceList = () => {
   useEffect(() => {
     // Refetch data after deletion or update
     if (provinceToDelete === null) {
-      dispatch(fetchProvince());
+      dispatch(fetchProvinces());
     }
   }, [provinceToDelete, dispatch]);
   //---to update item in a table --

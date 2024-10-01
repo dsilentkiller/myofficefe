@@ -51,8 +51,16 @@ import ProjectDetail from "./admin/crm/project/ProjectDetail";
 import EventSystem from "./admin/crm/event/EventSystem";
 import AttendeeForm from "./admin/crm/attendee/AttendeeForm";
 import AttendeeTable from "./admin/crm/attendee/AttendeeTable";
-import MeetingUpdateTable from "./admin/crm/event/meetingupdate/MeetingUpdateTable";
-import MeetingUpdateForm from "./admin/crm/event/meetingupdate/MeetingUpdateForm";
+// import MeetingUpdateTable from "./admin/crm/event/meetingupdate/MeetingUpdateTable";
+// import MeetingUpdateForm from "./admin/crm/event/meetingupdate/MeetingUpdateForm";
+import AttendeeDelete from "./admin/crm/attendee/AttendeeDelete";
+import AttendeeUpdate from "./admin/crm/attendee/AttendeeUpdate";
+import EnquiryForm from "./admin/crm/enquiry/EnquiryForm";
+import EnquiryTable from "./admin/crm/enquiry/EnquiryTable";
+import CategoryTable from "./admin/crm/category/CategoryTable";
+import CategoryForm from "./admin/crm/category/CategoryForm";
+import CategoryDelete from "./admin/crm/category/CategoryDelete";
+import EventDetail from "./admin/crm/event/EventDetail";
 // import ProjectForm from "./admin/"
 function App() {
   return (
@@ -64,33 +72,37 @@ function App() {
             {/*localhost/dashboard */}
             <Route index element={<AdminDashboard />} />
             <Route path="crm" element={<CrmDashboard />}>
+              {/* dashboard/crm/category */}
+              <Route path="category" element={<CategoryTable />} />
+              <Route path="category/create" element={<CategoryForm />} />
+              <Route path="category/delete/:id/" element={<CategoryDelete />} />
+
               {/* localhost/dashbaord/crm/enquiry */}
-              <Route path="enquiry" element={<EmployeeList />} />
-              <Route path="enquiry/create" element={<EmployeeForm />} />
-              <Route path="enquiry/update/:id/" element={<UpdateDistrict />} />
-              <Route path="enquiry/delete/:id/" element={<DeleteDistrict />} />
-              <Route path="enquiry/detail/:id/" element={<UpdateDistrict />} />
+              <Route path="enquiry" element={<EnquiryTable />} />
+              <Route path="enquiry/create" element={<EnquiryForm />} />
+
               {/*  {/* localhost/dashbaord/crm/project */}
               <Route path="project" element={<ProjectTable />} />
               <Route path="project/create" element={<ProjectForm />} />
               <Route path="project/update/:id/" element={<ProjectForm />} />
               <Route path="project/delete/:id/" element={<ProjectDelete />} />
               <Route path="project/detail/:id/" element={<ProjectDetail />} />
+
               {/*  {/* localhost/dashbaord/crm/event */}
               <Route path="event" element={<EventSystem />} />
-              <Route path="event/create" element={<ProjectForm />} />
-              <Route path="event/update/:id/" element={<ProjectForm />} />
-              <Route path="event/cancel/:id/" element={<ProjectDelete />} />
-              <Route path="event/detail/:id/" element={<ProjectDetail />} />
+              <Route path="event/create" element={<EventSystem />} />
+              {/* <Route path="event/update/:id/" element={<ProjectForm />} /> */}
+              {/* <Route path="event/cancel/:id/" element={<ProjectDelete />} /> */}
+              <Route path="event/detail/:id/" element={<EventDetail />} />
+
               {/* dashboard/crm/attendees */}
               <Route path="attendee" element={<AttendeeTable />} />
               <Route path="attendee/create/" element={<AttendeeForm />} />
-              {/* {/* <Route path="event/create" element={<ProjectForm />} /> */}
-              <Route path="attendee/update/:id/" element={<AttendeeForm />} />
-              {/* <Route path="attendee/cancel/:id/" element={<AttendeesTable />} /> */}
-              {/* <Route path="attendee/detail/:id/" element={<AttendeesTable />} /> */}
+              <Route path="attendee/update/:id/" element={<AttendeeUpdate />} />
+              <Route path="attendee/delete/:id/" element={<AttendeeDelete />} />
+
               {/* meeting update */}
-              <Route path="meeting-update" element={<MeetingUpdateTable />} />
+              {/* <Route path="meeting-update" element={<MeetingUpdateTable />} />
               <Route
                 path="meeting-update/create"
                 element={<MeetingUpdateForm />}
@@ -98,7 +110,7 @@ function App() {
               <Route
                 path="meeting-update/update/:id/"
                 element={<MeetingUpdateForm />}
-              />
+              /> */}
               <Route
                 path="meeting-update/cancel/:id/"
                 element={<ProjectDelete />}
@@ -157,11 +169,13 @@ function App() {
               {/* zone */}
               <Route path="zone" element={<ZoneList />} />
               <Route path="zone/create" element={<ZoneForm />} />
+
               {/* district route=>localhost/dashboard/setup/district*/}
               <Route path="district" element={<DistrictTable />} />
               <Route path="district/create/" element={<DistrictForm />} />
               <Route path="district/update/:id/" element={<UpdateDistrict />} />
               <Route path="district/delete/:id/" element={<DeleteDistrict />} />
+
               {/* municipality  route -> localhost/dashboard/setup/municipality*/}
               <Route path="municipality" element={<MunicipalityList />} />
               <Route

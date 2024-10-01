@@ -6,7 +6,7 @@ import {
   deleteworking,
   updateStatus,
   updateError,
-} from "../../redux/slice/workingSlice";
+} from "../../redux/slice/base/workingSlice";
 import { Link } from "react-router-dom";
 import "../../../admin/css/Table.css"; // Ensure this includes necessary styles
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete

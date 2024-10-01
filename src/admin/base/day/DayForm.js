@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { createDay, fetchDay } from "../../redux/slice/daySlice";
+import { createDay, fetchDays } from "../../redux/slice/base/daySlice";
 
 const DayForm = () => {
   const [formData, setFormData] = useState({ name: "" });
@@ -13,7 +13,7 @@ const DayForm = () => {
   const days = useSelector((state) => state.days.list || []);
 
   useEffect(() => {
-    dispatch(fetchDay()); // Ensure days are fetched on component mount
+    dispatch(fetchDays()); // Ensure days are fetched on component mount
   }, [dispatch]);
 
   useEffect(() => {

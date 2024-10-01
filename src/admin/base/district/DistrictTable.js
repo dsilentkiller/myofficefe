@@ -2,11 +2,11 @@ import { toast } from "react-toastify";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchDistrict,
+  fetchDistricts,
   updateDistrict,
   updateError,
   updateStatus,
-} from "../../redux/slice/districtSlice";
+} from "../../redux/slice/base/districtSlice";
 import { Link } from "react-router-dom";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import "../../../admin/css/Table.css";
@@ -26,7 +26,7 @@ const DistrictList = () => {
   // const navigate = useNavigate();
   //-----Fetching data from database o api call using fetchDistrict  -------------
   useEffect(() => {
-    dispatch(fetchDistrict());
+    dispatch(fetchDistricts());
   }, [dispatch]);
 
   // const handleAddDistrict = () => {
@@ -60,7 +60,7 @@ const DistrictList = () => {
   useEffect(() => {
     // Refetch data after deletion or update
     if (districtToDelete === null) {
-      dispatch(fetchDistrict());
+      dispatch(fetchDistricts());
     }
   }, [districtToDelete, dispatch]);
   //---to update item in a table --

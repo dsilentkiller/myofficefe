@@ -5,7 +5,7 @@ import {
   deleteProvince,
   deleteError,
   deleteStatus,
-} from "../../redux/slice/provinceSlice";
+} from "../../redux/slice/base/provinceSlice";
 import { toast } from "react-toastify";
 import "../../css/delete.css"; // Ensure this file contains proper CSS
 const DeleteProvince = ({ id, onClose }) => {

@@ -84,8 +84,34 @@
 .page-link:focus {
     box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
 }
-
-#------------- form design province -----------
+/* #---------------for enquiry table------------ */
+.table-container {
+    overflow-x: auto; /* Enables horizontal scrolling */
+  }
+  
+  .table th,
+  .table td {
+    white-space: nowrap; /* Prevent table cells from wrapping */
+  }
+  
+  .table th:nth-child(8), /* Province */
+  .table td:nth-child(8) {
+    min-width: 120px; /* Ensures the word "Province" fits */
+  }
+  
+  .table th:nth-child(9), /* District */
+  .table td:nth-child(9),
+  .table th:nth-child(10), /* Municipality */
+  .table td:nth-child(10) {
+    min-width: 150px; /* Adjust for larger content */
+  }
+  
+  .table th:last-child,
+  .table td:last-child {
+    width: 100px; /* Set a fixed width for the Action column */
+  }
+  
+/* #------------- form design province ----------- */
 /* Form styling */
 .form-container {
     display: flex;

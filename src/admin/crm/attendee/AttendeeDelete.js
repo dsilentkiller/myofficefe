@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "../../css/delete.css";
 // import { deleteAttendee } from "../../redux/slice/attendeeSlice";
-import { deleteAttendee } from "../../redux/slice/attendeeSlice";
+import { deleteAttendee } from "../../redux/slice/crm/attendeeSlice";
 
 const AttendeeDelete = ({ id, onClose }) => {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const AttendeeDelete = ({ id, onClose }) => {
       .unwrap()
       .then(() => {
         toast.success("attendee deleted successfully!");
-        navigate("/dashboard/crmnpm start/attendee"); // Adjust this route as needed
+        navigate("/dashboard/crm/attendee"); // Adjust this route as needed
       })
       .catch((error) => {
         toast.error(`Failed to delete attendee: ${error.message}`);

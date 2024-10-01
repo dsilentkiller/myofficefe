@@ -9,7 +9,7 @@ import {
   deleteMeetingUpdate,
   updateStatus,
   updateError,
-} from "../../../redux/slice/meetingUpdateSlice";
+} from "../../redux/slice/meetingUpdateSlice";
 import "../../../css/Table.css";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";

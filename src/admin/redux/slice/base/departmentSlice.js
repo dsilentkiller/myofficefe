@@ -7,18 +7,18 @@ export const searchDepartment = createAsyncThunk(
     const response = await axios.get(
       `http://127.0.0.1:8000/api/setup/department/?search=${searchTerm}`
     );
-    return response.data.result.data;
+    return response.data.result;
   }
 );
 // Fetch all"departments action
-export const fetchDepartment = createAsyncThunk(
-  "departments/fetchDepartment",
+export const fetchDepartments = createAsyncThunk(
+  "departments/fetchDepartments",
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(
         "http://127.0.0.1:8000/api/setup/department/"
       );
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -74,7 +74,7 @@ export const fetchDepartmentById = createAsyncThunk(
 );
 // // Update Department
 export const updateDepartment = createAsyncThunk(
-  "department/updateDepartment",
+  "departments/updateDepartment",
   async ({ id, name }, thunkAPI) => {
     try {
       const response = await axios.put(
@@ -113,7 +113,6 @@ export const deleteDepartment = createAsyncThunk(
   }
 );
 
-
 const departmentSlice = createSlice({
   name: "departments",
   initialState: {
@@ -132,15 +131,15 @@ const departmentSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Fetch all"departments
-      .addCase(fetchDepartment.pending, (state) => {
+      .addCase(fetchDepartments.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchDepartment.fulfilled, (state, action) => {
+      .addCase(fetchDepartments.fulfilled, (state, action) => {
         state.isLoading = false;
         state.list = action.payload;
       })
-      .addCase(fetchDepartment.rejected, (state, action) => {
+      .addCase(fetchDepartments.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
       })

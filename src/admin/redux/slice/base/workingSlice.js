@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 // search
 export const searchWorking = createAsyncThunk(
-  "working/searchWorking",
+  "workings/searchWorking",
   async (searchTerm) => {
     const response = await axios.get(
       `http://127.0.0.1:8000/api/setup/working/?search=${searchTerm}`
@@ -11,8 +11,8 @@ export const searchWorking = createAsyncThunk(
   }
 );
 // Fetch all municipalities action
-export const fetchWorking = createAsyncThunk(
-  "working/fetchWorking",
+export const fetchWorkings = createAsyncThunk(
+  "workings/fetchWorkings",
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(
@@ -25,7 +25,7 @@ export const fetchWorking = createAsyncThunk(
   }
 );
 export const createWorking = createAsyncThunk(
-  "working/createWorking",
+  "workings/createWorking",
   async (workingData, thunkAPI) => {
     try {
       const response = await axios.post(
@@ -40,7 +40,7 @@ export const createWorking = createAsyncThunk(
 );
 // Fetch a single working by ID action
 export const fetchWorkingById = createAsyncThunk(
-  "working/fetchWorkingById",
+  "workings/fetchWorkingById",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
@@ -54,7 +54,7 @@ export const fetchWorkingById = createAsyncThunk(
 );
 // // Update working
 export const updateWorking = createAsyncThunk(
-  "working/updateWorking",
+  "workings/updateWorking",
   async ({ id, name }, thunkAPI) => {
     try {
       const response = await axios.put(
@@ -71,7 +71,7 @@ export const updateWorking = createAsyncThunk(
 );
 
 export const deleteWorking = createAsyncThunk(
-  "working/deleteWorking",
+  "workings/deleteWorking",
   async (id, thunkAPI) => {
     try {
       // Make sure this URL is correct
@@ -107,7 +107,7 @@ export const deleteWorking = createAsyncThunk(
 // );
 
 const workingSlice = createSlice({
-  name: "working",
+  name: "workings",
   initialState: {
     list: [],
     isLoading: false,
@@ -124,15 +124,15 @@ const workingSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Fetch all municipalities
-      .addCase(fetchWorking.pending, (state) => {
+      .addCase(fetchWorkings.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchWorking.fulfilled, (state, action) => {
+      .addCase(fetchWorkings.fulfilled, (state, action) => {
         state.isLoading = false;
         state.list = action.payload;
       })
-      .addCase(fetchWorking.rejected, (state, action) => {
+      .addCase(fetchWorkings.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
       })

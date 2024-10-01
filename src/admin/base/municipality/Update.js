@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   fetchMunicipalityById,
   updateMunicipality as updateMunicipalityAction, // Correct import statement
-} from "../../redux/slice/municipalitySlice";
+} from "../../redux/slice/base/municipalitySlice";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

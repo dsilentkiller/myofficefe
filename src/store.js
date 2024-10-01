@@ -1,14 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
-import districtReducer from "./admin/redux/slice/districtSlice";
-import provinceReducer from "./admin/redux/slice/provinceSlice";
+import districtReducer from "./admin/redux/slice/base/districtSlice";
+import provinceReducer from "./admin/redux/slice/base/provinceSlice";
 // import { ProvinceReducer } from "./admin/redux/reducers/ProvinceReducer";
-import designationReducer from "./admin/redux/slice/designationSlice";
-import municipalityReducer from "./admin/redux/slice/municipalitySlice";
-import workingReducer from "./admin/redux/slice/workingSlice";
-import departmentReducer from "./admin/redux/slice/departmentSlice";
-import projectReducer from "./admin/redux/slice/projectSlice";
-import eventReducer from "./admin/redux/slice/eventSlice";
-import attendeeReducer from "./admin/redux/slice/attendeeSlice";
+import designationReducer from "./admin/redux/slice/base/designationSlice";
+import municipalityReducer from "./admin/redux/slice/base/municipalitySlice";
+import workingReducer from "./admin/redux/slice/base/workingSlice";
+import departmentReducer from "./admin/redux/slice/base/departmentSlice";
+import projectReducer from "./admin/redux/slice/crm/projectSlice";
+import eventReducer from "./admin/redux/slice/crm/eventSlice";
+import attendeeReducer from "./admin/redux/slice/crm/attendeeSlice";
+import categoryReducer from "./admin/redux/slice/crm/categorySlice";
+import enquiryReducer from "./admin/redux/slice/crm/enquirySlice";
 const store = configureStore({
   reducer: {
     districts: districtReducer,
@@ -20,6 +22,8 @@ const store = configureStore({
     projects: projectReducer,
     events: eventReducer,
     attendees: attendeeReducer, // Add the attendee slice here
+    categories: categoryReducer, //
+    enquiry: enquiryReducer,
   },
 });
 

@@ -1,25 +1,26 @@
-// export default DayDelete;
+// export default CategoryDelete;
 
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "../../css/delete.css";
-import { deleteDay } from "../../redux/slice/base/daySlice";
+import "../../css/Table.css";
+import { deleteCategory } from "../../redux/slice/crm/categorySlice";
+import CategoryTable from "./CategoryTable";
 
-const DayDelete = ({ id, onClose }) => {
+const CategoryDelete = ({ id, onClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleDelete = () => {
-    dispatch(deleteDay(id))
+    dispatch(deleteCategory(id))
       .unwrap()
       .then(() => {
-        toast.success("day deleted successfully!");
-        navigate("/dashboard/setup/day"); // Adjust this route as needed
+        toast.success("category deleted successfully!");
+        navigate("/dashboard/crm/category"); // Adjust this route as needed
       })
       .catch((error) => {
-        toast.error(`Failed to delete day: ${error.message}`);
+        toast.error(`Failed to delete category: ${error.message}`);
       })
       .finally(() => {
         onClose(); // Close the modal after deletion
@@ -53,7 +54,7 @@ const DayDelete = ({ id, onClose }) => {
             </button>
           </div>
           <div className="modal-body">
-            Are you sure you want to delete this day?
+            Are you sure you want to delete this category?
           </div>
           <div className="modal-footer">
             <button
@@ -78,4 +79,4 @@ const DayDelete = ({ id, onClose }) => {
   );
 };
 
-export default DayDelete;
+export default CategoryDelete;

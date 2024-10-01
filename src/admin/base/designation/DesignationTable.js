@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchDesignation,
+  fetchDesignations,
   updateDesignation,
   deleteDesignation,
-} from "../../redux/slice/designationSlice";
+} from "../../redux/slice/base/designationSlice";
 import { Link } from "react-router-dom";
 import "../../../admin/css/Table.css";
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -21,17 +21,19 @@ const DesignationTable = () => {
   const [newName, setNewName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [designationToDelete, setDesignationToDelete] = useState(null);
-
+  // Access state from Redux
+  const updateStatus = useSelector((state) => state.designations?.updateStatus);
+  const updateError = useSelector((state) => state.designations?.updateError);
   const {
-    list: designations,
+    list: designations = [],
     isLoading,
     error,
-    updateStatus,
-    updateError,
+    // updateStatus,
+    // updateError,
   } = useSelector((state) => state.designations || {});
 
   useEffect(() => {
-    dispatch(fetchDesignation());
+    dispatch(fetchDesignations());
   }, [dispatch]);
 
   const handleEdit = (id, name) => {
@@ -76,7 +78,7 @@ const DesignationTable = () => {
       .then(() => {
         toast.success("Designation deleted successfully!");
         setDesignationToDelete(null);
-        dispatch(fetchDesignation());
+        dispatch(fetchDesignations());
       })
       .catch((error) => {
         console.error("Delete Error:", error);
@@ -89,7 +91,10 @@ const DesignationTable = () => {
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
-
+  // Filter categories for search term
+  const filteredDesignations = designations.filter((designation) =>
+    designation.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(
       designations.map((designation) => ({
@@ -201,13 +206,8 @@ const DesignationTable = () => {
                                 </tr>
                               </thead>
                               <tbody>
-                                {designations
-                                  .filter((designation) =>
-                                    designation.name
-                                      ?.toLowerCase()
-                                      .includes(searchTerm.toLowerCase())
-                                  )
-                                  .map((designation, index) => (
+                                {filteredDesignations.map(
+                                  (designation, index) => (
                                     <tr key={designation.id}>
                                       <td>{index + 1}</td>
                                       <td>
@@ -255,7 +255,8 @@ const DesignationTable = () => {
                                         </button>
                                       </td>
                                     </tr>
-                                  ))}
+                                  )
+                                )}
                               </tbody>
                             </table>
                           </div>

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchDay,
+  fetchDays,
   updateDay,
   deleteDay,
   updateStatus,
   updateError,
-} from "../../redux/slice/daySlice";
+} from "../../redux/slice/base/daySlice";
 import { Link } from "react-router-dom";
 import "../../../admin/css/Table.css"; // Ensure this includes necessary styles
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
@@ -35,7 +35,7 @@ const DayTable = () => {
   } = useSelector((state) => state.days || {});
 
   useEffect(() => {
-    dispatch(fetchDay());
+    dispatch(fetchDays());
   }, [dispatch]);
 
   // To update item in the table
@@ -80,7 +80,7 @@ const DayTable = () => {
       .then(() => {
         toast.success("day deleted successfully!");
         setDayToDelete(null); // Close the modal after successful deletion
-        dispatch(fetchDay()); // Refresh the list
+        dispatch(fetchDays()); // Refresh the list
       })
       .catch((error) => {
         // Handle and log the error more robustly

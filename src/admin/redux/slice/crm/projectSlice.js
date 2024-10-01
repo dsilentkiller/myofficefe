@@ -7,7 +7,7 @@ export const fetchProject = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/project/");
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -45,13 +45,20 @@ export const fetchProjectById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/project/${id}/`
       );
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
-
+// Update Project Status
+export const updateProjectStatus = createAsyncThunk(
+  "projects/updateStatus",
+  async ({ id, status }) => {
+    const response = await axios.put(`/api/projects/${id}/`, { status });
+    return response.data;
+  }
+);
 // Update project
 export const updateProject = createAsyncThunk(
   "projects/updateProject",
@@ -61,7 +68,7 @@ export const updateProject = createAsyncThunk(
         `http://127.0.0.1:8000/api/project/update/${id}/`,
         { name }
       );
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -147,6 +154,15 @@ const projectSlice = createSlice({
       .addCase(fetchProjectById.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      })
+      .addCase(updateProjectStatus.fulfilled, (state, action) => {
+        const updatedProject = action.payload;
+        state.list = state.list.map((project) =>
+          project.id === updatedProject.id ? updatedProject : project
+        );
+        if (state.currentProject.id === updatedProject.id) {
+          state.currentProject = updatedProject;
+        }
       })
       // Create project
       .addCase(createProject.pending, (state) => {

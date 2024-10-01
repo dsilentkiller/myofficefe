@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createProvince, fetchProvince } from "../../redux/slice/provinceSlice";
+import { createProvince } from "../../redux/slice/base/provinceSlice";
 import { toast } from "react-toastify"; // Import toast
 import { Link } from "react-router-dom";
 const ProvinceForm = () => {

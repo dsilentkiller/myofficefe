@@ -17,7 +17,7 @@ export const fetchEvent = createAsyncThunk(
   "events/fetchEvent",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/events/");
+      const response = await axios.get("http://127.0.0.1:8000/api/event/");
       return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -44,7 +44,7 @@ export const createEvent = createAsyncThunk(
   async (eventData, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/events/create/",
+        "http://127.0.0.1:8000/api/event/create/",
         eventData
       );
       if (response.status === 201) {
@@ -64,7 +64,7 @@ export const fetchEventById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/events/${id}/`
+        `http://127.0.0.1:8000/api/event/${id}/`
       );
       return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
@@ -95,7 +95,7 @@ export const deleteEvent = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       // Make sure this URL is correct
-      await axios.delete(`http://127.0.0.1:8000/api/events/delete/${id}/`);
+      await axios.delete(`http://127.0.0.1:8000/api/event/delete/${id}/`);
       return id; // Return the ID of the deleted event
     } catch (error) {
       // Log the entire error to understand its structure

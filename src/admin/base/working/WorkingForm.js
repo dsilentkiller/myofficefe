@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { createWorking } from "../../redux/slice/workingSlice";
+import { createWorking } from "../../redux/slice/base/workingSlice";
 const WorkingForm = () => {
   // State to manage form data
   const [name, setName] = useState("");

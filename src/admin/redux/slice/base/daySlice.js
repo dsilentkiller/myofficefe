@@ -7,16 +7,16 @@ export const searchDay = createAsyncThunk(
     const response = await axios.get(
       `http://127.0.0.1:8000/api/setup/day/?search=${searchTerm}`
     );
-    return response.data.result.data;
+    return response.data.result;
   }
 );
 // Fetch all"days action
-export const fetchDay = createAsyncThunk(
-  "days/fetchDay",
+export const fetchDays = createAsyncThunk(
+  "days/fetchDays",
   async (_, thunkAPI) => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/setup/day/");
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -30,7 +30,7 @@ export const fetchDay = createAsyncThunk(
 //         "http://127.0.0.1:8000/api/setup/day/create/",
 //         dayData
 //       );
-//       return response.data.result.data; // Adjust this based on your actual API response structure
+//       return response.data.result; // Adjust this based on your actual API response structure
 //     } catch (error) {
 //       return thunkAPI.rejectWithValue(error.response.result.data);
 //     }
@@ -47,7 +47,7 @@ export const createDay = createAsyncThunk(
       );
       if (response.status === 201) {
         // Ensure it's a successful creation response
-        return response.data.result.data;
+        return response.data.result;
       } else {
         return thunkAPI.rejectWithValue("Failed to create day.");
       }
@@ -64,7 +64,7 @@ export const fetchDayById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/setup/day/${id}/`
       );
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -79,7 +79,7 @@ export const updateDay = createAsyncThunk(
         `http://127.0.0.1:8000/api/setup/day/update/${id}/`,
         { name }
       );
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       const message =
         error.response?.data?.message || error.message || "An error occurred";
@@ -127,15 +127,15 @@ const daySlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Fetch all"days
-      .addCase(fetchDay.pending, (state) => {
+      .addCase(fetchDays.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchDay.fulfilled, (state, action) => {
+      .addCase(fetchDays.fulfilled, (state, action) => {
         state.isLoading = false;
         state.list = action.payload;
       })
-      .addCase(fetchDay.rejected, (state, action) => {
+      .addCase(fetchDays.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
       })

@@ -12,12 +12,12 @@ export const searchAttendee = createAsyncThunk(
   }
 );
 // Fetch all"attendees action
-export const fetchAttendee = createAsyncThunk(
-  "attendees/fetchAttendee",
+export const fetchAttendees = createAsyncThunk(
+  "attendees/fetchAttendees",
   async (_, thunkAPI) => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/attendee/");
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -117,7 +117,9 @@ export const deleteAttendee = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       // Make sure this URL is correct
-      await axios.delete(`http://127.0.0.1:8000/api/attendee/delete/${id}/`);
+      await axios.delete(
+        `     http://127.0.0.1:8000/api/attendee/delete/${id}/`
+      );
       return id; // Return the ID of the deleted attendee
     } catch (error) {
       // Log the entire error to understand its structure
@@ -151,15 +153,15 @@ const attendeeSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Fetch all"attendees
-      .addCase(fetchAttendee.pending, (state) => {
+      .addCase(fetchAttendees.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchAttendee.fulfilled, (state, action) => {
+      .addCase(fetchAttendees.fulfilled, (state, action) => {
         state.isLoading = false;
         state.list = action.payload;
       })
-      .addCase(fetchAttendee.rejected, (state, action) => {
+      .addCase(fetchAttendees.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
       })
@@ -243,90 +245,3 @@ const attendeeSlice = createSlice({
   },
 });
 export default attendeeSlice.reducer;
-
-// // src/store/attendeeSlice.js
-// import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-// import axios from "axios";
-
-// const initialState = {
-//   attendees: [],
-//   loading: false,
-//   error: null,
-// };
-
-// // Async thunks for API calls
-// export const fetchAttendees = createAsyncThunk(
-//   "attendees/fetchAttendees",
-//   async () => {
-//     const response = await axios.get("http://localhost:8000/attendee/");
-//     return response.data.result;
-//   }
-// );
-
-// export const addAttendee = createAsyncThunk(
-//   "attendees/addAttendee",
-//   async (attendee) => {
-//     const response = await axios.post(
-//       "http://localhost:8000/attendee/create/",
-//       attendee
-//     );
-//     return response.data.result;
-//   }
-// );
-
-// export const updateAttendee = createAsyncThunk(
-//   "attendees/updateAttendee",
-//   async ({ id, attendee }) => {
-//     const response = await axios.put(
-//       `http://localhost:8000/attendee/update/${id}/`,
-//       attendee
-//     );
-//     return response.data.result;
-//   }
-// );
-
-// export const deleteAttendee = createAsyncThunk(
-//   "attendees/deleteAttendee",
-//   async (id) => {
-//     await axios.delete(`http://localhost:8000/attendee/delete/${id}/`);
-//     return id;
-//   }
-// );
-
-// const attendeeSlice = createSlice({
-//   name: "attendees",
-//   initialState,
-//   reducers: {},
-//   extraReducers: (builder) => {
-//     builder
-//       .addCase(fetchAttendees.pending, (state) => {
-//         state.loading = true;
-//       })
-//       .addCase(fetchAttendees.fulfilled, (state, action) => {
-//         state.loading = false;
-//         state.attendees = action.payload;
-//       })
-//       .addCase(fetchAttendees.rejected, (state, action) => {
-//         state.loading = false;
-//         state.error = action.error.message;
-//       })
-//       .addCase(addAttendee.fulfilled, (state, action) => {
-//         state.attendees.push(action.payload);
-//       })
-//       .addCase(updateAttendee.fulfilled, (state, action) => {
-//         const index = state.attendees.findIndex(
-//           (attendee) => attendee.id === action.payload.id
-//         );
-//         if (index !== -1) {
-//           state.attendees[index] = action.payload;
-//         }
-//       })
-//       .addCase(deleteAttendee.fulfilled, (state, action) => {
-//         state.attendees = state.attendees.filter(
-//           (attendee) => attendee.id !== action.payload
-//         );
-//       });
-//   },
-// });
-
-// export default attendeeSlice.reducer;

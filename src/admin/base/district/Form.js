@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createDistrict } from "../../redux/slice/districtSlice";
+import { createDistrict } from "../../redux/slice/base/districtSlice";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";

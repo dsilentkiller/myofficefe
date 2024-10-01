@@ -7,6 +7,11 @@ const CrmHeader = () => {
         {/* <!-- Left navbar links --> */}
         <ul className="navbar-nav">
           <li className="nav-item d-none d-sm-inline-block">
+            <Link to="category" className="nav-link">
+              Category
+            </Link>
+          </li>
+          <li className="nav-item d-none d-sm-inline-block">
             <Link to="enquiry" className="nav-link">
               Enquiry
             </Link>

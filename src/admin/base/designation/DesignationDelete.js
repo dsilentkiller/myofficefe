@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "../../css/delete.css";
-import { deleteDesignation } from "../../redux/slice/designationSlice";
+import { deleteDesignation } from "../../redux/slice/base/designationSlice";
 
 const DesignationDelete = ({ id, onClose }) => {
   const dispatch = useDispatch();

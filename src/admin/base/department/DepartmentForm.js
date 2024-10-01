@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   createDepartment,
-  fetchDepartment,
-} from "../../redux/slice/departmentSlice";
+  fetchDepartments,
+} from "../../redux/slice/base/departmentSlice";
 
 const DepartmentForm = () => {
   const [formData, setFormData] = useState({ name: "" });
@@ -16,7 +16,8 @@ const DepartmentForm = () => {
   const departments = useSelector((state) => state.departments.list || []);
 
   useEffect(() => {
-    dispatch(fetchDepartment()); // Ensure departments are fetched on component mount
+    dispatch(fetchDepartments()); // Ensure departments are fetched on component mount
+    // console.log(dispatch);
   }, [dispatch]);
 
   useEffect(() => {

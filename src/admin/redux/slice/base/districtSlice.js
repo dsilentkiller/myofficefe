@@ -2,14 +2,14 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // Thunks
-export const fetchDistrict = createAsyncThunk(
-  "district/fetchDistrict",
+export const fetchDistricts = createAsyncThunk(
+  "districts/fetchDistricts",
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(
         "http://127.0.0.1:8000/api/setup/district/"
       );
-      return response.data.result.data; // Adjust based on your API response
+      return response.data.result; // Adjust based on your API response
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -17,7 +17,7 @@ export const fetchDistrict = createAsyncThunk(
 );
 
 export const createDistrict = createAsyncThunk(
-  "district/createDistrict",
+  "districts/createDistrict",
   async (districtData, thunkAPI) => {
     try {
       const response = await axios.post(
@@ -32,13 +32,13 @@ export const createDistrict = createAsyncThunk(
 );
 
 export const fetchDistrictById = createAsyncThunk(
-  "district/fetchDistrictById",
+  "districts/fetchDistrictById",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
         `http://127.0.0.1:8000/api/setup/district/${id}/`
       );
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       const message =
         error.response?.data?.message || error.message || "An error occurred";
@@ -48,14 +48,14 @@ export const fetchDistrictById = createAsyncThunk(
 );
 
 export const updateDistrict = createAsyncThunk(
-  "district/updateDistrict",
+  "districts/updateDistrict",
   async ({ id, name }, thunkAPI) => {
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/api/setup/district/update/${id}/`,
         { name }
       );
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       const message =
         error.response?.data?.message || error.message || "An error occurred";
@@ -76,12 +76,12 @@ export const updateDistrict = createAsyncThunk(
 
 // search
 export const searchDistrict = createAsyncThunk(
-  "district/searchDistrict",
+  "districts/searchDistrict",
   async (searchTerm) => {
     const response = await axios.get(
       `http://127.0.0.1:8000/api/setup/district/?search=${searchTerm}`
     );
-    return response.data.result.data;
+    return response.data.result;
   }
 );
 
@@ -121,15 +121,15 @@ const districtSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Fetch district
-      .addCase(fetchDistrict.pending, (state) => {
+      .addCase(fetchDistricts.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchDistrict.fulfilled, (state, action) => {
+      .addCase(fetchDistricts.fulfilled, (state, action) => {
         state.isLoading = false;
         state.list = action.payload;
       })
-      .addCase(fetchDistrict.rejected, (state, action) => {
+      .addCase(fetchDistricts.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })

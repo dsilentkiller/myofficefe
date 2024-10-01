@@ -9,17 +9,19 @@ import {
   deleteProject,
   updateStatus,
   updateError,
-} from "../../redux/slice/projectSlice";
+} from "../../redux/slice/crm/projectSlice";
 import "../../../admin/css/Table.css";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import autoTable from "jspdf-autotable";
 import { useNavigate } from "react-router-dom";
+import ProjectDelete from "./ProjectDelete";
 const ProjectTable = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [projectToDelete, setProjectToDelete] = useState(null);
   const projects = useSelector((state) => state.projects?.list || []);
   // console.log(projects);
   const updateStatus = useSelector((state) => state.projects?.updateStatus);
@@ -31,6 +33,15 @@ const ProjectTable = () => {
   useEffect(() => {
     dispatch(fetchProject());
   }, [dispatch]);
+  // Handle update
+  // const handleUpdate = (e) => {
+  //   e.preventDefault();
+  //   if (editId !== null) {
+  //     dispatch(updateproject({ id: editId, project_name: newName }));
+  //     setEditId(null);
+  //     setNewName("");
+  //   }
+  // };
 
   // useEffect(() => {
   //   if (updateStatus === "succeeded") {
@@ -65,18 +76,40 @@ const ProjectTable = () => {
     createStatus,
     createError,
   ]);
-
+  //search button -----------
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
-  //--converting first letter  capital
-  // const formatName = (name) => {
-  //   if (!name) return "";
-  //   return name
-  //     .split(" ")
-  //     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-  //     .join(" ");
-  // };
+
+  // Filter categories for search term
+  const filteredProjects = projects.filter((project) =>
+    project.project_name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  //--- Project delete ------------
+  const handleDelete = (id) => {
+    setProjectToDelete(id); // Set the project ID to trigger the modal
+  };
+
+  const confirmDelete = (id) => {
+    dispatch(deleteProject(id))
+      .unwrap()
+      .then(() => {
+        toast.success("project deleted successfully!");
+        setProjectToDelete(null); // Close the modal after successful deletion
+        dispatch(fetchProject()); // Refresh the list
+      })
+      .catch((error) => {
+        // Handle and log the error more robustly
+        console.error("Delete Error:", error);
+        toast.error(
+          `Failed to delete project: ${
+            error.message || deleteError || "Unknown error"
+          }`
+        );
+      });
+  };
+  //project delete end  box -------------------
   const formatName = React.useCallback((name) => {
     if (!name) return "";
     return name
@@ -88,7 +121,7 @@ const ProjectTable = () => {
     if (createStatus === "succeeded") {
       toast.success("Project created successfully!");
       setFormData({
-        client_id: "",
+        // client_id: "",
         project_name: "",
         description: "",
         start_date: "",
@@ -115,7 +148,7 @@ const ProjectTable = () => {
     autoTable(doc, {
       head: [
         [
-          "Client ID",
+          // "Client ID",
           "Project Name",
           "Description",
           "Start Date",
@@ -124,7 +157,7 @@ const ProjectTable = () => {
         ],
       ],
       body: projects.map((project) => [
-        project.client_id,
+        // project.client_id,
         project.project_name,
         project.description,
         project.start_date,
@@ -186,7 +219,7 @@ const ProjectTable = () => {
                       <table className="table table-bordered">
                         <thead>
                           <tr>
-                            <th>Client ID</th>
+                            <th>#</th>
                             <th>Project Name</th>
                             <th>Description</th>
                             <th>Start Date</th>
@@ -196,28 +229,40 @@ const ProjectTable = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {projects.length > 0 ? (
-                            projects.map((project, index) => (
+                          {filteredProjects.length > 0 ? (
+                            filteredProjects.map((project, index) => (
                               <tr key={project.id}>
                                 <td>{index + 1}</td>
-                                <td>{project.client_id}</td>
-                                <td>{project.project_name}</td>
+                                {/* <td>{project.client_id}</td> */}
+                                <td>{formatName(project.project_name)}</td>
                                 <td>{project.description}</td>
                                 <td>{project.start_date}</td>
                                 <td>{project.end_date}</td>
                                 <td>{project.status}</td>
                                 <td>
-                                  <Link to={`/projects/update/${project.id}`}>
-                                    <FaEdit /> Edit
-                                  </Link>
-                                  |
-                                  <Link to={`/projects/detail/${project.id}`}>
+                                  <button
+                                    to={`/projects/update/${project.id}`}
+                                    className="btn btn-primary"
+                                  >
+                                    <FaEdit />
+                                  </button>
+                                  <span></span>
+
+                                  <button
+                                    to={`/projects/detail/${project.id}`}
+                                    className="btn btn-secondary"
+                                  >
                                     View
-                                  </Link>
-                                  |
-                                  <Link to={`/projects/delete/${project.id}`}>
-                                    <FaTrash /> Delete
-                                  </Link>
+                                  </button>
+                                  <span></span>
+                                  <button
+                                    to={`/projects/delete/${project.id}`}
+                                    onClick={() => handleDelete(project.id)}
+                                    // onClick={() => handleDelete(category.id)}
+                                    className="btn btn-danger"
+                                  >
+                                    <FaTrash />
+                                  </button>
                                 </td>
                               </tr>
                             ))
@@ -229,6 +274,14 @@ const ProjectTable = () => {
                         </tbody>
                       </table>
                     </div>
+                    {/* Delete Confirmation Modal */}
+                    {projectToDelete !== null && (
+                      <ProjectDelete
+                        id={projectToDelete}
+                        onClose={() => setProjectToDelete(null)}
+                        onConfirm={() => confirmDelete(projectToDelete)}
+                      />
+                    )}
                   </div>
                 </div>
               </div>

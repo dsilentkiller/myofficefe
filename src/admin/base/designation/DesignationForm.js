@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   createDesignation,
-  fetchDesignation,
-} from "../../redux/slice/designationSlice";
+  fetchDesignations,
+} from "../../redux/slice/base/designationSlice";
 
 const DesignationForm = () => {
   const [formData, setFormData] = useState({ name: "" });
@@ -16,7 +16,7 @@ const DesignationForm = () => {
   const designations = useSelector((state) => state.designations.list || []);
 
   useEffect(() => {
-    dispatch(fetchDesignation()); // Ensure designations are fetched on component mount
+    dispatch(fetchDesignations()); // Ensure designations are fetched on component mount
   }, [dispatch]);
 
   useEffect(() => {

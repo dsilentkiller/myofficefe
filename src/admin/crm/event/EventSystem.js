@@ -1,17 +1,14 @@
-
-
-// src/components/EventSystem.js
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addEvent,
+  createEvent,
+  fetchEvent,
   updateEvent,
   removeEvent,
-} from "../../redux/slice/eventSlice";
+} from "../../redux/slice/crm/eventSlice";
 import { useNavigate } from "react-router-dom"; // For navigation
-import React, { useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import Select from "react-select";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "admin-lte/dist/css/adminlte.min.css"; // Import AdminLTE CSS
 import { ToastContainer, toast } from "react-toastify";
@@ -25,25 +22,50 @@ const EventSystem = () => {
     title: "",
     start: "",
     end: "",
-    attendees: [],
+    attendees: [], // Store selected attendee IDs
     email: "",
     notes: "",
     is_canceled: false,
   });
-  const attendeesOptions = [
-    { value: "John Doe", label: "John Doe" },
-    { value: "Jane Smith", label: "Jane Smith" },
-    { value: "Alice Brown", label: "Alice Brown" },
-  ]; // Example attendees, modify as per your options
 
-  const [selectedEvent, setSelectedEvent] = useState(null); // Store the selected event
+  const [attendees, setAttendees] = useState([]); // Dynamic list of attendees fetched from the AttendeeTable
 
   const dispatch = useDispatch();
   const events = useSelector((state) => state.events.events); // Fetch events from Redux
 
+  useEffect(() => {
+    const fetchAttendee = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/attendee"); // Replace with your actual API endpoint
+        const data = await response.json();
+        console.log("Fetched attendees data:", data);
+
+        if (Array.isArray(data)) {
+          setAttendees(data);
+        } else if (data.results && Array.isArray(data.results)) {
+          setAttendees(data.results);
+        } else {
+          console.error("Unexpected data format for attendees:", data);
+          setAttendees([]);
+        }
+      } catch (error) {
+        console.error("Error fetching attendees:", error);
+        setAttendees([]);
+      }
+    };
+
+    fetchAttendee();
+  }, [dispatch]);
+
   const handleSelectSlot = ({ start, end }) => {
     setNewEvent({ ...newEvent, start, end });
     setModalOpen(true);
+  };
+  const handleAttendeeSelect = (event) => {
+    const selectedOptions = Array.from(event.target.selectedOptions).map(
+      (option) => option.value
+    );
+    setNewEvent({ ...newEvent, attendees: selectedOptions }); // Update attendees
   };
 
   const handleEventSubmit = (e) => {
@@ -53,19 +75,19 @@ const EventSystem = () => {
       title: newEvent.title,
       start: new Date(newEvent.start),
       end: new Date(newEvent.end),
-      attendees: newEvent.attendees.map((attendee) => attendee.label),
+      attendees: newEvent.attendees.map((attendeeId) => {
+        const attendee = attendees.find((a) => a.id === attendeeId);
+        return attendee ? attendee.name : attendeeId; // Get name or fallback to ID
+      }),
       email: newEvent.email,
       notes: newEvent.notes,
     };
 
-    // Dispatch the action to add event
-    dispatch(addEvent(newEventObject));
-
+    dispatch(createEvent(newEventObject));
     toast.success("Event created successfully!");
-    sendEmail(newEventObject); // Send email after event creation
+    sendEmail(newEventObject);
 
     setModalOpen(false);
-    setSelectedEvent(null);
     setNewEvent({
       title: "",
       start: "",
@@ -77,12 +99,11 @@ const EventSystem = () => {
     });
   };
 
-  // Function to send email using EmailJS
   const sendEmail = (eventDetails) => {
     const emailParams = {
       title: eventDetails.title,
       email: eventDetails.email,
-      attendees: eventDetails.attendees,
+      attendees: eventDetails.attendees.join(", "),
       start: moment(eventDetails.start).format("YYYY-MM-DD HH:mm"),
       end: moment(eventDetails.end).format("YYYY-MM-DD HH:mm"),
       notes: eventDetails.notes,
@@ -97,25 +118,12 @@ const EventSystem = () => {
       });
   };
 
-  // Handle event click to view details
-  const handleEventClick = (event) => {
-    setSelectedEvent(event); // Set selected event for viewing details
-  };
-
-  // Modal close handler
-  const closeModal = () => {
-    setModalOpen(false);
-    setSelectedEvent(null);
-    setNewEvent({
-      title: "",
-      start: "",
-      end: "",
-      attendees: [],
-      email: "",
-      notes: "",
-      is_canceled: false,
-    });
-  };
+  // const handleAttendeeSelect = (event) => {
+  //   const selectedOptions = Array.from(event.target.selectedOptions).map(
+  //     (option) => option.value
+  //   );
+  //   setNewEvent({ ...newEvent, attendees: selectedOptions });
+  // };
 
   return (
     <div className="content-wrapper">
@@ -143,7 +151,6 @@ const EventSystem = () => {
                     titleAccessor="title"
                     selectable
                     onSelectSlot={handleSelectSlot}
-                    onSelectEvent={handleEventClick} // Click event to view details
                     style={{ height: 500 }}
                   />
                 </div>
@@ -162,34 +169,43 @@ const EventSystem = () => {
           <div className="modal-dialog modal-lg" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">
-                  {selectedEvent ? "Update Event" : "Create New Event"}
-                </h5>
-                <button type="button" className="close" onClick={closeModal}>
+                <h5 className="modal-title">Create New Event</h5>
+                <button
+                  type="button"
+                  className="close"
+                  onClick={() => setModalOpen(false)}
+                >
                   <span>&times;</span>
                 </button>
               </div>
               <div className="modal-body">
-                <form onSubmit={handleEventSubmit}>
-                  <div className="form-group">
-                    <label>Event Title</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter event title"
-                      value={newEvent.title}
-                      onChange={(e) =>
-                        setNewEvent({
-                          ...newEvent,
-                          title: e.target.value,
-                        })
-                      }
-                      required
-                    />
+                <form onSubmit={handleEventSubmit} className="form-horizontal">
+                  <div className="form-group row">
+                    <label className="col-sm-2 col-form-label">
+                      Event Title
+                    </label>
+                    <div className="col-sm-10">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter event title"
+                        value={newEvent.title}
+                        onChange={(e) =>
+                          setNewEvent({
+                            ...newEvent,
+                            title: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
                   </div>
-                  <div className="form-row">
-                    <div className="form-group col-md-6">
-                      <label>Start Date and Time</label>
+
+                  <div className="form-group row">
+                    <label className="col-sm-2 col-form-label">
+                      Start Date and Time
+                    </label>
+                    <div className="col-sm-4">
                       <input
                         type="datetime-local"
                         className="form-control"
@@ -205,8 +221,11 @@ const EventSystem = () => {
                         required
                       />
                     </div>
-                    <div className="form-group col-md-6">
-                      <label>End Date and Time</label>
+
+                    <label className="col-sm-2 col-form-label">
+                      End Date and Time
+                    </label>
+                    <div className="col-sm-4">
                       <input
                         type="datetime-local"
                         className="form-control"
@@ -221,117 +240,117 @@ const EventSystem = () => {
                       />
                     </div>
                   </div>
-                  <div className="form-group">
-                    <label>Attendees</label>
-                    <Select
-                      isMulti
-                      options={attendeesOptions}
-                      value={newEvent.attendees}
-                      onChange={(selectedOptions) =>
-                        setNewEvent({
-                          ...newEvent,
-                          attendees: selectedOptions,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Email</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      placeholder="Enter email"
-                      value={newEvent.email}
-                      onChange={(e) =>
-                        setNewEvent({
-                          ...newEvent,
-                          email: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Notes</label>
-                    <textarea
-                      className="form-control"
-                      rows="3"
-                      placeholder="Enter notes"
-                      value={newEvent.notes}
-                      onChange={(e) =>
-                        setNewEvent({
-                          ...newEvent,
-                          notes: e.target.value,
-                        })
-                      }
-                    ></textarea>
-                  </div>
-                  <div className="modal-footer">
-                    <button type="submit" className="btn btn-primary">
-                      Save Event
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={closeModal}
+
+                  {/* Attendee Selection */}
+                  {/* <div className="form-group row">
+                    <label
+                      className="col-sm-2 col-form-label"
+                      htmlFor="attendeeSelect"
                     >
-                      Close
-                    </button>
+                      Attendees
+                    </label>
+                    <div className="col-sm-10"> */}
+                  {/* <select
+                        id="attendeeSelect"
+                        className="form-control"
+                        multiple
+                        value={newEvent.attendees}
+                        onChange={(e) =>
+                          setNewEvent({
+                            ...newEvent,
+                            attendee: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="">-- select an attendee --</option>
+                        {attendees.map((attendee) => (
+                          <option key={attendee.id} value={attendee.id}>
+                            {attendee.attendee_name}
+                          </option>
+                        ))}
+
+                      </select> */}
+
+                  {/* Attendee Selection */}
+                  <div className="form-group row">
+                    <label
+                      className="col-sm-2 col-form-label"
+                      htmlFor="attendeeSelect"
+                    >
+                      Attendees
+                    </label>
+                    <div className="col-sm-10">
+                      <select
+                        id="attendeeSelect"
+                        name="attendee.attendee_name"
+                        className="form-control"
+                        multiple
+                        value={newEvent.attendees}
+                        onChange={handleAttendeeSelect}
+                      >
+                        <option value="">--select an attendee--</option>
+                        {attendees.length > 0 ? (
+                          attendees.map((attendee) => (
+                            <option key={attendee.id} value={attendee.id}>
+                              {attendee.attendee_name}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="">no attendee found</option>
+                        )}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Other form fields... */}
+                  {/* 
+                    </div>
+                  </div> */}
+
+                  <div className="form-group row">
+                    <label className="col-sm-2 col-form-label">Email</label>
+                    <div className="col-sm-10">
+                      <input
+                        type="email"
+                        className="form-control"
+                        placeholder="Enter email"
+                        value={newEvent.email}
+                        onChange={(e) =>
+                          setNewEvent({
+                            ...newEvent,
+                            email: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group row">
+                    <label className="col-sm-2 col-form-label">Notes</label>
+                    <div className="col-sm-10">
+                      <textarea
+                        className="form-control"
+                        placeholder="Enter notes"
+                        value={newEvent.notes}
+                        onChange={(e) =>
+                          setNewEvent({
+                            ...newEvent,
+                            notes: e.target.value,
+                          })
+                        }
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <div className="form-group row">
+                    <div className="col-sm-10 offset-sm-2">
+                      <button type="submit" className="btn btn-primary">
+                        Submit
+                      </button>
+                    </div>
                   </div>
                 </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Event Details Modal */}
-      {selectedEvent && (
-        <div
-          className="modal fade show"
-          role="dialog"
-          style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        >
-          <div className="modal-dialog modal-lg" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Event Details</h5>
-                <button
-                  type="button"
-                  className="close"
-                  onClick={() => setSelectedEvent(null)}
-                >
-                  <span>&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <h3>{selectedEvent.title}</h3>
-                <p>
-                  <strong>Start:</strong>{" "}
-                  {moment(selectedEvent.start).format("MMMM Do YYYY, h:mm A")}
-                </p>
-                <p>
-                  <strong>End:</strong>{" "}
-                  {moment(selectedEvent.end).format("MMMM Do YYYY, h:mm A")}
-                </p>
-                <p>
-                  <strong>Attendees:</strong>{" "}
-                  {selectedEvent.attendees.join(", ")}
-                </p>
-                <p>
-                  <strong>Email:</strong> {selectedEvent.email}
-                </p>
-                <p>
-                  <strong>Notes:</strong> {selectedEvent.notes}
-                </p>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setSelectedEvent(null)}
-                >
-                  Close
-                </button>
               </div>
             </div>
           </div>

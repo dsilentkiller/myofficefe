@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   fetchDistrictById,
   updateDistrict,
-} from "../../redux/slice/districtSlice";
+} from "../../redux/slice/base/districtSlice";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

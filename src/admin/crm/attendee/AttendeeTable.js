@@ -1,94 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import {
-  fetchAttendee,
-  updateAttendee,
+  fetchAttendees,
   deleteAttendee,
-  // updateStatus,
-  // updateError,
-} from "../../redux/slice/attendeeSlice";
-import { Link } from "react-router-dom";
-
-import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
-// import AttendeeDelete from "./AttendeeDelete";
-import { toast } from "react-toastify"; // Import toast for error messages
-// import "../../../css/Table.css";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable"; // Import the autoTable plugin
-import { saveAs } from "file-saver";
-import * as XLSX from "xlsx";
-// import "../../../css/Table.css";
+} from "../../redux/slice/crm/attendeeSlice";
+import { toast } from "react-toastify";
+import { useState } from "react";
 
 const AttendeeTable = () => {
   const dispatch = useDispatch();
-  const [editId, setEditId] = useState(null);
-  const [newName, setNewName] = useState("");
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [attendeeToDelete, setAttendeeToDelete] = useState(null);
-  // Access updateStatus state property
-  // const updateStatus = useSelector((state) => state.attendee.updateStatus);
-  // const updateError = useSelector((state) => state.attendee.updateError);
+
+  // Access state from Redux
+  const updateStatus = useSelector((state) => state.categories?.updateStatus);
+  const updateError = useSelector((state) => state.categories?.updateError);
+
+  const fetchError = useSelector((state) => state.attendees.fetchError);
   const {
-    list: attendees = [],
-    // isLoading,
-    // error,
-    // deleteStatus,
+    list: attendees = [], // Default to empty array if undefined
+    isLoading,
+    error,
     deleteError,
-  } = useSelector((state) => state.attendees || {});
-
+  } = useSelector((state) => state.categories || {});
   useEffect(() => {
-    dispatch(fetchAttendee());
+    dispatch(fetchAttendees());
   }, [dispatch]);
-
-  // To update item in the table
-  // const handleEdit = (id, name) => {
-  //   setEditId(id);
-  //   setNewName(name);
-  // };
-
-  // // Handle update item in attendee table
-  // const handleUpdate = (e) => {
-  //   e.preventDefault();
-  //   if (editId !== null) {
-  //     dispatch(updateAttendee({ id: editId, name: newName }));
-  //     setEditId(null);
-  //     setNewName("");
-  //   }
-  // };
-  //-----update status toast--------
-  // useEffect(() => {
-  //   if (updateStatus === "succeeded") {
-  //     toast.success("attendees updated successfully!");
-  //   } else if (updateStatus === "failed") {
-  //     toast.error(
-  //       `Failed to update attendee: ${updateError || "Unknown error"}`
-  //     );
-  //   }
-  // }, [updateStatus, updateError]);
-  //--converting first letter  capital
-  const formatName = (name) => {
-    if (!name) return "";
-    return name
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
+  const handleDelete = (id) => {
+    setAttendeeToDelete(id);
+    // Don't re-fetch attendees here, let the confirmation trigger it
   };
-  // Handle delete confirmation
-  // const handleDelete = (id) => {
-  //   setAttendeeToDelete(id); // Set the attendee ID to trigger the modal
-  // };
 
   const confirmDelete = (id) => {
     dispatch(deleteAttendee(id))
       .unwrap()
       .then(() => {
-        toast.success("attendee deleted successfully!");
+        toast.success("Attendee deleted successfully!");
         setAttendeeToDelete(null); // Close the modal after successful deletion
-        dispatch(fetchAttendee()); // Refresh the list
+        dispatch(fetchAttendees()); // Refresh the list only once
       })
       .catch((error) => {
-        // Handle and log the error more robustly
-        console.error("Delete Error:", error);
         toast.error(
           `Failed to delete attendee: ${
             error.message || deleteError || "Unknown error"
@@ -96,151 +49,95 @@ const AttendeeTable = () => {
         );
       });
   };
-  //--- handle searchitem in a table ----
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-  // Export to Excel
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(
-      attendees.map((attendee) => ({
-        ID: attendee.id,
-        Name: attendee.name,
-      }))
-    );
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "attendees");
-    XLSX.writeFile(workbook, "attendee.xlsx");
-  };
 
-  // Export to PDF
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text("attendees List", 20, 10);
-
-    const tableColumn = ["ID", "Name"];
-    const tableRows = attendees.map((attendee) => [attendee.id, attendee.name]);
-
-    autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-    });
-    doc.save("attendee.pdf");
+  //--converting first letter  capital
+  const formatName = (attendee_name) => {
+    if (!attendee_name) return "";
+    return attendee_name
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
   };
+  // Filter categories for search term
+  const filteredAttendees = attendees.filter((attendee) =>
+    attendee.attendee_name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="content-wrapper">
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <div className="container">
         <div className="container-fluid">
-          <h5 className="navbar-brand">attendee List</h5>
-          <div className="navbar-nav ml-auto">
-            <Link to="create" className="nav-link btn btn-primary">
-              <h5>Add attendee</h5>
-            </Link>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setSearchTerm(e.target.q.value);
-              }}
-              className="form-inline ml-3"
-            >
-              <div className="input-group">
-                search
-                <input
-                  type="search"
-                  id="default-search"
-                  name="search_term"
-                  value={searchTerm}
-                  className="form-control"
-                  placeholder="Search attendee..."
-                  onChange={handleSearchChange}
-                  required
-                />
+          <div className="card">
+            <nav className="navbar navbar-expand-lg navbar-light bg-light">
+              <div className="container-fluid">
+                <h5 className="navbar-brand">Attendee Table</h5>
+                <div className="navbar-nav ml-auto">
+                  <Link to="create" className="nav-link btn btn-primary">
+                    <h5>Add Attendee</h5>
+                  </Link>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                    }}
+                    className="form-inline ml-3"
+                  >
+                    <div className="input-group">
+                      <input
+                        type="search"
+                        id="default-search"
+                        name="search_term"
+                        value={searchTerm}
+                        className="form-control"
+                        placeholder="Search attendees..."
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </form>
+                </div>
               </div>
-            </form>
-          </div>
-
-          <div className="form-inline ml-4" id="navbarSupportedContent">
-            <ul className="navbar-nav mr-30">
-              <li className="nav-item">
-                <button
-                  id="exportExcel"
-                  className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
-                  onClick={exportToExcel}
-                >
-                  Export Excel
-                </button>
-              </li>
-              <li className="nav-item">
-                <button
-                  id="exportPDF"
-                  className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
-                  onClick={exportToPDF}
-                >
-                  Export PDF
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-      <section className="content-header">
-        <h1>Attendees List</h1>
-      </section>
-      <section className="content">
-        <div className="container-fluid">
-          <div className="card card-primary">
+            </nav>
             <div className="card-body">
+              {fetchError && <p className="text-danger">{fetchError}</p>}
               <table className="table table-bordered">
                 <thead>
                   <tr>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>WhatsApp</th>
                     <th>Phone</th>
-                    <th>Organization</th>
-                    <th>Organization Details</th>
-                    <th>action</th>
+                    <th>Organization Name</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {attendees.length > 0 ? (
-                    attendees
-                      .filter((attendee) =>
-                        attendee.name
-                          ?.toLowerCase()
-                          .includes(searchTerm.toLowerCase())
-                      )
-                      // {attendee.length > 0 ? (
-                      .map((attendee, index) => (
-                        <tr key={attendee.id}>
-                          <td>{index + 1}</td>
-                          <td>{formatName(attendee.name)}</td>
-                          <td>{formatName(attendee.email)}</td>
-                          <td>{attendee.whatsapp}</td>
-                          <td>{attendee.pri_phone}</td>
-                          <td>{attendee.organization}</td>
-                          <td>{attendee.organizationDetail}</td>
-                          <td>
-                            <Link to={`/attendees/update/${attendee.id}`}>
-                              <FaEdit /> Edit
-                            </Link>
-                            |
-                            <Link to={`/attendees/detail/${attendee.id}`}>
-                              View
-                            </Link>
-                            |
-                            <Link to={`/attendees/delete/${attendee.id}`}>
-                              <FaTrash /> Delete
-                            </Link>
-                          </td>
-                        </tr>
-                      ))
+                  {filteredAttendees.length > 0 ? (
+                    filteredAttendees.map((attendee, index) => (
+                      <tr key={attendee.id}>
+                        <td>{index + 1}</td>
+                        <td>{attendee.attendee_name}</td>
+                        <td>{attendee.email}</td>
+                        <td>{attendee.pri_phone}</td>
+                        <td>{attendee.organization_name}</td>
+                        <td>
+                          <Link
+                            to={`attendee/edit/${attendee.id}`}
+                            className="btn btn-warning btn-sm"
+                          >
+                            Edit
+                          </Link>
+                          <button
+                            className="btn btn-danger btn-sm ml-2"
+                            onClick={() => handleDelete(attendee.id)}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className="text-center">
-                        No Attendees Found
+                      <td colSpan="5" className="text-center">
+                        No attendees found.
                       </td>
                     </tr>
                   )}
@@ -249,15 +146,7 @@ const AttendeeTable = () => {
             </div>
           </div>
         </div>
-        {/* Delete Confirmation Modal */}
-        {/* {attendeeToDelete !== null && (
-          <AttendeeDelete
-            id={attendeeToDelete}
-            onClose={() => setAttendeeToDelete(null)}
-            onConfirm={() => confirmDelete(attendeeToDelete)}
-          />
-        )} */}
-      </section>
+      </div>
     </div>
   );
 };
