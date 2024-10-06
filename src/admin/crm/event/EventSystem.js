@@ -1,129 +1,61 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  createEvent,
-  fetchEvent,
-  updateEvent,
-  removeEvent,
-} from "../../redux/slice/crm/eventSlice";
-import { useNavigate } from "react-router-dom"; // For navigation
+import { createEvent } from "../../redux/slice/crm/eventSlice";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "admin-lte/dist/css/adminlte.min.css"; // Import AdminLTE CSS
+import "admin-lte/dist/css/adminlte.min.css";
 import { ToastContainer, toast } from "react-toastify";
-import emailjs from "emailjs-com"; // Import EmailJS if not already installed
+import "react-toastify/dist/ReactToastify.css"; // Include toastify styles
 
 const localizer = momentLocalizer(moment);
 
 const EventSystem = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [newEvent, setNewEvent] = useState({
+  const [formData, setFormData] = useState({
     title: "",
     start: "",
     end: "",
-    attendees: [], // Store selected attendee IDs
     email: "",
     notes: "",
     is_canceled: false,
   });
 
-  const [attendees, setAttendees] = useState([]); // Dynamic list of attendees fetched from the AttendeeTable
-
   const dispatch = useDispatch();
+
   const events = useSelector((state) => state.events.events); // Fetch events from Redux
-
-  useEffect(() => {
-    const fetchAttendee = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/api/attendee"); // Replace with your actual API endpoint
-        const data = await response.json();
-        console.log("Fetched attendees data:", data);
-
-        if (Array.isArray(data)) {
-          setAttendees(data);
-        } else if (data.results && Array.isArray(data.results)) {
-          setAttendees(data.results);
-        } else {
-          console.error("Unexpected data format for attendees:", data);
-          setAttendees([]);
-        }
-      } catch (error) {
-        console.error("Error fetching attendees:", error);
-        setAttendees([]);
-      }
-    };
-
-    fetchAttendee();
-  }, [dispatch]);
+  console.log("Events:", events); // Log the events to ensure they are correctly fetched
 
   const handleSelectSlot = ({ start, end }) => {
-    setNewEvent({ ...newEvent, start, end });
+    setFormData({ ...formData, start, end });
     setModalOpen(true);
-  };
-  const handleAttendeeSelect = (event) => {
-    const selectedOptions = Array.from(event.target.selectedOptions).map(
-      (option) => option.value
-    );
-    setNewEvent({ ...newEvent, attendees: selectedOptions }); // Update attendees
   };
 
   const handleEventSubmit = (e) => {
     e.preventDefault();
-    const newEventObject = {
-      id: Date.now(), // For unique identification
-      title: newEvent.title,
-      start: new Date(newEvent.start),
-      end: new Date(newEvent.end),
-      attendees: newEvent.attendees.map((attendeeId) => {
-        const attendee = attendees.find((a) => a.id === attendeeId);
-        return attendee ? attendee.name : attendeeId; // Get name or fallback to ID
-      }),
-      email: newEvent.email,
-      notes: newEvent.notes,
+
+    const formDataObject = {
+      id: Date.now(), // Unique ID
+      title: formData.title,
+      start: new Date(formData.start), // Ensure this is a valid Date object
+      end: new Date(formData.end), // Ensure this is a valid Date object
+      email: formData.email,
+      notes: formData.notes,
     };
 
-    dispatch(createEvent(newEventObject));
+    dispatch(createEvent(formDataObject));
     toast.success("Event created successfully!");
-    sendEmail(newEventObject);
 
     setModalOpen(false);
-    setNewEvent({
+    setFormData({
       title: "",
       start: "",
       end: "",
-      attendees: [],
       email: "",
       notes: "",
       is_canceled: false,
     });
   };
-
-  const sendEmail = (eventDetails) => {
-    const emailParams = {
-      title: eventDetails.title,
-      email: eventDetails.email,
-      attendees: eventDetails.attendees.join(", "),
-      start: moment(eventDetails.start).format("YYYY-MM-DD HH:mm"),
-      end: moment(eventDetails.end).format("YYYY-MM-DD HH:mm"),
-      notes: eventDetails.notes,
-    };
-    emailjs
-      .send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", emailParams, "YOUR_USER_ID")
-      .then((result) => {
-        console.log("Email sent successfully:", result.text);
-      })
-      .catch((error) => {
-        console.log("Email failed:", error.text);
-      });
-  };
-
-  // const handleAttendeeSelect = (event) => {
-  //   const selectedOptions = Array.from(event.target.selectedOptions).map(
-  //     (option) => option.value
-  //   );
-  //   setNewEvent({ ...newEvent, attendees: selectedOptions });
-  // };
 
   return (
     <div className="content-wrapper">
@@ -164,7 +96,10 @@ const EventSystem = () => {
         <div
           className="modal fade show"
           role="dialog"
-          style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          style={{
+            display: modalOpen ? "block" : "none",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
         >
           <div className="modal-dialog modal-lg" role="document">
             <div className="modal-content">
@@ -189,10 +124,10 @@ const EventSystem = () => {
                         type="text"
                         className="form-control"
                         placeholder="Enter event title"
-                        value={newEvent.title}
+                        value={formData.title}
                         onChange={(e) =>
-                          setNewEvent({
-                            ...newEvent,
+                          setFormData({
+                            ...formData,
                             title: e.target.value,
                           })
                         }
@@ -203,18 +138,18 @@ const EventSystem = () => {
 
                   <div className="form-group row">
                     <label className="col-sm-2 col-form-label">
-                      Start Date and Time
+                      Start Date
                     </label>
                     <div className="col-sm-4">
                       <input
                         type="datetime-local"
                         className="form-control"
-                        value={moment(newEvent.start).format(
+                        value={moment(formData.start).format(
                           "YYYY-MM-DDTHH:mm"
                         )}
                         onChange={(e) =>
-                          setNewEvent({
-                            ...newEvent,
+                          setFormData({
+                            ...formData,
                             start: e.target.value,
                           })
                         }
@@ -222,17 +157,15 @@ const EventSystem = () => {
                       />
                     </div>
 
-                    <label className="col-sm-2 col-form-label">
-                      End Date and Time
-                    </label>
+                    <label className="col-sm-2 col-form-label">End Date</label>
                     <div className="col-sm-4">
                       <input
                         type="datetime-local"
                         className="form-control"
-                        value={moment(newEvent.end).format("YYYY-MM-DDTHH:mm")}
+                        value={moment(formData.end).format("YYYY-MM-DDTHH:mm")}
                         onChange={(e) =>
-                          setNewEvent({
-                            ...newEvent,
+                          setFormData({
+                            ...formData,
                             end: e.target.value,
                           })
                         }
@@ -241,72 +174,6 @@ const EventSystem = () => {
                     </div>
                   </div>
 
-                  {/* Attendee Selection */}
-                  {/* <div className="form-group row">
-                    <label
-                      className="col-sm-2 col-form-label"
-                      htmlFor="attendeeSelect"
-                    >
-                      Attendees
-                    </label>
-                    <div className="col-sm-10"> */}
-                  {/* <select
-                        id="attendeeSelect"
-                        className="form-control"
-                        multiple
-                        value={newEvent.attendees}
-                        onChange={(e) =>
-                          setNewEvent({
-                            ...newEvent,
-                            attendee: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="">-- select an attendee --</option>
-                        {attendees.map((attendee) => (
-                          <option key={attendee.id} value={attendee.id}>
-                            {attendee.attendee_name}
-                          </option>
-                        ))}
-
-                      </select> */}
-
-                  {/* Attendee Selection */}
-                  <div className="form-group row">
-                    <label
-                      className="col-sm-2 col-form-label"
-                      htmlFor="attendeeSelect"
-                    >
-                      Attendees
-                    </label>
-                    <div className="col-sm-10">
-                      <select
-                        id="attendeeSelect"
-                        name="attendee.attendee_name"
-                        className="form-control"
-                        multiple
-                        value={newEvent.attendees}
-                        onChange={handleAttendeeSelect}
-                      >
-                        <option value="">--select an attendee--</option>
-                        {attendees.length > 0 ? (
-                          attendees.map((attendee) => (
-                            <option key={attendee.id} value={attendee.id}>
-                              {attendee.attendee_name}
-                            </option>
-                          ))
-                        ) : (
-                          <option value="">no attendee found</option>
-                        )}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Other form fields... */}
-                  {/* 
-                    </div>
-                  </div> */}
-
                   <div className="form-group row">
                     <label className="col-sm-2 col-form-label">Email</label>
                     <div className="col-sm-10">
@@ -314,10 +181,10 @@ const EventSystem = () => {
                         type="email"
                         className="form-control"
                         placeholder="Enter email"
-                        value={newEvent.email}
+                        value={formData.email}
                         onChange={(e) =>
-                          setNewEvent({
-                            ...newEvent,
+                          setFormData({
+                            ...formData,
                             email: e.target.value,
                           })
                         }
@@ -332,10 +199,10 @@ const EventSystem = () => {
                       <textarea
                         className="form-control"
                         placeholder="Enter notes"
-                        value={newEvent.notes}
+                        value={formData.notes}
                         onChange={(e) =>
-                          setNewEvent({
-                            ...newEvent,
+                          setFormData({
+                            ...formData,
                             notes: e.target.value,
                           })
                         }

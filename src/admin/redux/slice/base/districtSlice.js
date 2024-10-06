@@ -9,7 +9,7 @@ export const fetchDistricts = createAsyncThunk(
       const response = await axios.get(
         "http://127.0.0.1:8000/api/setup/district/"
       );
-      return response.data.result; // Adjust based on your API response
+      return response.data.result.data; // Adjust based on your API response
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -24,7 +24,7 @@ export const createDistrict = createAsyncThunk(
         "http://127.0.0.1:8000/api/setup/district/create/",
         districtData
       );
-      return response.data.result; // Adjust based on your API response
+      return response.data.result.data; // Adjust based on your API response
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -55,7 +55,7 @@ export const updateDistrict = createAsyncThunk(
         `http://127.0.0.1:8000/api/setup/district/update/${id}/`,
         { name }
       );
-      return response.data.result;
+      return response.data.result.data;
     } catch (error) {
       const message =
         error.response?.data?.message || error.message || "An error occurred";
@@ -140,7 +140,10 @@ const districtSlice = createSlice({
       })
       .addCase(createDistrict.fulfilled, (state, action) => {
         state.createStatus = "succeeded";
-        state.list.push(action.payload);
+        // state.list.push(action.payload);
+        if (Array.isArray(state.list)) {
+          state.list.push(action.payload); // Push new district if list is an array (to solve state.list.push doesnot defined)
+        }
       })
       .addCase(createDistrict.rejected, (state, action) => {
         state.createStatus = "failed";

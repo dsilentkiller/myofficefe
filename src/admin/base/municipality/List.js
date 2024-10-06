@@ -4,49 +4,45 @@ import {
   fetchMunicipalities,
   updateMunicipality,
   deleteMunicipality,
-  updateStatus,
-  updateError,
 } from "../../redux/slice/base/municipalitySlice";
 import { Link } from "react-router-dom";
-import "../../../admin/css/Table.css"; // Ensure this includes necessary styles
-import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
+import "../../../admin/css/Table.css";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import DeleteMunicipality from "./Delete";
-import { toast } from "react-toastify"; // Import toast for error messages
+import { toast } from "react-toastify";
 import "../../css/Table.css";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable"; // Import the autoTable plugin
+import autoTable from "jspdf-autotable";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
+
 const MunicipalityList = () => {
   const dispatch = useDispatch();
   const [editId, setEditId] = useState(null);
   const [newName, setNewName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [municipalityToDelete, setMunicipalityToDelete] = useState(null);
-  // Access updateStatus state property
-  const updateStatus = useSelector(
-    (state) => state.municipalities.updateStatus
-  );
-  const updateError = useSelector((state) => state.municipalities.updateError);
+  const [filteredMunicipalities, setFilteredMunicipalities] = useState([]);
+
   const {
     list: municipalities,
     isLoading,
     error,
     deleteStatus,
     deleteError,
+    updateStatus,
+    updateError,
   } = useSelector((state) => state.municipalities);
 
   useEffect(() => {
     dispatch(fetchMunicipalities());
   }, [dispatch]);
 
-  // To update item in the table
   const handleEdit = (id, name) => {
     setEditId(id);
     setNewName(name);
   };
 
-  // Handle update item in Municipality table
   const handleUpdate = (e) => {
     e.preventDefault();
     if (editId !== null) {
@@ -55,27 +51,22 @@ const MunicipalityList = () => {
       setNewName("");
     }
   };
-  //-----update status toast--------
+
+  // Update status and error handling with safe access to message property
   useEffect(() => {
     if (updateStatus === "succeeded") {
-      toast.success("municipalities updated successfully!");
+      toast.success("Municipality updated successfully!");
     } else if (updateStatus === "failed") {
       toast.error(
-        `Failed to update municipalitie: ${updateError || "Unknown error"}`
+        `Failed to update municipality: ${
+          updateError?.message || "Unknown error"
+        }`
       );
     }
   }, [updateStatus, updateError]);
-  //--converting first letter  capital
-  const formatName = (name) => {
-    if (!name) return "";
-    return name
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
-  };
-  // Handle delete confirmation
+
   const handleDelete = (id) => {
-    setMunicipalityToDelete(id); // Set the municipality ID to trigger the modal
+    setMunicipalityToDelete(id);
   };
 
   const confirmDelete = (id) => {
@@ -83,24 +74,37 @@ const MunicipalityList = () => {
       .unwrap()
       .then(() => {
         toast.success("Municipality deleted successfully!");
-        setMunicipalityToDelete(null); // Close the modal after successful deletion
-        dispatch(fetchMunicipalities()); // Refresh the list
+        setMunicipalityToDelete(null);
+        dispatch(fetchMunicipalities());
       })
       .catch((error) => {
-        // Handle and log the error more robustly
         console.error("Delete Error:", error);
         toast.error(
           `Failed to delete municipality: ${
-            error.message || deleteError || "Unknown error"
+            error?.message || deleteError?.message || "Unknown error"
           }`
         );
       });
   };
-  //--- handle searchitem in a table ----
+
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
-  // Export to Excel
+
+  useEffect(() => {
+    if (searchTerm) {
+      setFilteredMunicipalities(
+        municipalities.filter(
+          (municipality) =>
+            municipality.name &&
+            municipality.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredMunicipalities(municipalities);
+    }
+  }, [searchTerm, municipalities]);
+
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(
       municipalities.map((municipality) => ({
@@ -113,7 +117,6 @@ const MunicipalityList = () => {
     XLSX.writeFile(workbook, "municipalities.xlsx");
   };
 
-  // Export to PDF
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.text("Municipalities List", 20, 10);
@@ -152,7 +155,6 @@ const MunicipalityList = () => {
                     className="form-inline ml-3"
                   >
                     <div className="input-group">
-                      search
                       <input
                         type="search"
                         id="default-search"
@@ -163,30 +165,10 @@ const MunicipalityList = () => {
                         onChange={handleSearchChange}
                         required
                       />
-                      {/* <div className="input-group-append"> */}
-                      {/* <button type="submit" className="btn btn-info">
-                          Search
-                        </button> */}
-                      {/* </div> */}
                     </div>
                   </form>
                 </div>
 
-                {/* <div className="form-inline ml-4" id="navbarSupportedContent">
-                  <ul className="navbar-nav mr-30">
-                    <li className="nav-item">
-                      <button
-                        id="municipalityTable"
-                        className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
-                      >
-                        <i className="fas fa-file-csv"></i>
-                      </button>
-                    </li>
-                    {/* Add other export buttons here */}
-                {/* </ul>
-                </div>
-              </div>
-            </nav> */}
                 <div className="form-inline ml-4" id="navbarSupportedContent">
                   <ul className="navbar-nav mr-30">
                     <li className="nav-item">
@@ -221,9 +203,8 @@ const MunicipalityList = () => {
                         {isLoading ? (
                           <p>Loading...</p>
                         ) : error ? (
-                          <p>Error: {error}</p>
+                          <p>Error: {error?.message || "Unknown error"}</p>
                         ) : (
-                          // <div className="card-body">
                           <div className="table-container">
                             <table className="table table-bordered">
                               <thead>
@@ -234,81 +215,79 @@ const MunicipalityList = () => {
                                 </tr>
                               </thead>
                               <tbody>
-                                {municipalities
-                                  .filter((municipality) =>
-                                    municipality.name
-                                      .toLowerCase()
-                                      .includes(searchTerm.toLowerCase())
-                                  )
-                                  .map((municipality, index) => (
-                                    <tr key={municipality.id}>
-                                      <td>{index + 1}</td>
-                                      <td>
-                                        {editId === municipality.id ? (
-                                          <input
-                                            type="text"
-                                            value={newName}
-                                            onChange={(e) =>
-                                              setNewName(e.target.value)
-                                            }
-                                          />
-                                        ) : (
-                                          formatName(municipality.name)
-                                        )}
-                                      </td>
-                                      <td>
-                                        {editId === municipality.id ? (
-                                          <button
-                                            onClick={handleUpdate}
-                                            className="btn btn-success"
-                                          >
-                                            Save
-                                          </button>
-                                        ) : (
+                                {filteredMunicipalities.length > 0 ? (
+                                  filteredMunicipalities.map(
+                                    (municipality, index) => (
+                                      <tr key={municipality.id}>
+                                        <td>{index + 1}</td>
+                                        <td>
+                                          {editId === municipality.id ? (
+                                            <input
+                                              type="text"
+                                              value={newName}
+                                              onChange={(e) =>
+                                                setNewName(e.target.value)
+                                              }
+                                            />
+                                          ) : (
+                                            municipality.name
+                                          )}
+                                        </td>
+                                        <td>
+                                          {editId === municipality.id ? (
+                                            <button
+                                              onClick={handleUpdate}
+                                              className="btn btn-success"
+                                            >
+                                              Save
+                                            </button>
+                                          ) : (
+                                            <button
+                                              onClick={() =>
+                                                handleEdit(
+                                                  municipality.id,
+                                                  municipality.name
+                                                )
+                                              }
+                                              className="btn btn-primary"
+                                            >
+                                              <FaEdit />
+                                            </button>
+                                          )}
                                           <button
                                             onClick={() =>
-                                              handleEdit(
-                                                municipality.id,
-                                                municipality.name
-                                              )
+                                              handleDelete(municipality.id)
                                             }
-                                            className="btn btn-primary"
+                                            className="btn btn-danger"
                                           >
-                                            <FaEdit />
+                                            <FaTrash />
                                           </button>
-                                        )}
-                                        <span> </span>
-                                        <button
-                                          onClick={() =>
-                                            handleDelete(municipality.id)
-                                          }
-                                          className="btn btn-danger"
-                                        >
-                                          <FaTrash />
-                                        </button>
-                                      </td>
-                                    </tr>
-                                  ))}
+                                        </td>
+                                      </tr>
+                                    )
+                                  )
+                                ) : (
+                                  <tr>
+                                    <td colSpan="3">
+                                      No municipalities found.
+                                    </td>
+                                  </tr>
+                                )}
                               </tbody>
                             </table>
                           </div>
-                          // </div>
                         )}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Delete Confirmation Modal */}
-            {municipalityToDelete !== null && (
               <DeleteMunicipality
                 id={municipalityToDelete}
-                onClose={() => setMunicipalityToDelete(null)}
-                onConfirm={() => confirmDelete(municipalityToDelete)}
+                onConfirm={confirmDelete}
+                onCancel={() => setMunicipalityToDelete(null)}
               />
-            )}
+            </div>
           </div>
         </div>
       </div>

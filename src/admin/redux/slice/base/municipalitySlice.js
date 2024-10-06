@@ -18,7 +18,8 @@ export const fetchMunicipalities = createAsyncThunk(
       const response = await axios.get(
         "http://127.0.0.1:8000/api/setup/municipality/"
       );
-      return response.data.result; // Adjust this based on your actual API response structure
+      console.log(response.data); // Log to check the API response
+      return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }

@@ -15,7 +15,8 @@ const CategoryForm = () => {
   // Use a fallback value in case `categories` is undefined
   const categories = useSelector((state) => state.categories.list || []);
   const createStatus = useSelector((state) => state.categories.createStatus);
-  const createError = useSelector((state) => state.categories.createError);
+  // const createError = useSelector((state) => state.categories.createError);
+  const createError = useSelector((state) => state.categories.createError); // Update based on your state structure
 
   useEffect(() => {
     // Fetch categories when the component mounts

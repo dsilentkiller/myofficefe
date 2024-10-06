@@ -19,11 +19,11 @@ const ProvinceForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(createProvince(formData));
-    // setFormData({ name: "" });
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   dispatch(createProvince(formData));
+  //   // setFormData({ name: "" });
+  // };
   //handle add Province button
   // const handleAddProvince = () => {
   //   toast.success("Province created successfully!");
@@ -44,6 +44,29 @@ const ProvinceForm = () => {
       toast.error(`Error: ${createError.message || "An error occurred"}`); // Use toast for error message
     }
   }, [createStatus, createError]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.name.trim()) return; // Prevent empty name submission
+
+    const existingProvince = provinces.some(
+      (prov) =>
+        prov.name &&
+        prov.name.toLowerCase() === formData.prov.name.toLowerCase()
+    );
+
+    if (existingProvince) {
+      toast.error("Province with this name already exists.");
+      return;
+    }
+
+    dispatch(createProvince(formData))
+      .unwrap()
+      .catch((error) => {
+        console.error("Create Error:", error);
+      });
+  };
+
   return (
     <div className="content-wrapper">
       <div className="section">

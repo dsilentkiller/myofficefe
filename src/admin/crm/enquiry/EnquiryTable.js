@@ -47,181 +47,177 @@ const EnquiryTable = () => {
   return (
     <div className="content-wrapper">
       <div className="row justify-content-center">
-        <div className="col-lg-10">
-          <div className="card">
-            {/* heading */}
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-              <div className="container-fluid">
-                <h5 className="navbar-brand">Enquiry Table</h5>
-                <div className="navbar-nav ml-auto">
-                  <Link to="create" className="nav-link btn btn-info">
-                    <h5>Add Enquiry</h5>
-                  </Link>
-                  <form
-                    method="get"
-                    action="/enquiry/search"
-                    className="form-inline ml-3"
-                  >
-                    <div className="input-group">
-                      <input
-                        type="search"
-                        id="default-search"
-                        name="q"
-                        className="form-control"
-                        placeholder="Search Mockups, Logos..."
-                        required
-                      />
-                      {/* <div className="input-group-append">
+        <div className="card">
+          {/* heading */}
+          <nav className="navbar navbar-expand-lg navbar-light bg-light">
+            <div className="container-fluid">
+              <h5 className="navbar-brand">Enquiry Table</h5>
+              <div className="navbar-nav ml-auto">
+                <Link to="create" className="nav-link btn btn-info">
+                  <h5>Add Enquiry</h5>
+                </Link>
+                <form
+                  method="get"
+                  action="/enquiry/search"
+                  className="form-inline ml-3"
+                >
+                  <div className="input-group">
+                    <input
+                      type="search"
+                      id="default-search"
+                      name="q"
+                      className="form-control"
+                      placeholder="Search Mockups, Logos..."
+                      required
+                    />
+                    {/* <div className="input-group-append">
                         <button type="submit" className="btn btn-info">
                           
                         </button>
                       </div> */}
-                    </div>
-                  </form>
-                </div>
+                  </div>
+                </form>
+              </div>
 
-                <div className="form-inline ml-4" id="navbarSupportedContent">
-                  <ul className="navbar-nav mr-30">
-                    <li className="nav-item ">
+              <div className="form-inline ml-4" id="navbarSupportedContent">
+                <ul className="navbar-nav mr-30">
+                  <li className="nav-item ">
+                    <button
+                      id="employeeTable"
+                      className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
+                    >
+                      <i className="fas fa-file-csv"></i>
+                      {/* Font Awesome icon for CSV */}
+                    </button>
+                  </li>
+                  {/* Add other export buttons here */}
+                </ul>
+              </div>
+            </div>
+          </nav>
+          {/* heading end */}
+          <div className="card-body">
+            <div className="table-container">
+              <table className="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Customer Name</th>
+                    <th>Department</th>
+                    <th>Phone</th>
+                    <th>Contact No</th>
+                    <th>Email</th>
+                    <th>Gender</th>
+                    <th>Province</th>
+                    <th>District</th>
+                    <th>Municipality</th>
+                    <th>Ward No</th>
+                    <th>Tole Name</th>
+                    <th>Estimated Amount</th>
+                    <th>Enquiry Purpose</th>
+                    <th>Known By</th>
+                    <th>Joining Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {enquiries.length > 0 ? (
+                    enquiries.map((enquiry, index) => (
+                      <tr key={enquiry.id}>
+                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                        <td>{enquiry.customer_name}</td>
+                        <td>{enquiry.department}</td>
+                        <td>{enquiry.pri_phone}</td>
+                        <td>{enquiry.sec_phone}</td>
+                        <td>{enquiry.email}</td>
+                        <td>{enquiry.gender}</td>
+                        <td>{enquiry.province}</td>
+                        <td>{enquiry.district}</td>
+                        <td>{enquiry.municipality}</td>
+                        <td>{enquiry.ward_no}</td>
+                        <td>{enquiry.tole_name}</td>
+                        <td>{enquiry.estimated_amount}</td>
+                        <td>{enquiry.enquiry_purpose}</td>
+                        <td>{enquiry.known_by}</td>
+                        <td>{enquiry.created}</td>
+                        <td>
+                          <button className="btn btn-primary">Edit</button>
+                          <Link
+                            to={`/detail/${enquiry.id}`}
+                            className="btn btn-info"
+                          >
+                            View
+                          </Link>
+                          <button className="btn btn-danger">Delete</button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="17">No enquiries found</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="pagination-wrapper">
+              <div className="pagination-controls">
+                <div className="pagination-info">
+                  <label htmlFor="itemsPerPage">Items per page:</label>
+                  <select
+                    id="itemsPerPage"
+                    value={itemsPerPage}
+                    onChange={handleItemsPerPageChange}
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                  </select>
+                </div>
+                <nav>
+                  <ul className="pagination">
+                    <li
+                      className={`page-item ${
+                        currentPage === 1 ? "disabled" : ""
+                      }`}
+                    >
                       <button
-                        id="employeeTable"
-                        className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
+                        className="page-link"
+                        onClick={() => handlePageChange(currentPage - 1)}
                       >
-                        <i className="fas fa-file-csv"></i>
-                        {/* Font Awesome icon for CSV */}
+                        &laquo;
                       </button>
                     </li>
-                    {/* Add other export buttons here */}
-                  </ul>
-                </div>
-              </div>
-            </nav>
-            {/* heading end */}
-            <div className="card-body">
-              <div className="table-container">
-                <table className="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Customer Name</th>
-                      <th>Department</th>
-                      <th>Phone</th>
-                      <th>Contact No</th>
-                      <th>Email</th>
-                      <th>Gender</th>
-                      <th>Province</th>
-                      <th>District</th>
-                      <th>Municipality</th>
-                      <th>Ward No</th>
-                      <th>Tole Name</th>
-                      <th>Estimated Amount</th>
-                      <th>Enquiry Purpose</th>
-                      <th>Known By</th>
-                      <th>Joining Date</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {enquiries.length > 0 ? (
-                      enquiries.map((enquiry, index) => (
-                        <tr key={enquiry.id}>
-                          <td>
-                            {(currentPage - 1) * itemsPerPage + index + 1}
-                          </td>
-                          <td>{enquiry.customer_name}</td>
-                          <td>{enquiry.department}</td>
-                          <td>{enquiry.pri_phone}</td>
-                          <td>{enquiry.sec_phone}</td>
-                          <td>{enquiry.email}</td>
-                          <td>{enquiry.gender}</td>
-                          <td>{enquiry.province}</td>
-                          <td>{enquiry.district}</td>
-                          <td>{enquiry.municipality}</td>
-                          <td>{enquiry.ward_no}</td>
-                          <td>{enquiry.tole_name}</td>
-                          <td>{enquiry.estimated_amount}</td>
-                          <td>{enquiry.enquiry_purpose}</td>
-                          <td>{enquiry.known_by}</td>
-                          <td>{enquiry.created}</td>
-                          <td>
-                            <button className="btn btn-primary">Edit</button>
-                            <Link
-                              to={`/detail/${enquiry.id}`}
-                              className="btn btn-info"
-                            >
-                              View
-                            </Link>
-                            <button className="btn btn-danger">Delete</button>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="17">No enquiries found</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="pagination-wrapper">
-                <div className="pagination-controls">
-                  <div className="pagination-info">
-                    <label htmlFor="itemsPerPage">Items per page:</label>
-                    <select
-                      id="itemsPerPage"
-                      value={itemsPerPage}
-                      onChange={handleItemsPerPageChange}
+                    {Array.from({ length: totalPages }, (_, index) => (
+                      <li
+                        key={index + 1}
+                        className={`page-item ${
+                          currentPage === index + 1 ? "active" : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => handlePageChange(index + 1)}
+                        >
+                          {index + 1}
+                        </button>
+                      </li>
+                    ))}
+                    <li
+                      className={`page-item ${
+                        currentPage === totalPages ? "disabled" : ""
+                      }`}
                     >
-                      <option value={10}>10</option>
-                      <option value={25}>25</option>
-                      <option value={50}>50</option>
-                    </select>
-                  </div>
-                  <nav>
-                    <ul className="pagination">
-                      <li
-                        className={`page-item ${
-                          currentPage === 1 ? "disabled" : ""
-                        }`}
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(currentPage + 1)}
                       >
-                        <button
-                          className="page-link"
-                          onClick={() => handlePageChange(currentPage - 1)}
-                        >
-                          &laquo;
-                        </button>
-                      </li>
-                      {Array.from({ length: totalPages }, (_, index) => (
-                        <li
-                          key={index + 1}
-                          className={`page-item ${
-                            currentPage === index + 1 ? "active" : ""
-                          }`}
-                        >
-                          <button
-                            className="page-link"
-                            onClick={() => handlePageChange(index + 1)}
-                          >
-                            {index + 1}
-                          </button>
-                        </li>
-                      ))}
-                      <li
-                        className={`page-item ${
-                          currentPage === totalPages ? "disabled" : ""
-                        }`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() => handlePageChange(currentPage + 1)}
-                        >
-                          &raquo;
-                        </button>
-                      </li>
-                    </ul>
-                  </nav>
-                </div>
+                        &raquo;
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             </div>
           </div>

@@ -158,10 +158,7 @@ function App() {
               {/* department */}
               <Route path="department" element={<DepartmentTable />} />
               <Route path="department/create" element={<DepartmentForm />} />
-              {/* <Route
-                path="department/update/:id"
-                element={<UpdateMunicipality />}
-              /> */}
+            
               <Route
                 path="department/delete/:id"
                 element={<DepartmentDelete />}

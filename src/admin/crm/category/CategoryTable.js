@@ -41,6 +41,11 @@ const CategoryTable = () => {
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
+  // To update item in the table
+  const handleEdit = (id, category_name) => {
+    setEditId(id);
+    setNewName(category_name);
+  };
 
   // Handle update
   const handleUpdate = (e) => {
@@ -62,12 +67,6 @@ const CategoryTable = () => {
       );
     }
   }, [updateStatus, updateError]);
-
-  // To update item in the table
-  const handleEdit = (id, category_name) => {
-    setEditId(id);
-    setNewName(category_name);
-  };
 
   const handleDelete = (id) => {
     setCategoryToDelete(id); // Set the category ID to trigger the modal

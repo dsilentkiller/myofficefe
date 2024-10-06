@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCategories } from "../../redux/slice/crm/categorySlice";
 import { fetchDepartments } from "../../redux/slice/base/departmentSlice";
@@ -10,18 +11,36 @@ import { fetchDistricts } from "../../redux/slice/base/districtSlice";
 import { fetchMunicipalities } from "../../redux/slice/base/municipalitySlice";
 import { fetchProvinces } from "../../redux/slice/base/provinceSlice";
 import classnames from "classnames";
+
+import { useNavigate, useParams } from "react-router-dom"; // Import useParams
+import { toast } from "react-toastify";
+import {
+  createEnquiry,
+  updateEnquiry,
+  fetchEnquiryById,
+} from "../../redux/slice/crm/enquirySlice";
+// import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 const EnquiryForm = () => {
   const [activeTab, setActiveTab] = useState("1");
 
+  const { id } = useParams(); // Get the enquiry ID from URL
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [toggleState, setToggleState] = useState({ toggle: false });
+  const [phoneValid, setPhoneValid] = useState(true);
+  const [errors, setErrors] = useState({});
 
-  const [districts, setDistricts] = useState([]);
-  const [municipalities, setMunicipalities] = useState([]);
   // Retrieve data from the store
+
+  const currentEnquiry = useSelector(
+    (state) => state.enquiry?.currentEnquiry || {}
+  );
+
   const { list: provinces } = useSelector((state) => state.provinces);
   const { list: categories } = useSelector((state) => state.categories);
-  // const { list: districts } = useSelector((state) => state.districts);
-  // const { list: municipalities } = useSelector((state) => state.municipalities);
+  const { list: districts } = useSelector((state) => state.districts);
+  const { list: municipalities } = useSelector((state) => state.municipalities);
   const { list: departments } = useSelector((state) => state.departments);
   const { list: designations } = useSelector((state) => state.designations);
 
@@ -34,9 +53,65 @@ const EnquiryForm = () => {
   console.log("Provinces:", provinces);
   // Local state for the form
 
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchEnquiryById(id));
+    }
+  }, [id, dispatch]);
+  // pri_phone number validate
+  const validatePhoneNumber = (value) => {
+    const phoneLength = value.replace(/\D/g, "").length;
+    if (phoneLength >= 10 && phoneLength <= 15) {
+      setPhoneValid(true);
+    } else {
+      setPhoneValid(false);
+    }
+    setFormData({ ...formData, pri_phone: value });
+  };
+  // sec phone valid
+
+  const validateSecPhoneNumber = (value) => {
+    const phoneLength = value.replace(/\D/g, "").length;
+    if (phoneLength >= 10 && phoneLength <= 15) {
+      setPhoneValid(true);
+    } else {
+      setPhoneValid(false);
+    }
+    setFormData({ ...formData, sec_phone: value });
+  };
+  // curent enquiry
+  useEffect(() => {
+    if (currentEnquiry && id) {
+      setFormData({
+        customer_name: currentEnquiry?.customer_name || "",
+
+        category: currentEnquiry?.category || "",
+        organization_name: currentEnquiry?.organization_name || "",
+        department: currentEnquiry?.department || "",
+        designation: currentEnquiry?.designation || "",
+        pri_phone: currentEnquiry?.pri_phone || "",
+        sec_phone: currentEnquiry?.sec_phone || "",
+        email: currentEnquiry?.email || "",
+        gender: currentEnquiry?.gender || "",
+
+        province: currentEnquiry?.province || "",
+        district: currentEnquiry?.district || "",
+        municipality: currentEnquiry?.municipality || "",
+        ward_no: currentEnquiry?.ward_no || "",
+        tole_name: currentEnquiry?.tole_name || "",
+
+        estimated_amount: currentEnquiry?.estimated_amount || "",
+        enquiry_purpose: currentEnquiry?.enquiry_purpose || "",
+        known_by: currentEnquiry?.known_by || "",
+        created: currentEnquiry?.created || "",
+      });
+    }
+  }, [currentEnquiry, id]);
+  // form data filled up
   const [formData, setFormData] = useState({
     customer_name: "",
     category: "",
+    organization_name: "",
     department: "",
     designation: "",
     pri_phone: "",
@@ -45,64 +120,23 @@ const EnquiryForm = () => {
     gender: "",
 
     province: "",
-    zone: "",
+    // zone: "",
     district: "",
     municipality: "",
     ward_no: "",
     tole_name: "",
+
+    // temp_province:"",
+    // temp_district:"",
+    // temp_municipality:"",
+    // temp_ward_no:"",
+    // temp_tole_name:"",
 
     estimated_amount: "",
     enquiry_purpose: "",
     known_by: "",
     created: "",
   });
-
-  useEffect(() => {
-    const fetchDistrictsAndMunicipalities = async () => {
-      if (formData.province) {
-        console.log(
-          `Fetching districts and municipalities for province: ${formData.province}`
-        ); // Debug log
-        try {
-          // Fetch districts
-          const districtsResponse = await axios.get(
-            `http://127.0.0.1:8000/api/setup/district/?province=${formData.province}`
-          );
-          console.log("Districts Response:", districtsResponse.data); // Log the full response
-          if (Array.isArray(districtsResponse.data)) {
-            setDistricts(districtsResponse.data); // Set districts state
-          } else {
-            console.error(
-              "Unexpected data structure for districts:",
-              districtsResponse.data
-            );
-          }
-
-          // Fetch municipalities
-          const municipalitiesResponse = await axios.get(
-            `http://127.0.0.1:8000/api/setup/municipality/?province=${formData.province}`
-          );
-          console.log("Municipalities Response:", municipalitiesResponse.data); // Log the full response
-          if (Array.isArray(municipalitiesResponse.data)) {
-            setMunicipalities(municipalitiesResponse.data); // Set municipalities state
-          } else {
-            console.error(
-              "Unexpected data structure for municipalities:",
-              municipalitiesResponse.data
-            );
-          }
-        } catch (error) {
-          console.error("Error fetching districts or municipalities:", error);
-        }
-      } else {
-        // Clear districts and municipalities if no province is selected
-        setDistricts([]);
-        setMunicipalities([]);
-      }
-    };
-
-    fetchDistrictsAndMunicipalities();
-  }, [formData.province]);
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -123,47 +157,120 @@ const EnquiryForm = () => {
   };
 
   // Handle form submission
-  function handleSameAddress(event) {
-    if (event.target.checked) {
-      setFormData({
-        ...formData,
-        category: formData.department,
-        temp_zone: formData.zone,
-        temp_district: formData.district,
-        temp_municipality: formData.municipality,
-        temp_ward_no: formData.ward_no,
-        temp_tole_name: formData.tole_name,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        category: "",
-        temp_zone: "",
-        temp_district: "",
-        temp_municipality: "",
-        temp_ward_no: "",
-        temp_tole_name: "",
-      });
-    }
-  }
+  // function handleSameAddress(event) {
+  //   if (event.target.checked) {
+  //     setFormData({
+  //       ...formData,
+  //       temp_province: formData.province,
+  //       // temp_zone: formData.zone,
+  //       temp_district: formData.district,
+  //       temp_municipality: formData.municipality,
+  //       temp_ward_no: formData.ward_no,
+  //       temp_tole_name: formData.tole_name,
+  //     });
+  //   } else {
+  //     setFormData({
+  //       ...formData,
+  //       temp_province: "",
+  //       // temp_zone: "",
+  //       temp_district: "",
+  //       temp_municipality: "",
+  //       temp_ward_no: "",
+  //       temp_tole_name: "",
+  //     });
+  //   }
+  // }
+
   // Redux state
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
-  const handleSubmit = async (e) => {
+  // reset form
+  // const resetForm = () => {
+  //   setFormData({
+  //     customer_name: "",
+  //     category: "",
+  //     organization_name: "",
+  //     department: "",
+  //     designation: "",
+  //     pri_phone: "",
+  //     sec_phone: "",
+  //     email: "",
+  //     gender: "",
+  //     province: "",
+  //     zone: "",
+  //     district: "",
+  //     municipality: "",
+  //     ward_no: "",
+  //     tole_name: "",
+  //     estimated_amount: "",
+  //     enquiry_purpose: "",
+  //     known_by: "",
+  //     created: "",
+  //   });
+  // };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!formData.customer_name || !formData.category || !formData.pri_phone) {
+  //     alert("Please fill in all required fields.");
+  //     return;
+  //   }
+  //   // resetForm();
+  // };
+  //habdle submit for update and create enquiry
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/employee/new/",
-        formData
-      );
-      console.log(response.data);
-      alert("Employee created successfully!");
-      // You can reset the form or navigate to another page here
-    } catch (error) {
-      console.error("There was an error creating the employee!", error);
-      alert("Failed to create employee.");
+
+    if (id) {
+      // Update enquiry
+      dispatch(updateEnquiry({ id, ...formData }))
+        .unwrap()
+        .then(() => {
+          toast.success("enquiry updated successfully!");
+          navigate("/dashboard/crm/enquiry");
+        })
+        .catch((error) => {
+          console.error("Update Error:", error);
+          toast.error(
+            `Failed to update enquiry: ${error.message || "An error occurred"}`
+          );
+        });
+    } else {
+      // Create enquiry
+      dispatch(createEnquiry(formData))
+        .unwrap()
+        .then(() => {
+          toast.success("enquiry created successfully!");
+          setFormData({
+            customer_name: "",
+            category: "",
+            organization_name: "",
+            department: "",
+            designation: "",
+            pri_phone: "",
+            sec_phone: "",
+            email: "",
+            gender: "",
+            province: "",
+            zone: "",
+            district: "",
+            municipality: "",
+            ward_no: "",
+            tole_name: "",
+            estimated_amount: "",
+            enquiry_purpose: "",
+            known_by: "",
+            created: "",
+          });
+          navigate("/dashboard/crm/enquiry");
+        })
+        .catch((error) => {
+          console.error("Create Error:", error);
+          toast.error(
+            `Failed to create enquiry: ${error.message || "An error occurred"}`
+          );
+        });
     }
   };
 
@@ -222,34 +329,22 @@ const EnquiryForm = () => {
                           id="customer_name"
                           name="customer_name"
                           value={formData.customer_name}
-                          onChange={handleInputChange}
+                          // onChange={handleInputChange}
                           className="form-control"
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              customer_name: e.target.value,
+                            })
+                          }
+                          // onChange={(e) => dispatch(setCurrentEnquiry({ ...currentEnquiry, name: e.target.value }))}
                           required
                         />
                       </div>
                     </div>
+
                     {/* enquory type */}
-                    {/* <div className="col-md-4"> */}
-                    {/* <div className="col-md-4">
-                      <div className="form-group">
-                        <label htmlFor="category">enquiry type</label>
-                        <select
-                          id="category"
-                          name="category"
-                          value={formData.category}
-                          onChange={handleInputChange}
-                          className="form-control"
-                          required
-                        >
-                          <option value="">Select enquiry type</option>
-                          {categories.map((category) => (
-                            <option key={category.id} value={category.id}>
-                              {category.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div> */}
+
                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="category">categories </label>
@@ -284,14 +379,20 @@ const EnquiryForm = () => {
                           id="estimated_amount"
                           name="estimated_amount"
                           value={formData.estimated_amount}
-                          onChange={handleInputChange}
+                          // onChange={handleInputChange}
                           className="form-control"
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              estimated_amount: e.target.value,
+                            })
+                          }
                           required
                         />
                       </div>
                     </div>
                     <div className="row">
-                      {/* departmebt */}
+                      {/* department */}
 
                       <div className="col-md-4">
                         <div className="form-group">
@@ -303,7 +404,13 @@ const EnquiryForm = () => {
                             id="enquiry_purpose"
                             name="enquiry_purpose"
                             value={formData.enquiry_purpose}
-                            onChange={handleInputChange}
+                            // onChange={handleInputChange}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                enquiry_purpose: e.target.value,
+                              })
+                            }
                             className="form-control"
                             required
                           />
@@ -312,16 +419,29 @@ const EnquiryForm = () => {
                       {/* known by */}
                       <div className="col-md-4">
                         <div className="form-group">
-                          <label htmlFor="known_by">known_by:</label>
-                          <input
-                            type="number"
+                          <label htmlFor="known_by">Known By:</label>
+                          <select
                             id="known_by"
                             name="known_by"
                             value={formData.known_by}
-                            onChange={handleInputChange}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                known_by: e.target.value,
+                              })
+                            }
                             className="form-control"
                             required
-                          />
+                          >
+                            <option value="">Select an Option</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="mouth to mouth">
+                              Mouth to Mouth
+                            </option>
+                            <option value="youtube">YouTube</option>
+                          </select>
                         </div>
                       </div>
                       {/* gender */}
@@ -332,7 +452,13 @@ const EnquiryForm = () => {
                             id="gender"
                             name="gender"
                             value={formData.gender}
-                            onChange={handleInputChange}
+                            // onChange={handleInputChange}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                gender: e.target.value,
+                              })
+                            }
                             className="form-control"
                             required
                           >
@@ -346,7 +472,7 @@ const EnquiryForm = () => {
                     </div>
                     {/* pri phone */}
                     <div className="row">
-                      <div className="col-md-4">
+                      {/* <div className="col-md-4">
                         <div className="form-group">
                           <label htmlFor="pri_phone">Primary Phone:</label>
                           <input
@@ -354,54 +480,107 @@ const EnquiryForm = () => {
                             id="pri_phone"
                             name="pri_phone"
                             value={formData.pri_phone}
-                            onChange={handleInputChange}
+                            // onChange={handleInputChange}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                pri_phone: e.target.value,
+                              })
+                            }
                             className="form-control"
                             required
                           />
                         </div>
-                      </div>
-                      {/* </div> */}
-                      {/* sec phone */}
+                      </div> */}
+                      {/* Email Field */}
 
-                      <div className="col-md-4">
-                        <div className="form-group">
-                          <label htmlFor="sec_phone">Secondary Phone:</label>
-                          <input
-                            type="text"
-                            id="sec_phone"
-                            name="sec_phone"
-                            value={formData.sec_phone}
-                            onChange={handleInputChange}
-                            className="form-control"
-                            required
-                          />
+                      {/* Phone Field */}
+                      <div className="row">
+                        <div className="col-md-4">
+                          <div className="form-group">
+                            <label htmlFor="pri_phone">Phone:</label>
+                            <PhoneInput
+                              country={"np"} // Country code for Nepal
+                              value={formData.pri_phone}
+                              onChange={validatePhoneNumber}
+                              inputStyle={{
+                                width: "100%",
+                                borderColor: phoneValid ? "green" : "red",
+                                backgroundColor: phoneValid
+                                  ? "#e0f7fa"
+                                  : "#ffebee",
+                              }}
+                            />
+                            {!phoneValid && (
+                              <p style={{ color: "red" }}>
+                                Please enter a valid phone number between 10 and
+                                15 digits.
+                              </p>
+                            )}
+                          </div>
+                          {/* </div> */}
+                          {errors.pri_phone && <p>{errors.pri_phone}</p>}
                         </div>
-                      </div>
-                      {/* email */}
-                      <div className="col-md-4">
-                        <div className="form-group">
-                          <label htmlFor="email">Email:</label>
-                          <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            className="form-control"
-                            required
-                          />
+
+                        {/* sec phone */}
+                        <div className="col-md-4">
+                          <div className="form-group">
+                            <label htmlFor="sec_phone">Phone:</label>
+                            <PhoneInput
+                              country={"np"} // Country code for Nepal
+                              value={formData.sec_phone}
+                              onChange={validateSecPhoneNumber}
+                              inputStyle={{
+                                width: "100%",
+                                borderColor: phoneValid ? "green" : "red",
+                                backgroundColor: phoneValid
+                                  ? "#e0f7fa"
+                                  : "#ffebee",
+                              }}
+                            />
+                            {!phoneValid && (
+                              <p style={{ color: "red" }}>
+                                Please enter a valid phone number between 10 and
+                                15 digits.
+                              </p>
+                            )}
+                          </div>
+                          {/* </div> */}
+                          {errors.sec_phone && <p>{errors.sec_phone}</p>}
+                        </div>
+
+                        {/* email */}
+                        <div className="col-md-4">
+                          <div className="form-group">
+                            <label htmlFor="email">Email:</label>
+                            <input
+                              type="email"
+                              id="email"
+                              name="email"
+                              value={formData.email}
+                              // onChange={handleInputChange}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  email: e.target.value,
+                                })
+                              }
+                              className="form-control"
+                              required
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="form-group">
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={() => toggle("2")}
-                    >
-                      Next
-                    </button>
+                    <div className="form-group">
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => toggle("2")}
+                      >
+                        Next
+                      </button>
+                    </div>
                   </div>
                 </form>
               </div>
@@ -425,7 +604,13 @@ const EnquiryForm = () => {
                           id="province"
                           name="province"
                           value={formData.province}
-                          onChange={handleInputChange}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              province: e.target.value,
+                            })
+                          }
                           className="form-control"
                           required
                         >
@@ -452,7 +637,13 @@ const EnquiryForm = () => {
                           id="district"
                           name="district"
                           value={formData.district}
-                          onChange={handleInputChange}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              district: e.target.value,
+                            })
+                          }
                           className="form-control"
                           required
                         >
@@ -470,7 +661,7 @@ const EnquiryForm = () => {
                       </div>
                     </div>
                   </div>
-                  {/* municuipality */}
+                  {/* municipality */}
                   <div className="row">
                     <div className="col-md-4">
                       <div className="form-group">
@@ -479,7 +670,13 @@ const EnquiryForm = () => {
                           id="municipality"
                           name="municipality"
                           value={formData.municipality}
-                          onChange={handleInputChange}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              municipality: e.target.value,
+                            })
+                          }
                           className="form-control"
                           required
                         >
@@ -511,7 +708,13 @@ const EnquiryForm = () => {
                           id="ward_no"
                           name="ward_no"
                           value={formData.ward_no}
-                          onChange={handleInputChange}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              ward_no: e.target.value,
+                            })
+                          }
                           className="form-control"
                           required
                         />
@@ -526,7 +729,13 @@ const EnquiryForm = () => {
                           id="tole_name"
                           name="tole_name"
                           value={formData.tole_name}
-                          onChange={handleInputChange}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              tole_name: e.target.value,
+                            })
+                          }
                           className="form-control"
                           required
                         />
@@ -535,7 +744,7 @@ const EnquiryForm = () => {
                   </div>
 
                   {/* "Same as Permanent Address" Checkbox */}
-                  <div className="form-group mt-3">
+                  {/* <div className="form-group mt-3">
                     <input
                       type="checkbox"
                       id="sameAddressCheckbox"
@@ -544,7 +753,7 @@ const EnquiryForm = () => {
                     <label htmlFor="sameAddressCheckbox" className="ml-2">
                       Same as Permanent Address
                     </label>
-                  </div>
+                  </div> */}
 
                   <div className="form-group">
                     <button
@@ -566,16 +775,22 @@ const EnquiryForm = () => {
                 <form onSubmit={handleSubmit}>
                   <div className="row">
                     <div className="col-md-4">
+                      {/* organization name */}
+
                       <div className="form-group">
-                        <label htmlFor="organization_name">
-                          Organization name:
-                        </label>
+                        <label htmlFor="name">Organization name :</label>
                         <input
                           type="text"
                           id="organization_name"
                           name="organization_name"
                           value={formData.organization_name}
-                          onChange={handleInputChange}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              organization_name: e.target.value,
+                            })
+                          }
                           className="form-control"
                           required
                         />
@@ -588,7 +803,13 @@ const EnquiryForm = () => {
                           id="department"
                           name="department"
                           value={formData.department}
-                          onChange={handleInputChange}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              department: e.target.value,
+                            })
+                          }
                           className="form-control"
                           required
                         >
@@ -614,7 +835,13 @@ const EnquiryForm = () => {
                           id="designation"
                           name="designation"
                           value={formData.designation}
-                          onChange={handleInputChange}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              designation: e.target.value,
+                            })
+                          }
                           className="form-control"
                           required
                         >
@@ -644,7 +871,13 @@ const EnquiryForm = () => {
                           id="created"
                           name="created"
                           value={formData.created}
-                          onChange={handleInputChange}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              created: e.target.value,
+                            })
+                          }
                           className="form-control"
                           required
                         />
@@ -654,7 +887,7 @@ const EnquiryForm = () => {
 
                   <div className="form-group">
                     <button type="submit" className="btn btn-primary">
-                      Add Employee
+                      Add Enquiry
                     </button>
                   </div>
                 </form>

@@ -21,6 +21,7 @@ const DesignationTable = () => {
   const [newName, setNewName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [designationToDelete, setDesignationToDelete] = useState(null);
+  const [filteredDesignations, setFilteredDesignations] = useState([]);
   // Access state from Redux
   const updateStatus = useSelector((state) => state.designations?.updateStatus);
   const updateError = useSelector((state) => state.designations?.updateError);
@@ -35,7 +36,26 @@ const DesignationTable = () => {
   useEffect(() => {
     dispatch(fetchDesignations());
   }, [dispatch]);
+  //------------ this is filtered designation name  in search table ---------
+  useEffect(() => {
+    if (searchTerm) {
+      setFilteredDesignations(
+        designations.filter((designation) =>
+          designation.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredDesignations(designations);
+    }
+  }, [searchTerm, designations]);
 
+  //----refresh table after delete the item from table ---
+  useEffect(() => {
+    // Refetch data after deletion or update
+    if (designationToDelete === null) {
+      dispatch(fetchDesignations());
+    }
+  }, [designationToDelete, dispatch]);
   const handleEdit = (id, name) => {
     setEditId(id);
     setNewName(name);
@@ -92,9 +112,9 @@ const DesignationTable = () => {
     setSearchTerm(e.target.value);
   };
   // Filter categories for search term
-  const filteredDesignations = designations.filter((designation) =>
-    designation.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredDesignations = designations.filter((designation) =>
+  //   designation.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(
       designations.map((designation) => ({

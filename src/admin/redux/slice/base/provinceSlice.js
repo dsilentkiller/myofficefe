@@ -8,7 +8,7 @@ export const fetchProvinces = createAsyncThunk(
       const response = await axios.get(
         "http://127.0.0.1:8000/api/setup/province/"
       );
-      return response.data.result; // Adjust this based on your actual API response structure
+      return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -17,11 +17,11 @@ export const fetchProvinces = createAsyncThunk(
 
 export const createProvince = createAsyncThunk(
   "provinces/createProvince",
-  async (provinceData, thunkAPI) => {
+  async (formData, thunkAPI) => {
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/api/setup/province/create/",
-        provinceData
+        formData
       );
       return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
@@ -316,11 +316,11 @@ export default provinceSlice.reducer;
 // // // Async thunk for creating a new province
 // // export const createProvince = createAsyncThunk(
 // //   "province/createProvince",
-// //   async (provinceData, thunkAPI) => {
+// //   async (formData, thunkAPI) => {
 // //     try {
 // //       const response = await axios.post(
 // //         "http://127.0.0.1:8000/api/setup/province/create/",
-// //         provinceData
+// //         formData
 // //       );
 // //       return response.data;
 // //     } catch (error) {

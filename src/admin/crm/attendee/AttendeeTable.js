@@ -15,8 +15,8 @@ const AttendeeTable = () => {
   const [attendeeToDelete, setAttendeeToDelete] = useState(null);
 
   // Access state from Redux
-  const updateStatus = useSelector((state) => state.categories?.updateStatus);
-  const updateError = useSelector((state) => state.categories?.updateError);
+  const updateStatus = useSelector((state) => state.attendees?.updateStatus);
+  const updateError = useSelector((state) => state.attendees?.updateError);
 
   const fetchError = useSelector((state) => state.attendees.fetchError);
   const {
@@ -24,10 +24,13 @@ const AttendeeTable = () => {
     isLoading,
     error,
     deleteError,
-  } = useSelector((state) => state.categories || {});
+  } = useSelector((state) => state.attendees || {});
+
+  // fetching attendees data from attendees list
   useEffect(() => {
     dispatch(fetchAttendees());
   }, [dispatch]);
+
   const handleDelete = (id) => {
     setAttendeeToDelete(id);
     // Don't re-fetch attendees here, let the confirmation trigger it
@@ -65,8 +68,8 @@ const AttendeeTable = () => {
 
   return (
     <div className="content-wrapper">
-      <div className="container">
-        <div className="container-fluid">
+      <div className="col-mg-10">
+        <div className="row justify-content-center">
           <div className="card">
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
               <div className="container-fluid">
@@ -102,6 +105,7 @@ const AttendeeTable = () => {
               <table className="table table-bordered">
                 <thead>
                   <tr>
+                    <th>#</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
@@ -120,11 +124,20 @@ const AttendeeTable = () => {
                         <td>{attendee.organization_name}</td>
                         <td>
                           <Link
-                            to={`attendee/edit/${attendee.id}`}
+                            to={`/edit/${attendee.id}`}
                             className="btn btn-warning btn-sm"
                           >
                             Edit
                           </Link>
+
+                          <span></span>
+                          <Link
+                            to={`/detail/${attendee.id}`}
+                            className="btn btn-info btn-sm"
+                          >
+                            view
+                          </Link>
+                          <span></span>
                           <button
                             className="btn btn-danger btn-sm ml-2"
                             onClick={() => handleDelete(attendee.id)}
@@ -148,6 +161,7 @@ const AttendeeTable = () => {
         </div>
       </div>
     </div>
+    // </div>
   );
 };
 

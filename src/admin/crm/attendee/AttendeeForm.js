@@ -17,8 +17,10 @@ const AttendeeForm = () => {
   const navigate = useNavigate();
   const [toggleState, setToggleState] = useState({ toggle: false });
 
-  // Correctly setting toggle property
-  setToggleState((prevState) => ({ ...prevState, toggle: true }));
+  // Correctly set the toggle only once on component mount
+  useEffect(() => {
+    setToggleState((prevState) => ({ ...prevState, toggle: true }));
+  }, []); // Empty dependency array ensures this runs only once
 
   const [phoneValid, setPhoneValid] = useState(true);
   const [errors, setErrors] = useState({});
@@ -124,7 +126,7 @@ const AttendeeForm = () => {
               <form onSubmit={handleSubmit}>
                 {/* Form fields */}
                 {/* ... your form fields here ... */}
-                <div className="row">
+                <div className="row justify-content-center">
                   {/* Name Field */}
                   <div className="col-md-6">
                     <div className="form-group">

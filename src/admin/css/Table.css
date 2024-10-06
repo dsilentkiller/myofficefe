@@ -1,22 +1,92 @@
-.table-container {
-    max-height: 600px; /* Adjust the height as needed */
-    overflow: auto; /* Enables both horizontal and vertical scrolling */
-    position: relative; 
+/* Container for the dashboard */
+.card {
+    width: auto;
+    padding: 0; /* Remove padding to ensure full width */
+    margin: 0; /* Remove margin to ensure full width */
+}
 
-  }
+/* Table container with full width */
+.table-container {
+    width: 100%; /* Make sure it spreads across full dashboard width */
+    max-height: 600px; /* Adjust height as needed */
+    overflow: auto; /* Allows both horizontal and vertical scrolling */
+    position: relative;
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margin */
+}
+
+/* Table styling */
+.table {
+    width: 100%; /* Full width */
+    border-collapse: collapse;
+    table-layout: auto; /* Allow flexible table layout */
+}
+
+/* Sticky header styling */
+.table th {
+    position: sticky;
+    top: 0;
+    background: #f0f3f7;
+    z-index: 1;
+    white-space: nowrap;
+    padding: 8px;
+    text-align: left; /* Align header text left for consistency */
+}
+
+/* Table cell styling */
+.table td {
+    word-wrap: break-word;
+    padding: 8px;
+    text-align: left;
+    white-space: normal; /* Allow text to wrap if needed */
+}
+
+/* Pagination container styles */
+.pagination-wrapper {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Province Form Design */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+/* Error Message */
+.error {
+    color: red;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+
+
+
+/* .table-container {
+
+    max-height: 600px; /* Adjust the height as needed */
+    /* overflow: auto; Enables both horizontal and vertical scrolling */
+    /* position: relative;  */
+
+  /* }  */
   
-  .table {
+  /* .table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed; /* Ensures columns are of equal width */
-  }
-  
-  .table th {
-    position: sticky; /* Keeps the header fixed at the top */
-    top: 0;
-    background: #f0f3f7; /* Light background color for header */
-    z-index: 0.5;
-  }
+  /* } */
+
+  /* .table th { */
+    /* position: sticky; Keeps the header fixed at the top */
+    /* top: 0; */
+    /* background: #f0f3f7; Light background color for header */
+    /* z-index: 0.5; */
+  /* } */
   
   .table td {
     word-wrap: break-word; /* Wrap text within cells */

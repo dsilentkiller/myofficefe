@@ -6,29 +6,32 @@ import {
   deleteProvince,
   fetchProvinces, // Import the delete action correctly
 } from "../../redux/slice/base/provinceSlice";
+import DeleteProvince from "./DeleteProvince";
 import "../../../admin/css/Table.css"; // Make sure this includes necessary styles
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 const ProvinceList = () => {
-  const [newProvinceName, setNewProvinceName] = useState("");
-  const [editId, setEditId] = useState(null);
   const [newName, setNewName] = useState("");
+  const [editId, setEditId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProvinces, setFilteredProvinces] = useState([]);
   const [provinceToDelete, setProvinceToDelete] = useState(null);
   const dispatch = useDispatch();
-  const { list, isLoading, error } = useSelector((state) => state.districts);
+  const { list, isLoading, error, deleteError } = useSelector(
+    (state) => state.provinces
+  );
+  console.log(list);
   // Access updateStatus state property
-  const updateStatus = useSelector((state) => state.districts.updateStatus);
-  const updateError = useSelector((state) => state.districts.updateError);
+  const updateStatus = useSelector((state) => state.provinces.updateStatus);
+  const updateError = useSelector((state) => state.provinces.updateError);
   //
-  //-----Fetching data from database o api call using fetchDistrict  -------------
+  //-----Fetching data from database o api call using fetchprovince  -------------
   useEffect(() => {
     dispatch(fetchProvinces());
   }, [dispatch]);
 
-  // const handleAddDistrict = () => {
+  // const handleAddprovince = () => {
   //   navigate("create");
   // };
 
@@ -43,7 +46,7 @@ const ProvinceList = () => {
     }
   }, [updateStatus, updateError]);
 
-  //------------ this is filtered district name  in search table ---------
+  //------------ this is filtered province name  in search table ---------
   useEffect(() => {
     if (searchTerm) {
       setFilteredProvinces(
@@ -67,7 +70,7 @@ const ProvinceList = () => {
     setEditId(id);
     setNewName(name);
   };
-  //----to handle update item in district table
+  //----to handle update item in province table
   const handleUpdate = (e) => {
     e.preventDefault();
     if (editId !== null) {
@@ -88,10 +91,25 @@ const ProvinceList = () => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   };
+  // delete province
+  const handleDelete = (id) => {
+    dispatch(deleteProvince(id))
+      .unwrap()
+      .then(() => {
+        toast.success("Province deleted successfully!");
+        dispatch(fetchProvinces()); // Refresh the list after deletion
+      })
+      .catch((error) => {
+        toast.error(
+          `Failed to delete province: ${
+            error.message || deleteError || "Unknown error"
+          }`
+        );
+      });
+  };
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-
   return (
     <div className="content-wrapper">
       <div className="row justify-content-center">
@@ -101,11 +119,7 @@ const ProvinceList = () => {
               <div className="container-fluid">
                 <h5 className="navbar-brand">Province List</h5>
                 <div className="navbar-nav ml-auto">
-                  <Link
-                    to="create"
-                    className="nav-link btn btn-primary"
-                    // onClick={handleAddDistrict}
-                  >
+                  <Link to="create" className="nav-link btn btn-primary">
                     <h5>Add Province</h5>
                   </Link>
                   <form className="form-inline ml-3">
@@ -120,11 +134,6 @@ const ProvinceList = () => {
                         onChange={handleSearchChange}
                         required
                       />
-                      <div className="input-group-append">
-                        <button type="submit" className="btn btn-info">
-                          Search
-                        </button>
-                      </div>
                     </div>
                   </form>
                 </div>
@@ -143,8 +152,6 @@ const ProvinceList = () => {
                   <tbody>
                     {filteredProvinces.length > 0 ? (
                       filteredProvinces.map((province, index) => (
-                        // {list.length > 0 ? (
-                        //   list.map((province, index) => (
                         <tr key={province.id}>
                           <td>{index + 1}</td>
                           <td>
@@ -169,7 +176,7 @@ const ProvinceList = () => {
                             ) : (
                               <button
                                 onClick={() =>
-                                  handleEdit(province.id, province.name)
+                                  handleEdit(province.id, province.name || "")
                                 }
                                 className="btn btn-primary"
                               >
@@ -178,7 +185,7 @@ const ProvinceList = () => {
                             )}
                             <span> </span>
                             <button
-                              onClick={() => setProvinceToDelete(province.id)}
+                              onClick={() => handleDelete(province.id)}
                               className="btn btn-danger"
                             >
                               <FaTrash />
@@ -198,64 +205,55 @@ const ProvinceList = () => {
           </div>
         </div>
       </div>
-
-      {/* Delete Confirmation Modal */}
-      {provinceToDelete !== null && (
-        <deleteProvince
-          id={provinceToDelete}
-          onClose={() => setProvinceToDelete(null)}
-        />
-      )}
     </div>
   );
 };
 
 export default ProvinceList;
-
 //2
-// // // components/DistrictList.js
+// // // components/provinceList.js
 // import React, { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
-// import { fetchDistrict, updateDistrict } from "../../redux/slice/districtSlice";
+// import { fetchprovince, updateprovince } from "../../redux/slice/provinceSlice";
 // import { Link } from "react-router-dom";
 // import { FaEdit, FaTrash } from "react-icons/fa";
 // import "../../../admin/css/Table.css";
-// import DeleteDistrict from "./DeleteDistrict"; // Adjust the path as needed
+// import Deleteprovince from "./Deleteprovince"; // Adjust the path as needed
 // import { toast, ToastContainer } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
 // import "../../css/delete.css";
-// const DistrictList = () => {
+// const provinceList = () => {
 //   const dispatch = useDispatch();
-//   const { list, isLoading, error } = useSelector((state) => state.districts);
+//   const { list, isLoading, error } = useSelector((state) => state.provinces);
 
 //   const [editId, setEditId] = useState(null);
 //   const [newName, setNewName] = useState("");
 //   const [searchTerm, setSearchTerm] = useState("");
-//   const [filteredDistricts, setFilteredDistricts] = useState([]);
-//   const [districtToDelete, setDistrictToDelete] = useState(null);
+//   const [filteredprovinces, setFilteredprovinces] = useState([]);
+//   const [provinceToDelete, setprovinceToDelete] = useState(null);
 
 //   useEffect(() => {
-//     dispatch(fetchDistrict());
+//     dispatch(fetchprovince());
 //   }, [dispatch]);
 
 //   useEffect(() => {
 //     if (searchTerm) {
-//       setFilteredDistricts(
-//         list.filter((district) =>
+//       setFilteredprovinces(
+//         list.filter((province) =>
 //           province.name.toLowerCase().includes(searchTerm.toLowerCase())
 //         )
 //       );
 //     } else {
-//       setFilteredDistricts(list);
+//       setFilteredprovinces(list);
 //     }
 //   }, [searchTerm, list]);
 
 //   // useEffect(() => {
 //   //   if (updateStatus === "succeeded") {
-//   //     toast.success("District updated successfully!");
+//   //     toast.success("province updated successfully!");
 //   //   } else if (updateStatus === "failed") {
 //   //     toast.error(
-//   //       `Failed to update district: ${updateError || "Unknown error"}`
+//   //       `Failed to update province: ${updateError || "Unknown error"}`
 //   //     );
 //   //   }
 //   // }, [updateStatus, updateError]);
@@ -268,7 +266,7 @@ export default ProvinceList;
 //   const handleUpdate = (e) => {
 //     e.preventDefault();
 //     if (editId !== null) {
-//       dispatch(updateDistrict({ id: editId, name: newName }));
+//       dispatch(updateprovince({ id: editId, name: newName }));
 //       setEditId(null);
 //       setNewName("");
 //     }
@@ -296,10 +294,10 @@ export default ProvinceList;
 //           <div className="card">
 //             <nav className="navbar navbar-expand-lg navbar-light bg-light">
 //               <div className="container-fluid">
-//                 <h5 className="navbar-brand">District List</h5>
+//                 <h5 className="navbar-brand">province List</h5>
 //                 <div className="navbar-nav ml-auto">
 //                   <Link to="create" className="nav-link btn btn-primary">
-//                     <h5>Add District</h5>
+//                     <h5>Add province</h5>
 //                   </Link>
 //                   <form className="form-inline ml-3">
 //                     <div className="input-group">
@@ -334,8 +332,8 @@ export default ProvinceList;
 //                     </tr>
 //                   </thead>
 //                   <tbody>
-//                     {filteredDistricts.length > 0 ? (
-//                       filteredDistricts.map((district, index) => (
+//                     {filteredprovinces.length > 0 ? (
+//                       filteredprovinces.map((province, index) => (
 //                         <tr key={province.id}>
 //                           <td>{index + 1}</td>
 //                           <td>
@@ -369,7 +367,7 @@ export default ProvinceList;
 //                             )}
 //                             <span> </span>
 //                             <button
-//                               onClick={() => setDistrictToDelete(province.id)}
+//                               onClick={() => setprovinceToDelete(province.id)}
 //                               className="btn btn-danger"
 //                             >
 //                               <FaTrash />
@@ -379,7 +377,7 @@ export default ProvinceList;
 //                       ))
 //                     ) : (
 //                       <tr>
-//                         <td colSpan="3">No districts found</td>
+//                         <td colSpan="3">No provinces found</td>
 //                       </tr>
 //                     )}
 //                   </tbody>
@@ -391,10 +389,10 @@ export default ProvinceList;
 //       </div>
 
 //       {/* Delete Confirmation Modal */}
-//       {districtToDelete !== null && (
-//         <DeleteDistrict
-//           id={districtToDelete}
-//           onClose={() => setDistrictToDelete(null)}
+//       {provinceToDelete !== null && (
+//         <Deleteprovince
+//           id={provinceToDelete}
+//           onClose={() => setprovinceToDelete(null)}
 //         />
 //       )}
 
@@ -404,39 +402,39 @@ export default ProvinceList;
 //   );
 // };
 
-// export default DistrictList;
+// export default provinceList;
 
 // import React, { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
-// import { fetchDistrict, updateDistrict } from "../../redux/slice/districtSlice";
+// import { fetchprovince, updateprovince } from "../../redux/slice/provinceSlice";
 // import { Link } from "react-router-dom";
 // import { FaEdit, FaTrash } from "react-icons/fa";
 // import "../../../admin/css/Table.css";
-// import DeleteDistrict from "./DeleteDistrict"; // Adjust the path as needed
+// import Deleteprovince from "./Deleteprovince"; // Adjust the path as needed
 
-// const DistrictList = () => {
+// const provinceList = () => {
 //   const dispatch = useDispatch();
-//   const { list, isLoading, error } = useSelector((state) => state.districts);
+//   const { list, isLoading, error } = useSelector((state) => state.provinces);
 
 //   const [editId, setEditId] = useState(null);
 //   const [newName, setNewName] = useState("");
 //   const [searchTerm, setSearchTerm] = useState("");
-//   const [filteredDistricts, setFilteredDistricts] = useState([]);
-//   const [districtToDelete, setDistrictToDelete] = useState(null);
+//   const [filteredprovinces, setFilteredprovinces] = useState([]);
+//   const [provinceToDelete, setprovinceToDelete] = useState(null);
 
 //   useEffect(() => {
-//     dispatch(fetchDistrict());
+//     dispatch(fetchprovince());
 //   }, [dispatch]);
 
 //   useEffect(() => {
 //     if (searchTerm) {
-//       setFilteredDistricts(
-//         list.filter((district) =>
+//       setFilteredprovinces(
+//         list.filter((province) =>
 //           province.name.toLowerCase().includes(searchTerm.toLowerCase())
 //         )
 //       );
 //     } else {
-//       setFilteredDistricts(list);
+//       setFilteredprovinces(list);
 //     }
 //   }, [searchTerm, list]);
 
@@ -448,7 +446,7 @@ export default ProvinceList;
 //   const handleUpdate = (e) => {
 //     e.preventDefault();
 //     if (editId !== null) {
-//       dispatch(updateDistrict({ id: editId, name: newName }));
+//       dispatch(updateprovince({ id: editId, name: newName }));
 //       setEditId(null);
 //       setNewName("");
 //     }
@@ -476,10 +474,10 @@ export default ProvinceList;
 //           <div className="card">
 //             <nav className="navbar navbar-expand-lg navbar-light bg-light">
 //               <div className="container-fluid">
-//                 <h5 className="navbar-brand">District List</h5>
+//                 <h5 className="navbar-brand">province List</h5>
 //                 <div className="navbar-nav ml-auto">
 //                   <Link to="create" className="nav-link btn btn-primary">
-//                     <h5>Add District</h5>
+//                     <h5>Add province</h5>
 //                   </Link>
 //                   <form className="form-inline ml-3">
 //                     <div className="input-group">
@@ -514,8 +512,8 @@ export default ProvinceList;
 //                     </tr>
 //                   </thead>
 //                   <tbody>
-//                     {filteredDistricts.length > 0 ? (
-//                       filteredDistricts.map((district, index) => (
+//                     {filteredprovinces.length > 0 ? (
+//                       filteredprovinces.map((province, index) => (
 //                         <tr key={province.id}>
 //                           <td>{index + 1}</td>
 //                           <td>
@@ -549,7 +547,7 @@ export default ProvinceList;
 //                             )}
 //                             <span> </span>
 //                             <button
-//                               onClick={() => setDistrictToDelete(province.id)}
+//                               onClick={() => setprovinceToDelete(province.id)}
 //                               className="btn btn-danger"
 //                             >
 //                               <FaTrash />
@@ -559,7 +557,7 @@ export default ProvinceList;
 //                       ))
 //                     ) : (
 //                       <tr>
-//                         <td colSpan="3">No districts found</td>
+//                         <td colSpan="3">No provinces found</td>
 //                       </tr>
 //                     )}
 //                   </tbody>
@@ -571,41 +569,41 @@ export default ProvinceList;
 //       </div>
 
 //       {/* Delete Confirmation Modal */}
-//       {districtToDelete !== null && (
-//         <DeleteDistrict
-//           id={districtToDelete}
-//           onClose={() => setDistrictToDelete(null)}
+//       {provinceToDelete !== null && (
+//         <Deleteprovince
+//           id={provinceToDelete}
+//           onClose={() => setprovinceToDelete(null)}
 //         />
 //       )}
 //     </div>
 //   );
 // };
 
-// export default DistrictList;
+// export default provinceList;
 
 // import React, { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import {
-//   fetchDistrict,
-//   updateDistrict,
-//   searchDistrict,
-// } from "../../redux/slice/districtSlice";
+//   fetchprovince,
+//   updateprovince,
+//   searchprovince,
+// } from "../../redux/slice/provinceSlice";
 // import { Link } from "react-router-dom";
 // import { FaEdit, FaTrash } from "react-icons/fa";
 // import "../../../admin/css/Table.css";
 
-// const DistrictList = () => {
+// const provinceList = () => {
 //   const dispatch = useDispatch();
-//   const { list, isLoading, error } = useSelector((state) => state.districts);
+//   const { list, isLoading, error } = useSelector((state) => state.provinces);
 
 //   const [editId, setEditId] = useState(null);
 //   const [newName, setNewName] = useState("");
 //   const [searchTerm, setSearchTerm] = useState("");
-//   const [filteredDistricts, setFilteredDistricts] = useState([]);
+//   const [filteredprovinces, setFilteredprovinces] = useState([]);
 
-//   // Fetch districts from backend on component mount
+//   // Fetch provinces from backend on component mount
 //   useEffect(() => {
-//     dispatch(fetchDistrict());
+//     dispatch(fetchprovince());
 //   }, [dispatch]);
 
 //   // Handle edit button click, enabling editing mode
@@ -614,26 +612,26 @@ export default ProvinceList;
 //     setNewName(name);
 //   };
 
-//   // Handle save button click, updating district name
+//   // Handle save button click, updating province name
 //   const handleUpdate = (e) => {
 //     e.preventDefault();
 //     if (editId !== null) {
-//       dispatch(updateDistrict({ id: editId, name: newName }));
+//       dispatch(updateprovince({ id: editId, name: newName }));
 //       setEditId(null);
 //       setNewName("");
 //     }
 //   };
 
-//   // Filter districts based on search term
+//   // Filter provinces based on search term
 //   useEffect(() => {
 //     if (searchTerm) {
-//       setFilteredDistricts(
-//         list.filter((district) =>
+//       setFilteredprovinces(
+//         list.filter((province) =>
 //           province.name.toLowerCase().includes(searchTerm.toLowerCase())
 //         )
 //       );
 //     } else {
-//       setFilteredDistricts(list);
+//       setFilteredprovinces(list);
 //     }
 //   }, [searchTerm, list]);
 
@@ -642,7 +640,7 @@ export default ProvinceList;
 //     setSearchTerm(e.target.value);
 //   };
 
-//   // Format district name with capitalization for each word
+//   // Format province name with capitalization for each word
 //   const formatName = (name) => {
 //     if (!name) return "";
 //     return name
@@ -662,10 +660,10 @@ export default ProvinceList;
 //           <div className="card">
 //             <nav className="navbar navbar-expand-lg navbar-light bg-light">
 //               <div className="container-fluid">
-//                 <h5 className="navbar-brand">District List</h5>
+//                 <h5 className="navbar-brand">province List</h5>
 //                 <div className="navbar-nav ml-auto">
 //                   <Link to="create" className="nav-link btn btn-primary">
-//                     <h5>Add District</h5>
+//                     <h5>Add province</h5>
 //                   </Link>
 //                   <form className="form-inline ml-3">
 //                     <div className="input-group">
@@ -700,8 +698,8 @@ export default ProvinceList;
 //                     </tr>
 //                   </thead>
 //                   <tbody>
-//                     {filteredDistricts.length > 0 ? (
-//                       filteredDistricts.map((district, index) => (
+//                     {filteredprovinces.length > 0 ? (
+//                       filteredprovinces.map((province, index) => (
 //                         <tr key={province.id}>
 //                           <td>{index + 1}</td>
 //                           <td>
@@ -745,7 +743,7 @@ export default ProvinceList;
 //                       ))
 //                     ) : (
 //                       <tr>
-//                         <td colSpan="3">No districts found</td>
+//                         <td colSpan="3">No provinces found</td>
 //                       </tr>
 //                     )}
 //                   </tbody>
@@ -759,28 +757,28 @@ export default ProvinceList;
 //   );
 // };
 
-// export default DistrictList;
+// export default provinceList;
 
 // import React, { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
-// import { fetchDistrict, updateDistrict } from "../../redux/slice/districtSlice";
+// import { fetchprovince, updateprovince } from "../../redux/slice/provinceSlice";
 // import { Link } from "react-router-dom";
 // import { FaEdit, FaTrash } from "react-icons/fa";
 // import "../../../admin/css/Table.css";
 // // import debounce from "lodash/debounce"; // If you installed lodash
-// import { searchDistrict } from "../../redux/slice/districtSlice";
+// import { searchprovince } from "../../redux/slice/provinceSlice";
 
-// const DistrictList = () => {
+// const provinceList = () => {
 //   const dispatch = useDispatch();
 //   const [editId, setEditId] = useState(null);
 //   const [newName, setNewName] = useState("");
 //   const [searchTerm, setSearchTerm] = useState("");
-//   //fiter district for search item
-//   const [filteredDistricts, setFilteredDistricts] = useState([]);
-//   const { list, isLoading, error } = useSelector((state) => state.districts);
+//   //fiter province for search item
+//   const [filteredprovinces, setFilteredprovinces] = useState([]);
+//   const { list, isLoading, error } = useSelector((state) => state.provinces);
 //   // fetching data from backend
 //   useEffect(() => {
-//     dispatch(fetchDistrict());
+//     dispatch(fetchprovince());
 //   }, [dispatch]);
 
 //   //editing data in a table
@@ -792,7 +790,7 @@ export default ProvinceList;
 //   const handleUpdate = (e) => {
 //     e.preventDefault();
 //     if (editId !== null) {
-//       dispatch(updateDistrict({ id: editId, name: newName }));
+//       dispatch(updateprovince({ id: editId, name: newName }));
 //       setEditId(null);
 //       setNewName("");
 //     }
@@ -800,13 +798,13 @@ export default ProvinceList;
 //   //search item  by filtering  live search
 //   useEffect(() => {
 //     if (searchTerm) {
-//       setFilteredDistricts(
-//         list.filter((district) =>
+//       setFilteredprovinces(
+//         list.filter((province) =>
 //           province.name.toLowerCase().includes(searchTerm.toLowerCase())
 //         )
 //       );
 //     } else {
-//       setFilteredDistricts(list);
+//       setFilteredprovinces(list);
 //     }
 //   }, [searchTerm, list]);
 
@@ -839,10 +837,10 @@ export default ProvinceList;
 //           <div className="card">
 //             <nav className="navbar navbar-expand-lg navbar-light bg-light">
 //               <div className="container-fluid">
-//                 <h5 className="navbar-brand">District List</h5>
+//                 <h5 className="navbar-brand">province List</h5>
 //                 <div className="navbar-nav ml-auto">
 //                   <Link to="create" className="nav-link btn btn-info">
-//                     <h5>Add district</h5>
+//                     <h5>Add province</h5>
 //                   </Link>
 //                   <form
 //                     // onSubmit={handleSearchChange}
@@ -880,8 +878,8 @@ export default ProvinceList;
 //                   </tr>
 //                 </thead>
 //                 <tbody>
-//                   {filteredDistricts.length > 0 ? (
-//                     filteredDistricts.map((district, index) => (
+//                   {filteredprovinces.length > 0 ? (
+//                     filteredprovinces.map((province, index) => (
 //                       <tr key={province.id}>
 //                         <td>{index + 1}</td>
 //                         <td>
@@ -919,7 +917,7 @@ export default ProvinceList;
 //                     ))
 //                   ) : (
 //                     <tr>
-//                       <td colSpan="3">No districts found</td>
+//                       <td colSpan="3">No provinces found</td>
 //                     </tr>
 //                   )}
 //                 </tbody>
@@ -932,7 +930,7 @@ export default ProvinceList;
 //   );
 // };
 
-// export default DistrictList;
+// export default provinceList;
 
 //   // Select state from Redux store
 //   const {

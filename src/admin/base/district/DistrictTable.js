@@ -15,6 +15,7 @@ import DeleteDistrict from "./DeleteDistrict"; // Adjust the path as need
 const DistrictList = () => {
   const dispatch = useDispatch();
   const { list, isLoading, error } = useSelector((state) => state.districts);
+  console.log(list);
   // Access updateStatus state property
   const updateStatus = useSelector((state) => state.districts.updateStatus);
   const updateError = useSelector((state) => state.districts.updateError);
@@ -121,11 +122,11 @@ const DistrictList = () => {
                         onChange={handleSearchChange}
                         required
                       />
-                      <div className="input-group-append">
+                      {/* <div className="input-group-append">
                         <button type="submit" className="btn btn-info">
                           Search
                         </button>
-                      </div>
+                      </div> */}
                     </div>
                   </form>
                 </div>

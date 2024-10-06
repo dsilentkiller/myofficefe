@@ -1,7 +1,7 @@
 // src/store/eventSlice.js
-
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
 // search
 export const searchEvent = createAsyncThunk(
   "event/searchEvent",
@@ -13,51 +13,63 @@ export const searchEvent = createAsyncThunk(
   }
 );
 // Fetch all"events action
-export const fetchEvent = createAsyncThunk(
-  "events/fetchEvent",
+export const fetchEvents = createAsyncThunk(
+  "events/fetchEvents",
   async (_, thunkAPI) => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/event/");
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
-// export const createEvent = createAsyncThunk(
-//   "events/createEvent",
-//   async (eventData, thunkAPI) => {
-//     try {
-//       const response = await axios.post(
-//         "http://127.0.0.1:8000/api/events/create/",
-//         eventData
-//       );
-//       return response.data.result.data; // Adjust this based on your actual API response structure
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response.result.data);
-//     }
-//   }
-// );
 
-export const createEvent = createAsyncThunk(
-  "events/createEvent",
-  async (eventData, thunkAPI) => {
-    try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/event/create/",
-        eventData
-      );
-      if (response.status === 201) {
-        // Ensure it's a successful creation response
-        return response.data.result.data;
-      } else {
-        return thunkAPI.rejectWithValue("Failed to create event.");
-      }
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+// Action to create an event
+export const createEvent = (formData) => async (dispatch) => {
+  try {
+    // const formattedEvent = {
+    //   ...formData,
+    //   attendees: formData.attendees.map((attendee) => parseInt(attendee, 10)), // Convert to integers
+    // };
+
+    // console.log("Formatted Event Data:", formattedEvent); // Log the data being sent
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/event/create/",
+      formData
+    );
+
+    dispatch({ type: "EVENT_CREATED", payload: response.data.result });
+  } catch (error) {
+    console.error("Error creating event:", error); // Log the full error object
+
+    if (error.response) {
+      console.error("Error response data:", error.response.data); // Log specific response details
+      console.error("Error response status:", error.response.status);
+      console.error("Error response headers:", error.response.headers);
+
+      // Dispatch an error action with detailed message
+      dispatch({
+        type: "EVENT_CREATE_FAILED",
+        payload: error.response.data, // Send the entire error data for detailed information
+      });
+    } else if (error.request) {
+      console.error("Error request:", error.request);
+      dispatch({
+        type: "EVENT_CREATE_FAILED",
+        payload: "No response received from server.",
+      });
+    } else {
+      console.error("Error message:", error.message);
+      dispatch({
+        type: "EVENT_CREATE_FAILED",
+        payload: error.message,
+      });
     }
   }
-);
+};
+
 // Fetch a single event by ID action
 export const fetchEventById = createAsyncThunk(
   "events/fetchEventById",
@@ -66,29 +78,12 @@ export const fetchEventById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/event/${id}/`
       );
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
-// // Update event
-// export const updateEvent = createAsyncThunk(
-//   "event/updateEvent",
-//   async ({ id, name }, thunkAPI) => {
-//     try {
-//       const response = await axios.put(
-//         `http://127.0.0.1:8000/api/events/update/${id}/`,
-//         { name }
-//       );
-//       return response.data.result.data;
-//     } catch (error) {
-//       const message =
-//         error.response?.data?.message || error.message || "An error occurred";
-//       return thunkAPI.rejectWithValue(message);
-//     }
-//   }
-// );
 
 export const deleteEvent = createAsyncThunk(
   "events/deleteEvent",
