@@ -25,7 +25,7 @@ export const fetchEvents = createAsyncThunk(
       }));
       return events;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.result.data);
     }
   }
 );
@@ -45,7 +45,7 @@ export const createEvent = (formData) => async (dispatch) => {
       formData
     );
 
-    dispatch({ type: "EVENT_CREATED", payload: response.data.result });
+    dispatch({ type: "EVENT_CREATED", payload: response.data.result.data });
   } catch (error) {
     console.error("Error creating event:", error); // Log the full error object
 
@@ -112,7 +112,7 @@ export const deleteEvent = createAsyncThunk(
 );
 
 const initialState = {
-  events: [],
+  list: [], //This should store the list of events
   isLoading: false,
   error: null,
   createStatus: null,
@@ -127,25 +127,43 @@ const initialState = {
 const eventSlice = createSlice({
   name: "events",
   initialState,
-  reducers: {
-    addEvent: (state, action) => {
-      state.events.push(action.payload);
-    },
-    removeEvent: (state, action) => {
-      state.events = state.events.filter(
-        (event) => event.id !== action.payload
-      );
-    },
-    updateEvent: (state, action) => {
-      const index = state.events.findIndex(
-        (event) => event.id === action.payload.id
-      );
-      if (index !== -1) {
-        state.events[index] = action.payload;
-      }
-    },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchEvents.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchEvents.fulfilled, (state, action) => {
+        state.loading = false;
+        state.list = action.payload; // Store events here
+      })
+      .addCase(fetchEvents.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
+// name: "events",
+// initialState,
+// reducers: {
+// addEvent: (state, action) => {
+//   state.events.push(action.payload);
+// },
+// removeEvent: (state, action) => {
+//       state.events = state.events.filter(
+//         (event) => event.id !== action.payload
+//       );
+//     },
+//     updateEvent: (state, action) => {
+//       const index = state.events.findIndex(
+//         (event) => event.id === action.payload.id
+//       );
+//       if (index !== -1) {
+//         state.events[index] = action.payload;
+//       }
+//     },
+//   },
+// });
 
-export const { addEvent, removeEvent, updateEvent } = eventSlice.actions;
+// export const { addEvent, removeEvent, updateEvent } = eventSlice.actions;
 export default eventSlice.reducer;
