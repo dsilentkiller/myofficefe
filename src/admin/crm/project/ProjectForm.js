@@ -50,7 +50,9 @@ const ProjectForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.project_name.trim()) return; // Prevent empty name submission
+    if (!formData.project_name.trim()) return;
+
+    console.log("Submitting form data:", formData); // Add this line
 
     const existingProject = projects.some(
       (proj) =>
@@ -69,6 +71,30 @@ const ProjectForm = () => {
         console.error("Create Error:", error);
       });
   };
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   // Prevent empty name submission
+  //   if (!formData.project_name.trim()) return;
+
+  //   // Check if the project already exists (ensure correct comparison)
+  //   const existingProject = projects.some(
+  //     (proj) =>
+  //       proj.project_name &&
+  //       proj.project_name.toLowerCase() === formData.project_name.toLowerCase()
+  //   );
+
+  //   if (existingProject) {
+  //     toast.error("Project with this name already exists.");
+  //     return;
+  //   }
+
+  //   dispatch(createProject(formData))
+  //     .unwrap()
+  //     .catch((error) => {
+  //       console.error("Create Error:", error);
+  //     });
+  // };
 
   return (
     <div className="content-wrapper">

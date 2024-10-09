@@ -30,6 +30,7 @@ const AttendeeForm = () => {
     pri_phone: "",
     organization_name: "",
     organization_detail: "",
+    purpose: "",
   });
 
   const createStatus = useSelector((state) => state.attendees.createStatus);
@@ -52,6 +53,7 @@ const AttendeeForm = () => {
         pri_phone: currentAttendee.pri_phone || "",
         organization_name: currentAttendee.organization_name || "",
         organization_detail: currentAttendee.organization_detail || "",
+        purpose: currentAttendee.purpose || "",
       });
     }
   }, [currentAttendee, id]);
@@ -99,6 +101,7 @@ const AttendeeForm = () => {
             pri_phone: "",
             organization_name: "",
             organization_detail: "",
+            purpose: "",
           });
           navigate("/dashboard/crm/attendee");
         })
@@ -124,9 +127,7 @@ const AttendeeForm = () => {
             <div className="card-body">
               {createError && <p className="text-danger">{createError}</p>}
               <form onSubmit={handleSubmit}>
-                {/* Form fields */}
-                {/* ... your form fields here ... */}
-                <div className="row justify-content-center">
+                <div className="row">
                   {/* Name Field */}
                   <div className="col-md-6">
                     <div className="form-group">
@@ -138,7 +139,6 @@ const AttendeeForm = () => {
                         value={formData.attendee_name}
                         className="form-control"
                         placeholder="Enter attendee name"
-                        // onChange={handleChange}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
@@ -146,10 +146,9 @@ const AttendeeForm = () => {
                           })
                         }
                         required
-                        style={{ width: "100%" }}
                       />
+                      {errors.attendee_name && <p>{errors.attendee_name}</p>}
                     </div>
-                    {errors.attendee_name && <p>{errors.attendee_name}</p>}
                   </div>
 
                   {/* Email Field */}
@@ -163,25 +162,23 @@ const AttendeeForm = () => {
                         value={formData.email}
                         className="form-control"
                         placeholder="Enter email"
-                        // onChange={handleChange}
                         onChange={(e) =>
                           setFormData({ ...formData, email: e.target.value })
                         }
                         required
-                        style={{ width: "100%" }}
                       />
+                      {errors.email && <p>{errors.email}</p>}
                     </div>
                   </div>
-                  {errors.email && <p>{errors.email}</p>}
                 </div>
 
-                {/* Phone Field */}
                 <div className="row">
+                  {/* Phone Field */}
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="pri_phone">Phone:</label>
                       <PhoneInput
-                        country={"np"} // Country code for Nepal
+                        country={"np"}
                         value={formData.pri_phone}
                         onChange={validatePhoneNumber}
                         inputStyle={{
@@ -197,13 +194,35 @@ const AttendeeForm = () => {
                         </p>
                       )}
                     </div>
+                    {errors.pri_phone && <p>{errors.pri_phone}</p>}
                   </div>
-                  {errors.pri_phone && <p>{errors.pri_phone}</p>}
+
+                  {/* Purpose Field */}
+                  <div className="col-md-6">
+                    <div className="form-group">
+                      <label htmlFor="purpose">Purpose:</label>
+                      <input
+                        type="text"
+                        id="purpose"
+                        name="purpose"
+                        value={formData.purpose}
+                        className="form-control"
+                        placeholder="Enter purpose"
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            purpose: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                      {errors.purpose && <p>{errors.purpose}</p>}
+                    </div>
+                  </div>
                 </div>
 
-                {/* Organization Fields */}
                 <div className="row">
-                  {/* Organization Name */}
+                  {/* Organization Name Field */}
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="organization_name">
@@ -216,7 +235,6 @@ const AttendeeForm = () => {
                         value={formData.organization_name}
                         className="form-control"
                         placeholder="Enter organization name"
-                        // onChange={handleChange}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
@@ -224,28 +242,25 @@ const AttendeeForm = () => {
                           })
                         }
                         required
-                        style={{ width: "100%" }}
                       />
+                      {errors.organization_name && (
+                        <p>{errors.organization_name}</p>
+                      )}
                     </div>
-                    {errors.organization_name && (
-                      <p>{errors.organization_name}</p>
-                    )}
                   </div>
 
-                  {/* Organization Detail */}
+                  {/* Organization Detail Field */}
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="organization_detail">
                         Organization Detail:
                       </label>
-                      <input
-                        type="text"
+                      <textarea
                         id="organization_detail"
                         name="organization_detail"
                         value={formData.organization_detail}
                         className="form-control"
                         placeholder="Enter organization details"
-                        // onChange={handleChange}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
@@ -253,13 +268,12 @@ const AttendeeForm = () => {
                           })
                         }
                         required
-                        style={{ width: "100%" }}
                       />
+                      {errors.organization_detail && (
+                        <p>{errors.organization_detail}</p>
+                      )}
                     </div>
                   </div>
-                  {errors.organization_detail && (
-                    <p>{errors.organization_detail}</p>
-                  )}
                 </div>
 
                 {errors.non_field_errors && <p>{errors.non_field_errors[0]}</p>}
@@ -278,6 +292,199 @@ const AttendeeForm = () => {
 };
 
 export default AttendeeForm;
+//     <div className="content-wrapper">
+//       <div className="container">
+//         <div className="container-fluid">
+//           <div className="card">
+//             <div className="card-header">
+//               <h4 className="btn btn-primary">
+//                 {id ? "Update Attendee" : "Add Attendee"}
+//               </h4>
+//             </div>
+//             <div className="card-body">
+//               {createError && <p className="text-danger">{createError}</p>}
+//               <form onSubmit={handleSubmit}>
+//                 {/* Form fields */}
+//                 {/* ... your form fields here ... */}
+//                 <div className="row justify-content-center">
+//                   {/* Name Field */}
+//                   <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="attendee_name">Name:</label>
+//                       <input
+//                         type="text"
+//                         id="attendee_name"
+//                         name="attendee_name"
+//                         value={formData.attendee_name}
+//                         className="form-control"
+//                         placeholder="Enter attendee name"
+//                         // onChange={handleChange}
+//                         onChange={(e) =>
+//                           setFormData({
+//                             ...formData,
+//                             attendee_name: e.target.value,
+//                           })
+//                         }
+//                         required
+//                         style={{ width: "100%" }}
+//                       />
+//                     </div>
+//                     {errors.attendee_name && <p>{errors.attendee_name}</p>}
+//                   </div>
+
+//                   {/* Email Field */}
+//                   <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="email">Email:</label>
+//                       <input
+//                         type="email"
+//                         id="email"
+//                         name="email"
+//                         value={formData.email}
+//                         className="form-control"
+//                         placeholder="Enter email"
+//                         // onChange={handleChange}
+//                         onChange={(e) =>
+//                           setFormData({ ...formData, email: e.target.value })
+//                         }
+//                         required
+//                         style={{ width: "100%" }}
+//                       />
+//                     </div>
+//                   </div>
+//                   {errors.email && <p>{errors.email}</p>}
+//                 </div>
+
+//                 {/* Phone Field */}
+//                 <div className="row">
+//                   <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="pri_phone">Phone:</label>
+//                       <PhoneInput
+//                         country={"np"} // Country code for Nepal
+//                         value={formData.pri_phone}
+//                         onChange={validatePhoneNumber}
+//                         inputStyle={{
+//                           width: "100%",
+//                           borderColor: phoneValid ? "green" : "red",
+//                           backgroundColor: phoneValid ? "#e0f7fa" : "#ffebee",
+//                         }}
+//                       />
+//                       {!phoneValid && (
+//                         <p style={{ color: "red" }}>
+//                           Please enter a valid phone number between 10 and 15
+//                           digits.
+//                         </p>
+//                       )}
+//                     </div>
+//                   </div>
+//                   {errors.pri_phone && <p>{errors.pri_phone}</p>}
+//                 </div>
+//                 {/* <div className="row"> */}
+//                   {/* purpose */}
+//                   <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="purpose">Purpose</label>
+//                       <input
+//                         type="text"
+//                         id="purpose"
+//                         name="purpose"
+//                         value={formData.purpose}
+//                         className="form-control"
+//                         placeholder="Enter purpose"
+//                         // onChange={handleChange}
+//                         onChange={(e) =>
+//                           setFormData({
+//                             ...formData,
+//                             purpose: e.target.value,
+//                           })
+//                         }
+//                         required
+//                         style={{ width: "100%" }}
+//                       />
+//                     </div>
+//                     {errors.purpose && <p>{errors.purpose}</p>}
+//                   </div>
+
+//                   {/* Organization Fields */}
+
+//                   {/* Organization Name */}
+//                   <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="organization_name">
+//                         Organization Name:
+//                       </label>
+//                       <input
+//                         type="text"
+//                         id="organization_name"
+//                         name="organization_name"
+//                         value={formData.organization_name}
+//                         className="form-control"
+//                         placeholder="Enter organization name"
+//                         // onChange={handleChange}
+//                         onChange={(e) =>
+//                           setFormData({
+//                             ...formData,
+//                             organization_name: e.target.value,
+//                           })
+//                         }
+//                         required
+//                         style={{ width: "100%" }}
+//                       />
+//                     </div>
+//                     {errors.organization_name && (
+//                       <p>{errors.organization_name}</p>
+//                     )}
+//                   </div>
+//                 {/* </div> */}
+
+//                   {/* Organization Detail */}
+//                   <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="organization_detail">
+//                         Organization Detail:
+//                       </label>
+//                       <textarea
+//                         type="text"
+//                         id="organization_detail"
+//                         name="organization_detail"
+//                         value={formData.organization_detail}
+//                         className="form-control"
+//                         placeholder="Enter organization details"
+//                         // onChange={handleChange}
+//                         onChange={(e) =>
+//                           setFormData({
+//                             ...formData,
+//                             organization_detail: e.target.value,
+//                           })
+//                         }
+//                         required
+//                         style={{ width: "100%" }}
+//                       />
+//                     </div>
+//                   </div>
+//                   {errors.organization_detail && (
+//                     <p>{errors.organization_detail}</p>
+//                   )}
+//                 {/* </div> */}
+
+//                 {errors.non_field_errors && <p>{errors.non_field_errors[0]}</p>}
+//                 {/* </div> */}
+
+//                 {/* Submit Button */}
+//                 <button type="submit" className="btn btn-primary">
+//                   {id ? "Update" : "Save"}
+//                 </button>
+//               </form>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AttendeeForm;
 
 // #only create form
 // import React, { useState, useEffect } from "react";

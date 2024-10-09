@@ -12,8 +12,9 @@ import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and D
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 const ProvinceList = () => {
-  const [newName, setNewName] = useState("");
+  const [newProvinceName, setNewProvinceName] = useState("");
   const [editId, setEditId] = useState(null);
+  const [newName, setNewName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProvinces, setFilteredProvinces] = useState([]);
   const [provinceToDelete, setProvinceToDelete] = useState(null);
@@ -93,15 +94,22 @@ const ProvinceList = () => {
   };
   // delete province
   const handleDelete = (id) => {
+    setProvinceToDelete(id); // Set the category ID to trigger the modal
+  };
+  // confirm delete
+  const confirmDelete = (id) => {
     dispatch(deleteProvince(id))
       .unwrap()
       .then(() => {
-        toast.success("Province deleted successfully!");
-        dispatch(fetchProvinces()); // Refresh the list after deletion
+        toast.success("category deleted successfully!");
+        setProvinceToDelete(null); // Close the modal after successful deletion
+        dispatch(fetchProvinces()); // Refresh the list
       })
       .catch((error) => {
+        // Handle and log the error more robustly
+        console.error("Delete Error:", error);
         toast.error(
-          `Failed to delete province: ${
+          `Failed to delete category: ${
             error.message || deleteError || "Unknown error"
           }`
         );
@@ -110,6 +118,7 @@ const ProvinceList = () => {
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+
   return (
     <div className="content-wrapper">
       <div className="row justify-content-center">
@@ -119,7 +128,11 @@ const ProvinceList = () => {
               <div className="container-fluid">
                 <h5 className="navbar-brand">Province List</h5>
                 <div className="navbar-nav ml-auto">
-                  <Link to="create" className="nav-link btn btn-primary">
+                  <Link
+                    to="create"
+                    className="nav-link btn btn-primary"
+                    // onClick={handleAddprovince}
+                  >
                     <h5>Add Province</h5>
                   </Link>
                   <form className="form-inline ml-3">
@@ -134,6 +147,11 @@ const ProvinceList = () => {
                         onChange={handleSearchChange}
                         required
                       />
+                      <div className="input-group-append">
+                        <button type="submit" className="btn btn-info">
+                          Search
+                        </button>
+                      </div>
                     </div>
                   </form>
                 </div>
@@ -152,6 +170,8 @@ const ProvinceList = () => {
                   <tbody>
                     {filteredProvinces.length > 0 ? (
                       filteredProvinces.map((province, index) => (
+                        // {list.length > 0 ? (
+                        //   list.map((province, index) => (
                         <tr key={province.id}>
                           <td>{index + 1}</td>
                           <td>
@@ -162,7 +182,7 @@ const ProvinceList = () => {
                                 onChange={(e) => setNewName(e.target.value)}
                               />
                             ) : (
-                              formatName(province.name)
+                              formatName(province.name || "")
                             )}
                           </td>
                           <td>
@@ -201,15 +221,31 @@ const ProvinceList = () => {
                   </tbody>
                 </table>
               </div>
+              {provinceToDelete !== null && (
+                <DeleteProvince
+                  id={provinceToDelete}
+                  onClose={() => setProvinceToDelete(null)}
+                  onConfirm={() => confirmDelete(provinceToDelete)}
+                />
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {provinceToDelete !== null && (
+        <deleteProvince
+          id={provinceToDelete}
+          onClose={() => setProvinceToDelete(null)}
+        />
+      )}
     </div>
   );
 };
 
 export default ProvinceList;
+
 //2
 // // // components/provinceList.js
 // import React, { useEffect, useState } from "react";

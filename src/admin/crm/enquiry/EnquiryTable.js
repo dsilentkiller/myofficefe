@@ -1,9 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import EnquiryForm from "./EnquiryForm";
 import "../../css/Table.css";
+import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
+import { useSelector, useDispatch } from "react-redux"; // Correct import
+import { Link, useNavigate } from "react-router-dom";
+import EnquiryDelete from "./EnquiryDelete";
+
 const EnquiryTable = () => {
   const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,8 +15,21 @@ const EnquiryTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredEnquiries, setFilteredEnquiries] = useState([]);
+  const [enquiryToDelete, setEnquiryToDelete] = useState(null);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  // const { enquiries, isLoading } = useSelector((state) => state.enquiries);
+
+  // Handle search
+  // const filteredEnquiries = enquiries.filter((enquiry) =>
+  //   enquiry.customer_name.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   useEffect(() => {
+    //fetching data
     const fetchEnquiries = async () => {
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/enquiry/");
@@ -26,7 +43,22 @@ const EnquiryTable = () => {
     };
 
     fetchEnquiries();
-  }, [currentPage, itemsPerPage]);
+
+    //live search handling
+    if (searchTerm) {
+      setFilteredEnquiries(
+        enquiries.filter((enquiry) =>
+          enquiry.customer_name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredEnquiries(enquiries);
+    }
+  }, [currentPage, itemsPerPage, searchTerm, enquiries]);
+
+  useEffect(() => {
+    dispatch(fetchEnquiries()); // Fetch enquiries using the dispatched action
+  }, [dispatch]);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -43,6 +75,21 @@ const EnquiryTable = () => {
   if (error) {
     return <div>Error loading enquiries: {error.message}</div>;
   }
+  //--- handle searchitem in a table ----
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+  //--converting first letter  capital
+  const formatName = (name) => {
+    if (!name) return "";
+    return name
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
+
+  // if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="content-wrapper">
@@ -65,14 +112,16 @@ const EnquiryTable = () => {
                     <input
                       type="search"
                       id="default-search"
-                      name="q"
+                      name="searchTerm"
                       className="form-control"
                       placeholder="Search Mockups, Logos..."
+                      value={searchTerm}
+                      onChange={handleSearchChange}
                       required
                     />
                     {/* <div className="input-group-append">
                         <button type="submit" className="btn btn-info">
-                          
+
                         </button>
                       </div> */}
                   </div>
@@ -121,34 +170,44 @@ const EnquiryTable = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {enquiries.length > 0 ? (
-                    enquiries.map((enquiry, index) => (
+                  {filteredEnquiries.length > 0 ? (
+                    filteredEnquiries.map((enquiry, index) => (
                       <tr key={enquiry.id}>
                         <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                        <td>{enquiry.customer_name}</td>
-                        <td>{enquiry.department}</td>
+                        <td>{formatName(enquiry.customer_name)}</td>
+                        <td>{formatName(enquiry.department)}</td>
                         <td>{enquiry.pri_phone}</td>
                         <td>{enquiry.sec_phone}</td>
                         <td>{enquiry.email}</td>
                         <td>{enquiry.gender}</td>
-                        <td>{enquiry.province}</td>
-                        <td>{enquiry.district}</td>
-                        <td>{enquiry.municipality}</td>
+                        <td>{formatName(enquiry.province)}</td>
+                        <td>{formatName(enquiry.district)}</td>
+                        <td>{formatName(enquiry.municipality)}</td>
                         <td>{enquiry.ward_no}</td>
-                        <td>{enquiry.tole_name}</td>
+                        <td>{formatName(enquiry.tole_name)}</td>
                         <td>{enquiry.estimated_amount}</td>
                         <td>{enquiry.enquiry_purpose}</td>
                         <td>{enquiry.known_by}</td>
                         <td>{enquiry.created}</td>
                         <td>
-                          <button className="btn btn-primary">Edit</button>
                           <Link
-                            to={`/detail/${enquiry.id}`}
+                            className="btn btn-primary"
+                            to={`update/${enquiry.id}`}
+                          >
+                            Edit
+                          </Link>
+                          <Link
+                            to={`detail/${enquiry.id}`}
                             className="btn btn-info"
                           >
                             View
                           </Link>
-                          <button className="btn btn-danger">Delete</button>
+                          <button
+                            onClick={() => setEnquiryToDelete(enquiry.id)}
+                            className="btn btn-danger"
+                          >
+                            delete
+                          </button>
                         </td>
                       </tr>
                     ))
@@ -222,393 +281,16 @@ const EnquiryTable = () => {
             </div>
           </div>
         </div>
+        {/* Delete Confirmation Modal */}
+        {enquiryToDelete !== null && (
+          <EnquiryDelete
+            id={enquiryToDelete}
+            onClose={() => setEnquiryToDelete(null)}
+          />
+        )}
       </div>
     </div>
   );
 };
 
 export default EnquiryTable;
-// import React from "react";
-// import { Link } from "react-router-dom";
-// import axios from "axios";
-// import { useState, useEffect } from "react";
-
-// const EnquiryTable = () => {
-//   const [enquiries, setEnquiries] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     const fetchEnquiries = async () => {
-//       try {
-//         const response = await axios.get(
-//           "http://127.0.0.1:8000/api/list/"
-//         );
-//         setEnquiries(response.data.result || []); // Ensure the data is from 'result'
-//         setLoading(false);
-//       } catch (error) {
-//         console.error("Error fetching enquiries:", error); // Log the error for debugging
-//         setError(error);
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchEnquiries();
-//   }, []);
-
-//   if (loading) {
-//     return <div>Loading...</div>;
-//   }
-
-//   if (error) {
-//     return <div>Error loading enquiries: {error.message}</div>;
-//   }
-
-//   return (
-//     <div className="content-wrapper">
-//       <div className="row justify-content-center">
-//         <div className="col-lg-10">
-//           <div className="card">
-//             {/* heading */}
-//             <nav className="navbar navbar-expand-lg navbar-light bg-light">
-//               <div className="container-fluid">
-//                 <h5 className="navbar-brand">Employee List</h5>
-//                 <div className="navbar-nav ml-auto">
-//                   <Link to="create" className="nav-link btn btn-info">
-//                     <h5>Add Employee</h5>
-//                   </Link>
-//                   <form
-//                     method="get"
-//                     action="/search"
-//                     className="form-inline ml-3"
-//                   >
-//                     <div className="input-group">
-//                       <input
-//                         type="search"
-//                         id="default-search"
-//                         name="q"
-//                         className="form-control"
-//                         placeholder="Search Mockups, Logos..."
-//                         required
-//                       />
-//                       <div className="input-group-append">
-//                         <button type="submit" className="btn btn-info">
-//                           Search
-//                         </button>
-//                       </div>
-//                     </div>
-//                   </form>
-//                 </div>
-
-//                 <div className="form-inline ml-4" id="navbarSupportedContent">
-//                   <ul className="navbar-nav mr-30">
-//                     <li className="nav-item ">
-//                       <button
-//                         id="employeeTable"
-//                         className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
-//                       >
-//                         <i className="fas fa-file-csv"></i>
-//                         {/* Font Awesome icon for CSV */}
-//                       </button>
-//                     </li>
-//                     {/* Add other export buttons here */}
-//                   </ul>
-//                 </div>
-//               </div>
-//             </nav>
-//             {/* heading end */}
-//             <div className="card-body">
-//               <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-//                 <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-//                   <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-//                     <div className="overflow-x-auto overflow-y-auto max-h-[400px]">
-//                       <div className="overflow-x-auto">
-//                         <table className="table table-bordered">
-//                           <thead>
-//                             <tr>
-//                               <th>#</th>
-//                               <th>Name</th>
-//                               <th>Phone</th>
-//                               <th>Email</th>
-
-//                               <th>Employee type</th>
-//                               <th>role</th>
-//                               <th>date_issued</th>
-//                               <th>province</th>
-//                               <th>District</th>
-//                               <th>municipality</th>
-
-//                               <th> ward no</th>
-//                               <th> tole name</th>
-//                               <th> temp_province</th>
-//                               <th>temp_district</th>
-//                               <th>temp_municipality</th>
-//                               <th> temp_ward_no</th>
-//                               <th>temp_tole_name</th>
-//                               <th> gender</th>
-//                               <th> dob</th>
-//                               <th> supervisor name</th>
-
-//                               <th>Department</th>
-//                               <th>Designation</th>
-//                               <th>Salary</th>
-//                               <th>Joining date</th>
-//                               <th>Action</th>
-//                             </tr>
-//                           </thead>
-//                           <tbody>
-//                             {enquiries.length > 0 ? (
-//                               enquiries.map((employee) => (
-//                                 <tr key={enquiry.id}>
-//                                   <td>{enquiry.id}</td>
-//                                   <td>{enquiry.name}</td>
-//                                   <td>{enquiry.pri_phone}</td>
-//                                   <td>{enquiry.email}</td>
-//                                   <td>{enquiry.employee_type}</td>
-//                                   <td>{enquiry.role}</td>
-//                                   <td>{enquiry.date_issued}</td>
-//                                   <td>{enquiry.province}</td>
-//                                   <td>{enquiry.district}</td>
-
-//                                   <td>{enquiry.municipality}</td>
-
-//                                   <td>{enquiry.ward_no}</td>
-//                                   <td>{enquiry.tole_name}</td>
-//                                   <td>{enquiry.temp_province}</td>
-//                                   <td>{enquiry.temp_district}</td>
-//                                   <td>{enquiry.temp_municipality}</td>
-//                                   <td>{enquiry.temp_ward_no}</td>
-//                                   <td>{enquiry.temp_tole_name}</td>
-//                                   <td>{enquiry.municipality}</td>
-//                                   <td>{enquiry.gender}</td>
-//                                   <td>{enquiry.dob}</td>
-//                                   <td>{enquiry.supervisor_name}</td>
-
-//                                   <td>{enquiry.department}</td>
-//                                   <td>{enquiry.designation}</td>
-//                                   <td>{enquiry.salary}</td>
-//                                   <td>{enquiry.joining_date}</td>
-//                                   <td>
-//                                     <Link
-//                                       to={`/update/${enquiry.id}`}
-//                                     >
-//                                       Edit
-//                                     </Link>
-//                                     |
-//                                     <Link
-//                                       to={`/detail/${enquiry.id}`}
-//                                     >
-//                                       View
-//                                     </Link>
-//                                     |
-//                                     <Link
-//                                       to={`/delete/${enquiry.id}`}
-//                                     >
-//                                       Delete
-//                                     </Link>
-//                                   </td>
-//                                 </tr>
-//                               ))
-//                             ) : (
-//                               <tr>
-//                                 <td colSpan="8">No enquiries found</td>
-//                               </tr>
-//                             )}
-//                           </tbody>
-//                         </table>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// import React from "react";
-// import { Link } from "react-router-dom";
-// import axios from "axios";
-// import { useState, useEffect } from "react";
-
-// const EnquiryTable = () => {
-//   const [enquiries, setEnquiries] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     const fetchEnquiries = async () => {
-//       try {
-//         const response = await axios.get(
-//           "http://127.0.0.1:8000/api/list/"
-//         );
-//         setEnquiries(response.data.result || []); // Ensure the data is from 'result'
-//         setLoading(false);
-//       } catch (error) {
-//         console.error("Error fetching enquiries:", error); // Log the error for debugging
-//         setError(error);
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchEnquiries();
-//   }, []);
-
-//   if (loading) {
-//     return <div>Loading...</div>;
-//   }
-
-//   if (error) {
-//     return <div>Error loading enquiries: {error.message}</div>;
-//   }
-
-//   return (
-//     <div className="content-wrapper">
-//       <div className="row justify-content-center">
-//         <div className="col-lg-10">
-//           <div className="card">
-//             {/* heading */}
-//             <nav className="navbar navbar-expand-lg navbar-light bg-light">
-//               <div className="container-fluid">
-//                 <h5 className="navbar-brand">Employee List</h5>
-//                 <div className="navbar-nav ml-auto">
-//                   <Link to="create" className="nav-link btn btn-info">
-//                     <h5>Add Employee</h5>
-//                   </Link>
-//                   <form
-//                     method="get"
-//                     action="/search"
-//                     className="form-inline ml-3"
-//                   >
-//                     <div className="input-group">
-//                       <input
-//                         type="search"
-//                         id="default-search"
-//                         name="q"
-//                         className="form-control"
-//                         placeholder="Search Mockups, Logos..."
-//                         required
-//                       />
-//                       <div className="input-group-append">
-//                         <button type="submit" className="btn btn-info">
-//                           Search
-//                         </button>
-//                       </div>
-//                     </div>
-//                   </form>
-//                 </div>
-
-//                 <div className="form-inline ml-4" id="navbarSupportedContent">
-//                   <ul className="navbar-nav mr-30">
-//                     <li className="nav-item ">
-//                       <button
-//                         id="employeeTable"
-//                         className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
-//                       >
-//                         <i className="fas fa-file-csv"></i>
-//                         {/* Font Awesome icon for CSV */}
-//                       </button>
-//                     </li>
-//                     {/* Add other export buttons here */}
-//                   </ul>
-//                 </div>
-//               </div>
-//             </nav>
-//             {/* heading end */}
-//             <div className="card-body">
-//               <div className="overflow-x-auto overflow-y-auto max-h-[400px]">
-//                 <table className="table table-bordered min-w-full">
-//                   <thead>
-//                     <tr>
-//                       <th>#</th>
-//                       <th>Name</th>
-//                       <th>Phone</th>
-//                       <th>Email</th>
-//                       <th>Employee type</th>
-//                       <th>role</th>
-//                       <th>date_issued</th>
-//                       <th>province</th>
-//                       <th>District</th>
-//                       <th>municipality</th>
-//                       <th> ward no</th>
-//                       <th> tole name</th>
-//                       <th> temp_province</th>
-//                       <th>temp_district</th>
-//                       <th>temp_municipality</th>
-//                       <th> temp_ward_no</th>
-//                       <th>temp_tole_name</th>
-//                       <th> gender</th>
-//                       <th> dob</th>
-//                       <th> supervisor name</th>
-//                       <th>Department</th>
-//                       <th>Designation</th>
-//                       <th>Salary</th>
-//                       <th>Joining date</th>
-//                       <th>Action</th>
-//                     </tr>
-//                   </thead>
-//                   <tbody>
-//                     {enquiries.length > 0 ? (
-//                       enquiries.map((employee) => (
-//                         <tr key={enquiry.id}>
-//                           <td>{enquiry.id}</td>
-//                           <td>{enquiry.name}</td>
-//                           <td>{enquiry.pri_phone}</td>
-//                           <td>{enquiry.email}</td>
-//                           <td>{enquiry.employee_type}</td>
-//                           <td>{enquiry.role}</td>
-//                           <td>{enquiry.date_issued}</td>
-//                           <td>{enquiry.province}</td>
-//                           <td>{enquiry.district}</td>
-//                           <td>{enquiry.municipality}</td>
-//                           <td>{enquiry.ward_no}</td>
-//                           <td>{enquiry.tole_name}</td>
-//                           <td>{enquiry.temp_province}</td>
-//                           <td>{enquiry.temp_district}</td>
-//                           <td>{enquiry.temp_municipality}</td>
-//                           <td>{enquiry.temp_ward_no}</td>
-//                           <td>{enquiry.temp_tole_name}</td>
-//                           <td>{enquiry.municipality}</td>
-//                           <td>{enquiry.gender}</td>
-//                           <td>{enquiry.dob}</td>
-//                           <td>{enquiry.supervisor_name}</td>
-//                           <td>{enquiry.department}</td>
-//                           <td>{enquiry.designation}</td>
-//                           <td>{enquiry.salary}</td>
-//                           <td>{enquiry.joining_date}</td>
-//                           <td>
-//                             <Link to={`/update/${enquiry.id}`}>
-//                               Edit
-//                             </Link>
-//                             |
-//                             <Link to={`/detail/${enquiry.id}`}>
-//                               View
-//                             </Link>
-//                             |
-//                             <Link to={`/delete/${enquiry.id}`}>
-//                               Delete
-//                             </Link>
-//                           </td>
-//                         </tr>
-//                       ))
-//                     ) : (
-//                       <tr>
-//                         <td colSpan="22">No enquiries found</td>
-//                       </tr>
-//                     )}
-//                   </tbody>
-//                 </table>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default EnquiryTable;
-// // export default EmployeeLis

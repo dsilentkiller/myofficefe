@@ -18,7 +18,12 @@ export const fetchEvents = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/event/");
-      return response.data.result; // Adjust this based on your actual API response structure
+      const events = response.data.result.data.map((event) => ({
+        ...event,
+        start: new Date(event.start), // Ensure start and end are Date objects
+        end: new Date(event.end),
+      }));
+      return events;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -78,7 +83,7 @@ export const fetchEventById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/event/${id}/`
       );
-      return response.data.result; // Adjust this based on your actual API response structure
+      return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }

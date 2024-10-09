@@ -21,6 +21,7 @@ import {
 } from "../../redux/slice/crm/enquirySlice";
 // import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+
 const EnquiryForm = () => {
   const [activeTab, setActiveTab] = useState("1");
 
@@ -30,6 +31,36 @@ const EnquiryForm = () => {
   const [toggleState, setToggleState] = useState({ toggle: false });
   const [phoneValid, setPhoneValid] = useState(true);
   const [errors, setErrors] = useState({});
+  // form data filled up
+  const [formData, setFormData] = useState({
+    customer_name: "",
+    category: "",
+    organization_name: "",
+    department: "",
+    designation: "",
+    pri_phone: "",
+    sec_phone: "",
+    email: "",
+    gender: "",
+
+    province: "",
+    // zone: "",
+    district: "",
+    municipality: "",
+    ward_no: "",
+    tole_name: "",
+
+    // temp_province:"",
+    // temp_district:"",
+    // temp_municipality:"",
+    // temp_ward_no:"",
+    // temp_tole_name:"",
+
+    estimated_amount: "",
+    enquiry_purpose: "",
+    known_by: "",
+    created: "",
+  });
 
   // Retrieve data from the store
 
@@ -58,6 +89,7 @@ const EnquiryForm = () => {
       dispatch(fetchEnquiryById(id));
     }
   }, [id, dispatch]);
+
   // pri_phone number validate
   const validatePhoneNumber = (value) => {
     const phoneLength = value.replace(/\D/g, "").length;
@@ -107,36 +139,6 @@ const EnquiryForm = () => {
       });
     }
   }, [currentEnquiry, id]);
-  // form data filled up
-  const [formData, setFormData] = useState({
-    customer_name: "",
-    category: "",
-    organization_name: "",
-    department: "",
-    designation: "",
-    pri_phone: "",
-    sec_phone: "",
-    email: "",
-    gender: "",
-
-    province: "",
-    // zone: "",
-    district: "",
-    municipality: "",
-    ward_no: "",
-    tole_name: "",
-
-    // temp_province:"",
-    // temp_district:"",
-    // temp_municipality:"",
-    // temp_ward_no:"",
-    // temp_tole_name:"",
-
-    estimated_amount: "",
-    enquiry_purpose: "",
-    known_by: "",
-    created: "",
-  });
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -221,6 +223,16 @@ const EnquiryForm = () => {
   //habdle submit for update and create enquiry
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Validate required fields
+    if (!formData.customer_name || !formData.category || !formData.pri_phone) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    if (!phoneValid) {
+      toast.error("Please enter a valid phone number.");
+      return;
+    }
 
     if (id) {
       // Update enquiry
@@ -400,7 +412,7 @@ const EnquiryForm = () => {
                             enquiry_purpose:
                           </label>
                           <input
-                            type="number"
+                            type="text"
                             id="enquiry_purpose"
                             name="enquiry_purpose"
                             value={formData.enquiry_purpose}
@@ -472,28 +484,6 @@ const EnquiryForm = () => {
                     </div>
                     {/* pri phone */}
                     <div className="row">
-                      {/* <div className="col-md-4">
-                        <div className="form-group">
-                          <label htmlFor="pri_phone">Primary Phone:</label>
-                          <input
-                            type="text"
-                            id="pri_phone"
-                            name="pri_phone"
-                            value={formData.pri_phone}
-                            // onChange={handleInputChange}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                pri_phone: e.target.value,
-                              })
-                            }
-                            className="form-control"
-                            required
-                          />
-                        </div>
-                      </div> */}
-                      {/* Email Field */}
-
                       {/* Phone Field */}
                       <div className="row">
                         <div className="col-md-4">
@@ -704,7 +694,7 @@ const EnquiryForm = () => {
                       <div className="form-group">
                         <label htmlFor="ward_no">Ward No:</label>
                         <input
-                          type="text"
+                          type="number"
                           id="ward_no"
                           name="ward_no"
                           value={formData.ward_no}

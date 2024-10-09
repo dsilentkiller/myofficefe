@@ -1,44 +1,71 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createEvent } from "../../redux/slice/crm/eventSlice";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "admin-lte/dist/css/adminlte.min.css";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Include toastify styles
+import "react-toastify/dist/ReactToastify.css";
+import { fetchAttendees } from "../../redux/slice/crm/attendeeSlice";
+import { fetchEvents } from "../../redux/slice/crm/eventSlice";
+import { useNavigate } from "react-router-dom";
 
 const localizer = momentLocalizer(moment);
 
 const EventSystem = () => {
-  const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     start: "",
     end: "",
+    attendees: [],
     email: "",
     notes: "",
-    is_canceled: false,
   });
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const events = useSelector((state) => state.events.list || []);
+  const { list: attendees } = useSelector((state) => state.attendees);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const events = useSelector((state) => state.events.events); // Fetch events from Redux
-  console.log("Events:", events); // Log the events to ensure they are correctly fetched
+  const toggleModal = () => {
+    setModalOpen((prevState) => !prevState);
+  };
 
   const handleSelectSlot = ({ start, end }) => {
     setFormData({ ...formData, start, end });
-    setModalOpen(true);
+    toggleModal();
   };
+
+  useEffect(() => {
+    dispatch(fetchAttendees());
+    dispatch(fetchEvents());
+  }, [dispatch]);
 
   const handleEventSubmit = (e) => {
     e.preventDefault();
 
+    // Check for existing events with the same title and time
+    const isDuplicate = events.some(
+      (event) =>
+        event.title === formData.title &&
+        new Date(event.start).getTime() ===
+          new Date(formData.start).getTime() &&
+        new Date(event.end).getTime() === new Date(formData.end).getTime()
+    );
+
+    if (isDuplicate) {
+      toast.error("An event with the same title and time already exists!");
+      return;
+    }
+
     const formDataObject = {
-      id: Date.now(), // Unique ID
+      id: Date.now(),
       title: formData.title,
-      start: new Date(formData.start), // Ensure this is a valid Date object
-      end: new Date(formData.end), // Ensure this is a valid Date object
+      start: new Date(formData.start),
+      end: new Date(formData.end),
+      attendees: formData.attendees,
       email: formData.email,
       notes: formData.notes,
     };
@@ -51,10 +78,30 @@ const EventSystem = () => {
       title: "",
       start: "",
       end: "",
+      attendees: [],
       email: "",
       notes: "",
-      is_canceled: false,
     });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "attendees") {
+      const selectedOptions = Array.from(
+        e.target.selectedOptions,
+        (option) => option.value
+      );
+      setFormData({
+        ...formData,
+        [name]: selectedOptions,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   return (
@@ -84,7 +131,35 @@ const EventSystem = () => {
                     selectable
                     onSelectSlot={handleSelectSlot}
                     style={{ height: 500 }}
+                    views={{
+                      month: true,
+                      week: true,
+                      day: true,
+                      agenda: true,
+                    }}
                   />
+                  <h2>Upcoming Events</h2>
+                  <div className="agenda">
+                    {events.length > 0 ? (
+                      <ul>
+                        {events.map((event) => (
+                          <li key={event.id}>
+                            <strong>{event.title}</strong>
+                            <br />
+                            <span>
+                              {moment(event.start).format(
+                                "MMMM Do YYYY, h:mm a"
+                              )}{" "}
+                              - {moment(event.end).format("h:mm a")}
+                            </span>
+                            <p>{event.notes}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>No upcoming events.</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -102,7 +177,13 @@ const EventSystem = () => {
           }}
         >
           <div className="modal-dialog modal-lg" role="document">
-            <div className="modal-content">
+            <div
+              className="modal-content"
+              style={{
+                borderRadius: "10px",
+                boxShadow: "0 0 20px rgba(0,0,0,0.5)",
+              }}
+            >
               <div className="modal-header">
                 <h5 className="modal-title">Create New Event</h5>
                 <button
@@ -126,10 +207,7 @@ const EventSystem = () => {
                         placeholder="Enter event title"
                         value={formData.title}
                         onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            title: e.target.value,
-                          })
+                          setFormData({ ...formData, title: e.target.value })
                         }
                         required
                       />
@@ -148,10 +226,7 @@ const EventSystem = () => {
                           "YYYY-MM-DDTHH:mm"
                         )}
                         onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            start: e.target.value,
-                          })
+                          setFormData({ ...formData, start: e.target.value })
                         }
                         required
                       />
@@ -164,13 +239,66 @@ const EventSystem = () => {
                         className="form-control"
                         value={moment(formData.end).format("YYYY-MM-DDTHH:mm")}
                         onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            end: e.target.value,
-                          })
+                          setFormData({ ...formData, end: e.target.value })
                         }
                         required
                       />
+                    </div>
+                  </div>
+
+                  <div className="form-group row">
+                    <label className="col-sm-2 col-form-label">Attendees</label>
+                    <div className="col-sm-10">
+                      <select
+                        id="attendees"
+                        name="attendees"
+                        value={formData.attendees}
+                        onChange={handleInputChange}
+                        className="form-control"
+                        multiple
+                        required
+                      >
+                        {attendees.length > 0 ? (
+                          attendees.map((attendee) => (
+                            <option key={attendee.id} value={attendee.id}>
+                              {attendee.attendee_name}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="">No attendees available</option>
+                        )}
+                      </select>
+                      <div className="mt-2">
+                        <span>Selected Attendees: </span>
+                        <div style={{ display: "flex", flexWrap: "wrap" }}>
+                          {formData.attendees.map((attendeeId) => {
+                            const attendee = attendees.find(
+                              (a) => a.id === attendeeId
+                            );
+                            return attendee ? (
+                              <span
+                                key={attendeeId}
+                                className="badge badge-info mr-2"
+                                style={{
+                                  marginRight: "5px",
+                                  marginBottom: "5px",
+                                }}
+                              >
+                                {attendee.attendee_name}
+                              </span>
+                            ) : null;
+                          })}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() =>
+                          navigate("/dashboard/crm/attendee/create/")
+                        }
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
 
@@ -180,13 +308,10 @@ const EventSystem = () => {
                       <input
                         type="email"
                         className="form-control"
-                        placeholder="Enter email"
+                        placeholder="Enter attendee email"
                         value={formData.email}
                         onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            email: e.target.value,
-                          })
+                          setFormData({ ...formData, email: e.target.value })
                         }
                         required
                       />
@@ -198,24 +323,27 @@ const EventSystem = () => {
                     <div className="col-sm-10">
                       <textarea
                         className="form-control"
-                        placeholder="Enter notes"
+                        rows="3"
+                        placeholder="Additional notes"
                         value={formData.notes}
                         onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            notes: e.target.value,
-                          })
+                          setFormData({ ...formData, notes: e.target.value })
                         }
-                      ></textarea>
+                      />
                     </div>
                   </div>
 
-                  <div className="form-group row">
-                    <div className="col-sm-10 offset-sm-2">
-                      <button type="submit" className="btn btn-primary">
-                        Submit
-                      </button>
-                    </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={toggleModal}
+                    >
+                      Close
+                    </button>
+                    <button type="submit" className="btn btn-primary">
+                      Create Event
+                    </button>
                   </div>
                 </form>
               </div>

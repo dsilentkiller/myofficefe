@@ -61,6 +61,9 @@ import CategoryTable from "./admin/crm/category/CategoryTable";
 import CategoryForm from "./admin/crm/category/CategoryForm";
 import CategoryDelete from "./admin/crm/category/CategoryDelete";
 import EventDetail from "./admin/crm/event/EventDetail";
+import EnquiryDelete from "./admin/crm/enquiry/EnquiryDelete";
+import EnquiryDetail from "./admin/crm/enquiry/EnquiryDetail";
+import EnquiryUpdate from "./admin/crm/enquiry/EnquiryUpdate";
 // import ProjectForm from "./admin/"
 function App() {
   return (
@@ -79,7 +82,11 @@ function App() {
 
               {/* localhost/dashbaord/crm/enquiry */}
               <Route path="enquiry" element={<EnquiryTable />} />
-              <Route path="enquiry/create" element={<EnquiryForm />} />
+              <Route path="enquiry/create/" element={<EnquiryForm />} />
+              <Route path="enquiry/delete/" element={<EnquiryDelete />} />
+              <Route path="enquiry/detail/:id/" element={<EnquiryDetail />} />
+              <Route path="enquiry/update/:id/" element={<EnquiryForm />} />
+              {/* <Route path="enquiry/update/:id/" element={<EnquiryUpdate />} /> */}
 
               {/*  {/* localhost/dashbaord/crm/project */}
               <Route path="project" element={<ProjectTable />} />
@@ -158,7 +165,7 @@ function App() {
               {/* department */}
               <Route path="department" element={<DepartmentTable />} />
               <Route path="department/create" element={<DepartmentForm />} />
-            
+
               <Route
                 path="department/delete/:id"
                 element={<DepartmentDelete />}

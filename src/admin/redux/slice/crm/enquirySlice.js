@@ -26,6 +26,7 @@ export const fetchEnquiries = createAsyncThunk(
 );
 
 // Create Enquiry
+// Create Enquiry (improved error handling)
 export const createEnquiry = createAsyncThunk(
   "enquiries/createEnquiry",
   async (formData, thunkAPI) => {
@@ -34,9 +35,11 @@ export const createEnquiry = createAsyncThunk(
         "http://127.0.0.1:8000/api/enquiry/create/",
         formData
       );
-      return response.data.result;
+      return response.data.result.data || [];
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.result);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
     }
   }
 );
@@ -47,7 +50,7 @@ export const fetchEnquiryById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/enquiry/${id}/`
+        `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
       );
       return response.data.result;
     } catch (error) {
@@ -99,76 +102,13 @@ export const fetchCategories = createAsyncThunk(
     return response.data.result;
   }
 );
-// export const fetchDesignations = createAsyncThunk(
-//   "enquiry/fetchDesignations",
-//   async () => {
-//     const response = await axios.get(
-//       "http://127.0.0.1:8000/api/setup/designation"
-//     );
-//     return response.data.result;
-//   }
-// );
-
-// export const fetchDepartments = createAsyncThunk(
-//   "enquiry/fetchDepartments",
-//   async () => {
-//     const response = await axios.get(
-//       "http://127.0.0.1:8000/api/setup/department/"
-//     );
-//     return response.data.result;
-//   }
-// );
-
-// export const fetchMunicipalities = createAsyncThunk(
-//   "enquiry/fetchMunicipalities",
-//   async () => {
-//     const response = await axios.get(
-//       "http://127.0.0.1:8000/api/setup/municipality/"
-//     );
-//     return response.data.result;
-//   }
-// );
-
-// Fetch Provinces
-// export const fetchProvinces = createAsyncThunk(
-//   "enquiry/fetchProvinces",
-//   async () => {
-//     try {
-//       const response = await axios.get(
-//         "http://127.0.0.1:8000/api/setup/province/"
-//       );
-//       console.log("Provinces fetched:", response.data); // Check the data structu
-//       // dispatch(setProvinces(response.data));
-//     } catch (error) {
-//       console.error("Failed to fetch provinces:", error);
-//     }
-//   }
-// );
-
-// Fetch Zones
-// export const fetchZones = createAsyncThunk("enquiry/fetchZones", async () => {
-//   const response = await axios.get("http://127.0.0.1:8000/api/setup/zone/");
-//   return response.result.data;
-// });
-
-// Fetch Districts
-// export const fetchDistricts = createAsyncThunk(
-//   "enquiry/fetchDistricts",
-//   async () => {
-//     const response = await axios.get(
-//       "http://127.0.0.1:8000/api/setup/district/"
-//     );
-//     return response.result.data;
-//   }
-// );
 
 const enquirySlice = createSlice({
   name: "enquiries",
   initialState: {
+    list: [], // Initialize list as an empty array
     loading: false,
     error: null,
-    list: [],
-    isLoading: false,
     createStatus: null,
     updateStatus: null,
     deleteStatus: null,
@@ -180,78 +120,27 @@ const enquirySlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // // Fetch Provinces
-      // .addCase(fetchProvinces.pending, (state) => {
-      //   state.isLoading = true;
-      // })
-      // .addCase(fetchProvinces.fulfilled, (state, action) => {
-      //   state.isLoading = false;
-      //   // state.provinces = action.payload;
-      //   state.provinces = Array.isArray(action.payload) ? action.payload : [];
-      // })
-      // .addCase(fetchProvinces.rejected, (state, action) => {
-      //   state.isLoading = false;
-      //   state.error = action.error.message;
-      // })
-
-      // Fetch Zones
-      // .addCase(fetchZones.pending, (state) => {
-      //   state.isLoading = true;
-      // })
-      // .addCase(fetchZones.fulfilled, (state, action) => {
-      //   state.isLoading = false;
-      //   state.zones = action.payload;
-      // })
-      // .addCase(fetchZones.rejected, (state, action) => {
-      //   state.isLoading = false;
-      //   state.error = action.error.message;
-      // })
-
-      // Fetch Districts
-      // .addCase(fetchDistricts.pending, (state) => {
-      //   state.isLoading = true;
-      // })
-      // .addCase(fetchDistricts.fulfilled, (state, action) => {
-      //   state.isLoading = false;
-      //   state.districts = action.payload;
-      // })
-      // .addCase(fetchDistricts.rejected, (state, action) => {
-      //   state.isLoading = false;
-      //   state.error = action.error.message;
-      // })
-
-      // // Fetch Municipalities
-      // .addCase(fetchMunicipalities.pending, (state) => {
-      //   state.isLoading = true;
-      // })
-      // .addCase(fetchMunicipalities.fulfilled, (state, action) => {
-      //   state.isLoading = false;
-      //   state.municipalities = action.payload.data.municipalities;
-      // })
-      // .addCase(fetchMunicipalities.rejected, (state, action) => {
-      //   state.isLoading = false;
-      //   state.error = action.error.message;
-      // })
       // Fetch all enquiries
       .addCase(fetchEnquiries.pending, (state) => {
-        state.isLoading = true;
+        state.loading = true;
         state.error = null;
       })
       .addCase(fetchEnquiries.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.list = action.payload;
+        state.loading = false;
+        state.list = action.payload || []; // Ensure list is an array
       })
       .addCase(fetchEnquiries.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message;
+        state.loading = false;
+        state.error = action.payload || action.error.message;
       })
+
       // Fetch enquiry by ID
       .addCase(fetchEnquiryById.pending, (state) => {
-        state.isLoading = true;
+        state.loading = true;
         state.error = null;
       })
       .addCase(fetchEnquiryById.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.loading = false;
         state.currentEnquiry = action.payload;
         const index = state.list.findIndex(
           (enquiry) => enquiry.id === action.payload.id
@@ -263,9 +152,10 @@ const enquirySlice = createSlice({
         }
       })
       .addCase(fetchEnquiryById.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message;
+        state.loading = false;
+        state.error = action.payload || action.error.message;
       })
+
       // Create Enquiry
       .addCase(createEnquiry.pending, (state) => {
         state.createStatus = "loading";
@@ -277,8 +167,9 @@ const enquirySlice = createSlice({
       })
       .addCase(createEnquiry.rejected, (state, action) => {
         state.createStatus = "failed";
-        state.createError = action.payload;
+        state.createError = action.payload || action.error.message;
       })
+
       // Update Enquiry
       .addCase(updateEnquiry.pending, (state) => {
         state.updateStatus = "loading";
@@ -294,8 +185,9 @@ const enquirySlice = createSlice({
       })
       .addCase(updateEnquiry.rejected, (state, action) => {
         state.updateStatus = "failed";
-        state.updateError = action.payload;
+        state.updateError = action.payload || action.error.message;
       })
+
       // Delete Enquiry
       .addCase(deleteEnquiry.pending, (state) => {
         state.deleteStatus = "loading";
@@ -309,21 +201,21 @@ const enquirySlice = createSlice({
       })
       .addCase(deleteEnquiry.rejected, (state, action) => {
         state.deleteStatus = "failed";
-        state.deleteError = action.payload;
+        state.deleteError = action.payload || action.error.message;
       })
+
       // Search Enquiries
       .addCase(searchEnquiry.pending, (state) => {
-        state.isLoading = true;
+        state.loading = true;
       })
       .addCase(searchEnquiry.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.list = action.payload;
+        state.loading = false;
+        state.list = action.payload || []; // Ensure the list is an array
       })
       .addCase(searchEnquiry.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message;
+        state.loading = false;
+        state.error = action.payload || action.error.message;
       });
   },
 });
-
 export default enquirySlice.reducer;

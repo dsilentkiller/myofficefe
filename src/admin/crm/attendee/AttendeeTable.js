@@ -109,7 +109,9 @@ const AttendeeTable = () => {
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
+                    <th>purpose</th>
                     <th>Organization Name</th>
+                    <th>organization detail</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -121,7 +123,9 @@ const AttendeeTable = () => {
                         <td>{attendee.attendee_name}</td>
                         <td>{attendee.email}</td>
                         <td>{attendee.pri_phone}</td>
+                        <td>{attendee.purpose}</td>
                         <td>{attendee.organization_name}</td>
+                        <td>{attendee.organization_detail}</td>
                         <td>
                           <Link
                             to={`/edit/${attendee.id}`}
