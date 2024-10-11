@@ -1,110 +1,22 @@
-// import React, { useState, useEffect } from "react";
-// import { Calendar, momentLocalizer } from "react-big-calendar";
-// import moment from "moment";
-// import "react-big-calendar/lib/css/react-big-calendar.css";
-// import axios from "axios";
-
-// // Set up the localizer by providing the moment (or globalize) Object to the correct localizer.
-// const localizer = momentLocalizer(moment);
-
-// const EventSystem = () => {
-//   const [events, setEvents] = useState([]);
-//   const [selectedEvent, setSelectedEvent] = useState(null);
-
-//   // Fetch events from the backend
-//   const fetchEvents = async () => {
-//     try {
-//       const response = await axios.get("/api/event/");
-//       const fetchedEvents = response.data.result.map((event) => ({
-//         id: event.id,
-//         title: event.title,
-//         start: new Date(event.start),
-//         end: new Date(event.end),
-//         email: event.email,
-//         notes: event.notes,
-//       }));
-//       setEvents(fetchedEvents);
-//     } catch (error) {
-//       console.error("Error fetching events:", error);
-//     }
-//   };
-
-//   // Handle event creation
-//   const handleSelectSlot = async ({ start, end }) => {
-//     const title = window.prompt("Enter Event Title");
-//     const email = window.prompt("Enter Organizer Email");
-//     const notes = window.prompt("Enter Notes");
-
-//     if (title && email) {
-//       try {
-//         const newEvent = {
-//           title,
-//           start,
-//           end,
-//           email,
-//           notes,
-//         };
-
-//         // Send new event to the backend
-//         const response = await axios.post("/api/event/create/", newEvent);
-
-//         if (response.data.success) {
-//           // Fetch the updated events
-//           fetchEvents();
-//         } else {
-//           console.error("Error creating event:", response.data.message);
-//         }
-//       } catch (error) {
-//         console.error("Error creating event:", error);
-//       }
-//     }
-//   };
-
-//   // Load events when component mounts
-//   useEffect(() => {
-//     fetchEvents();
-//   }, []);
-
-//   return (
-//     <div style={{ height: "500px", margin: "50px" }}>
-//       <h2>Event Calendar</h2>
-//       <Calendar
-//         localizer={localizer}
-//         events={events}
-//         startAccessor="start"
-//         endAccessor="end"
-//         style={{ height: 500 }}
-//         selectable={true}
-//         onSelectSlot={handleSelectSlot}
-//         onSelectEvent={(event) =>
-//           alert(
-//             `Event Title: ${event.title}\nEmail: ${event.email}\nNotes: ${event.notes}`
-//           )
-//         }
-//       />
-//     </div>
-//   );
-// };
-
-// export default EventSystem;
-
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchEvents,
+  createEvent,
+  updateEvent,
+} from "../../redux/slice/crm/eventSlice";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import { Modal, Button, Form } from "react-bootstrap";
-import { ToastContainer, toast } from "react-toastify";
-import DatePicker from "react-datepicker";
-import { createEvent, fetchEvents } from "../../redux/slice/crm/eventSlice"; // Import createEvent and fetchEvents
-import { useDispatch, useSelector } from "react-redux";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import "react-datepicker/dist/react-datepicker.css";
+import EventForm from "./EventForm";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const localizer = momentLocalizer(moment);
 
 const EventSystem = () => {
   const dispatch = useDispatch();
-  const events = useSelector((state) => state.events?.events || []); // Access events from the Redux state
+  const events = useSelector((state) => state.events?.events || []);
   const [showModal, setShowModal] = useState(false);
   const [eventData, setEventData] = useState({
     title: "",
@@ -116,42 +28,62 @@ const EventSystem = () => {
 
   // Fetch events when the component mounts
   useEffect(() => {
-    dispatch(fetchEvents()); // Dispatch the fetchEvents action
-    console.log("Fetched Events: ", fetchEvents); // Debug fetched data
+    dispatch(fetchEvents());
   }, [dispatch]);
 
+  // Handle showing the modal for new event creation
   const handleShow = ({ start, end }) => {
-    setEventData((prevData) => ({
-      ...prevData,
-      start,
-      end,
-    }));
+    setEventData({ title: "", start, end, email: "", notes: "" }); // Reset form for new event
     setShowModal(true);
   };
 
+  // Handle closing the modal
   const handleClose = () => {
     setShowModal(false);
     resetForm();
   };
 
+  // Handle saving or updating event
   const handleSaveEvent = async () => {
     const { title, start, end } = eventData;
-//check it all fields are filled  
+
+    // Check if the event title already exists in the list of events
+    const isDuplicateTitle = events.some((event) => event.title === title);
+
     if (!title || !start || !end) {
       toast.error("Event title, start, and end time are required!");
       return;
     }
 
+    if (isDuplicateTitle) {
+      toast.error("Event name already exists!");
+      return;
+    }
+
     try {
-      await dispatch(createEvent(eventData)).unwrap();
-      toast.success("Event created successfully!");
+      if (eventData.id) {
+        // If editing an existing event
+        await dispatch(updateEvent({ id: eventData.id, eventData })).unwrap();
+        toast.success("Event updated successfully!");
+      } else {
+        // If creating a new event
+        await dispatch(createEvent(eventData)).unwrap();
+        toast.success("Event created successfully!");
+      }
       handleClose();
     } catch (error) {
-      console.error("Error creating event: ", error); //log the error
-      toast.error("Failed to create event!");
+      console.error("Error saving event: ", error);
+      toast.error("Failed to save event!");
     }
   };
 
+  // Handle selecting an event from the calendar (for editing)
+  const handleSelectEvent = (event) => {
+    setEventData(event); // Pre-fill the form with event details
+    setShowModal(true);
+  };
+
+  // Reset the form after close
   const resetForm = () => {
     setEventData({
       title: "",
@@ -160,13 +92,6 @@ const EventSystem = () => {
       email: "",
       notes: "",
     });
-  };
-
-  const handleSelectEvent = (event) => {
-    //display event details when an event is clicked
-    alert(
-      `Title: ${event.title}\nEmail: ${event.email}\nNotes: ${event.notes}`
-    );
   };
 
   return (
@@ -178,13 +103,18 @@ const EventSystem = () => {
         endAccessor="end"
         style={{ height: 500, margin: "50px" }}
         selectable
-        onSelectEvent={handleSelectEvent}
-        onSelectSlot={handleShow}
+        onSelectEvent={handleSelectEvent} // For editing event
+        onSelectSlot={handleShow} // For creating new event
       />
 
-      <Modal show={showModal} onHide={handleClose}>
-        {/* Modal content */}
-      </Modal>
+      {/* Reusable EventForm Component */}
+      <EventForm
+        eventData={eventData}
+        setEventData={setEventData}
+        handleSaveEvent={handleSaveEvent}
+        show={showModal}
+        handleClose={handleClose}
+      />
 
       <ToastContainer />
     </div>
