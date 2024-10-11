@@ -21,6 +21,7 @@
     "font-awesome": "^4.7.0",
     "http-proxy-middleware": "^3.0.2",
     "jquery": "^3.7.1",
+    "jquery-ui": "^1.14.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.3",
     "lodash": "^4.17.21",
@@ -43,6 +44,7 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^3.1.0",
     "reselect": "^5.1.1",
+    "summernote": "^0.9.1",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },

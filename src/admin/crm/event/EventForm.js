@@ -1,178 +1,299 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { createEvent, fetchEvent } from "../../redux/slice/eventSlice";
+import React from "react";
+import { Modal, Button, Form } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-const EventForm = () => {
-  const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState({
-    title: "",
-    start: "",
-    end: "",
-    attendees: [],
-    email: "",
-    notes: "",
-    is_canceled: false,
-  });
-
-  // Toggle state for showing/hiding sections (e.g., Notes section)
-  const [isNotesOpen, setIsNotesOpen] = useState(false);
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const createStatus = useSelector((state) => state.events.createStatus);
-  const createError = useSelector((state) => state.events.createError);
-  const events = useSelector((state) => state.events.list || []);
-  const attendeesList = useSelector((state) => state.attendees.list || []);
-
-  useEffect(() => {
-    dispatch(fetchEvent());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (createStatus === "succeeded") {
-      toast.success("Event created successfully!");
-      setFormData({
-        title: "",
-        start: "",
-        end: "",
-        attendees: [],
-        email: "",
-        notes: "",
-        is_canceled: false,
-      });
-      navigate("/dashboard/crm/event");
-    }
-  }, [createStatus, navigate]);
-
-  useEffect(() => {
-    if (createStatus === "failed") {
-      toast.error(`Error: ${createError.message || "An error occurred"}`);
-    }
-  }, [createStatus, createError]);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleAttendeeChange = (attendeeId) => {
-    setFormData((prevData) => {
-      const attendees = prevData.attendees.includes(attendeeId)
-        ? prevData.attendees.filter((id) => id !== attendeeId)
-        : [...prevData.attendees, attendeeId];
-      return { ...prevData, attendees };
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const existingEvent = events.some(
-      (event) =>
-        event.title &&
-        event.title.toLowerCase() === formData.title.toLowerCase()
-    );
-
-    if (existingEvent) {
-      toast.error("Event with this name already exists.");
-      return;
-    }
-
-    dispatch(createEvent(formData))
-      .unwrap()
-      .then(() => {
-        setFormData({
-          title: "",
-          start: "",
-          end: "",
-          attendees: [],
-          email: "",
-          notes: "",
-          is_canceled: false,
-        });
-        navigate("/dashboard/crm/event");
-      })
-      .catch((error) => {
-        console.error("Create Error:", error.response);
-      });
-  };
-
-  const toggleNotes = () => {
-    setIsNotesOpen((prev) => !prev);
-  };
-
+const EventForm = ({ eventData, setEventData, handleSaveEvent, show, handleClose }) => {
   return (
-    <div className="content-wrapper">
-      <div className="container">
-        <div className="container-fluid">
-          <div className="card">
-            <div className="card-header">
-              <h4 className="btn btn-primary">Add Event</h4>
-            </div>
-            <div className="card-body">
-              {createError && <p className="text-danger">{createError}</p>}
-              <form onSubmit={handleSubmit}>
-                {/* Existing Fields */}
-                <div className="row">
-                  <div className="col-md-6">
-                    <div className="form-group">
-                      <label htmlFor="title">Event Name:</label>
-                      <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        value={formData.title}
-                        className="form-control"
-                        placeholder="Enter event name"
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                    {errors.title && <p>{errors.title}</p>}
-                  </div>
-                  {/* Add the rest of the form fields here... */}
-                </div>
+    <Modal show={show} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>{eventData?.id ? "Edit Event" : "Create Event"}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          {/* Event Title */}
+          <Form.Group controlId="eventTitle">
+            <Form.Label>Event Title</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter event title"
+              value={eventData.title}
+              onChange={(e) =>
+                setEventData((prevData) => ({
+                  ...prevData,
+                  title: e.target.value,
+                }))
+              }
+            />
+          </Form.Group>
 
-                {/* Notes section with toggle */}
-                <div className="row">
-                  <div className="col-md-12">
-                    <button
-                      type="button"
-                      onClick={toggleNotes}
-                      className="btn btn-secondary"
-                    >
-                      {isNotesOpen ? "Hide Notes" : "Show Notes"}
-                    </button>
-                    {isNotesOpen && (
-                      <div className="form-group mt-3">
-                        <label htmlFor="notes">Notes:</label>
-                        <input
-                          type="text"
-                          id="notes"
-                          name="notes"
-                          value={formData.notes}
-                          className="form-control"
-                          placeholder="Enter notes"
-                          onChange={handleChange}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
+          {/* Event Email */}
+          <Form.Group controlId="eventEmail">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="Enter your email"
+              value={eventData.email}
+              onChange={(e) =>
+                setEventData((prevData) => ({
+                  ...prevData,
+                  email: e.target.value,
+                }))
+              }
+            />
+          </Form.Group>
 
-                <button type="submit" className="btn btn-primary">
-                  Save
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+          {/* Event Notes */}
+          <Form.Group controlId="eventNotes">
+            <Form.Label>Notes</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="Enter notes"
+              value={eventData.notes}
+              onChange={(e) =>
+                setEventData((prevData) => ({
+                  ...prevData,
+                  notes: e.target.value,
+                }))
+              }
+            />
+          </Form.Group>
+
+          {/* Start Date & Time */}
+          <Form.Group controlId="eventStart">
+            <Form.Label>Start Date & Time</Form.Label>
+            <DatePicker
+              selected={eventData.start}
+              onChange={(date) =>
+                setEventData((prevData) => ({
+                  ...prevData,
+                  start: date,
+                }))
+              }
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeIntervals={15}
+              dateFormat="MMMM d, yyyy h:mm aa"
+              placeholderText="Select start date and time"
+              className="form-control"
+            />
+          </Form.Group>
+
+          {/* End Date & Time */}
+          <Form.Group controlId="eventEnd">
+            <Form.Label>End Date & Time</Form.Label>
+            <DatePicker
+              selected={eventData.end}
+              onChange={(date) =>
+                setEventData((prevData) => ({
+                  ...prevData,
+                  end: date,
+                }))
+              }
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeIntervals={15}
+              dateFormat="MMMM d, yyyy h:mm aa"
+              placeholderText="Select end date and time"
+              className="form-control"
+            />
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Close
+        </Button>
+        <Button variant="primary" onClick={handleSaveEvent}>
+          {eventData?.id ? "Update Event" : "Save Event"}
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 
 export default EventForm;
+
+
+
+
+//old event form
+// import React, { useState, useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useNavigate } from "react-router-dom";
+// import { toast } from "react-toastify";
+// import { createEvent, fetchEvent } from "../../redux/slice/eventSlice";
+
+// const EventForm = () => {
+//   const [errors, setErrors] = useState({});
+//   const [formData, setFormData] = useState({
+//     title: "",
+//     start: "",
+//     end: "",
+//     attendees: [],
+//     email: "",
+//     notes: "",
+//     is_canceled: false,
+//   });
+
+//   // Toggle state for showing/hiding sections (e.g., Notes section)
+//   const [isNotesOpen, setIsNotesOpen] = useState(false);
+
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+//   const createStatus = useSelector((state) => state.events.createStatus);
+//   const createError = useSelector((state) => state.events.createError);
+//   const events = useSelector((state) => state.events.list || []);
+//   const attendeesList = useSelector((state) => state.attendees.list || []);
+
+//   useEffect(() => {
+//     dispatch(fetchEvent());
+//   }, [dispatch]);
+
+//   useEffect(() => {
+//     if (createStatus === "succeeded") {
+//       toast.success("Event created successfully!");
+//       setFormData({
+//         title: "",
+//         start: "",
+//         end: "",
+//         attendees: [],
+//         email: "",
+//         notes: "",
+//         is_canceled: false,
+//       });
+//       navigate("/dashboard/crm/event");
+//     }
+//   }, [createStatus, navigate]);
+
+//   useEffect(() => {
+//     if (createStatus === "failed") {
+//       toast.error(`Error: ${createError.message || "An error occurred"}`);
+//     }
+//   }, [createStatus, createError]);
+
+//   const handleChange = (e) => {
+//     setFormData({ ...formData, [e.target.name]: e.target.value });
+//   };
+
+//   const handleAttendeeChange = (attendeeId) => {
+//     setFormData((prevData) => {
+//       const attendees = prevData.attendees.includes(attendeeId)
+//         ? prevData.attendees.filter((id) => id !== attendeeId)
+//         : [...prevData.attendees, attendeeId];
+//       return { ...prevData, attendees };
+//     });
+//   };
+
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     const existingEvent = events.some(
+//       (event) =>
+//         event.title &&
+//         event.title.toLowerCase() === formData.title.toLowerCase()
+//     );
+
+//     if (existingEvent) {
+//       toast.error("Event with this name already exists.");
+//       return;
+//     }
+
+//     dispatch(createEvent(formData))
+//       .unwrap()
+//       .then(() => {
+//         setFormData({
+//           title: "",
+//           start: "",
+//           end: "",
+//           attendees: [],
+//           email: "",
+//           notes: "",
+//           is_canceled: false,
+//         });
+//         navigate("/dashboard/crm/event");
+//       })
+//       .catch((error) => {
+//         console.error("Create Error:", error.response);
+//       });
+//   };
+
+//   const toggleNotes = () => {
+//     setIsNotesOpen((prev) => !prev);
+//   };
+
+//   return (
+//     <div className="content-wrapper">
+//       <div className="container">
+//         <div className="container-fluid">
+//           <div className="card">
+//             <div className="card-header">
+//               <h4 className="btn btn-primary">Add Event</h4>
+//             </div>
+//             <div className="card-body">
+//               {createError && <p className="text-danger">{createError}</p>}
+//               <form onSubmit={handleSubmit}>
+//                 {/* Existing Fields */}
+//                 <div className="row">
+//                   <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="title">Event Name:</label>
+//                       <input
+//                         type="text"
+//                         id="title"
+//                         name="title"
+//                         value={formData.title}
+//                         className="form-control"
+//                         placeholder="Enter event name"
+//                         onChange={handleChange}
+//                         required
+//                       />
+//                     </div>
+//                     {errors.title && <p>{errors.title}</p>}
+//                   </div>
+//                   {/* Add the rest of the form fields here... */}
+//                 </div>
+
+//                 {/* Notes section with toggle */}
+//                 <div className="row">
+//                   <div className="col-md-12">
+//                     <button
+//                       type="button"
+//                       onClick={toggleNotes}
+//                       className="btn btn-secondary"
+//                     >
+//                       {isNotesOpen ? "Hide Notes" : "Show Notes"}
+//                     </button>
+//                     {isNotesOpen && (
+//                       <div className="form-group mt-3">
+//                         <label htmlFor="notes">Notes:</label>
+//                         <input
+//                           type="text"
+//                           id="notes"
+//                           name="notes"
+//                           value={formData.notes}
+//                           className="form-control"
+//                           placeholder="Enter notes"
+//                           onChange={handleChange}
+//                         />
+//                       </div>
+//                     )}
+//                   </div>
+//                 </div>
+
+//                 <button type="submit" className="btn btn-primary">
+//                   Save
+//                 </button>
+//               </form>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default EventForm;
 
 //fourth
 // import React, { useState, useEffect } from "react";
