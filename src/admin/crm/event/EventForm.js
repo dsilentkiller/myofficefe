@@ -1,1305 +1,474 @@
 import React from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Button, Form, Modal, Row, Col } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "../../css/delete.css";
 
-const EventForm = ({ eventData, setEventData, handleSaveEvent, show, handleClose }) => {
+const EventDetailForm = ({ eventData, handleClose, show }) => {
   return (
-    <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>{eventData?.id ? "Edit Event" : "Create Event"}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          {/* Event Title */}
-          <Form.Group controlId="eventTitle">
-            <Form.Label>Event Title</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter event title"
-              value={eventData.title}
-              onChange={(e) =>
-                setEventData((prevData) => ({
-                  ...prevData,
-                  title: e.target.value,
-                }))
-              }
-            />
-          </Form.Group>
+    <div className="content-wrapper">
+      <Modal show={show} onHide={handleClose} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Event Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            {/* First Row - Event Title, Start Date & Time, End Date & Time */}
+            <Row className="mb-3">
+              {/* First column - Event Title */}
+              <Col md={4}>
+                <Form.Group controlId="eventTitle">
+                  <Form.Label>Event Title</Form.Label>
+                  <Form.Control
+                    type="text"
+                    readOnly
+                    value={eventData.title || ""}
+                  />
+                </Form.Group>
+              </Col>
 
-          {/* Event Email */}
-          <Form.Group controlId="eventEmail">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="Enter your email"
-              value={eventData.email}
-              onChange={(e) =>
-                setEventData((prevData) => ({
-                  ...prevData,
-                  email: e.target.value,
-                }))
-              }
-            />
-          </Form.Group>
+              {/* Second column - Start Date & Time */}
+              <Col md={4}>
+                <Form.Group controlId="eventStart">
+                  <Form.Label>Start Date & Time</Form.Label>
+                  <DatePicker
+                    selected={eventData.start || null}
+                    readOnly
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    className="form-control"
+                  />
+                </Form.Group>
+              </Col>
 
-          {/* Event Notes */}
-          <Form.Group controlId="eventNotes">
-            <Form.Label>Notes</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              placeholder="Enter notes"
-              value={eventData.notes}
-              onChange={(e) =>
-                setEventData((prevData) => ({
-                  ...prevData,
-                  notes: e.target.value,
-                }))
-              }
-            />
-          </Form.Group>
+              {/* Third column - End Date & Time */}
+              <Col md={4}>
+                <Form.Group controlId="eventEnd">
+                  <Form.Label>End Date & Time</Form.Label>
+                  <DatePicker
+                    selected={eventData.end || null}
+                    readOnly
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    className="form-control"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
 
-          {/* Start Date & Time */}
-          <Form.Group controlId="eventStart">
-            <Form.Label>Start Date & Time</Form.Label>
-            <DatePicker
-              selected={eventData.start}
-              onChange={(date) =>
-                setEventData((prevData) => ({
-                  ...prevData,
-                  start: date,
-                }))
-              }
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="MMMM d, yyyy h:mm aa"
-              placeholderText="Select start date and time"
-              className="form-control"
-            />
-          </Form.Group>
+            {/* Second Row - Notes, Attendees, Location */}
+            <Row className="mb-3">
+              {/* First column - Notes */}
+              <Col md={4}>
+                <Form.Group controlId="eventNotes">
+                  <Form.Label>Notes</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    readOnly
+                    value={eventData.notes || ""}
+                  />
+                </Form.Group>
+              </Col>
 
-          {/* End Date & Time */}
-          <Form.Group controlId="eventEnd">
-            <Form.Label>End Date & Time</Form.Label>
-            <DatePicker
-              selected={eventData.end}
-              onChange={(date) =>
-                setEventData((prevData) => ({
-                  ...prevData,
-                  end: date,
-                }))
-              }
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="MMMM d, yyyy h:mm aa"
-              placeholderText="Select end date and time"
-              className="form-control"
-            />
-          </Form.Group>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-        <Button variant="primary" onClick={handleSaveEvent}>
-          {eventData?.id ? "Update Event" : "Save Event"}
-        </Button>
-      </Modal.Footer>
-    </Modal>
+              {/* Second column - Attendees */}
+              <Col md={4}>
+                <Form.Group controlId="attendees">
+                  <Form.Label>Attendees</Form.Label>
+                  <Form.Control
+                    as="select"
+                    multiple
+                    readOnly
+                    value={
+                      eventData.attendees?.map((attendee) => attendee.id) || []
+                    }
+                  >
+                    {eventData.attendees?.map((attendee) => (
+                      <option key={attendee.id} value={attendee.id}>
+                        {attendee.attendee_name}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+              </Col>
+
+              {/* Third column - Location */}
+              <Col md={4}>
+                <Form.Group controlId="location">
+                  <Form.Label>Location</Form.Label>
+                  <Form.Control
+                    type="text"
+                    readOnly
+                    value={eventData.location || ""}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 };
 
-export default EventForm;
+export default EventDetailForm;
 
+// import React from "react";
+// import { Button, Form, Modal, Row, Col } from "react-bootstrap";
+// import DatePicker from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
 
-
-
-//old event form
-// import React, { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
-// import { createEvent, fetchEvent } from "../../redux/slice/eventSlice";
-
-// const EventForm = () => {
-//   const [errors, setErrors] = useState({});
-//   const [formData, setFormData] = useState({
-//     title: "",
-//     start: "",
-//     end: "",
-//     attendees: [],
-//     email: "",
-//     notes: "",
-//     is_canceled: false,
-//   });
-
-//   // Toggle state for showing/hiding sections (e.g., Notes section)
-//   const [isNotesOpen, setIsNotesOpen] = useState(false);
-
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const createStatus = useSelector((state) => state.events.createStatus);
-//   const createError = useSelector((state) => state.events.createError);
-//   const events = useSelector((state) => state.events.list || []);
-//   const attendeesList = useSelector((state) => state.attendees.list || []);
-
-//   useEffect(() => {
-//     dispatch(fetchEvent());
-//   }, [dispatch]);
-
-//   useEffect(() => {
-//     if (createStatus === "succeeded") {
-//       toast.success("Event created successfully!");
-//       setFormData({
-//         title: "",
-//         start: "",
-//         end: "",
-//         attendees: [],
-//         email: "",
-//         notes: "",
-//         is_canceled: false,
-//       });
-//       navigate("/dashboard/crm/event");
-//     }
-//   }, [createStatus, navigate]);
-
-//   useEffect(() => {
-//     if (createStatus === "failed") {
-//       toast.error(`Error: ${createError.message || "An error occurred"}`);
-//     }
-//   }, [createStatus, createError]);
-
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleAttendeeChange = (attendeeId) => {
-//     setFormData((prevData) => {
-//       const attendees = prevData.attendees.includes(attendeeId)
-//         ? prevData.attendees.filter((id) => id !== attendeeId)
-//         : [...prevData.attendees, attendeeId];
-//       return { ...prevData, attendees };
-//     });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     const existingEvent = events.some(
-//       (event) =>
-//         event.title &&
-//         event.title.toLowerCase() === formData.title.toLowerCase()
-//     );
-
-//     if (existingEvent) {
-//       toast.error("Event with this name already exists.");
-//       return;
-//     }
-
-//     dispatch(createEvent(formData))
-//       .unwrap()
-//       .then(() => {
-//         setFormData({
-//           title: "",
-//           start: "",
-//           end: "",
-//           attendees: [],
-//           email: "",
-//           notes: "",
-//           is_canceled: false,
-//         });
-//         navigate("/dashboard/crm/event");
-//       })
-//       .catch((error) => {
-//         console.error("Create Error:", error.response);
-//       });
-//   };
-
-//   const toggleNotes = () => {
-//     setIsNotesOpen((prev) => !prev);
-//   };
-
+// const EventDetailForm = ({ eventData, handleClose, show }) => {
 //   return (
 //     <div className="content-wrapper">
-//       <div className="container">
-//         <div className="container-fluid">
-//           <div className="card">
-//             <div className="card-header">
-//               <h4 className="btn btn-primary">Add Event</h4>
-//             </div>
-//             <div className="card-body">
-//               {createError && <p className="text-danger">{createError}</p>}
-//               <form onSubmit={handleSubmit}>
-//                 {/* Existing Fields */}
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="title">Event Name:</label>
-//                       <input
-//                         type="text"
-//                         id="title"
-//                         name="title"
-//                         value={formData.title}
-//                         className="form-control"
-//                         placeholder="Enter event name"
-//                         onChange={handleChange}
-//                         required
-//                       />
-//                     </div>
-//                     {errors.title && <p>{errors.title}</p>}
-//                   </div>
-//                   {/* Add the rest of the form fields here... */}
-//                 </div>
+//       <Modal show={show} onHide={handleClose} size="lg">
+//         <Modal.Header closeButton>
+//           <Modal.Title>Event Details</Modal.Title>
+//         </Modal.Header>
+//         <Modal.Body>
+//           <Form>
+//             <Row className="mb-3">
+//               {/* First column */}
+//               <Col md={4}>
+//                 <Form.Group controlId="eventTitle">
+//                   <Form.Label>Event Title</Form.Label>
+//                   <Form.Control
+//                     type="text"
+//                     readOnly
+//                     value={eventData.title || ""}
+//                   />
+//                 </Form.Group>
+//               </Col>
 
-//                 {/* Notes section with toggle */}
-//                 <div className="row">
-//                   <div className="col-md-12">
-//                     <button
-//                       type="button"
-//                       onClick={toggleNotes}
-//                       className="btn btn-secondary"
-//                     >
-//                       {isNotesOpen ? "Hide Notes" : "Show Notes"}
-//                     </button>
-//                     {isNotesOpen && (
-//                       <div className="form-group mt-3">
-//                         <label htmlFor="notes">Notes:</label>
-//                         <input
-//                           type="text"
-//                           id="notes"
-//                           name="notes"
-//                           value={formData.notes}
-//                           className="form-control"
-//                           placeholder="Enter notes"
-//                           onChange={handleChange}
-//                         />
-//                       </div>
-//                     )}
-//                   </div>
-//                 </div>
+//               {/* Second column */}
+//               <Col md={4}>
+//                 <Form.Group controlId="eventStart">
+//                   <Form.Label>Start Date & Time</Form.Label>
+//                   <DatePicker
+//                     selected={eventData.start || null}
+//                     readOnly
+//                     showTimeSelect
+//                     timeFormat="HH:mm"
+//                     timeIntervals={15}
+//                     dateFormat="MMMM d, yyyy h:mm aa"
+//                     className="form-control"
+//                   />
+//                 </Form.Group>
+//               </Col>
 
-//                 <button type="submit" className="btn btn-primary">
-//                   Save
-//                 </button>
-//               </form>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
+//               {/* Third column */}
+//               <Col md={4}>
+//                 <Form.Group controlId="eventEnd">
+//                   <Form.Label>End Date & Time</Form.Label>
+//                   <DatePicker
+//                     selected={eventData.end || null}
+//                     readOnly
+//                     showTimeSelect
+//                     timeFormat="HH:mm"
+//                     timeIntervals={15}
+//                     dateFormat="MMMM d, yyyy h:mm aa"
+//                     className="form-control"
+//                   />
+//                 </Form.Group>
+//               </Col>
+//             </Row>
+
+//             <Row className="mb-3">
+//               {/* First column */}
+//               <Col md={4}>
+//                 <Form.Group controlId="eventNotes">
+//                   <Form.Label>Notes</Form.Label>
+//                   <Form.Control
+//                     as="textarea"
+//                     rows={3}
+//                     readOnly
+//                     value={eventData.notes || ""}
+//                   />
+//                 </Form.Group>
+//               </Col>
+
+//               {/* Second column */}
+//               <Col md={4}>
+//                 <Form.Group controlId="attendees">
+//                   <Form.Label>Attendees</Form.Label>
+//                   <Form.Control
+//                     as="select"
+//                     multiple
+//                     readOnly
+//                     value={
+//                       eventData.attendees?.map((attendee) => attendee.id) || []
+//                     }
+//                   >
+//                     {eventData.attendees?.map((attendee) => (
+//                       <option key={attendee.id} value={attendee.id}>
+//                         {attendee.attendee_name}
+//                       </option>
+//                     ))}
+//                   </Form.Control>
+//                 </Form.Group>
+//               </Col>
+
+//               {/* Third column */}
+//               <Col md={4}>
+//                 <Form.Group controlId="location">
+//                   <Form.Label>Location</Form.Label>
+//                   <Form.Control
+//                     type="text"
+//                     readOnly
+//                     value={eventData.location || ""}
+//                   />
+//                 </Form.Group>
+//               </Col>
+//             </Row>
+//           </Form>
+//         </Modal.Body>
+//         <Modal.Footer>
+//           <Button variant="secondary" onClick={handleClose}>
+//             Close
+//           </Button>
+//         </Modal.Footer>
+//       </Modal>
 //     </div>
 //   );
 // };
 
-// export default EventForm;
+// export default EventDetailForm;
 
-//fourth
 // import React, { useState, useEffect } from "react";
+// import { Button, Form, Modal } from "react-bootstrap";
+// import DatePicker from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
+// import { fetchAttendees } from "../../redux/slice/crm/attendeeSlice";
 // import { useDispatch, useSelector } from "react-redux";
-// import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
-// import { createEvent, fetchEvent } from "../../redux/slice/eventSlice";
+// import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+// import "../../css/eventForm.css"; // Custom CSS file for additional styling
 
-// const EventForm = () => {
-//   const [errors, setErrors] = useState({});
-//   const [formData, setFormData] = useState({
-//     title: "",
-//     start: "",
-//     end: "",
-//     attendees: [], // Ensure attendees is initialized
-//     email: "",
-//     notes: "",
-//     is_canceled: false,
-//   });
+// const EventForm = ({
+//   eventData,
+//   setEventData,
+//   handleClose,
+//   handleSaveEvent,
+//   show,
+// }) => {
+//   const [attendeeIds, setAttendeeIds] = useState(
+//     eventData.attendees?.map((attendee) => attendee.id) || []
+//   );
 
 //   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const createStatus = useSelector((state) => state.events.createStatus);
-//   const createError = useSelector((state) => state.events.createError);
-//   const events = useSelector((state) => state.events.list || []);
-//   const attendeesList = useSelector((state) => state.attendees.list || []); // Ensure attendeesList is defined
 
 //   useEffect(() => {
-//     dispatch(fetchEvent());
+//     dispatch(fetchAttendees());
 //   }, [dispatch]);
-//   const ToggleComponent = () => {
-//     const [isOpen, setIsOpen] = useState(false);
 
-//     const toggle = () => {
-//         setIsOpen(prev => !prev); // Make sure setIsOpen is properly defined
+//   const {
+//     list: existingAttendees = [],
+//     isLoading,
+//     error,
+//   } = useSelector((state) => state.attendees || {});
+
+//   useEffect(() => {
+//     setAttendeeIds(eventData.attendees?.map((attendee) => attendee.id) || []);
+//   }, [eventData]);
+
+//   const handleSelectAttendee = (index, value) => {
+//     const updatedAttendeeIds = [...attendeeIds];
+//     updatedAttendeeIds[index] = value;
+//     setAttendeeIds(updatedAttendeeIds);
+//   };
+
+//   const handleRemoveAttendee = (index) => {
+//     const updatedAttendeeIds = attendeeIds.filter((_, i) => i !== index);
+//     setAttendeeIds(updatedAttendeeIds);
+//   };
+
+//   const handleAddAttendee = () => {
+//     setAttendeeIds((prev) => [...prev, ""]);
+//   };
+
+//   if (isLoading) return <p>Loading attendees...</p>;
+//   if (error) return <p>Error loading attendees: {error}</p>;
+
+//   const handleSave = () => {
+//     const selectedAttendees = attendeeIds
+//       .filter((id) => id)
+//       .map((id) => {
+//         const attendee = existingAttendees.find(
+//           (att) => att.id === parseInt(id, 10)
+//         );
+//         return attendee ? attendee.id : null;
+//       })
+//       .filter(Boolean);
+
+//     const eventToSave = {
+//       title: eventData.title,
+//       start: eventData.start.toISOString(),
+//       end: eventData.end.toISOString(),
+//       attendees: selectedAttendees,
+//       notes: eventData.notes || "",
 //     };
 
-//   useEffect(() => {
-//     if (createStatus === "succeeded") {
-//       toast.success("Event created successfully!");
-//       setFormData({
-//         title: "",
-//         start: "",
-//         end: "",
-//         attendees: [],
-//         email: "",
-//         notes: "",
-//         is_canceled: false,
-//       });
-//       navigate("/dashboard/crm/event");
-//     }
-//   }, [createStatus, navigate]);
-
-//   useEffect(() => {
-//     if (createStatus === "failed") {
-//       toast.error(`Error: ${createError.message || "An error occurred"}`);
-//     }
-//   }, [createStatus, createError]);
-
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleAttendeeChange = (attendeeId) => {
-//     setFormData((prevData) => {
-//       const attendees = prevData.attendees.includes(attendeeId)
-//         ? prevData.attendees.filter((id) => id !== attendeeId)
-//         : [...prevData.attendees, attendeeId];
-//       return { ...prevData, attendees };
-//     });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     const existingEvent = events.some(
-//       (event) =>
-//         event.title &&
-//         event.title.toLowerCase() === formData.title.toLowerCase()
-//     );
-
-//     if (existingEvent) {
-//       toast.error("Event with this name already exists.");
-//       return;
-//     }
-
-//     dispatch(createEvent(formData))
-//       .unwrap()
-//       .then(() => {
-//         setFormData({
-//           title: "",
-//           start: "",
-//           end: "",
-//           attendees: [],
-//           email: "",
-//           notes: "",
-//           is_canceled: false,
-//         });
-//         navigate("/dashboard/crm/event");
+//     handleSaveEvent(eventToSave)
+//       .then((response) => {
+//         console.log("Event saved successfully", response);
 //       })
 //       .catch((error) => {
-//         console.error("Create Error:", error.response); // Log detailed error
+//         console.error(
+//           "Error saving event:",
+//           error.response?.data || error.message
+//         );
+//         alert(
+//           `Error saving event: ${error.response?.data?.error || error.message}`
+//         );
 //       });
 //   };
 
 //   return (
-//     <div className="content-wrapper">
-//       <div className="container">
-//         <div className="container-fluid">
-//           <div className="card">
-//             <div className="card-header">
-//               <h4 className="btn btn-primary">Add Event</h4>
-//             </div>
-//             <div className="card-body">
-//               {createError && <p className="text-danger">{createError}</p>}
-//               <form onSubmit={handleSubmit}>
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="title">Event Name:</label>
-//                       <input
-//                         type="text"
-//                         id="title"
-//                         name="title"
-//                         value={formData.title}
-//                         className="form-control"
-//                         placeholder="Enter event name"
-//                         onChange={handleChange}
-//                         required
-//                       />
-//                     </div>
-//                     {errors.title && <p>{errors.title}</p>}
-//                   </div>
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="start">Start:</label>
-//                       <input
-//                         type="datetime-local" // Use datetime-local for proper date input
-//                         id="start"
-//                         name="start"
-//                         value={formData.start}
-//                         className="form-control"
-//                         onChange={handleChange}
-//                         required
-//                       />
-//                     </div>
-//                     {errors.start && <p>{errors.start}</p>}
-//                   </div>
-//                 </div>
+//     <Modal show={show} onHide={handleClose} className="event-modal">
+//       <Modal.Header closeButton>
+//         <Modal.Title className="event-modal-title">Create Event</Modal.Title>
+//       </Modal.Header>
+//       <Modal.Body>
+//         <Form>
+//           <Form.Group controlId="eventTitle" className="mb-4">
+//             <Form.Label>Event Title</Form.Label>
+//             <Form.Control
+//               type="text"
+//               placeholder="Enter event title"
+//               value={eventData.title || ""}
+//               onChange={(e) =>
+//                 setEventData((prevData) => ({
+//                   ...prevData,
+//                   title: e.target.value,
+//                 }))
+//               }
+//               className="event-form-input"
+//             />
+//           </Form.Group>
 
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="end">End:</label>
-//                       <input
-//                         type="datetime-local"
-//                         id="end"
-//                         name="end"
-//                         value={formData.end}
-//                         className="form-control"
-//                         onChange={handleChange}
-//                         required
-//                       />
-//                     </div>
-//                     {errors.end && <p>{errors.end}</p>}
-//                   </div>
-//                 </div>
+//           <Form.Group controlId="eventNotes" className="mb-4">
+//             <Form.Label>Notes</Form.Label>
+//             <Form.Control
+//               as="textarea"
+//               rows={3}
+//               placeholder="Enter notes"
+//               value={eventData.notes || ""}
+//               onChange={(e) =>
+//                 setEventData((prevData) => ({
+//                   ...prevData,
+//                   notes: e.target.value,
+//                 }))
+//               }
+//               className="event-form-input"
+//             />
+//           </Form.Group>
 
-//                 <div className="row">
-//                   <div className="col-md-12">
-//                     <div className="form-group">
-//                       <label htmlFor="attendees">Select Attendees:</label>
-//                       <select
-//                         multiple
-//                         className="form-control"
-//                         onChange={(e) => handleAttendeeChange(e.target.value)}
-//                       >
-//                         {attendeesList.map((attendee) => (
-//                           <option key={attendee.id} value={attendee.id}>
-//                             {attendee.name}
-//                           </option>
-//                         ))}
-//                       </select>
-//                     </div>
-//                     {formData.attendees.length > 0 && (
-//                       <div className="mt-3">
-//                         <h5>Selected Attendees:</h5>
-//                         <ul>
-//                           {formData.attendees.map((attendeeId) => {
-//                             const attendee = attendeesList.find(
-//                               (a) => a.id === attendeeId
-//                             );
-//                             return attendee ? (
-//                               <li key={attendeeId}>{attendee.name}</li>
-//                             ) : null;
-//                           })}
-//                         </ul>
-//                       </div>
-//                     )}
-//                   </div>
-//                 </div>
-
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="email">Email:</label>
-//                       <input
-//                         type="email"
-//                         id="email"
-//                         name="email"
-//                         value={formData.email}
-//                         className="form-control"
-//                         placeholder="Enter email"
-//                         onChange={handleChange}
-//                         required
-//                       />
-//                     </div>
-//                     {errors.email && <p>{errors.email}</p>}
-//                   </div>
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="notes">Notes:</label>
-//                       <input
-//                         type="text"
-//                         id="notes"
-//                         name="notes"
-//                         value={formData.notes}
-//                         className="form-control"
-//                         placeholder="Enter notes"
-//                         onChange={handleChange}
-//                         required
-//                       />
-//                     </div>
-//                   </div>
-//                 </div>
-
-//                 <button type="submit" className="btn btn-primary">
-//                   Save
-//                 </button>
-//               </form>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default EventForm;
-
-//third
-// import React, { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
-// import { createEvent, fetchEvent } from "../../redux/slice/eventSlice";
-// import Select from "react-select"; // Import the react-select library
-
-// const EventForm = () => {
-//   const [errors, setErrors] = useState({});
-//   const [formData, setFormData] = useState({
-//     title: "",
-//     start: "",
-//     end: "",
-//     email: "",
-//     notes: "",
-//     attendees: [], // Add attendees array to formData
-//     is_canceled: false,
-//   });
-
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const createStatus = useSelector((state) => state.events.createStatus);
-//   const createError = useSelector((state) => state.events.createError);
-//   const attendeesList = useSelector((state) => state.attendees.list || []); // Assuming attendees are in a Redux slice
-//   const events = useSelector((state) => state.events.list || []);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-
-//   const toggleModal = () => {
-//     setIsModalOpen((prev) => !prev);
-//   };
-//   useEffect(() => {
-//     dispatch(fetchEvent());
-//   }, [dispatch]);
-
-//   useEffect(() => {
-//     if (createStatus === "succeeded") {
-//       toast.success("Event created successfully!");
-//       setFormData({
-//         title: "",
-//         start: "",
-//         end: "",
-//         email: "",
-//         notes: "",
-//         attendees: [], // Reset attendees after success
-//       });
-//       navigate("/dashboard/crm/event");
-//     }
-//   }, [createStatus, navigate]);
-
-//   useEffect(() => {
-//     if (createStatus === "failed") {
-//       toast.error(`Error: ${createError.message || "An error occurred"}`);
-//     }
-//   }, [createStatus, createError]);
-
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleAttendeeChange = (selectedOptions) => {
-//     const attendees = selectedOptions.map((option) => option.value);
-//     setFormData({ ...formData, attendees });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     const existingEvent = events.some(
-//       (event) =>
-//         event.title &&
-//         event.title.toLowerCase() === formData.title.toLowerCase()
-//     );
-
-//     if (existingEvent) {
-//       toast.error("Event with this name already exists.");
-//       return;
-//     }
-
-//     dispatch(createEvent(formData))
-//       .unwrap()
-//       .then(() => {
-//         setFormData({
-//           title: "",
-//           start: "",
-//           end: "",
-//           email: "",
-//           notes: "",
-//           attendees: [],
-//         });
-//         navigate("/dashboard/crm/event");
-//       })
-//       .catch((error) => {
-//         console.error("Create Error:", error.response);
-//       });
-//   };
-
-//   // Convert attendeesList for react-select
-//   const options = attendeesList.map((attendee) => ({
-//     value: attendee.id, // Use the attendee ID
-//     label: attendee.name, // Use the attendee name
-//   }));
-
-//   return (
-//     <div className="content-wrapper">
-//       <div className="container">
-//         <div className="container-fluid">
-//           <div className="card">
-//             <div className="card-header">
-//               <h4 className="btn btn-primary">Add Event</h4>
-//             </div>
-//             <div className="card-body">
-//               {createError && <p className="text-danger">{createError}</p>}
-//               <form onSubmit={handleSubmit}>
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="title">Event Name:</label>
-//                       <input
-//                         type="text"
-//                         id="title"
-//                         name="title"
-//                         value={formData.title}
-//                         className="form-control"
-//                         placeholder="Enter event name"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                     {errors.title && <p>{errors.title}</p>}
-//                   </div>
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="start">Start:</label>
-//                       <input
-//                         type="datetime-local" // Change to datetime-local for better input
-//                         id="start"
-//                         name="start"
-//                         value={formData.start}
-//                         className="form-control"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                   </div>
-//                   {errors.start && <p>{errors.start}</p>}
-//                 </div>
-
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="end">End:</label>
-//                       <input
-//                         type="datetime-local" // Change to datetime-local for better input
-//                         id="end"
-//                         name="end"
-//                         value={formData.end}
-//                         className="form-control"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                   </div>
-//                   {errors.end && <p>{errors.end}</p>}
-//                 </div>
-
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="attendees">Attendees:</label>
-//                       <Select
-//                         id="attendees"
-//                         isMulti
-//                         options={options}
-//                         onChange={handleAttendeeChange}
-//                         className="basic-multi-select"
-//                         classNamePrefix="select"
-//                       />
-//                     </div>
-//                   </div>
-//                 </div>
-
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="email">Email</label>
-//                       <input
-//                         type="email"
-//                         id="email"
-//                         name="email"
-//                         value={formData.email}
-//                         className="form-control"
-//                         placeholder="Enter email"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                     {errors.email && <p>{errors.email}</p>}
-//                   </div>
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="notes">Notes:</label>
-//                       <input
-//                         type="text"
-//                         id="notes"
-//                         name="notes"
-//                         value={formData.notes}
-//                         className="form-control"
-//                         placeholder="Enter notes"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                   </div>
-//                   {errors.notes && <p>{errors.notes}</p>}
-//                 </div>
-//                 {errors.non_field_errors && <p>{errors.non_field_errors[0]}</p>}
-
-//                 <button type="submit" className="btn btn-primary">
-//                   Save
-//                 </button>
-//               </form>
-
-//               {/* Display selected attendees */}
-//               {formData.attendees.length > 0 && (
-//                 <div className="mt-3">
-//                   <h5>Selected Attendees:</h5>
-//                   <ul>
-//                     {formData.attendees.map((attendeeId) => {
-//                       const attendee = attendeesList.find(
-//                         (a) => a.id === attendeeId
-//                       );
-//                       return attendee ? (
-//                         <li key={attendeeId}>{attendee.name}</li>
-//                       ) : null;
-//                     })}
-//                   </ul>
-//                 </div>
-//               )}
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default EventForm;
-
-//second
-// import React, { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
-// import { createEvent, fetchEvent } from "../../redux/slice/eventSlice";
-// import "react-phone-input-2/lib/style.css";
-
-// const EventForm = () => {
-//   const [errors, setErrors] = useState({});
-//   const [formData, setFormData] = useState({
-//     title: "",
-//     start: "",
-//     end: "",
-//     email: "",
-//     notes: "",
-//     attendees: [], // New state for attendees
-//     is_canceled: false,
-//   });
-//   const [attendeesList, setAttendeesList] = useState([]); // List of all attendees
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const createStatus = useSelector((state) => state.events.createStatus);
-//   const createError = useSelector((state) => state.events.createError);
-//   const events = useSelector((state) => state.events.list || []);
-
-//   useEffect(() => {
-//     dispatch(fetchEvent());
-//     // Assume fetchAttendees fetches the list of attendees
-//     // dispatch(fetchAttendees()).then(data => setAttendeesList(data));
-//   }, [dispatch]);
-
-//   useEffect(() => {
-//     if (createStatus === "succeeded") {
-//       toast.success("Event created successfully!");
-//       setFormData({
-//         title: "",
-//         start: "",
-//         end: "",
-//         email: "",
-//         notes: "",
-//         attendees: [], // Reset attendees on successful submission
-//       });
-//       navigate("/dashboard/crm/event");
-//     }
-//   }, [createStatus, navigate]);
-
-//   useEffect(() => {
-//     if (createStatus === "failed") {
-//       toast.error(`Error: ${createError.message || "An error occurred"}`);
-//     }
-//   }, [createStatus, createError]);
-
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleAttendeeChange = (e) => {
-//     const { value, checked } = e.target;
-//     setFormData((prev) => {
-//       const attendees = checked
-//         ? [...prev.attendees, value]
-//         : prev.attendees.filter((attendee) => attendee !== value);
-//       return { ...prev, attendees };
-//     });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     const existingEvent = events.some(
-//       (event) =>
-//         event.title &&
-//         event.title.toLowerCase() === formData.title.toLowerCase()
-//     );
-
-//     if (existingEvent) {
-//       toast.error("Event with this name already exists.");
-//       return;
-//     }
-
-//     dispatch(createEvent(formData))
-//       .unwrap()
-//       .then(() => {
-//         setFormData({
-//           title: "",
-//           start: "",
-//           end: "",
-//           email: "",
-//           notes: "",
-//           attendees: [], // Reset attendees after submission
-//         });
-//         navigate("/dashboard/crm/event");
-//       })
-//       .catch((error) => {
-//         console.error("Create Error:", error.response);
-//       });
-//   };
-
-//   return (
-//     <div className="content-wrapper">
-//       <div className="container">
-//         <div className="container-fluid">
-//           <div className="card">
-//             <div className="card-header">
-//               <h4 className="btn btn-primary">Add Event</h4>
-//             </div>
-//             <div className="card-body">
-//               {createError && <p className="text-danger">{createError}</p>}
-//               <form onSubmit={handleSubmit}>
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="title">Event Name:</label>
-//                       <input
-//                         type="text"
-//                         id="title"
-//                         name="title"
-//                         value={formData.title}
-//                         className="form-control"
-//                         placeholder="Enter event name"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                     {errors.title && <p>{errors.title}</p>}
-//                   </div>
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="start">Start:</label>
-//                       <input
-//                         type="datetime-local" // Changed type to datetime-local
-//                         id="start"
-//                         name="start"
-//                         value={formData.start}
-//                         className="form-control"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                   </div>
-//                   {errors.start && <p>{errors.start}</p>}
-//                 </div>
-
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="end">End:</label>
-//                       <input
-//                         type="datetime-local" // Added End date input
-//                         id="end"
-//                         name="end"
-//                         value={formData.end}
-//                         className="form-control"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                     {errors.end && <p>{errors.end}</p>}
-//                   </div>
-//                 </div>
-
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="email">Email:</label>
-//                       <input
-//                         type="email"
-//                         id="email"
-//                         name="email"
-//                         value={formData.email}
-//                         className="form-control"
-//                         placeholder="Enter email"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                     {errors.email && <p>{errors.email}</p>}
-//                   </div>
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="notes">Notes:</label>
-//                       <input
-//                         type="text"
-//                         id="notes"
-//                         name="notes"
-//                         value={formData.notes}
-//                         className="form-control"
-//                         placeholder="Enter notes"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                   </div>
-//                   {errors.notes && <p>{errors.notes}</p>}
-//                 </div>
-
-//                 {/* Attendee Selection */}
-//                 <div className="row">
-//                   <div className="col-md-12">
-//                     <label htmlFor="attendees">Select Attendees:</label>
-//                     <div>
-//                       {attendeesList.map((attendee) => (
-//                         <div key={attendee.id}>
-//                           <label>
-//                             <input
-//                               type="checkbox"
-//                               value={attendee.name}
-//                               onChange={handleAttendeeChange}
-//                               checked={formData.attendees.includes(
-//                                 attendee.name
-//                               )}
-//                             />
-//                             {attendee.name}
-//                           </label>
-//                         </div>
-//                       ))}
-//                     </div>
-//                   </div>
-//                 </div>
-
-//                 <div className="row">
-//                   {errors.non_field_errors && (
-//                     <p>{errors.non_field_errors[0]}</p>
-//                   )}
-//                 </div>
-
-//                 <button type="submit" className="btn btn-primary">
-//                   Save
-//                 </button>
-//               </form>
-
-//               {/* Display Selected Attendees */}
-//               <div className="selected-attendees">
-//                 <h5>Selected Attendees:</h5>
-//                 <ul>
-//                   {formData.attendees.map((attendee, index) => (
-//                     <li key={index}>{attendee}</li>
+//           <Form.Group controlId="eventAttendees" className="mb-4">
+//             <Form.Label>Attendees</Form.Label>
+//             {attendeeIds.map((attendeeId, index) => (
+//               <div
+//                 key={index}
+//                 className="d-flex align-items-center mb-2 attendee-row"
+//               >
+//                 <Form.Control
+//                   as="select"
+//                   value={attendeeId}
+//                   onChange={(e) => handleSelectAttendee(index, e.target.value)}
+//                   className="attendee-select"
+//                 >
+//                   <option value="">Select Attendee</option>
+//                   {existingAttendees.map((existingAttendee) => (
+//                     <option
+//                       key={existingAttendee.id}
+//                       value={existingAttendee.id}
+//                     >
+//                       {existingAttendee.attendee_name} -{" "}
+//                       {existingAttendee.email}
+//                     </option>
 //                   ))}
-//                 </ul>
+//                 </Form.Control>
+//                 <Button
+//                   variant="outline-danger"
+//                   className="ms-2 attendee-remove-btn"
+//                   onClick={() => handleRemoveAttendee(index)}
+//                 >
+//                   <AiOutlineMinus />
+//                 </Button>
 //               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
+//             ))}
+//             <Button
+//               variant="outline-primary"
+//               onClick={handleAddAttendee}
+//               className="add-attendee-btn"
+//             >
+//               <AiOutlinePlus /> Add Attendee
+//             </Button>
+//           </Form.Group>
 
-// export default EventForm;
+//           <Form.Group controlId="eventStart" className="mb-4">
+//             <Form.Label>Start Date & Time</Form.Label>
+//             <DatePicker
+//               selected={eventData.start || null}
+//               onChange={(date) =>
+//                 setEventData((prevData) => ({
+//                   ...prevData,
+//                   start: date,
+//                 }))
+//               }
+//               showTimeSelect
+//               timeFormat="HH:mm"
+//               timeIntervals={15}
+//               dateFormat="MMMM d, yyyy h:mm aa"
+//               placeholderText="Select start date and time"
+//               className="form-control event-date-picker"
+//             />
+//           </Form.Group>
 
-//1old
-// import React, { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
-// import { createEvent, fetchEvent } from "../../redux/slice/eventSlice";
-// // import PhoneInput from "react-phone-input-2";
-// import "react-phone-input-2/lib/style.css";
-
-// const EventForm = () => {
-//   //   const [phoneNumber, setPhoneNumber] = useState("");
-//   //   const [phoneValid, setPhoneValid] = useState(true);
-//   const [errors, setErrors] = useState({});
-//   const [formData, setFormData] = useState({
-//     title: "",
-//     start: "",
-//     end: "",
-//     events: "",
-//     email: "",
-//     notes: "",
-//     is_canceled: false,
-//     // created: "",
-//   });
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const createStatus = useSelector((state) => state.events.createStatus);
-//   const createError = useSelector((state) => state.events.createError);
-//   const events = useSelector((state) => state.events.list || []);
-
-//   useEffect(() => {
-//     dispatch(fetchEvent());
-//   }, [dispatch]);
-
-//   useEffect(() => {
-//     if (createStatus === "succeeded") {
-//       toast.success("event created successfully!");
-//       setFormData({
-//         title: "",
-//         start: "",
-//         // whatsapp_no: "",
-//         events: "",
-//         email: "",
-//         notes: "",
-//         // created: "",
-//       });
-//       navigate("/dashboard/crm/event");
-//     }
-//   }, [createStatus, navigate]);
-
-//   useEffect(() => {
-//     if (createStatus === "failed") {
-//       toast.error(`Error: ${createError.message || "An error occurred"}`);
-//     }
-//   }, [createStatus, createError]);
-
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   //   const validatePhoneNumber = (value) => {
-//   //     const phoneLength = value.replace(/\D/g, "").length;
-//   //     if (phoneLength >= 10 && phoneLength <= 15) {
-//   //       setPhoneValid(true);
-//   //     } else {
-//   //       setPhoneValid(false);
-//   //     }
-//   //     setPhoneNumber(value);
-//   //   };
-
-//   // const validateWhatsappNumber = (value) => {
-//   //   const phoneLength = value.replace(/\D/g, "").length;
-//   //   if (phoneLength >= 10 && phoneLength <= 15) {
-//   //     setPhoneValid(true);
-//   //   } else {
-//   //     setPhoneValid(false);
-//   //   }
-//   //   setPhoneNumber(value);
-//   // };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     const existingEvent = events.some(
-//       (event) =>
-//         event.title &&
-//         event.title.toLowerCase() === formData.title.toLowerCase()
-//     );
-
-//     if (existingEvent) {
-//       toast.error("event with this name already exists.");
-//       return;
-//     }
-
-//     dispatch(createEvent(formData))
-//       .unwrap()
-//       .then(() => {
-//         setFormData({
-//           title: "",
-//           start: "",
-//           // whatsapp_no: "",
-//           events: "",
-//           email: "",
-//           notes: "",
-//           // created: "",
-//         });
-//         navigate("/dashboard/crm/event");
-//       })
-//       .catch((error) => {
-//         console.error("Create Error:", error.response); // Log detailed error
-//       });
-//   };
-
-//   return (
-//     <div className="content-wrapper">
-//       <div className="container">
-//         <div className="container-fluid">
-//           <div className="card">
-//             <div className="card-header">
-//               <h4 className="btn btn-primary">Add Event</h4>
-//             </div>
-//             <div className="card-body">
-//               {createError && <p className="text-danger">{createError}</p>}
-//               <form onSubmit={handleSubmit}>
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="title">Event Name:</label>
-//                       <input
-//                         type="text"
-//                         id="title"
-//                         name="title"
-//                         value={formData.title}
-//                         className="form-control"
-//                         placeholder="Enter event name"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                     {errors.title && <p>{errors.title}</p>}
-//                   </div>
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="start">start:</label>
-//                       <input
-//                         type="start"
-//                         id="start"
-//                         name="start"
-//                         value={formData.start}
-//                         className="form-control"
-//                         placeholder="Enter start"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                   </div>
-//                   {errors.start && <p>{errors.start}</p>}
-//                 </div>
-
-//                 <div className="row">
-//                   {/* <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="whatsapp_no">whatsapp no :</label>
-//                       <PhoneInput
-//                         country={"nepal"} // Set a default country
-//                         value={formData.whatsapp_no}
-//                         onChange={validateWhatsappNumber}
-//                         inputStyle={{
-//                           width: "100%",
-//                           borderColor: phoneValid ? "green" : "red",
-//                           backgroundColor: phoneValid ? "#e0f7fa" : "#ffebee",
-//                         }}
-//                       />
-//                       {!phoneValid && (
-//                         <p style={{ color: "red" }}>
-//                           Please enter a valid whatsapp_no number between 10 and
-//                           15 digits.
-//                         </p>
-//                       )}
-//                     </div>
-//                     {errors.whatsapp_no && <p>{errors.contact_no}</p>}
-//                   </div> */}
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="events">Phone:</label>
-//                       <input
-//                         type="date"
-//                         id="date"
-//                         name="start"
-//                         value={formData.email}
-//                         className="form-control"
-//                         placeholder="Enter organization name"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                     {errors.email && <p>{errors.email}</p>}
-//                   </div>
-//                   {errors.phone && <p>{errors.phone}</p>}
-//                 </div>
-
-//                 <div className="row">
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="email">Email</label>
-//                       <input
-//                         type="text"
-//                         id="email"
-//                         name="email"
-//                         value={formData.email}
-//                         className="form-control"
-//                         placeholder="Enter email"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                     {errors.email && <p>{errors.email}</p>}
-//                   </div>
-//                   <div className="col-md-6">
-//                     <div className="form-group">
-//                       <label htmlFor="notes">Notes:</label>
-//                       <input
-//                         type="text"
-//                         id="notes"
-//                         name="notes"
-//                         value={formData.notes}
-//                         className="form-control"
-//                         placeholder="Enter notes"
-//                         onChange={handleChange}
-//                         required
-//                         style={{ width: "100%" }}
-//                       />
-//                     </div>
-//                   </div>
-//                   {errors.notes && <p>{errors.notes}</p>}
-//                 </div>
-//                 {errors.non_field_errors && <p>{errors.non_field_errors[0]}</p>}
-
-//                 <button type="submit" className="btn btn-primary">
-//                   Save
-//                 </button>
-//               </form>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
+//           <Form.Group controlId="eventEnd" className="mb-4">
+//             <Form.Label>End Date & Time</Form.Label>
+//             <DatePicker
+//               selected={eventData.end || null}
+//               onChange={(date) =>
+//                 setEventData((prevData) => ({
+//                   ...prevData,
+//                   end: date,
+//                 }))
+//               }
+//               showTimeSelect
+//               timeFormat="HH:mm"
+//               timeIntervals={15}
+//               dateFormat="MMMM d, yyyy h:mm aa"
+//               placeholderText="Select end date and time"
+//               className="form-control event-date-picker"
+//             />
+//           </Form.Group>
+//         </Form>
+//       </Modal.Body>
+//       <Modal.Footer className="d-flex justify-content-between">
+//         <Button
+//           variant="outline-secondary"
+//           onClick={handleClose}
+//           className="event-modal-close-btn"
+//         >
+//           Close
+//         </Button>
+//         <Button
+//           variant="primary"
+//           onClick={handleSave}
+//           className="event-modal-save-btn"
+//         >
+//           Save Event
+//         </Button>
+//       </Modal.Footer>
+//     </Modal>
 //   );
 // };
 

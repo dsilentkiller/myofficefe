@@ -10,7 +10,20 @@ export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
   return response.data.result;
 });
 
-
+// Async thunk for fetching an event by ID
+export const fetchEventById = createAsyncThunk(
+  "events/fetchEventById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/event/detail/${id}/`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 // Fetch all projects action
 export const fetchProject = createAsyncThunk(
   "projects/fetchProject",
@@ -46,10 +59,10 @@ export const updateEvent = createAsyncThunk(
   async ({ id, eventData }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `$http://127.0.0.1:8000/api/event/update/${id}/`,
+        `http://127.0.0.1:8000/api/event/update/${id}/`,
         eventData
       );
-      return response.data.result;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -76,6 +89,7 @@ const eventSlice = createSlice({
   initialState: {
     events: [],
     status: "idle",
+    selectedEvent: null, // Ensure this is part of the initial state
     error: null,
   },
   reducers: {},
@@ -92,6 +106,19 @@ const eventSlice = createSlice({
       .addCase(fetchEvents.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+      //single event
+      .addCase(fetchEventById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchEventById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedEvent = action.payload;
+      })
+      .addCase(fetchEventById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch event";
       });
 
     // Create event

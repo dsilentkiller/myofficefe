@@ -64,6 +64,7 @@ import EventDetail from "./admin/crm/event/EventDetail";
 import EnquiryDelete from "./admin/crm/enquiry/EnquiryDelete";
 import EnquiryDetail from "./admin/crm/enquiry/EnquiryDetail";
 import EnquiryUpdate from "./admin/crm/enquiry/EnquiryUpdate";
+import EventUpdate from "./admin/crm/event/EventUpdate";
 // import ProjectForm from "./admin/"
 function App() {
   return (
@@ -98,7 +99,7 @@ function App() {
               {/*  {/* localhost/dashbaord/crm/event */}
               <Route path="event" element={<EventSystem />} />
               <Route path="event/create" element={<EventSystem />} />
-              {/* <Route path="event/update/:id/" element={<ProjectForm />} /> */}
+              <Route path="event/update/:id/" element={<EventUpdate />} />
               {/* <Route path="event/cancel/:id/" element={<ProjectDelete />} /> */}
               <Route path="event/detail/:id/" element={<EventDetail />} />
 

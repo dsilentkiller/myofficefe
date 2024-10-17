@@ -1,41 +1,191 @@
-import React from "react";
-import { useLocation } from "react-router-dom"; // useLocation to get event data passed through link
+import React, { useEffect, useState } from "react";
+import { Button } from "react-bootstrap";
+import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchEventById } from "../../redux/slice/crm/eventSlice";
+import EventDelete from "./EventDelete";
+import { toast, ToastContainer } from "react-toastify";
 
 const EventDetail = () => {
-  const location = useLocation();
-  const { event } = location.state || {};
+  const { id } = useParams(); // Get the event ID from the URL
+  const dispatch = useDispatch();
+  const event = useSelector((state) => state.events.selectedEvent);
+  const loading = useSelector((state) => state.events.loading);
+  const error = useSelector((state) => state.events.error);
+  const navigate = useNavigate();
+
+  const [eventToDelete, setEventToDelete] = useState(null);
+
+  // Fetch event by ID when component mounts
+  useEffect(() => {
+    dispatch(fetchEventById(id));
+  }, [dispatch, id]);
+
+  // Log the fetched event data for debugging
+  useEffect(() => {
+    console.log("Fetched event:", event);
+  }, [event]);
+
+  if (loading) {
+    return <p>Loading event details...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error.detail || "An unknown error occurred."}</p>;
+  }
+
+  if (!event) {
+    return <p>No event found!</p>;
+  }
 
   return (
-    <div className="content-wrapper">
-      <section className="content-header">
-        <h1>Event Details</h1>
-      </section>
-      <section className="content">
-        <div className="container-fluid">
-          <div className="card card-primary">
-            <div className="card-body">
-              <h3>Title: {event.title}</h3>
-              <p>
-                <strong>Start:</strong> {new Date(event.start).toLocaleString()}
-              </p>
-              <p>
-                <strong>End:</strong> {new Date(event.end).toLocaleString()}
-              </p>
-              <p>
-                <strong>Attendees:</strong> {event.attendees.join(", ")}
-              </p>
-              <p>
-                <strong>Email:</strong> {event.email}
-              </p>
-              <p>
-                <strong>Notes:</strong> {event.notes}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div>
+      <h2>{event.title}</h2>
+      <p>
+        <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+      </p>
+      <p>
+        <strong>End:</strong> {new Date(event.end).toLocaleString()}
+      </p>
+      {/* Handle the case where notes might be empty or null */}
+      <p>
+        <strong>Notes:</strong>{" "}
+        {event.notes ? event.notes : "No notes available."}
+      </p>
+
+      <h5>Attendees</h5>
+      {/* Handle empty attendees */}
+      {event.attendees && event.attendees.length > 0 ? (
+        <ul>
+          {event.attendees.map((attendee) => (
+            <li key={attendee.id}>
+              {attendee.attendee_name} ({attendee.email})
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No attendees available for this event.</p>
+      )}
+
+      <Button
+        variant="primary"
+        onClick={() => navigate(`/dashboard/crm/event/update/${event.id}`)}
+      >
+        Update Event
+      </Button>
+
+      <Button
+        variant="danger"
+        onClick={() => setEventToDelete(event.id)}
+        className="ms-2"
+      >
+        Delete Event
+      </Button>
+
+      {eventToDelete !== null && (
+        <EventDelete
+          id={eventToDelete}
+          onClose={() => setEventToDelete(null)}
+        />
+      )}
+
+      <ToastContainer />
     </div>
   );
 };
 
 export default EventDetail;
+
+// import React, { useEffect, useState } from "react";
+// import { Button } from "react-bootstrap";
+// import { useParams, useNavigate } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux";
+// import { fetchEventById } from "../../redux/slice/crm/eventSlice";
+// import EventDelete from "./EventDelete"; // Adjust the path as necessary
+// import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
+// import "react-toastify/dist/ReactToastify.css"; // Import CSS for toast
+
+// const EventDetail = () => {
+//   const { id } = useParams(); // Get the event ID from the URL
+//   const dispatch = useDispatch();
+//   const event = useSelector((state) => state.events.selectedEvent);
+//   const loading = useSelector((state) => state.events.loading);
+//   const error = useSelector((state) => state.events.error);
+//   const navigate = useNavigate();
+
+//   const [eventToDelete, setEventToDelete] = useState(null);
+
+//   useEffect(() => {
+//     dispatch(fetchEventById(id)); // Fetch event by ID when component mounts
+//   }, [dispatch, id]);
+
+//   useEffect(() => {
+//     console.log("Event:", event);
+//     console.log("Loading:", loading);
+//     console.log("Error:", error);
+//   }, [event, loading, error]);
+
+//   if (loading) {
+//     return <p>Loading event details...</p>;
+//   }
+
+//   if (error) {
+//     const errorMessage = error.detail || "An unknown error occurred.";
+//     return <p>Error: {errorMessage}</p>;
+//   }
+
+//   if (!event) {
+//     return <p>No event found!</p>;
+//   }
+
+//   return (
+//     <div>
+//       <h2>{event.title}</h2>
+//       <p>
+//         <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+//       </p>
+//       <p>
+//         <strong>End:</strong> {new Date(event.end).toLocaleString()}
+//       </p>
+//       <p>
+//         <strong>Notes:</strong> {event.notes}
+//       </p>
+//       <h5>Attendees</h5>
+//       {event.attendees && event.attendees.length > 0 ? (
+//         <ul>
+//           {event.attendees.map((attendee) => (
+//             <li key={attendee.id}>
+//               {attendee.attendee_name} ({attendee.email})
+//             </li>
+//           ))}
+//         </ul>
+//       ) : (
+//         <p>No attendees available for this event.</p>
+//       )}
+//       <Button
+//         variant="primary"
+//         onClick={() => navigate(`/dashboard/crm/event/update/${event.id}`)}
+//       >
+//         Update Event
+//       </Button>
+//       <Button
+//         variant="danger"
+//         onClick={() => setEventToDelete(event.id)}
+//         className="ms-2"
+//       >
+//         Delete Event
+//       </Button>
+//       {/* Delete Confirmation Modal */}
+//       {eventToDelete !== null && (
+//         <EventDelete
+//           id={eventToDelete}
+//           onClose={() => setEventToDelete(null)}
+//           // Removed toast.success from here
+//         />
+//       )}
+//       <ToastContainer /> {/* Ensure this is included for toast notifications */}
+//     </div>
+//   );
+// };
+
+// export default EventDetail;
