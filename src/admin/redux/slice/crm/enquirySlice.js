@@ -18,7 +18,7 @@ export const fetchEnquiries = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/enquiry/");
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -52,7 +52,7 @@ export const fetchEnquiryById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
       );
-      return response.data.result;
+      return response.data.result.data || [];
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -140,21 +140,33 @@ const enquirySlice = createSlice({
         state.error = null;
       })
       .addCase(fetchEnquiryById.fulfilled, (state, action) => {
+        state.selectedEnquiry = action.payload;
         state.loading = false;
-        state.currentEnquiry = action.payload;
-        const index = state.list.findIndex(
-          (enquiry) => enquiry.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.list[index] = action.payload;
-        } else {
-          state.list.push(action.payload);
-        }
       })
       .addCase(fetchEnquiryById.rejected, (state, action) => {
+        state.error = action.error.message;
         state.loading = false;
-        state.error = action.payload || action.error.message;
       })
+      // .addCase(fetchEnquiryById.pending, (state) => {
+      //   state.loading = true;
+      //   state.error = null;
+      // })
+      // .addCase(fetchEnquiryById.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   state.currentEnquiry = action.payload;
+      //   const index = state.list.findIndex(
+      //     (enquiry) => enquiry.id === action.payload.id
+      //   );
+      //   if (index !== -1) {
+      //     state.list[index] = action.payload;
+      //   } else {
+      //     state.list.push(action.payload);
+      //   }
+      // })
+      // .addCase(fetchEnquiryById.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload || action.error.message;
+      // })
 
       // Create Enquiry
       .addCase(createEnquiry.pending, (state) => {

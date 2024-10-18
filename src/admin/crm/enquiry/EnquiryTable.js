@@ -154,18 +154,20 @@ const EnquiryTable = () => {
                     <th>Customer Name</th>
                     <th>Department</th>
                     <th>Phone</th>
-                    <th>Contact No</th>
+                    <th>whatsapp</th>
                     <th>Email</th>
                     <th>Gender</th>
                     <th>Province</th>
                     <th>District</th>
                     <th>Municipality</th>
-                    <th>Ward No</th>
+                    <th>WardNo</th>
                     <th>Tole Name</th>
-                    <th>Estimated Amount</th>
+                    <th>Budget</th>
                     <th>Enquiry Purpose</th>
+
                     <th>Known By</th>
                     <th>Joining Date</th>
+                    <th>History</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -189,6 +191,7 @@ const EnquiryTable = () => {
                         <td>{enquiry.enquiry_purpose}</td>
                         <td>{enquiry.known_by}</td>
                         <td>{enquiry.created}</td>
+                        <td>{enquiry.history}</td>
                         <td>
                           <Link
                             className="btn btn-primary"

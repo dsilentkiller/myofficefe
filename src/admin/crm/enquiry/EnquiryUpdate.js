@@ -53,9 +53,7 @@ const EnquiryUpdate = () => {
   });
 
   // Current enquiry from the Redux store
-  const currentEnquiry = useSelector(
-    (state) => state.enquiry?.currentEnquiry || {}
-  );
+
   // pri_phone number validate
   const validatePhoneNumber = (value) => {
     const phoneLength = value.replace(/\D/g, "").length;
@@ -78,6 +76,7 @@ const EnquiryUpdate = () => {
     setFormData({ ...formData, sec_phone: value });
   };
   // Retrieve data from the store
+  const currentEnquiry = useSelector((state) => state.enquiries.currentEnquiry);
 
   const { list: provinces } = useSelector((state) => state.provinces);
   const { list: categories } = useSelector((state) => state.categories);
@@ -105,31 +104,51 @@ const EnquiryUpdate = () => {
   // Set form data when current enquiry updates
   useEffect(() => {
     if (currentEnquiry && id) {
-      setFormData({
-        customer_name: currentEnquiry.customer_name || "",
-        category: currentEnquiry.category || "",
-        organization_name: currentEnquiry.organization_name || "",
-        department: currentEnquiry.department || "",
-        designation: currentEnquiry.designation || "",
-        pri_phone: currentEnquiry.pri_phone || "",
-        sec_phone: currentEnquiry.sec_phone || "",
-        email: currentEnquiry.email || "",
-        gender: currentEnquiry.gender || "",
-        province: currentEnquiry.province || "",
-        district: currentEnquiry.district || "",
-        municipality: currentEnquiry.municipality || "",
-        ward_no: currentEnquiry.ward_no || "",
-        tole_name: currentEnquiry.tole_name || "",
-        estimated_amount: currentEnquiry.estimated_amount || "",
-        enquiry_purpose: currentEnquiry.enquiry_purpose || "",
-        known_by: currentEnquiry.known_by || "",
-        created: currentEnquiry.created || "",
-      });
+      // Check if currentEnquiry has valid data before mapping
+      const fetchedData = mapEnquiryToFormData(currentEnquiry);
+      setFormData(fetchedData);
     }
   }, [currentEnquiry, id]);
+  console.log(currentEnquiry);
+  const mapEnquiryToFormData = (currentEnquiry) => ({
+    customer_name: currentEnquiry.customer_name || "",
+    category: currentEnquiry.category || "",
+    organization_name: currentEnquiry.organization_name || "",
+    department: currentEnquiry.department || "",
+    designation: currentEnquiry.designation || "",
+    pri_phone: currentEnquiry.pri_phone || "",
+    sec_phone: currentEnquiry.sec_phone || "",
+    email: currentEnquiry.email || "",
+    gender: currentEnquiry.gender || "",
+    province: currentEnquiry.province || "",
+    district: currentEnquiry.district || "",
+    municipality: currentEnquiry.municipality || "",
+    ward_no: currentEnquiry.ward_no || "",
+    tole_name: currentEnquiry.tole_name || "",
+    estimated_amount: currentEnquiry.estimated_amount || "",
+    enquiry_purpose: currentEnquiry.enquiry_purpose || "",
+    known_by: currentEnquiry.known_by || "",
+    created: currentEnquiry.created || "",
+  });
+  if (!currentEnquiry) {
+    return <div>Loading...</div>; // Handle loading state or no data
+  }
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Clear previous errors
+    const newErrors = {};
 
+    // Validate required fields
+    if (!formData.customer_name) newErrors.customer_name = true;
+    if (!formData.category) newErrors.category = true;
+    if (!formData.pri_phone) newErrors.pri_phone = true;
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+    // proceed with form subnission
     const action = id ? updateEnquiry : createEnquiry;
     dispatch(action(id ? { id, ...formData } : formData))
       .unwrap()
@@ -248,23 +267,6 @@ const EnquiryUpdate = () => {
     if (activeTab !== tab) setActiveTab(tab);
   };
 
-  // Handle form submission
-  //   const handleSubmit = (e) => {
-  //     e.preventDefault();
-  //     dispatch(updateEnquiry({ id, ...formData }))
-  //       .unwrap()
-  //       .then(() => {
-  //         toast.success("Enquiry updated successfully!");
-  //         navigate("/dashboard/crm/enquiry");
-  //       })
-  //       .catch((error) => {
-  //         console.error("Update Error:", error);
-  //         toast.error(
-  //           `Failed to update enquiry: ${error.message || "An error occurred"}`
-  //         );
-  //       });
-  //   };
-
   return (
     <div className="content-wrapper" style={{ marginBottom: "20mm" }}>
       {/* <div className="container-fluid"> */}
@@ -314,7 +316,14 @@ const EnquiryUpdate = () => {
                     {/* customer name */}
                     <div className="col-md-4">
                       <div className="form-group">
-                        <label htmlFor="name">Customer Name:</label>
+                        <label
+                          htmlFor="customer_name"
+                          style={{
+                            color: errors.customer_name ? "red" : "inherit",
+                          }}
+                        >
+                          Customer Name:
+                        </label>
                         <input
                           type="text"
                           id="customer_name"

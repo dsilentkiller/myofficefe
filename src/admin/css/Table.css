@@ -64,7 +64,33 @@
     margin-top: 10px;
 }
 
+.table th,
+.table td {
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden;    /* Hide overflowed content */
+  text-overflow: ellipsis; /* Show ellipsis for overflowed text */
+}
 
+/* .table th:nth-child(2),
+.table td:nth-child(2) { /* Customer Name */
+  /* width: 150px; Set fixed width */
+/* } */
+/* 
+.table th:nth-child(3),
+.table td:nth-child(3) { /* Department */
+  /* width: 120px; Set fixed width */
+/* } */
+
+/* .table th:nth-child(4), */
+/* .table td:nth-child(4) { Phone */
+  /* width: 100px; Set fixed width */
+/* }  */
+/* .table th:nth-child(14),
+.table td:nth-child(14) { /* enquiry purpose */
+  /* width: 100px; Set fixed width */
+/* }  */
+
+/* Add similar styles for other columns as needed */
 
 
 /* .table-container {

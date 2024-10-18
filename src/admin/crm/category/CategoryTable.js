@@ -32,8 +32,8 @@ const CategoryTable = () => {
 
   const {
     list: categories = [], // Default to empty array if undefined
-    isLoading,
-    error,
+    // isLoading,
+    // error,
     deleteError,
   } = useSelector((state) => state.categories || {});
 

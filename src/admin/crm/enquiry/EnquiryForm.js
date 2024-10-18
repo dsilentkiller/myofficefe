@@ -12,6 +12,8 @@ import { fetchMunicipalities } from "../../redux/slice/base/municipalitySlice";
 import { fetchProvinces } from "../../redux/slice/base/provinceSlice";
 import classnames from "classnames";
 
+// import axios from "axios";
+
 import { useNavigate, useParams } from "react-router-dom"; // Import useParams
 import { toast } from "react-toastify";
 import {
@@ -60,6 +62,7 @@ const EnquiryForm = () => {
     enquiry_purpose: "",
     known_by: "",
     created: "",
+    history: "",
   });
 
   // Toggle function for switching tabs
@@ -142,6 +145,7 @@ const EnquiryForm = () => {
         enquiry_purpose: currentEnquiry?.enquiry_purpose || "",
         known_by: currentEnquiry?.known_by || "",
         created: currentEnquiry?.created || "",
+        history: currentEnquiry?.history || "",
       });
     }
   }, [currentEnquiry, id]);
@@ -183,10 +187,16 @@ const EnquiryForm = () => {
       toast.error("Please enter a valid phone number.");
       return;
     }
+    // Ensure formData includes department and designation IDs
+    const formDataToSubmit = {
+      ...formData,
+      department: formData.department, // Assuming you're storing the selected department ID in formData.departmentId
+      designation: formData.designation, // Assuming you're storing the selected designation ID in formData.designationId
+    };
 
     if (id) {
       // Update enquiry
-      dispatch(updateEnquiry({ id, ...formData }))
+      dispatch(updateEnquiry({ id, ...formData, formDataToSubmit }))
         .unwrap()
         .then(() => {
           toast.success("enquiry updated successfully!");
@@ -200,7 +210,7 @@ const EnquiryForm = () => {
         });
     } else {
       // Create enquiry
-      dispatch(createEnquiry(formData))
+      dispatch(createEnquiry(formDataToSubmit))
         .unwrap()
         .then(() => {
           toast.success("enquiry created successfully!");
@@ -224,6 +234,7 @@ const EnquiryForm = () => {
             enquiry_purpose: "",
             known_by: "",
             created: "",
+            history: "",
           });
           navigate("/dashboard/crm/enquiry");
         })
@@ -825,6 +836,27 @@ const EnquiryForm = () => {
                         />
                       </div>
                     </div>
+                    {/* tole name */}
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="history">History:</label>
+                        <textarea
+                          type="text"
+                          id="history"
+                          name="history"
+                          value={formData.history}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              history: e.target.value,
+                            })
+                          }
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   <div className="form-group">
@@ -844,17 +876,17 @@ const EnquiryForm = () => {
 };
 
 export default EnquiryForm;
-
+//###--------------------------- add employee not completed yet.
 // const EnquiryForm = () => {
 //   const [activeTab, setActiveTab] = useState("1");
 //   const dispatch = useDispatch();
 
 //   const {
-//     designations,
-//     departments,
-//     municipalities,
-//     provinces,
-//     districts,
+//     // designations,
+//     // departments,
+//     // municipalities,
+//     // provinces,
+//     // districts,
 //     loading,
 //     error,
 //   } = useSelector((state) => state.enquiry);
@@ -890,26 +922,31 @@ export default EnquiryForm;
 //       dispatch(fetchDistricts(value)); // Adjust the action to fetch districts based on selected province
 //     }
 //   };
-
+//   const { list: provinces } = useSelector((state) => state.provinces);
+//   const { list: districts } = useSelector((state) => state.districts);
+//   const { list: categories } = useSelector((state) => state.categories);
+//   const { list: departments } = useSelector((state) => state.departments);
+//   // const { list: designations } = useSelector((state) => state.designations);
 //   useEffect(() => {
 //     dispatch(fetchProvinces());
 //     dispatch(fetchDesignations());
 //     dispatch(fetchDepartments());
+//     dispatch(fetchCategories());
 //     dispatch(fetchMunicipalities());
 //   }, [dispatch]);
 
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
-//     try {
-//       const response = await axios.post(
-//         "http://127.0.0.1:8000/api/employee/new/",
-//         formData
-//       );
-//       alert("Employee created successfully!");
-//     } catch (error) {
-//       console.error("There was an error creating the employee!", error);
-//       alert("Failed to create employee.");
-//     }
+//     // try {
+//     //   const response = await axios.post(
+//     //     "http://127.0.0.1:8000/api/employee/new/",
+//     //     formData
+//     //   );
+//     //   alert("Employee created successfully!");
+//     // } catch (error) {
+//     //   console.error("There was an error creating the employee!", error);
+//     //   alert("Failed to create employee.");
+//     // }
 //   };
 
 //   const toggle = (tab) => {
@@ -1068,333 +1105,352 @@ export default EnquiryForm;
 // };
 
 // export default EnquiryForm;
+//#--############### add employee not completed yet -----------------------------------
+// import React, { useState, useEffect } from "react";
+// import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
+// import axios from "axios";
+// import { useSelector, useDispatch } from "react-redux";
+// import { fetchCategories } from "../../redux/slice/crm/categorySlice";
+// import { fetchDepartments } from "../../redux/slice/base/departmentSlice";
+// import { fetchDesignations } from "../../redux/slice/base/designationSlice";
+// import { fetchProvinces } from "../../redux/slice/base/provinceSlice";
+// import classnames from "classnames";
+// #===========not completed
+// const EnquiryForm = () => {
+//   const [activeTab, setActiveTab] = useState("1");
+//   const [formData, setFormData] = useState({
+//     customer_name: "",
+//     category: "",
+//     department: "",
+//     designation: "",
+//     pri_phone: "",
+//     sec_phone: "",
+//     email: "",
+//     gender: "",
+//     province: "",
+//     district: "",
+//     municipality: "",
+//     ward_no: "",
+//     tole_name: "",
+//     created: "",
+//   });
 
-// // import React, { useState, useEffect } from "react";
-// // import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
-// // import axios from "axios";
-// // import { useSelector, useDispatch } from "react-redux";
-// // import { fetchCategories } from "../../redux/slice/crm/categorySlice";
-// // import { fetchDepartments } from "../../redux/slice/base/departmentSlice";
-// // import { fetchDesignations } from "../../redux/slice/base/designationSlice";
-// // import { fetchProvinces } from "../../redux/slice/base/provinceSlice";
-// // import classnames from "classnames";
+//   const [districts, setDistricts] = useState([]);
+//   const [municipalities, setMunicipalities] = useState([]);
 
-// // const EnquiryForm = () => {
-// //   const [activeTab, setActiveTab] = useState("1");
-// //   const [formData, setFormData] = useState({
-// //     customer_name: "",
-// //     category: "",
-// //     department: "",
-// //     designation: "",
-// //     pri_phone: "",
-// //     sec_phone: "",
-// //     email: "",
-// //     gender: "",
-// //     province: "",
-// //     district: "",
-// //     municipality: "",
-// //     ward_no: "",
-// //     tole_name: "",
-// //     created: "",
-// //   });
+//   const dispatch = useDispatch();
+//   const { list: provinces } = useSelector((state) => state.provinces);
+//   const { list: categories } = useSelector((state) => state.categories);
+//   const { list: departments } = useSelector((state) => state.departments);
+//   const { list: designations } = useSelector((state) => state.designations);
 
-// //   const [districts, setDistricts] = useState([]);
-// //   const [municipalities, setMunicipalities] = useState([]);
+//   useEffect(() => {
+//     dispatch(fetchCategories());
+//     dispatch(fetchProvinces());
+//     dispatch(fetchDepartments());
+//     dispatch(fetchDesignations());
+//   }, [dispatch]);
 
-// //   const dispatch = useDispatch();
-// //   const { list: provinces } = useSelector((state) => state.provinces);
-// //   // const { list: categories } = useSelector((state) => state.categories);
-// //   const { list: departments } = useSelector((state) => state.departments);
-// //   const { list: designations } = useSelector((state) => state.designations);
+//   // Fetch districts and municipalities based on selected province
+//   useEffect(() => {
+//     const fetchDistrictsAndMunicipalities = async () => {
+//       if (formData.province) {
+//         try {
+//           // Replace the following URL with your API endpoint for fetching districts
+//           const districtsResponse = await axios.get(
+//             `http://127.0.0.1:8000/api/setup/districts/?province=${formData.province}`
+//           );
+//           setDistricts(districtsResponse.data);
 
-// //   useEffect(() => {
-// //     dispatch(fetchCategories());
-// //     dispatch(fetchProvinces());
-// //     dispatch(fetchDepartments());
-// //     dispatch(fetchDesignations());
-// //   }, [dispatch]);
+//           // Replace the following URL with your API endpoint for fetching municipalities
+//           const municipalitiesResponse = await axios.get(
+//             `http://127.0.0.1:8000/api/setup/municipalities/?province=${formData.province}`
+//           );
+//           setMunicipalities(municipalitiesResponse.data);
+//         } catch (error) {
+//           console.error(
+//             "There was an error fetching districts or municipalities!",
+//             error
+//           );
+//         }
+//       } else {
+//         setDistricts([]);
+//         setMunicipalities([]);
+//       }
+//     };
 
-// //   // Fetch districts and municipalities based on selected province
-// //   useEffect(() => {
-// //     const fetchDistrictsAndMunicipalities = async () => {
-// //       if (formData.province) {
-// //         try {
-// //           // Replace the following URL with your API endpoint for fetching districts
-// //           const districtsResponse = await axios.get(`http://127.0.0.1:8000/api/setup/districts/?province=${formData.province}`);
-// //           setDistricts(districtsResponse.data);
+//     fetchDistrictsAndMunicipalities();
+//   }, [formData.province]);
 
-// //           // Replace the following URL with your API endpoint for fetching municipalities
-// //           const municipalitiesResponse = await axios.get(`http://127.0.0.1:8000/api/setup/municipalities/?province=${formData.province}`);
-// //           setMunicipalities(municipalitiesResponse.data);
-// //         } catch (error) {
-// //           console.error("There was an error fetching districts or municipalities!", error);
-// //         }
-// //       } else {
-// //         setDistricts([]);
-// //         setMunicipalities([]);
-// //       }
-// //     };
+//   const handleInputChange = (e) => {
+//     setFormData({
+//       ...formData,
+//       [e.target.name]: e.target.value,
+//     });
+//   };
 
-// //     fetchDistrictsAndMunicipalities();
-// //   }, [formData.province]);
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     // Form submission logic
+//   };
 
-// //   const handleInputChange = (e) => {
-// //     setFormData({
-// //       ...formData,
-// //       [e.target.name]: e.target.value,
-// //     });
-// //   };
+//   return (
+//     <div className="content-wrapper" style={{ marginBottom: "20mm" }}>
+//       <div className="card">
+//         <Nav tabs>
+//           <NavItem>
+//             <NavLink
+//               className={classnames({ active: activeTab === "1" })}
+//               onClick={() => setActiveTab("1")}
+//             >
+//               General Information
+//             </NavLink>
+//           </NavItem>
+//           <NavItem>
+//             <NavLink
+//               className={classnames({ active: activeTab === "2" })}
+//               onClick={() => setActiveTab("2")}
+//             >
+//               Address
+//             </NavLink>
+//           </NavItem>
+//           <NavItem>
+//             <NavLink
+//               className={classnames({ active: activeTab === "3" })}
+//               onClick={() => setActiveTab("3")}
+//             >
+//               Company Info
+//             </NavLink>
+//           </NavItem>
+//         </Nav>
+//         <TabContent activeTab={activeTab}>
+//           <TabPane tabId="2">
+//             <div className="card">
+//               <div className="card-body">
+//                 <form>
+//                   <div className="row mt-3">
+//                     <h5 className="btn btn-info mb-2">Permanent Address</h5>
+//                   </div>
+//                   <div className="row">
+//                     <div className="col-md-4">
+//                       <div className="form-group">
+//                         <label htmlFor="province">Province:</label>
+//                         <select
+//                           id="province"
+//                           name="province"
+//                           value={formData.province}
+//                           onChange={handleInputChange}
+//                           className="form-control"
+//                           required
+//                         >
+//                           <option value="">Select province</option>
+//                           {provinces.length > 0 ? (
+//                             provinces.map((province) => (
+//                               <option key={province.id} value={province.id}>
+//                                 {province.name}
+//                               </option>
+//                             ))
+//                           ) : (
+//                             <option value="">No provinces available</option>
+//                           )}
+//                         </select>
+//                       </div>
+//                     </div>
 
-// //   const handleSubmit = async (e) => {
-// //     e.preventDefault();
-// //     // Form submission logic
-// //   };
+//                     {/* District */}
+//                     <div className="col-md-4">
+//                       <div className="form-group">
+//                         <label htmlFor="district">District:</label>
+//                         <select
+//                           id="district"
+//                           name="district"
+//                           value={formData.district}
+//                           onChange={handleInputChange}
+//                           className="form-control"
+//                           required
+//                         >
+//                           <option value="">Select District</option>
+//                           {districts.length > 0 ? (
+//                             districts.map((district) => (
+//                               <option key={district.id} value={district.id}>
+//                                 {district.name}
+//                               </option>
+//                             ))
+//                           ) : (
+//                             <option value="">No districts available</option>
+//                           )}
+//                         </select>
+//                       </div>
+//                     </div>
+//                   </div>
 
-// //   return (
-// //     <div className="content-wrapper" style={{ marginBottom: "20mm" }}>
-// //       <div className="card">
-// //         <Nav tabs>
-// //           <NavItem>
-// //             <NavLink
-// //               className={classnames({ active: activeTab === "1" })}
-// //               onClick={() => setActiveTab("1")}
-// //             >
-// //               General Information
-// //             </NavLink>
-// //           </NavItem>
-// //           <NavItem>
-// //             <NavLink
-// //               className={classnames({ active: activeTab === "2" })}
-// //               onClick={() => setActiveTab("2")}
-// //             >
-// //               Address
-// //             </NavLink>
-// //           </NavItem>
-// //           <NavItem>
-// //             <NavLink
-// //               className={classnames({ active: activeTab === "3" })}
-// //               onClick={() => setActiveTab("3")}
-// //             >
-// //               Company Info
-// //             </NavLink>
-// //           </NavItem>
-// //         </Nav>
-// //         <TabContent activeTab={activeTab}>
-// //           <TabPane tabId="2">
-// //             <div className="card">
-// //               <div className="card-body">
-// //                 <form>
-// //                   <div className="row mt-3">
-// //                     <h5 className="btn btn-info mb-2">Permanent Address</h5>
-// //                   </div>
-// //                   <div className="row">
-// //                     <div className="col-md-4">
-// //                       <div className="form-group">
-// //                         <label htmlFor="province">Province:</label>
-// //                         <select
-// //                           id="province"
-// //                           name="province"
-// //                           value={formData.province}
-// //                           onChange={handleInputChange}
-// //                           className="form-control"
-// //                           required
-// //                         >
-// //                           <option value="">Select province</option>
-// //                           {provinces.length > 0 ? (
-// //                             provinces.map((province) => (
-// //                               <option key={province.id} value={province.id}>
-// //                                 {province.name}
-// //                               </option>
-// //                             ))
-// //                           ) : (
-// //                             <option value="">No provinces available</option>
-// //                           )}
-// //                         </select>
-// //                       </div>
-// //                     </div>
+//                   {/* Municipality */}
+//                   <div className="row">
+//                     <div className="col-md-4">
+//                       <div className="form-group">
+//                         <label htmlFor="municipality">Municipality:</label>
+//                         <select
+//                           id="municipality"
+//                           name="municipality"
+//                           value={formData.municipality}
+//                           onChange={handleInputChange}
+//                           className="form-control"
+//                           required
+//                         >
+//                           <option value="">Select Municipality</option>
+//                           {municipalities.length > 0 ? (
+//                             municipalities.map((municipality) => (
+//                               <option
+//                                 key={municipality.id}
+//                                 value={municipality.id}
+//                               >
+//                                 {municipality.name}
+//                               </option>
+//                             ))
+//                           ) : (
+//                             <option value="">
+//                               No municipalities available
+//                             </option>
+//                           )}
+//                         </select>
+//                       </div>
+//                     </div>
 
-// //                     {/* District */}
-// //                     <div className="col-md-4">
-// //                       <div className="form-group">
-// //                         <label htmlFor="district">District:</label>
-// //                         <select
-// //                           id="district"
-// //                           name="district"
-// //                           value={formData.district}
-// //                           onChange={handleInputChange}
-// //                           className="form-control"
-// //                           required
-// //                         >
-// //                           <option value="">Select District</option>
-// //                           {districts.length > 0 ? (
-// //                             districts.map((district) => (
-// //                               <option key={district.id} value={district.id}>
-// //                                 {district.name}
-// //                               </option>
-// //                             ))
-// //                           ) : (
-// //                             <option value="">No districts available</option>
-// //                           )}
-// //                         </select>
-// //                       </div>
-// //                     </div>
-// //                   </div>
+//                     {/* Ward No */}
+//                     <div className="col-md-4">
+//                       <div className="form-group">
+//                         <label htmlFor="ward_no">Ward No:</label>
+//                         <input
+//                           type="text"
+//                           id="ward_no"
+//                           name="ward_no"
+//                           value={formData.ward_no}
+//                           onChange={handleInputChange}
+//                           className="form-control"
+//                           required
+//                         />
+//                       </div>
+//                     </div>
 
-// //                   {/* Municipality */}
-// //                   <div className="row">
-// //                     <div className="col-md-4">
-// //                       <div className="form-group">
-// //                         <label htmlFor="municipality">Municipality:</label>
-// //                         <select
-// //                           id="municipality"
-// //                           name="municipality"
-// //                           value={formData.municipality}
-// //                           onChange={handleInputChange}
-// //                           className="form-control"
-// //                           required
-// //                         >
-// //                           <option value="">Select Municipality</option>
-// //                           {municipalities.length > 0 ? (
-// //                             municipalities.map((municipality) => (
-// //                               <option key={municipality.id} value={municipality.id}>
-// //                                 {municipality.name}
-// //                               </option>
-// //                             ))
-// //                           ) : (
-// //                             <option value="">No municipalities available</option>
-// //                           )}
-// //                         </select>
-// //                       </div>
-// //                     </div>
+//                     {/* Tole Name */}
+//                     <div className="col-md-4">
+//                       <div className="form-group">
+//                         <label htmlFor="tole_name">Tole Name:</label>
+//                         <input
+//                           type="text"
+//                           id="tole_name"
+//                           name="tole_name"
+//                           value={formData.tole_name}
+//                           onChange={handleInputChange}
+//                           className="form-control"
+//                           required
+//                         />
+//                       </div>
+//                     </div>
+//                   </div>
 
-// //                     {/* Ward No */}
-// //                     <div className="col-md-4">
-// //                       <div className="form-group">
-// //                         <label htmlFor="ward_no">Ward No:</label>
-// //                         <input
-// //                           type="text"
-// //                           id="ward_no"
-// //                           name="ward_no"
-// //                           value={formData.ward_no}
-// //                           onChange={handleInputChange}
-// //                           className="form-control"
-// //                           required
-// //                         />
-// //                       </div>
-// //                     </div>
+//                   <div className="form-group">
+//                     <button
+//                       type="button"
+//                       className="btn btn-primary"
+//                       onClick={() => setActiveTab("3")}
+//                     >
+//                       Next
+//                     </button>
+//                   </div>
+//                 </form>
+//               </div>
+//             </div>
+//           </TabPane>
+//           <TabPane tabId="3">
+//             <div className="card">
+//               <div className="card-body">
+//                 <form onSubmit={handleSubmit}>
+//                   <div className="row">
+//                     {/* Other form fields for Company Info */}
+//                     <div className="col-md-4">
+//                       <div className="form-group">
+//                         <label htmlFor="organization_name">
+//                           Organization name:
+//                         </label>
+//                         <input
+//                           type="text"
+//                           id="organization_name"
+//                           name="organization_name"
+//                           value={formData.organization_name}
+//                           onChange={handleInputChange}
+//                           className="form-control"
+//                           required
+//                         />
+//                       </div>
+//                     </div>
+//                     {/* Other form fields */}
+//                     <div className="col-md-4">
+//                       <div className="form-group">
+//                         <button type="submit" className="btn btn-primary">
+//                           Add Employee
+//                         </button>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </form>
+//               </div>
+//             </div>
+//           </TabPane>
+//         </TabContent>
+//       </div>
+//     </div>
+//   );
+// };
 
-// //                     {/* Tole Name */}
-// //                     <div className="col-md-4">
-// //                       <div className="form-group">
-// //                         <label htmlFor="tole_name">Tole Name:</label>
-// //                         <input
-// //                           type="text"
-// //                           id="tole_name"
-// //                           name="tole_name"
-// //                           value={formData.tole_name}
-// //                           onChange={handleInputChange}
-// //                           className="form-control"
-// //                           required
-// //                         />
-// //                       </div>
-// //                     </div>
-// //                   </div>
+// export default EnquiryForm;
 
-// //                   <div className="form-group">
-// //                     <button type="button" className="btn btn-primary" onClick={() => setActiveTab("3")}>
-// //                       Next
-// //                     </button>
-// //                   </div>
-// //                 </form>
-// //               </div>
-// //             </div>
-// //           </TabPane>
-// //           <TabPane tabId="3">
-// //             <div className="card">
-// //               <div className="card-body">
-// //                 <form onSubmit={handleSubmit}>
-// //                   <div className="row">
-// //                     {/* Other form fields for Company Info */}
-// //                     <div className="col-md-4">
-// //                       <div className="form-group">
-// //                         <label htmlFor="organization_name">Organization name:</label>
-// //                         <input
-// //                           type="text"
-// //                           id="organization_name"
-// //                           name="organization_name"
-// //                           value={formData.organization_name}
-// //                           onChange={handleInputChange}
-// //                           className="form-control"
-// //                           required
-// //                         />
-// //                       </div>
-// //                     </div>
-// //                     {/* Other form fields */}
-// //                     <div className="col-md-4">
-// //                       <div className="form-group">
-// //                         <button type="submit" className="btn btn-primary">
-// //                           Add Employee
-// //                         </button>
-// //                       </div>
-// //                     </div>
-// //                   </div>
-// //                 </form>
-// //               </div>
-// //             </div>
-// //           </TabPane>
-// //         </TabContent>
-// //       </div>
-// //     </div>
-// //   );
-// // };
+//#--------#######--------------  districts undefined problem
+// import React, { useState, useEffect } from "react";
+// import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
+// import classnames from "classnames";
+// import { Link } from "react-router-dom";
+// import axios from "axios";
+// import { useSelector, useDispatch } from "react-redux";
+// import {
+//   fetchDepartments,
+//   fetchDesignations,
+//   fetchProvinces,
+//   fetchDistricts,
+//   fetchMunicipalities,
+// } from "../../redux/slice/crm/enquirySlice";
 
-// // export default EnquiryForm;
+// const EnquiryForm = () => {
+//   const [activeTab, setActiveTab] = useState("1");
+//   const [categories, setcategories] = useState([]);
 
-// // import React, { useState, useEffect } from "react";
-// // import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
-// // import classnames from "classnames";
-// // import { Link } from "react-router-dom";
-// // import axios from "axios";
-// // import { useSelector, useDispatch } from "react-redux";
-// // import {
-// //   fetchDepartments,
-// //   fetchDesignations,
-// //   fetchProvinces,
-// //   fetchDistricts,
-// //   fetchMunicipalities,
-// // } from "../../redux/slice/crm/enquirySlice";
+//   // const [provinces, setProvinces] = useState([]);
+//   const [zones, setZones] = useState([]);
 
-// // const EnquiryForm = () => {
-// //   const [activeTab, setActiveTab] = useState("1");
-// //   const [categories, setcategories] = useState([]);
+//   // const [districts, setDistricts] = useState([]);
 
-// //   // const [provinces, setProvinces] = useState([]);
-// //   const [zones, setZones] = useState([]);
+//   const {
+//     // provinces,
 
-// //   // const [districts, setDistricts] = useState([]);
+//     designations,
+//     departments,
+//     municipalities = [],
 
-// //   const {
-// //     // provinces,
-
-// //     designations,
-// //     departments,
-// //     municipalities = [],
-
-// //     provinces,
-// //     districts,
-// //     // zones: [],
-// //     loading,
-// //     error,
-// //   } = useSelector((state) => state.enquiry);
-// //   const dispatch = useDispatch();
-// //   const [formData, setFormData] = useState({
-// //     customer_name: "",
-// //     category: "",
-// //     // category: "",
-// //     department: "",
-// //     designation: "",
-// //     pri_phone: "",
-// //     sec_phone: "",
+//     provinces,
+//     districts,
+//     // zones: [],
+//     loading,
+//     error,
+//   } = useSelector((state) => state.enquiry);
+//   const dispatch = useDispatch();
+//   const [formData, setFormData] = useState({
+//     customer_name: "",
+//     category: "",
+//     // category: "",
+//     department: "",
+//     designation: "",
+//     pri_phone: "",
+//     sec_phone: "",
 //     email: "",
 //     gender: "",
 
@@ -1735,7 +1791,7 @@ export default EnquiryForm;
 //                           required
 //                         >
 //                           <option value="">Select District</option>
-//                           { districts.map((district) => (
+//                           {districts.map((district) => (
 //                             <option key={district.id} value={district.id}>
 //                               {district.name}
 //                             </option>
@@ -1863,3 +1919,4 @@ export default EnquiryForm;
 // };
 
 // export default EnquiryForm;
+//##  -----######---------------------

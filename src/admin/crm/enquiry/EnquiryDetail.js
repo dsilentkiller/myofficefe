@@ -1,46 +1,113 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams } from "react-router-dom";
+
 import { fetchEnquiryById } from "../../redux/slice/crm/enquirySlice";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Button } from "react-bootstrap";
+import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import EnquiryDelete from "./EnquiryDelete";
+// import { toast, ToastContainer } from "react-toastify";
 
-const EnquiryDetail = () => {
+const Enquiry = () => {
   const { id } = useParams();
-  const [enquiryDetail, setEnquiryDetail] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const enquiries = useSelector((state) => state.enquiries);
+  const loading = useSelector((state) => state.enquiries.loading);
+  const error = useSelector((state) => state.enquiries.error);
+  const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const fetchEnquiryDetail = async () => {
-  //     try {
-  //       const response = await axios.get(`/api/enquiry/${id}/`);
-  //       setEnquiryDetail(response.data);
-  //       setLoading(false);
-  //     } catch (err) {
-  //       setError(err);
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchEnquiryDetail();
-  // }, [id]);
+  const [enquiryToDelete, setEnquiryToDelete] = useState(null);
+
+  // Fetch event by ID when component mounts
+  useEffect(() => {
+    dispatch(fetchEnquiryById(id));
+  }, [dispatch, id]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
-  return (
-    <div>
-      <h3>Enquiry Details</h3>
-      <p>Customer Name: {enquiryDetail.enquiry.customer_name}</p>
-      <p>Phone: {enquiryDetail.enquiry.pri_phone}</p>
-      {/* Other fields */}
+  // if (!enquiry) return <div>No details found</div>;
 
-      <h4>Follow-up History</h4>
-      {enquiryDetail.followups.length > 0 ? (
-        enquiryDetail.followups.map((followup, index) => (
-          <div key={index}>
-            <p>{followup.note}</p>
-            <p>{followup.date}</p>
-          </div>
-        ))
+  return (
+    <div className="container mt-4">
+      <h3 className="mb-4 text-center">Enquiry Details</h3>
+
+      {/* Row for enquiry details */}
+      <div className="row">
+        <div className="col-md-4">
+          <h5>Customer Name</h5>
+          <p>{enquiries.enquiries?.customer_name}</p>
+        </div>
+        <div className="col-md-4">
+          <h5>Phone</h5>
+          <p>{enquiries.enquiries?.pri_phone}</p>
+        </div>
+        <div className="col-md-4">
+          <h5>Email</h5>
+          <p>{enquiries.enquiries?.email}</p>
+        </div>
+      </div>
+
+      {/* Additional details */}
+      <div className="row">
+        <div className="col-md-4">
+          <h5>Enquiry Type</h5>
+          <p>{enquiries.enquiries?.type}</p>
+        </div>
+        <div className="col-md-4">
+          <h5>Status</h5>
+          <p>{enquiries.enquiries?.status}</p>
+        </div>
+        <div className="col-md-4">
+          <h5>Assigned To</h5>
+          <p>{enquiries.enquiries?.assigned_to}</p>
+        </div>
+        <Button
+          variant="primary"
+          onClick={() =>
+            navigate(`/dashboard/crm/event/update/${enquiries.id}`)
+          }
+        >
+          Update Event
+        </Button>
+
+        <Button
+          variant="danger"
+          onClick={() => setEnquiryToDelete(enquiries.id)}
+          className="ms-2"
+        >
+          Delete Event
+        </Button>
+
+        {enquiryToDelete !== null && (
+          <EnquiryDelete
+            id={enquiryToDelete}
+            onClose={() => setEnquiryToDelete(null)}
+          />
+        )}
+      </div>
+
+      {/* Follow-up History Table */}
+      <h4 className="mt-5 text-center">Follow-up History</h4>
+      {enquiries.followups?.length > 0 ? (
+        <table className="table table-striped table-bordered mt-3">
+          <thead className="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Note</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {enquiries.followups.map((followup, index) => (
+              <tr key={index}>
+                <th scope="row">{index + 1}</th>
+                <td>{followup.note}</td>
+                <td>{followup.date}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <p>No follow-up history</p>
       )}
@@ -48,4 +115,4 @@ const EnquiryDetail = () => {
   );
 };
 
-export default EnquiryDetail;
+export default Enquiry;
