@@ -1,8 +1,8 @@
 import {
   createProject,
-  fetchProject,
+  // fetchProject,
 } from "../../redux/slice/crm/projectSlice";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Form, Row, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -24,35 +24,43 @@ const ProjectForm = () => {
   const createError = useSelector((state) => state.projects.createError);
   const projects = useSelector((state) => state.projects.list || []);
 
-  useEffect(() => {
-    dispatch(fetchProject());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchProject());
+  // }, [dispatch]);
 
-  useEffect(() => {
-    if (createStatus === "succeeded") {
-      toast.success("Project created successfully!");
-      setFormData({
-        project_name: "",
-        description: "",
-        start_date: "",
-        end_date: "",
-        status: "",
-      });
-      navigate("/dashboard/crm/project");
-    } else if (createStatus === "failed") {
-      toast.error(`Error: ${createError?.message || "An error occurred"}`);
-    }
-  }, [createStatus, createError, navigate]);
+  // useEffect(() => {
+  //   if (createStatus === "succeeded") {
+  //     toast.success("Project created successfully!");
+  //     setFormData({
+  //       project_name: "",
+  //       description: "",
+  //       start_date: "",
+  //       end_date: "",
+  //       status: "",
+  //     });
+  //     navigate("/dashboard/crm/project");
+  //   } else if (createStatus === "failed") {
+  //     toast.error(`Error: ${createError?.message || "An error occurred"}`);
+  //   }
+  // }, [createStatus, createError, navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.project_name.trim()) return;
 
-    console.log("Submitting form data:", formData); // Add this line
+    const startDate = new Date(formData.start_date);
+    const endDate = new Date(formData.end_date);
+
+    // Validate that start date is before end date
+    if (startDate >= endDate) {
+      toast.error("End date must be after start date.");
+      return;
+    }
+
+    console.log("Submitting form data:", formData);
 
     const existingProject = projects.some(
       (proj) =>
@@ -67,17 +75,31 @@ const ProjectForm = () => {
 
     dispatch(createProject(formData))
       .unwrap()
+      .then(() => {
+        // Show success toast and reset form
+        toast.success("Project created successfully!");
+        setFormData({
+          project_name: "",
+          description: "",
+          start_date: "",
+          end_date: "",
+          status: "",
+        });
+        navigate("/dashboard/crm/project");
+      })
       .catch((error) => {
         console.error("Create Error:", error);
+        toast.error(
+          `Create Error: ${error.response?.data?.detail || error.message}`
+        );
       });
   };
 
-  // const handleSubmit = (e) => {
   //   e.preventDefault();
-  //   // Prevent empty name submission
   //   if (!formData.project_name.trim()) return;
 
-  //   // Check if the project already exists (ensure correct comparison)
+  //   console.log("Submitting form data:", formData); // Add this line
+
   //   const existingProject = projects.some(
   //     (proj) =>
   //       proj.project_name &&
@@ -95,6 +117,22 @@ const ProjectForm = () => {
   //       console.error("Create Error:", error);
   //     });
   // };
+
+  useEffect(() => {
+    if (createStatus === "succeeded") {
+      toast.success("Project created successfully!");
+      setFormData({
+        project_name: "",
+        description: "",
+        start_date: "",
+        end_date: "",
+        status: "",
+      });
+      navigate("/dashboard/crm/project");
+    } else if (createStatus === "failed") {
+      toast.error(`Error: ${createError?.message || "An error occurred"}`);
+    }
+  }, [createStatus, createError, navigate]);
 
   return (
     <div className="content-wrapper">

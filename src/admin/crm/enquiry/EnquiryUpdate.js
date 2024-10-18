@@ -304,7 +304,7 @@ const EnquiryUpdate = () => {
                 <div className="container-fluid">
                   <h5 className="navbar-brand">Add Enquiry</h5>
                   <div className="navbar-nav ml-auto">
-                    <Link to="dashboard/crm/enquiry">
+                    <Link to="/enquiry">
                       <h5>Enquiry Table</h5>
                     </Link>
                   </div>

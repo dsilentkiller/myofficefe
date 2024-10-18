@@ -163,7 +163,7 @@ const EnquiryTable = () => {
                     <th>WardNo</th>
                     <th>Tole Name</th>
                     <th>Budget</th>
-                    <th>Enquiry Purpose</th>
+                    {/* <th>Enquiry Purpose</th> */}
 
                     <th>Known By</th>
                     <th>Joining Date</th>
@@ -188,7 +188,7 @@ const EnquiryTable = () => {
                         <td>{enquiry.ward_no}</td>
                         <td>{formatName(enquiry.tole_name)}</td>
                         <td>{enquiry.estimated_amount}</td>
-                        <td>{enquiry.enquiry_purpose}</td>
+                        {/* <td>{enquiry.enquiry_purpose}</td> */}
                         <td>{enquiry.known_by}</td>
                         <td>{enquiry.created}</td>
                         <td>{enquiry.history}</td>

@@ -11,7 +11,7 @@ import EnquiryDelete from "./EnquiryDelete";
 const Enquiry = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const enquiries = useSelector((state) => state.enquiries);
+  const enquiries = useSelector((state) => state.enquiries || []);
   const loading = useSelector((state) => state.enquiries.loading);
   const error = useSelector((state) => state.enquiries.error);
   const navigate = useNavigate();
