@@ -33,6 +33,7 @@ export const createCategory = createAsyncThunk(
         "http://127.0.0.1:8000/api/enquiry/category/create/",
         formData
       );
+      console.log(response.data.result);
       if (response.status === 201) {
         return response.data.result;
       } else {

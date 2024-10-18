@@ -67,14 +67,13 @@ const CategoryForm = () => {
     }
 
     // Dispatch the action to create a new category
-    dispatch(createCategory({ category_name: trimmedName }))
-      .unwrap()
-      .then(() => {
-        setFormData({ category_name: "" }); // Clear the form after successful submission
-      })
-      .catch((error) => {
-        console.error("Create Error:", error); // Log error
-      });
+    dispatch(createCategory({ category_name: trimmedName })).unwrap();
+    // .then(() => {
+    //   // setFormData({ category_name: "" }); // Clear the form after successful submission
+    // })
+    // .catch((error) => {
+    //   console.error("Create Error:", error); // Log error
+    // });
   };
 
   return (

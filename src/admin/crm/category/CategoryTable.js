@@ -14,10 +14,10 @@ import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and D
 import CategoryDelete from "./CategoryDelete";
 import { toast } from "react-toastify"; // Import toast for error messages
 import "../../css/Table.css";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable"; // Import the autoTable plugin
-import { saveAs } from "file-saver";
-import * as XLSX from "xlsx";
+// import jsPDF from "jspdf";
+// import autoTable from "jspdf-autotable"; // Import the autoTable plugin
+// import { saveAs } from "file-saver";
+// import * as XLSX from "xlsx";
 
 const CategoryTable = () => {
   const dispatch = useDispatch();
@@ -40,6 +40,7 @@ const CategoryTable = () => {
   // Fetch categories on component mount
   useEffect(() => {
     dispatch(fetchCategories());
+    console.log("Categories fetched:", categories);
   }, [dispatch]);
   // To update item in the table
   const handleEdit = (id, category_name) => {
@@ -99,9 +100,14 @@ const CategoryTable = () => {
       .join(" ");
   };
   // Filter categories for search term
-  const filteredCategories = categories.filter((category) =>
-    category.category_name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
+  const filteredCategories = categories?.filter((category) => {
+    //   console.log(categories);
+    // console.log("**");
+    return category?.category_name
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+  });
 
   return (
     <div className="content-wrapper">
@@ -153,51 +159,53 @@ const CategoryTable = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredCategories.map((category, index) => (
-                    <tr key={category.id}>
-                      <td>{index + 1}</td>
-                      <td>
-                        {editId === category.id ? (
-                          <input
-                            type="text"
-                            value={newName}
-                            onChange={(e) => setNewName(e.target.value)}
-                          />
-                        ) : (
-                          formatName(category.category_name || "") // Default to empty string if name is null
-                        )}
-                      </td>
-                      <td>
-                        {editId === category.id ? (
+                  {filteredCategories?.map?.((category, index) =>
+                    category ? (
+                      <tr key={category.id}>
+                        <td>{index + 1}</td>
+                        <td>
+                          {editId === category.id ? (
+                            <input
+                              type="text"
+                              value={newName}
+                              onChange={(e) => setNewName(e.target.value)}
+                            />
+                          ) : (
+                            formatName(category.category_name || "") // Default to empty string if name is null
+                          )}
+                        </td>
+                        <td>
+                          {editId === category.id ? (
+                            <button
+                              onClick={handleUpdate}
+                              className="btn btn-success"
+                            >
+                              Save
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() =>
+                                handleEdit(
+                                  category.id,
+                                  category.category_name || ""
+                                )
+                              }
+                              className="btn btn-primary"
+                            >
+                              <FaEdit />
+                            </button>
+                          )}
+                          <span> </span>
                           <button
-                            onClick={handleUpdate}
-                            className="btn btn-success"
+                            onClick={() => handleDelete(category.id)}
+                            className="btn btn-danger"
                           >
-                            Save
+                            <FaTrash />
                           </button>
-                        ) : (
-                          <button
-                            onClick={() =>
-                              handleEdit(
-                                category.id,
-                                category.category_name || ""
-                              )
-                            }
-                            className="btn btn-primary"
-                          >
-                            <FaEdit />
-                          </button>
-                        )}
-                        <span> </span>
-                        <button
-                          onClick={() => handleDelete(category.id)}
-                          className="btn btn-danger"
-                        >
-                          <FaTrash />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                      </tr>
+                    ) : null
+                  )}
                 </tbody>
               </table>
               {/* )} */}

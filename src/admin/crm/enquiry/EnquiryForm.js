@@ -62,6 +62,12 @@ const EnquiryForm = () => {
     created: "",
   });
 
+  // Toggle function for switching tabs
+  const toggle = (tab) => {
+    if (activeTab !== tab) {
+      setActiveTab(tab);
+    }
+  };
   // Retrieve data from the store
 
   const currentEnquiry = useSelector(
@@ -150,6 +156,12 @@ const EnquiryForm = () => {
     dispatch(fetchMunicipalities());
   }, [dispatch]);
 
+  useEffect(() => {
+    console.log("Provinces:", provinces);
+    console.log("Districts:", districts);
+    console.log("Municipalities:", municipalities);
+  }, [provinces, districts, municipalities]);
+
   // Handle form changes
   const handleInputChange = (e) => {
     setFormData({
@@ -158,68 +170,6 @@ const EnquiryForm = () => {
     });
   };
 
-  // Handle form submission
-  // function handleSameAddress(event) {
-  //   if (event.target.checked) {
-  //     setFormData({
-  //       ...formData,
-  //       temp_province: formData.province,
-  //       // temp_zone: formData.zone,
-  //       temp_district: formData.district,
-  //       temp_municipality: formData.municipality,
-  //       temp_ward_no: formData.ward_no,
-  //       temp_tole_name: formData.tole_name,
-  //     });
-  //   } else {
-  //     setFormData({
-  //       ...formData,
-  //       temp_province: "",
-  //       // temp_zone: "",
-  //       temp_district: "",
-  //       temp_municipality: "",
-  //       temp_ward_no: "",
-  //       temp_tole_name: "",
-  //     });
-  //   }
-  // }
-
-  // Redux state
-
-  const toggle = (tab) => {
-    if (activeTab !== tab) setActiveTab(tab);
-  };
-  // reset form
-  // const resetForm = () => {
-  //   setFormData({
-  //     customer_name: "",
-  //     category: "",
-  //     organization_name: "",
-  //     department: "",
-  //     designation: "",
-  //     pri_phone: "",
-  //     sec_phone: "",
-  //     email: "",
-  //     gender: "",
-  //     province: "",
-  //     zone: "",
-  //     district: "",
-  //     municipality: "",
-  //     ward_no: "",
-  //     tole_name: "",
-  //     estimated_amount: "",
-  //     enquiry_purpose: "",
-  //     known_by: "",
-  //     created: "",
-  //   });
-  // };
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (!formData.customer_name || !formData.category || !formData.pri_phone) {
-  //     alert("Please fill in all required fields.");
-  //     return;
-  //   }
-  //   // resetForm();
-  // };
   //habdle submit for update and create enquiry
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -404,7 +354,7 @@ const EnquiryForm = () => {
                       </div>
                     </div>
                     <div className="row">
-                      {/* department */}
+                      {/* enquiry purpose */}
 
                       <div className="col-md-4">
                         <div className="form-group">
@@ -482,95 +432,97 @@ const EnquiryForm = () => {
                         </div>
                       </div>
                     </div>
+
                     {/* pri phone */}
                     <div className="row">
                       {/* Phone Field */}
-                      <div className="row">
-                        <div className="col-md-4">
-                          <div className="form-group">
-                            <label htmlFor="pri_phone">Phone:</label>
-                            <PhoneInput
-                              country={"np"} // Country code for Nepal
-                              value={formData.pri_phone}
-                              onChange={validatePhoneNumber}
-                              inputStyle={{
-                                width: "100%",
-                                borderColor: phoneValid ? "green" : "red",
-                                backgroundColor: phoneValid
-                                  ? "#e0f7fa"
-                                  : "#ffebee",
-                              }}
-                            />
-                            {!phoneValid && (
-                              <p style={{ color: "red" }}>
-                                Please enter a valid phone number between 10 and
-                                15 digits.
-                              </p>
-                            )}
-                          </div>
-                          {/* </div> */}
-                          {errors.pri_phone && <p>{errors.pri_phone}</p>}
+                      {/* <div className="row"> */}
+                      <div className="col-md-4">
+                        <div className="form-group">
+                          <label htmlFor="pri_phone">Phone:</label>
+                          <PhoneInput
+                            country={"np"} // Country code for Nepal
+                            value={formData.pri_phone}
+                            onChange={validatePhoneNumber}
+                            inputStyle={{
+                              width: "100%",
+                              borderColor: phoneValid ? "green" : "red",
+                              backgroundColor: phoneValid
+                                ? "#e0f7fa"
+                                : "#ffebee",
+                            }}
+                          />
+                          {!phoneValid && (
+                            <p style={{ color: "red" }}>
+                              Please enter a valid phone number between 10 and
+                              15 digits.
+                            </p>
+                          )}
                         </div>
+                        {/* </div> */}
+                        {errors.pri_phone && <p>{errors.pri_phone}</p>}
+                      </div>
 
-                        {/* sec phone */}
-                        <div className="col-md-4">
-                          <div className="form-group">
-                            <label htmlFor="sec_phone">Phone:</label>
-                            <PhoneInput
-                              country={"np"} // Country code for Nepal
-                              value={formData.sec_phone}
-                              onChange={validateSecPhoneNumber}
-                              inputStyle={{
-                                width: "100%",
-                                borderColor: phoneValid ? "green" : "red",
-                                backgroundColor: phoneValid
-                                  ? "#e0f7fa"
-                                  : "#ffebee",
-                              }}
-                            />
-                            {!phoneValid && (
-                              <p style={{ color: "red" }}>
-                                Please enter a valid phone number between 10 and
-                                15 digits.
-                              </p>
-                            )}
-                          </div>
-                          {/* </div> */}
-                          {errors.sec_phone && <p>{errors.sec_phone}</p>}
+                      {/* sec phone */}
+                      <div className="col-md-4">
+                        <div className="form-group">
+                          <label htmlFor="sec_phone">Phone:</label>
+                          <PhoneInput
+                            country={"np"} // Country code for Nepal
+                            value={formData.sec_phone}
+                            onChange={validateSecPhoneNumber}
+                            inputStyle={{
+                              width: "100%",
+                              borderColor: phoneValid ? "green" : "red",
+                              backgroundColor: phoneValid
+                                ? "#e0f7fa"
+                                : "#ffebee",
+                            }}
+                          />
+                          {!phoneValid && (
+                            <p style={{ color: "red" }}>
+                              Please enter a valid phone number between 10 and
+                              15 digits.
+                            </p>
+                          )}
                         </div>
+                        {/* </div> */}
+                        {errors.sec_phone && <p>{errors.sec_phone}</p>}
+                      </div>
 
-                        {/* email */}
-                        <div className="col-md-4">
-                          <div className="form-group">
-                            <label htmlFor="email">Email:</label>
-                            <input
-                              type="email"
-                              id="email"
-                              name="email"
-                              value={formData.email}
-                              // onChange={handleInputChange}
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  email: e.target.value,
-                                })
-                              }
-                              className="form-control"
-                              required
-                            />
-                          </div>
+                      {/* email */}
+                      <div className="col-md-4">
+                        <div className="form-group">
+                          <label htmlFor="email">Email:</label>
+                          <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={formData.email}
+                            // onChange={handleInputChange}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                email: e.target.value,
+                              })
+                            }
+                            className="form-control"
+                            required
+                          />
                         </div>
                       </div>
                     </div>
-                    <div className="form-group">
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={() => toggle("2")}
-                      >
-                        Next
-                      </button>
-                    </div>
+                  </div>
+
+                  {/* </div> */}
+                  <div className="form-group">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => toggle("2")}
+                    >
+                      Next
+                    </button>
                   </div>
                 </form>
               </div>
