@@ -132,7 +132,7 @@ const CategoryTable = () => {
                       <input
                         type="search"
                         id="default-search"
-                        name="search_term"
+                        name="q"
                         value={searchTerm}
                         className="form-control"
                         placeholder="Search categories..."

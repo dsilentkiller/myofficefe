@@ -86,12 +86,12 @@ const EnquiryUpdate = () => {
   const { list: designations } = useSelector((state) => state.designations);
   // Fetch data when component mounts
   useEffect(() => {
-    dispatch(fetchCategories());
-    dispatch(fetchProvinces());
-    dispatch(fetchDistricts());
-    dispatch(fetchDesignations());
-    dispatch(fetchDepartments());
-    dispatch(fetchMunicipalities());
+    // dispatch(fetchCategories());
+    // dispatch(fetchProvinces());
+    // dispatch(fetchDistricts());
+    // dispatch(fetchDesignations());
+    // dispatch(fetchDepartments());
+    // dispatch(fetchMunicipalities());
   }, [dispatch]);
 
   // Fetch enquiry details on component mount
