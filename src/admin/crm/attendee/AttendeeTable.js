@@ -7,6 +7,7 @@ import {
 } from "../../redux/slice/crm/attendeeSlice";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import "../../css/Table.css";
 
 const AttendeeTable = () => {
   const dispatch = useDispatch();
@@ -68,39 +69,40 @@ const AttendeeTable = () => {
 
   return (
     <div className="content-wrapper">
-      <div className="col-mg-10">
-        <div className="row justify-content-center">
-          <div className="card">
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-              <div className="container-fluid">
-                <h5 className="navbar-brand">Attendee Table</h5>
-                <div className="navbar-nav ml-auto">
-                  <Link to="create" className="nav-link btn btn-primary">
-                    <h5>Add Attendee</h5>
-                  </Link>
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                    }}
-                    className="form-inline ml-3"
-                  >
-                    <div className="input-group">
-                      <input
-                        type="search"
-                        id="default-search"
-                        name="search_term"
-                        value={searchTerm}
-                        className="form-control"
-                        placeholder="Search attendees..."
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </form>
-                </div>
+      {/* <div className="col-mg-12"> */}
+      <div className="row justify-content-center">
+        <div className="card">
+          <nav className="navbar navbar-expand-lg navbar-light bg-light">
+            <div className="container-fluid">
+              <h5 className="navbar-brand">Attendee Table</h5>
+              <div className="navbar-nav ml-auto">
+                <Link to="create" className="nav-link btn btn-primary">
+                  <h5>Add Attendee</h5>
+                </Link>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                  }}
+                  className="form-inline ml-3"
+                >
+                  <div className="input-group">
+                    <input
+                      type="search"
+                      id="default-search"
+                      name="search_term"
+                      value={searchTerm}
+                      className="form-control"
+                      placeholder="Search attendees..."
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      required
+                    />
+                  </div>
+                </form>
               </div>
-            </nav>
-            <div className="card-body">
+            </div>
+          </nav>
+          <div className="card-body">
+            <div className="table-container">
               {fetchError && <p className="text-danger">{fetchError}</p>}
               <table className="table table-bordered">
                 <thead>
