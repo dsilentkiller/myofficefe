@@ -10,31 +10,36 @@ import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const statusOptions = [
-  { value: "0", label: "Completed" },
-  { value: "1", label: "Pending" },
-  { value: "2", label: "Doing" },
-  { value: "3", label: "Start" },
-  { value: "4", label: "Planning" },
+  { value: "completed", label: "completed" },
+  { value: "pending", label: "pending" },
+  { value: "doing", label: "doing" },
+  { value: "start", label: "start" },
+  { value: "planning", label: "planning" },
 ];
 
 const ProjectDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+
   const project = useSelector((state) => state.projects.currentProject);
   const [status, setStatus] = useState("");
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchProjectById(id));
+      console.log("Fetching project by ID:", id);
+      dispatch(fetchProjectById(id))
+        .unwrap()
+        .then((data) => console.log("Project fetched:", data))
+        .catch((error) => console.log("Error fetching project:", error));
     }
   }, [dispatch, id]);
 
   useEffect(() => {
     if (project) {
-      setStatus(project.status); // Set current status
+      console.log("Project data received:", project); // Debugging purpose
+      setStatus(project.status);
     }
   }, [project]);
-
   const handleStatusChange = (e) => {
     setStatus(e.target.value);
   };
@@ -55,9 +60,8 @@ const ProjectDetail = () => {
         toast.error(`Error updating status: ${error.message}`);
       });
   };
-
-  if (!project) {
-    return <div>Loading...</div>;
+  if (!project || project === null) {
+    return <div>Loading project details...</div>;
   }
 
   return (

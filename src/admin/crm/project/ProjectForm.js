@@ -1,11 +1,13 @@
+//##create and update =====
 import {
   createProject,
-  // fetchProject,
+  updateProject, // Import update action
+  fetchProjectById, // Action to fetch project by ID for updates
 } from "../../redux/slice/crm/projectSlice";
 import { Form, Row, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom"; // useParams to get project ID for update
 import { toast } from "react-toastify";
 
 const ProjectForm = () => {
@@ -19,53 +21,57 @@ const ProjectForm = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { id } = useParams(); // Get project ID from URL for update
 
   const createStatus = useSelector((state) => state.projects.createStatus);
+  const updateStatus = useSelector((state) => state.projects.updateStatus);
   const createError = useSelector((state) => state.projects.createError);
+  const updateError = useSelector((state) => state.projects.updateError);
+  const projectToUpdate = useSelector((state) => state.projects.project); // Select the project to update
   const projects = useSelector((state) => state.projects.list || []);
 
-  // useEffect(() => {
-  //   dispatch(fetchProject());
-  // }, [dispatch]);
+  // Fetch project details for updating if an ID is present
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchProjectById(id)); // Fetch the project by ID
+    }
+  }, [dispatch, id]);
 
-  // useEffect(() => {
-  //   if (createStatus === "succeeded") {
-  //     toast.success("Project created successfully!");
-  //     setFormData({
-  //       project_name: "",
-  //       description: "",
-  //       start_date: "",
-  //       end_date: "",
-  //       status: "",
-  //     });
-  //     navigate("/dashboard/crm/project");
-  //   } else if (createStatus === "failed") {
-  //     toast.error(`Error: ${createError?.message || "An error occurred"}`);
-  //   }
-  // }, [createStatus, createError, navigate]);
+  // Prefill the form with project data if updating
+  useEffect(() => {
+    if (projectToUpdate && id) {
+      setFormData({
+        project_name: projectToUpdate.project_name || "",
+        description: projectToUpdate.description || "",
+        start_date: projectToUpdate.start_date || "",
+        end_date: projectToUpdate.end_date || "",
+        status: projectToUpdate.status || "",
+      });
+    }
+  }, [projectToUpdate, id]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.project_name.trim()) return;
 
-    const startDate = new Date(formData.start_date);
-    const endDate = new Date(formData.end_date);
+    // const startDate = new Date(formData.start_date);
+    // const endDate = new Date(formData.end_date);
 
     // Validate that start date is before end date
-    if (startDate >= endDate) {
-      toast.error("End date must be after start date.");
-      return;
-    }
-
-    console.log("Submitting form data:", formData);
+    // if (startDate >= endDate) {
+    //   toast.error("End date must be after start date.");
+    //   return;
+    // }
 
     const existingProject = projects.some(
       (proj) =>
         proj.project_name &&
-        proj.project_name.toLowerCase() === formData.project_name.toLowerCase()
+        proj.project_name.toLowerCase() ===
+          formData.project_name.toLowerCase() &&
+        proj.id !== id // Ensure we are not matching the project we're updating
     );
 
     if (existingProject) {
@@ -73,66 +79,65 @@ const ProjectForm = () => {
       return;
     }
 
-    dispatch(createProject(formData))
-      .unwrap()
-      .then(() => {
-        // Show success toast and reset form
-        toast.success("Project created successfully!");
-        setFormData({
-          project_name: "",
-          description: "",
-          start_date: "",
-          end_date: "",
-          status: "",
+    if (id) {
+      // Dispatch update action if ID exists
+      dispatch(updateProject({ id, ...formData }))
+        .unwrap()
+        .then(() => {
+          toast.success("Project updated successfully!");
+          navigate("/dashboard/crm/project");
+        })
+        .catch((error) => {
+          console.error("Update Error:", error);
+          toast.error(
+            `Update Error: ${error.response?.data?.detail || error.message}`
+          );
         });
-        navigate("/dashboard/crm/project");
-      })
-      .catch((error) => {
-        console.error("Create Error:", error);
-        toast.error(
-          `Create Error: ${error.response?.data?.detail || error.message}`
-        );
-      });
+    } else {
+      // Dispatch create action if no ID
+      dispatch(createProject(formData))
+        .unwrap()
+        .then(() => {
+          toast.success("Project created successfully!");
+          setFormData({
+            project_name: "",
+            description: "",
+            start_date: "",
+            end_date: "",
+            status: "",
+          });
+          navigate("/dashboard/crm/project");
+        })
+        .catch((error) => {
+          console.error("Create Error:", error);
+          toast.error(
+            `Create Error: ${error.response?.data?.detail || error.message}`
+          );
+        });
+    }
   };
-
-  //   e.preventDefault();
-  //   if (!formData.project_name.trim()) return;
-
-  //   console.log("Submitting form data:", formData); // Add this line
-
-  //   const existingProject = projects.some(
-  //     (proj) =>
-  //       proj.project_name &&
-  //       proj.project_name.toLowerCase() === formData.project_name.toLowerCase()
-  //   );
-
-  //   if (existingProject) {
-  //     toast.error("Project with this name already exists.");
-  //     return;
-  //   }
-
-  //   dispatch(createProject(formData))
-  //     .unwrap()
-  //     .catch((error) => {
-  //       console.error("Create Error:", error);
-  //     });
-  // };
 
   useEffect(() => {
     if (createStatus === "succeeded") {
       toast.success("Project created successfully!");
-      setFormData({
-        project_name: "",
-        description: "",
-        start_date: "",
-        end_date: "",
-        status: "",
-      });
       navigate("/dashboard/crm/project");
     } else if (createStatus === "failed") {
-      toast.error(`Error: ${createError?.message || "An error occurred"}`);
+      toast.error(
+        `Create Error: ${createError?.message || "An error occurred"}`
+      );
     }
   }, [createStatus, createError, navigate]);
+
+  useEffect(() => {
+    if (updateStatus === "succeeded") {
+      toast.success("Project updated successfully!");
+      navigate("/dashboard/crm/project");
+    } else if (updateStatus === "failed") {
+      toast.error(
+        `Update Error: ${updateError?.message || "An error occurred"}`
+      );
+    }
+  }, [updateStatus, updateError, navigate]);
 
   return (
     <div className="content-wrapper">
@@ -140,12 +145,16 @@ const ProjectForm = () => {
         <div className="container-fluid">
           <div className="card">
             <div className="card-header">
-              <h4 className="btn btn-primary">Add Project</h4>
+              <h4 className="btn btn-primary">
+                {id ? "Update Project" : "Add Project"}
+              </h4>
             </div>
             <div className="card-body">
-              {createError && (
+              {(createError || updateError) && (
                 <p className="text-danger">
-                  {createError?.message || "An error occurred"}
+                  {createError?.message ||
+                    updateError?.message ||
+                    "An error occurred"}
                 </p>
               )}
               <form onSubmit={handleSubmit}>
@@ -225,7 +234,7 @@ const ProjectForm = () => {
                   </Row>
                 </div>
                 <button type="submit" className="btn btn-primary">
-                  Save
+                  {id ? "Update" : "Save"}
                 </button>
               </form>
             </div>
@@ -238,12 +247,15 @@ const ProjectForm = () => {
 
 export default ProjectForm;
 
-//v3
-// import {
+// ######### create and update end =============
+
+// create project file
+
+//import {
 //   createProject,
-//   fetchProject,
+//   // fetchProject,
 // } from "../../redux/slice/crm/projectSlice";
-// import { Form, Button, Row, Col } from "react-bootstrap";
+// import { Form, Row, Col } from "react-bootstrap";
 // import { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { useNavigate } from "react-router-dom";
@@ -251,13 +263,13 @@ export default ProjectForm;
 
 // const ProjectForm = () => {
 //   const [formData, setFormData] = useState({
-//     // client_id: "",
 //     project_name: "",
 //     description: "",
 //     start_date: "",
 //     end_date: "",
 //     status: "",
 //   });
+
 //   const dispatch = useDispatch();
 //   const navigate = useNavigate();
 
@@ -265,40 +277,44 @@ export default ProjectForm;
 //   const createError = useSelector((state) => state.projects.createError);
 //   const projects = useSelector((state) => state.projects.list || []);
 
-//   useEffect(() => {
-//     dispatch(fetchProject()); // Ensure projects are fetched on component mount
-//   }, [dispatch]);
+//   // useEffect(() => {
+//   //   dispatch(fetchProject());
+//   // }, [dispatch]);
 
-//   useEffect(() => {
-//     if (createStatus === "succeeded") {
-//       toast.success("Project created successfully!");
-//       setFormData({
-//         // client_id: "",
-//         project_name: "",
-//         description: "",
-//         start_date: "",
-//         end_date: "",
-//         status: "",
-//       }); // Clear the form after successful creation
-//       navigate("/dashboard/crm/project");
-//     }
-//   }, [createStatus, navigate]);
-
-//   useEffect(() => {
-//     if (createStatus === "failed") {
-//       toast.error(`Error: ${createError?.message || "An error occurred"}`);
-//     }
-//   }, [createStatus, createError]);
+//   // useEffect(() => {
+//   //   if (createStatus === "succeeded") {
+//   //     toast.success("Project created successfully!");
+//   //     setFormData({
+//   //       project_name: "",
+//   //       description: "",
+//   //       start_date: "",
+//   //       end_date: "",
+//   //       status: "",
+//   //     });
+//   //     navigate("/dashboard/crm/project");
+//   //   } else if (createStatus === "failed") {
+//   //     toast.error(`Error: ${createError?.message || "An error occurred"}`);
+//   //   }
+//   // }, [createStatus, createError, navigate]);
 
 //   const handleChange = (e) => {
 //     setFormData({ ...formData, [e.target.name]: e.target.value });
 //   };
-
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
-//     if (formData.project_name.trim() === "") return; // Prevent empty name submission
+//     if (!formData.project_name.trim()) return;
 
-//     // Check if Project name already exists
+//     const startDate = new Date(formData.start_date);
+//     const endDate = new Date(formData.end_date);
+
+//     // Validate that start date is before end date
+//     if (startDate >= endDate) {
+//       toast.error("End date must be after start date.");
+//       return;
+//     }
+
+//     console.log("Submitting form data:", formData);
+
 //     const existingProject = projects.some(
 //       (proj) =>
 //         proj.project_name &&
@@ -313,19 +329,63 @@ export default ProjectForm;
 //     dispatch(createProject(formData))
 //       .unwrap()
 //       .then(() => {
+//         // Show success toast and reset form
+//         toast.success("Project created successfully!");
 //         setFormData({
-//           // client_id: "",
 //           project_name: "",
 //           description: "",
 //           start_date: "",
 //           end_date: "",
 //           status: "",
-//         }); // Clear the form after successful creation
+//         });
+//         navigate("/dashboard/crm/project");
 //       })
 //       .catch((error) => {
 //         console.error("Create Error:", error);
+//         toast.error(
+//           `Create Error: ${error.response?.data?.detail || error.message}`
+//         );
 //       });
 //   };
+
+//   //   e.preventDefault();
+//   //   if (!formData.project_name.trim()) return;
+
+//   //   console.log("Submitting form data:", formData); // Add this line
+
+//   //   const existingProject = projects.some(
+//   //     (proj) =>
+//   //       proj.project_name &&
+//   //       proj.project_name.toLowerCase() === formData.project_name.toLowerCase()
+//   //   );
+
+//   //   if (existingProject) {
+//   //     toast.error("Project with this name already exists.");
+//   //     return;
+//   //   }
+
+//   //   dispatch(createProject(formData))
+//   //     .unwrap()
+//   //     .catch((error) => {
+//   //       console.error("Create Error:", error);
+//   //     });
+//   // };
+
+//   useEffect(() => {
+//     if (createStatus === "succeeded") {
+//       toast.success("Project created successfully!");
+//       setFormData({
+//         project_name: "",
+//         description: "",
+//         start_date: "",
+//         end_date: "",
+//         status: "",
+//       });
+//       navigate("/dashboard/crm/project");
+//     } else if (createStatus === "failed") {
+//       toast.error(`Error: ${createError?.message || "An error occurred"}`);
+//     }
+//   }, [createStatus, createError, navigate]);
 
 //   return (
 //     <div className="content-wrapper">
@@ -336,7 +396,6 @@ export default ProjectForm;
 //               <h4 className="btn btn-primary">Add Project</h4>
 //             </div>
 //             <div className="card-body">
-//               {/* Updated error message rendering */}
 //               {createError && (
 //                 <p className="text-danger">
 //                   {createError?.message || "An error occurred"}
@@ -345,26 +404,11 @@ export default ProjectForm;
 //               <form onSubmit={handleSubmit}>
 //                 <div className="card-body">
 //                   <Row>
-//                     {/* <Col md={4}>
-//                       <Form.Group id="formClientId">
-//                         <Form.Label>Client ID</Form.Label>
-//                         <Form.Control
-//                           type="text"
-//                           id="client_id"
-//                           name="client_id"
-//                           value={formData.client_id}
-//                           onChange={handleChange}
-//                           placeholder="Enter Client ID"
-//                           required
-//                         />
-//                       </Form.Group>
-//                     </Col> */}
 //                     <Col md={4}>
-//                       <Form.Group id="formProjectName">
+//                       <Form.Group>
 //                         <Form.Label>Project Name</Form.Label>
 //                         <Form.Control
 //                           type="text"
-//                           id="project_name"
 //                           name="project_name"
 //                           value={formData.project_name}
 //                           onChange={handleChange}
@@ -374,11 +418,10 @@ export default ProjectForm;
 //                       </Form.Group>
 //                     </Col>
 //                     <Col md={4}>
-//                       <Form.Group id="formDescription">
+//                       <Form.Group>
 //                         <Form.Label>Description</Form.Label>
 //                         <Form.Control
 //                           as="textarea"
-//                           id="description"
 //                           name="description"
 //                           value={formData.description}
 //                           onChange={handleChange}
@@ -390,11 +433,10 @@ export default ProjectForm;
 //                   </Row>
 //                   <Row>
 //                     <Col md={4}>
-//                       <Form.Group id="formStartDate">
+//                       <Form.Group>
 //                         <Form.Label>Start Date</Form.Label>
 //                         <Form.Control
 //                           type="datetime-local"
-//                           id="start_date"
 //                           name="start_date"
 //                           value={formData.start_date}
 //                           onChange={handleChange}
@@ -403,11 +445,10 @@ export default ProjectForm;
 //                       </Form.Group>
 //                     </Col>
 //                     <Col md={4}>
-//                       <Form.Group id="formEndDate">
+//                       <Form.Group>
 //                         <Form.Label>End Date</Form.Label>
 //                         <Form.Control
 //                           type="datetime-local"
-//                           id="end_date"
 //                           name="end_date"
 //                           value={formData.end_date}
 //                           onChange={handleChange}
@@ -416,22 +457,21 @@ export default ProjectForm;
 //                       </Form.Group>
 //                     </Col>
 //                     <Col md={4}>
-//                       <Form.Group id="formStatus">
+//                       <Form.Group>
 //                         <Form.Label>Status</Form.Label>
 //                         <Form.Control
 //                           as="select"
-//                           id="status"
 //                           name="status"
 //                           value={formData.status}
 //                           onChange={handleChange}
 //                           required
 //                         >
 //                           <option value="">Select Status</option>
-//                           <option value="0">Completed</option>
-//                           <option value="1">Pending</option>
-//                           <option value="2">Doing</option>
-//                           <option value="3">Start</option>
-//                           <option value="4">Planning</option>
+//                           <option value="completed">Completed</option>
+//                           <option value="pending">Pending</option>
+//                           <option value="doing">Doing</option>
+//                           <option value="start">Start</option>
+//                           <option value="planning">Planning</option>
 //                         </Form.Control>
 //                       </Form.Group>
 //                     </Col>
@@ -451,317 +491,530 @@ export default ProjectForm;
 
 // export default ProjectForm;
 
-//v2
-// import { createProject, fetchProject } from "../../redux/slice/projectSlice";
-// import { Form, Button, Row, Col } from "react-bootstrap";
-// import { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
-// const ProjectForm = () => {
-//   const [formData, setFormData] = useState({
-//     client_id: "",
-//     project_name: "",
-//     description: "",
-//     start_date: "",
-//     end_date: "",
-//     status: "",
-//   });
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const createStatus = useSelector((state) => state.projects.createStatus);
-//   const createError = useSelector((state) => state.projects.createError);
-//   const projects = useSelector((state) => state.projects.list || []);
+// //v3
+// // import {
+// //   createProject,
+// //   fetchProject,
+// // } from "../../redux/slice/crm/projectSlice";
+// // import { Form, Button, Row, Col } from "react-bootstrap";
+// // import { useState, useEffect } from "react";
+// // import { useDispatch, useSelector } from "react-redux";
+// // import { useNavigate } from "react-router-dom";
+// // import { toast } from "react-toastify";
 
-//   useEffect(() => {
-//     dispatch(fetchProject()); // Ensure projects are fetched on component mount
-//   }, [dispatch]);
+// // const ProjectForm = () => {
+// //   const [formData, setFormData] = useState({
+// //     // client_id: "",
+// //     project_name: "",
+// //     description: "",
+// //     start_date: "",
+// //     end_date: "",
+// //     status: "",
+// //   });
+// //   const dispatch = useDispatch();
+// //   const navigate = useNavigate();
 
-//   useEffect(() => {
-//     if (createStatus === "succeeded") {
-//       toast.success("Project created successfully!");
-//       setFormData({
-//         client_id: "",
-//         project_name: "",
-//         description: "",
-//         start_date: "",
-//         end_date: "",
-//         status: "",
-//       }); // Clear the form after successful creation
-//       navigate("/dashboard/crm/project");
-//     }
-//   }, [createStatus, navigate]);
+// //   const createStatus = useSelector((state) => state.projects.createStatus);
+// //   const createError = useSelector((state) => state.projects.createError);
+// //   const projects = useSelector((state) => state.projects.list || []);
 
-//   useEffect(() => {
-//     if (createStatus === "failed") {
-//       toast.error(`Error: ${createError.message || "An error occurred"}`);
-//     }
-//   }, [createStatus, createError]);
+// //   useEffect(() => {
+// //     dispatch(fetchProject()); // Ensure projects are fetched on component mount
+// //   }, [dispatch]);
 
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
+// //   useEffect(() => {
+// //     if (createStatus === "succeeded") {
+// //       toast.success("Project created successfully!");
+// //       setFormData({
+// //         // client_id: "",
+// //         project_name: "",
+// //         description: "",
+// //         start_date: "",
+// //         end_date: "",
+// //         status: "",
+// //       }); // Clear the form after successful creation
+// //       navigate("/dashboard/crm/project");
+// //     }
+// //   }, [createStatus, navigate]);
 
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     if (formData.project_name.trim() === "") return; // Prevent empty name submission
+// //   useEffect(() => {
+// //     if (createStatus === "failed") {
+// //       toast.error(`Error: ${createError?.message || "An error occurred"}`);
+// //     }
+// //   }, [createStatus, createError]);
 
-//     // Check if Project name already exists
-//     const existingProject = projects.some(
-//       (proj) =>
-//         proj.project_name &&
-//         proj.project_name.toLowerCase() === formData.project_name.toLowerCase()
-//     );
+// //   const handleChange = (e) => {
+// //     setFormData({ ...formData, [e.target.name]: e.target.value });
+// //   };
 
-//     if (existingProject) {
-//       toast.error("Project with this name already exists.");
-//       return;
-//     }
+// //   const handleSubmit = (e) => {
+// //     e.preventDefault();
+// //     if (formData.project_name.trim() === "") return; // Prevent empty name submission
 
-//     dispatch(createProject(formData))
-//       .unwrap()
-//       .then(() => {
-//         setFormData({ project_name: "" }); // Clear the form after successful creation
-//       })
-//       .catch((error) => {
-//         console.error("Create Error:", error);
-//       });
-//   };
+// //     // Check if Project name already exists
+// //     const existingProject = projects.some(
+// //       (proj) =>
+// //         proj.project_name &&
+// //         proj.project_name.toLowerCase() === formData.project_name.toLowerCase()
+// //     );
 
-//   return (
-//     <div className="content-wrapper">
-//       <div className="container">
-//         <div className="container-fluid">
-//           <div className="card">
-//             <div className="card-header">
-//               <h4 className="btn btn-primary">Add Project</h4>
-//             </div>
-//             <div className="card-body">
-//               {/* Updated error message rendering */}
-//               {createError && (
-//                 <p className="text-danger">
-//                   {createError.message || createError}
-//                 </p>
-//               )}
-//               <form onSubmit={handleSubmit}>
-//                 {/* <div className="form-group">
-//                   <label htmlFor="name">Project Name:</label>
-//                   <input
-//                     type="text"
-//                     id="project_name"
-//                     name="project_name"
-//                     value={formData.project_name}
-//                     className="form-control"
-//                     placeholder="Enter project name"
-//                     onChange={handleChange}
-//                     required
-//                   />
-//                 </div> */}
-//                 <div className="card-body">
-//                   <Row>
-//                     <Col md={4}>
-//                       <Form.Group id="formClientId">
-//                         <Form.Label>Client ID</Form.Label>
-//                         <Form.Control
-//                           type="text"
-//                           id="client_id"
-//                           name="client_id"
-//                           value={formData.client_id}
-//                           onChange={handleChange}
-//                           placeholder="Enter Client ID"
-//                           required
-//                         />
-//                       </Form.Group>
-//                     </Col>
-//                     <Col md={4}>
-//                       <Form.Group id="formProjectName">
-//                         <Form.Label>Project Name</Form.Label>
-//                         <Form.Control
-//                           type="text"
-//                           id="project_name"
-//                           name="project_name"
-//                           value={formData.project_name}
-//                           onChange={handleChange}
-//                           placeholder="Enter Project Name"
-//                           required
-//                         />
-//                       </Form.Group>
-//                     </Col>
-//                     <Col md={4}>
-//                       <Form.Group id="formDescription">
-//                         <Form.Label>Description</Form.Label>
-//                         <Form.Control
-//                           as="textarea"
-//                           id="description"
-//                           name="description"
-//                           value={formData.description}
-//                           onChange={handleChange}
-//                           placeholder="Enter Description"
-//                           required
-//                         />
-//                       </Form.Group>
-//                     </Col>
-//                   </Row>
-//                   <Row>
-//                     <Col md={4}>
-//                       <Form.Group id="formStartDate">
-//                         <Form.Label>Start Date</Form.Label>
-//                         <Form.Control
-//                           type="datetime-local"
-//                           id="start_date"
-//                           name="start_date"
-//                           value={formData.start_date}
-//                           onChange={handleChange}
-//                           required
-//                         />
-//                       </Form.Group>
-//                     </Col>
-//                     <Col md={4}>
-//                       <Form.Group id="formEndDate">
-//                         <Form.Label>End Date</Form.Label>
-//                         <Form.Control
-//                           type="datetime-local"
-//                           id="end_date"
-//                           name="end_date"
-//                           value={formData.end_date}
-//                           onChange={handleChange}
-//                           required
-//                         />
-//                       </Form.Group>
-//                     </Col>
-//                     <Col md={4}>
-//                       <Form.Group id="formStatus">
-//                         <Form.Label>Status</Form.Label>
-//                         <Form.Control
-//                           as="select"
-//                           id="status"
-//                           name="status"
-//                           value={formData.status}
-//                           onChange={handleChange}
-//                           required
-//                         >
-//                           <option value="">Select Status</option>
-//                           <option value="0">Completed</option>
-//                           <option value="1">Pending</option>
-//                           <option value="2">Doing</option>
-//                           <option value="3">Start</option>
-//                           <option value="4">Planning</option>
-//                         </Form.Control>
-//                       </Form.Group>
-//                     </Col>
-//                   </Row>
-//                 </div>
-//                 <button type="submit" className="btn btn-primary">
-//                   Save
-//                 </button>
-//               </form>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
+// //     if (existingProject) {
+// //       toast.error("Project with this name already exists.");
+// //       return;
+// //     }
 
-// export default ProjectForm;
+// //     dispatch(createProject(formData))
+// //       .unwrap()
+// //       .then(() => {
+// //         setFormData({
+// //           // client_id: "",
+// //           project_name: "",
+// //           description: "",
+// //           start_date: "",
+// //           end_date: "",
+// //           status: "",
+// //         }); // Clear the form after successful creation
+// //       })
+// //       .catch((error) => {
+// //         console.error("Create Error:", error);
+// //       });
+// //   };
 
-//v1
-// import React, { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
-// import { createProject, fetchProject } from "../../redux/slice/projectSlice";
+// //   return (
+// //     <div className="content-wrapper">
+// //       <div className="container">
+// //         <div className="container-fluid">
+// //           <div className="card">
+// //             <div className="card-header">
+// //               <h4 className="btn btn-primary">Add Project</h4>
+// //             </div>
+// //             <div className="card-body">
+// //               {/* Updated error message rendering */}
+// //               {createError && (
+// //                 <p className="text-danger">
+// //                   {createError?.message || "An error occurred"}
+// //                 </p>
+// //               )}
+// //               <form onSubmit={handleSubmit}>
+// //                 <div className="card-body">
+// //                   <Row>
+// //                     {/* <Col md={4}>
+// //                       <Form.Group id="formClientId">
+// //                         <Form.Label>Client ID</Form.Label>
+// //                         <Form.Control
+// //                           type="text"
+// //                           id="client_id"
+// //                           name="client_id"
+// //                           value={formData.client_id}
+// //                           onChange={handleChange}
+// //                           placeholder="Enter Client ID"
+// //                           required
+// //                         />
+// //                       </Form.Group>
+// //                     </Col> */}
+// //                     <Col md={4}>
+// //                       <Form.Group id="formProjectName">
+// //                         <Form.Label>Project Name</Form.Label>
+// //                         <Form.Control
+// //                           type="text"
+// //                           id="project_name"
+// //                           name="project_name"
+// //                           value={formData.project_name}
+// //                           onChange={handleChange}
+// //                           placeholder="Enter Project Name"
+// //                           required
+// //                         />
+// //                       </Form.Group>
+// //                     </Col>
+// //                     <Col md={4}>
+// //                       <Form.Group id="formDescription">
+// //                         <Form.Label>Description</Form.Label>
+// //                         <Form.Control
+// //                           as="textarea"
+// //                           id="description"
+// //                           name="description"
+// //                           value={formData.description}
+// //                           onChange={handleChange}
+// //                           placeholder="Enter Description"
+// //                           required
+// //                         />
+// //                       </Form.Group>
+// //                     </Col>
+// //                   </Row>
+// //                   <Row>
+// //                     <Col md={4}>
+// //                       <Form.Group id="formStartDate">
+// //                         <Form.Label>Start Date</Form.Label>
+// //                         <Form.Control
+// //                           type="datetime-local"
+// //                           id="start_date"
+// //                           name="start_date"
+// //                           value={formData.start_date}
+// //                           onChange={handleChange}
+// //                           required
+// //                         />
+// //                       </Form.Group>
+// //                     </Col>
+// //                     <Col md={4}>
+// //                       <Form.Group id="formEndDate">
+// //                         <Form.Label>End Date</Form.Label>
+// //                         <Form.Control
+// //                           type="datetime-local"
+// //                           id="end_date"
+// //                           name="end_date"
+// //                           value={formData.end_date}
+// //                           onChange={handleChange}
+// //                           required
+// //                         />
+// //                       </Form.Group>
+// //                     </Col>
+// //                     <Col md={4}>
+// //                       <Form.Group id="formStatus">
+// //                         <Form.Label>Status</Form.Label>
+// //                         <Form.Control
+// //                           as="select"
+// //                           id="status"
+// //                           name="status"
+// //                           value={formData.status}
+// //                           onChange={handleChange}
+// //                           required
+// //                         >
+// //                           <option value="">Select Status</option>
+// //                           <option value="0">Completed</option>
+// //                           <option value="1">Pending</option>
+// //                           <option value="2">Doing</option>
+// //                           <option value="3">Start</option>
+// //                           <option value="4">Planning</option>
+// //                         </Form.Control>
+// //                       </Form.Group>
+// //                     </Col>
+// //                   </Row>
+// //                 </div>
+// //                 <button type="submit" className="btn btn-primary">
+// //                   Save
+// //                 </button>
+// //               </form>
+// //             </div>
+// //           </div>
+// //         </div>
+// //       </div>
+// //     </div>
+// //   );
+// // };
 
-// const ProjectForm = () => {
-//   const [formData, setFormData] = useState({ project_name: "" });
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const createStatus = useSelector((state) => state.projects.createStatus);
-//   const createError = useSelector((state) => state.projects.createError);
-//   const projects = useSelector((state) => state.projects.list || []);
+// // export default ProjectForm;
 
-//   useEffect(() => {
-//     dispatch(fetchProject()); // Ensure departments are fetched on component mount
-//   }, [dispatch]);
+// //v2
+// // import { createProject, fetchProject } from "../../redux/slice/projectSlice";
+// // import { Form, Button, Row, Col } from "react-bootstrap";
+// // import { useState, useEffect } from "react";
+// // import { useDispatch, useSelector } from "react-redux";
+// // import { useNavigate } from "react-router-dom";
+// // import { toast } from "react-toastify";
+// // const ProjectForm = () => {
+// //   const [formData, setFormData] = useState({
+// //     client_id: "",
+// //     project_name: "",
+// //     description: "",
+// //     start_date: "",
+// //     end_date: "",
+// //     status: "",
+// //   });
+// //   const dispatch = useDispatch();
+// //   const navigate = useNavigate();
+// //   const createStatus = useSelector((state) => state.projects.createStatus);
+// //   const createError = useSelector((state) => state.projects.createError);
+// //   const projects = useSelector((state) => state.projects.list || []);
 
-//   useEffect(() => {
-//     if (createStatus === "succeeded") {
-//       toast.success("Project created successfully!");
-//       setFormData({ project_name: "" }); // Clear the form after successful creation
-//       navigate("/dashboard/crm/project");
-//     }
-//   }, [createStatus, navigate]);
+// //   useEffect(() => {
+// //     dispatch(fetchProject()); // Ensure projects are fetched on component mount
+// //   }, [dispatch]);
 
-//   useEffect(() => {
-//     if (createStatus === "failed") {
-//       toast.error(`Error: ${createError.message || "An error occurred"}`);
-//     }
-//   }, [createStatus, createError]);
+// //   useEffect(() => {
+// //     if (createStatus === "succeeded") {
+// //       toast.success("Project created successfully!");
+// //       setFormData({
+// //         client_id: "",
+// //         project_name: "",
+// //         description: "",
+// //         start_date: "",
+// //         end_date: "",
+// //         status: "",
+// //       }); // Clear the form after successful creation
+// //       navigate("/dashboard/crm/project");
+// //     }
+// //   }, [createStatus, navigate]);
 
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
+// //   useEffect(() => {
+// //     if (createStatus === "failed") {
+// //       toast.error(`Error: ${createError.message || "An error occurred"}`);
+// //     }
+// //   }, [createStatus, createError]);
 
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     if (formData.project_name.trim() === "") return; // Prevent empty name submission
+// //   const handleChange = (e) => {
+// //     setFormData({ ...formData, [e.target.name]: e.target.value });
+// //   };
 
-//     // Check if Project name already exists
-//     const existingProject = projects.some(
-//       (dept) =>
-//         dept.project_name &&
-//         dept.project_name.toLowerCase() === formData.project_name.toLowerCase()
-//     );
+// //   const handleSubmit = (e) => {
+// //     e.preventDefault();
+// //     if (formData.project_name.trim() === "") return; // Prevent empty name submission
 
-//     if (existingProject) {
-//       toast.error("Project with this name already exists.");
-//       return;
-//     }
+// //     // Check if Project name already exists
+// //     const existingProject = projects.some(
+// //       (proj) =>
+// //         proj.project_name &&
+// //         proj.project_name.toLowerCase() === formData.project_name.toLowerCase()
+// //     );
 
-//     dispatch(createProject(formData))
-//       .unwrap()
-//       .then(() => {
-//         setFormData({ project_name: "" }); // Clear the form after successful creation
-//       })
-//       .catch((error) => {
-//         console.error("Create Error:", error);
-//       });
-//   };
+// //     if (existingProject) {
+// //       toast.error("Project with this name already exists.");
+// //       return;
+// //     }
 
-//   return (
-//     <div className="content-wrapper">
-//       <div className="container">
-//         <div className="container-fluid">
-//           <div className="card">
-//             <div className="card-header">
-//               <h4 className="btn btn-primary">Add Department</h4>
-//             </div>
-//             <div className="card-body">
-//               {createError && <p className="text-danger">{createError}</p>}
-//               <form onSubmit={handleSubmit}>
-//                 <div className="form-group">
-//                   <label htmlFor="name">Project Name:</label>
-//                   <input
-//                     type="text"
-//                     id="project_name"
-//                     name="project_name"
-//                     value={formData.project_name}
-//                     className="form-control"
-//                     placeholder="Enter project name"
-//                     onChange={handleChange}
-//                     required
-//                   />
-//                 </div>
-//                 <button type="submit" className="btn btn-primary">
-//                   Save
-//                 </button>
-//               </form>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
+// //     dispatch(createProject(formData))
+// //       .unwrap()
+// //       .then(() => {
+// //         setFormData({ project_name: "" }); // Clear the form after successful creation
+// //       })
+// //       .catch((error) => {
+// //         console.error("Create Error:", error);
+// //       });
+// //   };
 
-// export default ProjectForm;
+// //   return (
+// //     <div className="content-wrapper">
+// //       <div className="container">
+// //         <div className="container-fluid">
+// //           <div className="card">
+// //             <div className="card-header">
+// //               <h4 className="btn btn-primary">Add Project</h4>
+// //             </div>
+// //             <div className="card-body">
+// //               {/* Updated error message rendering */}
+// //               {createError && (
+// //                 <p className="text-danger">
+// //                   {createError.message || createError}
+// //                 </p>
+// //               )}
+// //               <form onSubmit={handleSubmit}>
+// //                 {/* <div className="form-group">
+// //                   <label htmlFor="name">Project Name:</label>
+// //                   <input
+// //                     type="text"
+// //                     id="project_name"
+// //                     name="project_name"
+// //                     value={formData.project_name}
+// //                     className="form-control"
+// //                     placeholder="Enter project name"
+// //                     onChange={handleChange}
+// //                     required
+// //                   />
+// //                 </div> */}
+// //                 <div className="card-body">
+// //                   <Row>
+// //                     <Col md={4}>
+// //                       <Form.Group id="formClientId">
+// //                         <Form.Label>Client ID</Form.Label>
+// //                         <Form.Control
+// //                           type="text"
+// //                           id="client_id"
+// //                           name="client_id"
+// //                           value={formData.client_id}
+// //                           onChange={handleChange}
+// //                           placeholder="Enter Client ID"
+// //                           required
+// //                         />
+// //                       </Form.Group>
+// //                     </Col>
+// //                     <Col md={4}>
+// //                       <Form.Group id="formProjectName">
+// //                         <Form.Label>Project Name</Form.Label>
+// //                         <Form.Control
+// //                           type="text"
+// //                           id="project_name"
+// //                           name="project_name"
+// //                           value={formData.project_name}
+// //                           onChange={handleChange}
+// //                           placeholder="Enter Project Name"
+// //                           required
+// //                         />
+// //                       </Form.Group>
+// //                     </Col>
+// //                     <Col md={4}>
+// //                       <Form.Group id="formDescription">
+// //                         <Form.Label>Description</Form.Label>
+// //                         <Form.Control
+// //                           as="textarea"
+// //                           id="description"
+// //                           name="description"
+// //                           value={formData.description}
+// //                           onChange={handleChange}
+// //                           placeholder="Enter Description"
+// //                           required
+// //                         />
+// //                       </Form.Group>
+// //                     </Col>
+// //                   </Row>
+// //                   <Row>
+// //                     <Col md={4}>
+// //                       <Form.Group id="formStartDate">
+// //                         <Form.Label>Start Date</Form.Label>
+// //                         <Form.Control
+// //                           type="datetime-local"
+// //                           id="start_date"
+// //                           name="start_date"
+// //                           value={formData.start_date}
+// //                           onChange={handleChange}
+// //                           required
+// //                         />
+// //                       </Form.Group>
+// //                     </Col>
+// //                     <Col md={4}>
+// //                       <Form.Group id="formEndDate">
+// //                         <Form.Label>End Date</Form.Label>
+// //                         <Form.Control
+// //                           type="datetime-local"
+// //                           id="end_date"
+// //                           name="end_date"
+// //                           value={formData.end_date}
+// //                           onChange={handleChange}
+// //                           required
+// //                         />
+// //                       </Form.Group>
+// //                     </Col>
+// //                     <Col md={4}>
+// //                       <Form.Group id="formStatus">
+// //                         <Form.Label>Status</Form.Label>
+// //                         <Form.Control
+// //                           as="select"
+// //                           id="status"
+// //                           name="status"
+// //                           value={formData.status}
+// //                           onChange={handleChange}
+// //                           required
+// //                         >
+// //                           <option value="">Select Status</option>
+// //                           <option value="0">Completed</option>
+// //                           <option value="1">Pending</option>
+// //                           <option value="2">Doing</option>
+// //                           <option value="3">Start</option>
+// //                           <option value="4">Planning</option>
+// //                         </Form.Control>
+// //                       </Form.Group>
+// //                     </Col>
+// //                   </Row>
+// //                 </div>
+// //                 <button type="submit" className="btn btn-primary">
+// //                   Save
+// //                 </button>
+// //               </form>
+// //             </div>
+// //           </div>
+// //         </div>
+// //       </div>
+// //     </div>
+// //   );
+// // };
+
+// // export default ProjectForm;
+
+// //v1
+// // import React, { useState, useEffect } from "react";
+// // import { useDispatch, useSelector } from "react-redux";
+// // import { useNavigate } from "react-router-dom";
+// // import { toast } from "react-toastify";
+// // import { createProject, fetchProject } from "../../redux/slice/projectSlice";
+
+// // const ProjectForm = () => {
+// //   const [formData, setFormData] = useState({ project_name: "" });
+// //   const dispatch = useDispatch();
+// //   const navigate = useNavigate();
+// //   const createStatus = useSelector((state) => state.projects.createStatus);
+// //   const createError = useSelector((state) => state.projects.createError);
+// //   const projects = useSelector((state) => state.projects.list || []);
+
+// //   useEffect(() => {
+// //     dispatch(fetchProject()); // Ensure departments are fetched on component mount
+// //   }, [dispatch]);
+
+// //   useEffect(() => {
+// //     if (createStatus === "succeeded") {
+// //       toast.success("Project created successfully!");
+// //       setFormData({ project_name: "" }); // Clear the form after successful creation
+// //       navigate("/dashboard/crm/project");
+// //     }
+// //   }, [createStatus, navigate]);
+
+// //   useEffect(() => {
+// //     if (createStatus === "failed") {
+// //       toast.error(`Error: ${createError.message || "An error occurred"}`);
+// //     }
+// //   }, [createStatus, createError]);
+
+// //   const handleChange = (e) => {
+// //     setFormData({ ...formData, [e.target.name]: e.target.value });
+// //   };
+
+// //   const handleSubmit = (e) => {
+// //     e.preventDefault();
+// //     if (formData.project_name.trim() === "") return; // Prevent empty name submission
+
+// //     // Check if Project name already exists
+// //     const existingProject = projects.some(
+// //       (dept) =>
+// //         dept.project_name &&
+// //         dept.project_name.toLowerCase() === formData.project_name.toLowerCase()
+// //     );
+
+// //     if (existingProject) {
+// //       toast.error("Project with this name already exists.");
+// //       return;
+// //     }
+
+// //     dispatch(createProject(formData))
+// //       .unwrap()
+// //       .then(() => {
+// //         setFormData({ project_name: "" }); // Clear the form after successful creation
+// //       })
+// //       .catch((error) => {
+// //         console.error("Create Error:", error);
+// //       });
+// //   };
+
+// //   return (
+// //     <div className="content-wrapper">
+// //       <div className="container">
+// //         <div className="container-fluid">
+// //           <div className="card">
+// //             <div className="card-header">
+// //               <h4 className="btn btn-primary">Add Department</h4>
+// //             </div>
+// //             <div className="card-body">
+// //               {createError && <p className="text-danger">{createError}</p>}
+// //               <form onSubmit={handleSubmit}>
+// //                 <div className="form-group">
+// //                   <label htmlFor="name">Project Name:</label>
+// //                   <input
+// //                     type="text"
+// //                     id="project_name"
+// //                     name="project_name"
+// //                     value={formData.project_name}
+// //                     className="form-control"
+// //                     placeholder="Enter project name"
+// //                     onChange={handleChange}
+// //                     required
+// //                   />
+// //                 </div>
+// //                 <button type="submit" className="btn btn-primary">
+// //                   Save
+// //                 </button>
+// //               </form>
+// //             </div>
+// //           </div>
+// //         </div>
+// //       </div>
+// //     </div>
+// //   );
+// // };
+
+// // export default ProjectForm;

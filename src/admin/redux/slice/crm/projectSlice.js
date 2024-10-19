@@ -24,7 +24,7 @@ export const createProject = createAsyncThunk(
         formData
       );
       if (response.status === 201) {
-        return response.data; // Ensure the correct structure is returned
+        return response.data.result; // Ensure the correct structure is returned
       } else {
         return thunkAPI.rejectWithValue({
           message: "Failed to create project.",
@@ -38,25 +38,43 @@ export const createProject = createAsyncThunk(
   }
 );
 // Fetch project by ID
+// export const fetchProjectById = createAsyncThunk(
+//   "projects/fetchProjectById",
+//   async (id, thunkAPI) => {
+//     try {
+//       const response = await axios.get(
+//         `http://127.0.0.1:8000/api/project/${id}/`
+//       );
+//       return response.data.result.data;
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
+//     }
+//   }
+// );
+
 export const fetchProjectById = createAsyncThunk(
   "projects/fetchProjectById",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/project/${id}/`
+        `http://127.0.0.1:8000/api/project/detail/${id}/`
       );
-      return response.data.result;
+      return response.data.result; // Make sure the API returns the correct structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
+
 // Update Project Status
 export const updateProjectStatus = createAsyncThunk(
   "projects/updateStatus",
   async ({ id, status }) => {
-    const response = await axios.put(`/api/projects/${id}/`, { status });
-    return response.data;
+    const response = await axios.put(
+      `http://127.0.0.1:8000/api/project/${id}/`,
+      { status }
+    );
+    return response.data.result;
   }
 );
 // Update project
@@ -96,7 +114,7 @@ export const searchProject = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/project/?search=${searchTerm}`
       );
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -118,7 +136,12 @@ const projectSlice = createSlice({
     updateError: null,
     deleteError: null,
   },
-  reducers: {},
+  reducers: {
+    fetchProjectByIdSuccess: (state, action) => {
+      state.currentProject = action.payload; // This should update the currentProject
+    },
+  },
+
   extraReducers: (builder) => {
     builder
       // Fetch projects
@@ -139,17 +162,20 @@ const projectSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
+      // .addCase(fetchProjectById.fulfilled, (state, action) => {
+      //   state.isLoading = false;
+      //   state.currentProject = action.payload;
+      //   const index = state.list.findIndex(
+      //     (project) => project.id === action.payload.id
+      //   );
+      //   if (index !== -1) {
+      //     state.list[index] = action.payload;
+      //   } else {
+      //     state.list.push(action.payload);
+      //   }
+      // })
       .addCase(fetchProjectById.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.currentProject = action.payload;
-        const index = state.list.findIndex(
-          (project) => project.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.list[index] = action.payload;
-        } else {
-          state.list.push(action.payload);
-        }
+        state.currentProject = action.payload; // Ensure action.payload is defined
       })
       .addCase(fetchProjectById.rejected, (state, action) => {
         state.isLoading = false;

@@ -16,7 +16,7 @@ const ProjectDelete = ({ id, onClose }) => {
       .unwrap()
       .then(() => {
         toast.success("Project  deleted successfully!");
-        navigate("/dashboard/crm/project"); // Adjust this route as needed
+        navigate("/dashboard/crm/project/"); // Adjust this route as needed
       })
       .catch((error) => {
         toast.error(`Failed to delete project: ${error.message}`);

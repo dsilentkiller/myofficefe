@@ -33,28 +33,6 @@ const ProjectTable = () => {
   useEffect(() => {
     dispatch(fetchProject());
   }, [dispatch]);
-  // Handle update
-  // const handleUpdate = (e) => {
-  //   e.preventDefault();
-  //   if (editId !== null) {
-  //     dispatch(updateproject({ id: editId, project_name: newName }));
-  //     setEditId(null);
-  //     setNewName("");
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (updateStatus === "succeeded") {
-  //     toast.success("Project updated successfully!");
-  //   } else if (updateError) {
-  //     toast.error("Failed to update project.");
-  //   }
-  //   if (deleteStatus === "succeeded") {
-  //     toast.success("Project deleted successfully!");
-  //   } else if (deleteError) {
-  //     toast.error("Failed to delete project.");
-  //   }
-  // }, [updateStatus, updateError, deleteStatus, deleteError]);
 
   useEffect(() => {
     const notify = (status, successMsg, errorMsg) => {
@@ -128,7 +106,7 @@ const ProjectTable = () => {
         end_date: "",
         status: "",
       }); // Reset form after successful creation
-      navigate("/dashboard/crm/project");
+      navigate("/dashboard/crm/project/");
     } else if (createStatus === "failed") {
       toast.error(`Error: ${createError || "An error occurred"}`);
     }
@@ -240,20 +218,20 @@ const ProjectTable = () => {
                                 <td>{project.end_date}</td>
                                 <td>{project.status}</td>
                                 <td>
-                                  <button
-                                    to={`/projects/update/${project.id}`}
+                                  <Link
+                                    to={`/dashboard/crm/project/update/${project.id}`}
                                     className="btn btn-primary"
                                   >
                                     <FaEdit />
-                                  </button>
+                                  </Link>
                                   <span></span>
 
-                                  <button
-                                    to={`/projects/detail/${project.id}`}
+                                  <Link
+                                    to={`/dashboard/crm/project/detail/${project.id}`}
                                     className="btn btn-secondary"
                                   >
                                     View
-                                  </button>
+                                  </Link>
                                   <span></span>
                                   <button
                                     to={`/projects/delete/${project.id}`}
