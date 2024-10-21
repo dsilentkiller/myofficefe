@@ -10,7 +10,7 @@ export const fetchProvinces = createAsyncThunk(
       );
       return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data.result.data);
     }
   }
 );
@@ -23,9 +23,9 @@ export const createProvince = createAsyncThunk(
         "http://127.0.0.1:8000/api/setup/province/create/",
         formData
       );
-      return response.data.result; // Adjust this based on your actual API response structure
+      return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data.result.data);
     }
   }
 );
@@ -37,9 +37,9 @@ export const fetchProvinceById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/setup/province/${id}/`
       );
-      return response.data.result;
+      return response.data.result.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data.result.data);
     }
   }
 );
@@ -51,12 +51,12 @@ export const updateProvince = createAsyncThunk(
   async ({ id, name }, thunkAPI) => {
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/setup/province/${id}/`,
+        `http://127.0.0.1:8000/api/setup/province/update/${id}/`,
         { name }
       );
-      return response.data.result;
+      return response.data.result.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data.result.data);
     }
   }
 );
@@ -67,7 +67,7 @@ export const searchProvince = createAsyncThunk(
     const response = await axios.get(
       `http://127.0.0.1:8000/api/setup/province/?search=${searchTerm}`
     );
-    return response.data.result;
+    return response.data.result.data;
   }
 );
 
@@ -75,10 +75,12 @@ export const deleteProvince = createAsyncThunk(
   "provinces/deleteProvince",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/setup/province/${id}/`);
+      await axios.delete(
+        `http://127.0.0.1:8000/api/setup/province/delete/${id}/`
+      );
       return id; // Return the ID of the deleted province
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data.result.data);
     }
   }
 );

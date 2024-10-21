@@ -17,7 +17,7 @@ const AttendeeDelete = ({ id, onClose }) => {
       .unwrap()
       .then(() => {
         toast.success("attendee deleted successfully!");
-        navigate("/dashboard/crm/attendee"); // Adjust this route as needed
+        navigate("/dashboard/crm/attendee/"); // Adjust this route as needed
       })
       .catch((error) => {
         toast.error(`Failed to delete attendee: ${error.message}`);

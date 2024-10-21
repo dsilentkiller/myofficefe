@@ -47,12 +47,13 @@ const ProvinceForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("formData:", formData);
+    console.log("provinces:", provinces);
     if (!formData.name.trim()) return; // Prevent empty name submission
-
+    //checking if the province name already exists
     const existingProvince = provinces.some(
       (prov) =>
-        prov.name &&
-        prov.name.toLowerCase() === formData.prov.name.toLowerCase()
+        prov.name && prov.name.toLowerCase() === formData.name.toLowerCase()
     );
 
     if (existingProvince) {

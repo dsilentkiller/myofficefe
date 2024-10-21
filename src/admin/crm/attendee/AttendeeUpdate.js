@@ -25,12 +25,12 @@ const AttendeeUpdate = () => {
     organization_name: "",
     organization_detail: "",
   });
-
-  const createStatus = useSelector((state) => state.attendees.createStatus);
-  const createError = useSelector((state) => state.attendees.createError);
   const currentAttendee = useSelector(
     (state) => state.attendees.currentAttendee
   );
+
+  const createStatus = useSelector((state) => state.attendees.createStatus);
+  const createError = useSelector((state) => state.attendees.createError);
 
   useEffect(() => {
     if (id) {

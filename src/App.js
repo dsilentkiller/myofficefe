@@ -55,6 +55,7 @@ import AttendeeTable from "./admin/crm/attendee/AttendeeTable";
 // import MeetingUpdateForm from "./admin/crm/event/meetingupdate/MeetingUpdateForm";
 import AttendeeDelete from "./admin/crm/attendee/AttendeeDelete";
 import AttendeeUpdate from "./admin/crm/attendee/AttendeeUpdate";
+import AttendeeDetail from "./admin/crm/attendee/AttendeeDetail";
 import EnquiryForm from "./admin/crm/enquiry/EnquiryForm";
 import EnquiryTable from "./admin/crm/enquiry/EnquiryTable";
 import CategoryTable from "./admin/crm/category/CategoryTable";
@@ -106,6 +107,10 @@ function App() {
               {/* dashboard/crm/attendees */}
               <Route path="attendee" element={<AttendeeTable />} />
               <Route path="attendee/create/" element={<AttendeeForm />} />
+              <Route
+                path="/dashboard/crm/attendee/detail/:id"
+                element={<AttendeeDetail />}
+              />
               <Route path="attendee/update/:id/" element={<AttendeeUpdate />} />
               <Route path="attendee/delete/:id/" element={<AttendeeDelete />} />
 

@@ -26,7 +26,7 @@ const AttendeeTable = () => {
     error,
     deleteError,
   } = useSelector((state) => state.attendees || {});
-
+  
   // fetching attendees data from attendees list
   useEffect(() => {
     dispatch(fetchAttendees());
@@ -130,7 +130,7 @@ const AttendeeTable = () => {
                         <td>{attendee.organization_detail}</td>
                         <td>
                           <Link
-                            to={`/edit/${attendee.id}`}
+                            to={`/dashboard/crm/attendee/update/${attendee.id}`}
                             className="btn btn-warning btn-sm"
                           >
                             Edit
@@ -138,10 +138,10 @@ const AttendeeTable = () => {
 
                           <span></span>
                           <Link
-                            to={`/detail/${attendee.id}`}
+                            to={`/dashboard/crm/attendee/detail/${attendee.id}`}
                             className="btn btn-info btn-sm"
                           >
-                            view
+                            View
                           </Link>
                           <span></span>
                           <button

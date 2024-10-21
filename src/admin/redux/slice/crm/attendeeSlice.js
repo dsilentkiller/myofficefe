@@ -86,7 +86,7 @@ export const fetchAttendeeById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/attendee/${id}/`
+        `http://127.0.0.1:8000/api/attendee/detail/${id}/`
       );
       return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
