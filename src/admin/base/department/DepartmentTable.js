@@ -15,7 +15,7 @@ import { toast } from "react-toastify"; // Import toast for error messages
 import "../../css/Table.css";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable"; // Import the autoTable plugin
-import { saveAs } from "file-saver";
+
 import * as XLSX from "xlsx";
 const DepartmentTable = () => {
   const dispatch = useDispatch();
@@ -150,7 +150,6 @@ const DepartmentTable = () => {
                     className="form-inline ml-3"
                   >
                     <div className="input-group">
-                      search
                       <input
                         type="search"
                         id="default-search"

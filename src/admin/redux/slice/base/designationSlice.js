@@ -7,7 +7,7 @@ export const searchDesignation = createAsyncThunk(
     const response = await axios.get(
       `http://127.0.0.1:8000/api/setup/designation/?search=${searchTerm}`
     );
-    return response.data.result;
+    return response.data.result.data;
   }
 );
 // Fetch all designation action
@@ -20,7 +20,7 @@ export const fetchDesignations = createAsyncThunk(
       );
       return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data.result.data);
     }
   }
 );
@@ -32,7 +32,7 @@ export const createDesignation = createAsyncThunk(
         "http://127.0.0.1:8000/api/setup/designation/create/",
         DesignationData
       );
-      return response.data.result; // Adjust this based on your actual API response structure
+      return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.result.data);
     }
@@ -46,9 +46,9 @@ export const fetchDesignationById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/setup/designation/${id}/`
       );
-      return response.data.result; // Adjust this based on your actual API response structure
+      return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data.result.data);
     }
   }
 );
@@ -61,7 +61,7 @@ export const updateDesignation = createAsyncThunk(
         `http://127.0.0.1:8000/api/setup/designation/update/${id}/`,
         { name }
       );
-      return response.data.result;
+      return response.data.result.data;
     } catch (error) {
       const message =
         error.response?.data?.message || error.message || "An error occurred";

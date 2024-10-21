@@ -12,7 +12,7 @@ import DesignationDelete from "./DesignationDelete";
 import { toast } from "react-toastify";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { saveAs } from "file-saver";
+// import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 
 const DesignationTable = () => {
@@ -21,7 +21,7 @@ const DesignationTable = () => {
   const [newName, setNewName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [designationToDelete, setDesignationToDelete] = useState(null);
-  const [filteredDesignations, setFilteredDesignations] = useState([]);
+  // const [filteredDesignations, setFilteredDesignations] = useState([]);
   // Access state from Redux
   const updateStatus = useSelector((state) => state.designations?.updateStatus);
   const updateError = useSelector((state) => state.designations?.updateError);
@@ -34,20 +34,21 @@ const DesignationTable = () => {
   } = useSelector((state) => state.designations || {});
 
   useEffect(() => {
-    dispatch(fetchDesignations());
+    dispatch(fetchDesignations()).then((response) => console.log(response));
   }, [dispatch]);
-  //------------ this is filtered designation name  in search table ---------
-  useEffect(() => {
-    if (searchTerm) {
-      setFilteredDesignations(
-        designations.filter((designation) =>
-          designation.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
-    } else {
-      setFilteredDesignations(designations);
-    }
-  }, [searchTerm, designations]);
+  // //------------ this is filtered designation name  in search table ---------
+  // useEffect(() => {
+  //   if (searchTerm) {
+  //     setFilteredDesignations(
+  //       designations?.filter((designation) =>
+  //         designation?.name.toLowerCase().includes(searchTerm.toLowerCase())
+  //       )
+  //     );
+  //   } else {
+  //     setFilteredDesignations(designations);
+  //     console.log(filteredDesignations);
+  //   }
+  // }, [searchTerm, designations]);
 
   //----refresh table after delete the item from table ---
   useEffect(() => {
@@ -112,9 +113,12 @@ const DesignationTable = () => {
     setSearchTerm(e.target.value);
   };
   // Filter categories for search term
-  // const filteredDesignations = designations.filter((designation) =>
-  //   designation.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+
+  const filteredDesignations = designations?.filter((designation) => {
+    //   console.log(categories);
+    // console.log("**");
+    return designation?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+  });
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(
       designations.map((designation) => ({
@@ -165,7 +169,6 @@ const DesignationTable = () => {
                     className="form-inline ml-3"
                   >
                     <div className="input-group">
-                      Search
                       <input
                         type="search"
                         id="default-search"
@@ -228,7 +231,7 @@ const DesignationTable = () => {
                               <tbody>
                                 {filteredDesignations.map(
                                   (designation, index) => (
-                                    <tr key={designation.id}>
+                                    <tr key={designation?.id}>
                                       <td>{index + 1}</td>
                                       <td>
                                         {editId === designation.id ? (
@@ -240,7 +243,7 @@ const DesignationTable = () => {
                                             }
                                           />
                                         ) : (
-                                          formatName(designation.name || "")
+                                          formatName(designation?.name || "")
                                         )}
                                       </td>
                                       <td>

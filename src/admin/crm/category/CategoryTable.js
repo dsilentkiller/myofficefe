@@ -5,8 +5,8 @@ import {
   updateCategory,
   deleteCategory,
   // updateStatus,
-  updateError,
-  deleteError,
+  // updateError,
+  // deleteError,
 } from "../../redux/slice/crm/categorySlice";
 import { Link } from "react-router-dom";
 import "../../../admin/css/Table.css"; // Ensure this includes necessary styles

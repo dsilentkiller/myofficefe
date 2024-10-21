@@ -7,7 +7,7 @@ export const searchDepartment = createAsyncThunk(
     const response = await axios.get(
       `http://127.0.0.1:8000/api/setup/department/?search=${searchTerm}`
     );
-    return response.data.result;
+    return response.data.result.data;
   }
 );
 // Fetch all"departments action
@@ -20,7 +20,7 @@ export const fetchDepartments = createAsyncThunk(
       );
       return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data.result.data);
     }
   }
 );
