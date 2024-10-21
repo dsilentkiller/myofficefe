@@ -7,7 +7,7 @@ export const searchMunicipality = createAsyncThunk(
     const response = await axios.get(
       `http://127.0.0.1:8000/api/setup/municipality/?search=${searchTerm}`
     );
-    return response.data.result;
+    return response.data.result.data;
   }
 );
 // Fetch all municipalities action
@@ -33,7 +33,7 @@ export const createMunicipality = createAsyncThunk(
         "http://127.0.0.1:8000/api/setup/municipality/create/",
         municipalityData
       );
-      return response.data.result; // Adjust this based on your actual API response structure
+      return response.data.result.data; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.result.data);
     }
@@ -62,7 +62,7 @@ export const updateMunicipality = createAsyncThunk(
         `http://127.0.0.1:8000/api/setup/municipality/update/${id}/`,
         { name }
       );
-      return response.data.result;
+      return response.data.result.data;
     } catch (error) {
       const message =
         error.response?.data?.message || error.message || "An error occurred";

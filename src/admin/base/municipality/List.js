@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import "../../css/Table.css";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { saveAs } from "file-saver";
+
 import * as XLSX from "xlsx";
 
 const MunicipalityList = () => {
@@ -28,7 +28,7 @@ const MunicipalityList = () => {
     list: municipalities,
     isLoading,
     error,
-    deleteStatus,
+    // deleteStatus,
     deleteError,
     updateStatus,
     updateError,
@@ -285,7 +285,7 @@ const MunicipalityList = () => {
               <DeleteMunicipality
                 id={municipalityToDelete}
                 onConfirm={confirmDelete}
-                onCancel={() => setMunicipalityToDelete(null)}
+                onClose={() => setMunicipalityToDelete(null)}
               />
             </div>
           </div>
