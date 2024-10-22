@@ -18,7 +18,7 @@ export const fetchEnquiries = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/enquiry/");
-      return response.data.result;
+      return response.data.result.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -68,7 +68,7 @@ export const updateEnquiry = createAsyncThunk(
         `http://127.0.0.1:8000/api/enquiry/update/${id}/`,
         { name }
       );
-      return response.data.result;
+      return response.data.result.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || error.message
@@ -99,7 +99,7 @@ export const fetchCategories = createAsyncThunk(
     const response = await axios.get(
       "http://127.0.0.1:8000/api/enquiry/category/"
     );
-    return response.data.result;
+    return response.data.result.data;
   }
 );
 

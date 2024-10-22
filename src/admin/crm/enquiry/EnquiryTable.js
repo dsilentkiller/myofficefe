@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import EnquiryForm from "./EnquiryForm";
+// import EnquiryForm from "./EnquiryForm";
 import "../../css/Table.css";
 import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
 import { useSelector, useDispatch } from "react-redux"; // Correct import
@@ -152,7 +152,9 @@ const EnquiryTable = () => {
                   <tr>
                     <th>#</th>
                     <th>Customer Name</th>
+                    <th>category</th>
                     <th>Department</th>
+                    <th>designation</th>
                     <th>Phone</th>
                     <th>whatsapp</th>
                     <th>Email</th>
@@ -177,7 +179,9 @@ const EnquiryTable = () => {
                       <tr key={enquiry.id}>
                         <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                         <td>{formatName(enquiry.customer_name)}</td>
+                        <td>{enquiry.category}</td>
                         <td>{formatName(enquiry.department)}</td>
+                        <td>{formatName(enquiry.designation)}</td>
                         <td>{enquiry.pri_phone}</td>
                         <td>{enquiry.sec_phone}</td>
                         <td>{enquiry.email}</td>
