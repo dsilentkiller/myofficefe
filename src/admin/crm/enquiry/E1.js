@@ -1101,196 +1101,196 @@ const EnquiryTable = () => {
     return <div>Error loading enquiries: {error.message}</div>;
   }
   //--- handle searchitem in a table ----
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-  //--converting first letter  capital
-  const formatName = (name) => {
-    if (!name) return "";
-    return name
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
-  };
+  // const handleSearchChange = (e) => {
+  //   setSearchTerm(e.target.value);
+  // };
+  // //--converting first letter  capital
+  // const formatName = (name) => {
+  //   if (!name) return "";
+  //   return name
+  //     .split(" ")
+  //     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+  //     .join(" ");
+  // };
 
-  // if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  // // if (isLoading) return <div>Loading...</div>;
+  // if (error) return <div>Error: {error}</div>;
 
-  return (
-    <div className="content-wrapper">
-      <div className="row justify-content-center">
-        <div className="card">
-          {/* heading */}
-          <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <div className="container-fluid">
-              <h5 className="navbar-brand">Enquiry Table</h5>
-              <div className="navbar-nav ml-auto">
-                <Link to="create" className="nav-link btn btn-info">
-                  <h5>Add Enquiry</h5>
-                </Link>
-                <form
-                  method="get"
-                  action="/enquiry/search"
-                  className="form-inline ml-3"
-                >
-                  <div className="input-group">
-                    <input
-                      type="search"
-                      id="default-search"
-                      name="searchTerm"
-                      className="form-control"
-                      placeholder="Search Mockups, Logos..."
-                      value={searchTerm}
-                      onChange={handleSearchChange}
-                      required
-                    />
-                    {/* <div className="input-group-append">
-                        <button type="submit" className="btn btn-info">
+  // return (
+  //   <div className="content-wrapper">
+  //     <div className="row justify-content-center">
+  //       <div className="card">
+  //         {/* heading */}
+  //         <nav className="navbar navbar-expand-lg navbar-light bg-light">
+  //           <div className="container-fluid">
+  //             <h5 className="navbar-brand">Enquiry Table</h5>
+  //             <div className="navbar-nav ml-auto">
+  //               <Link to="create" className="nav-link btn btn-info">
+  //                 <h5>Add Enquiry</h5>
+  //               </Link>
+  //               <form
+  //                 method="get"
+  //                 action="/enquiry/search"
+  //                 className="form-inline ml-3"
+  //               >
+  //                 <div className="input-group">
+  //                   <input
+  //                     type="search"
+  //                     id="default-search"
+  //                     name="searchTerm"
+  //                     className="form-control"
+  //                     placeholder="Search Mockups, Logos..."
+  //                     value={searchTerm}
+  //                     onChange={handleSearchChange}
+  //                     required
+  //                   />
+  //                   {/* <div className="input-group-append">
+  //                       <button type="submit" className="btn btn-info">
                           
-                        </button>
-                      </div> */}
-                  </div>
-                </form>
-              </div>
+  //                       </button>
+  //                     </div> */}
+  //                 </div>
+  //               </form>
+  //             </div>
 
-              <div className="form-inline ml-4" id="navbarSupportedContent">
-                <ul className="navbar-nav mr-30">
-                  <li className="nav-item ">
-                    <button
-                      id="employeeTable"
-                      className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
-                    >
-                      <i className="fas fa-file-csv"></i>
-                      {/* Font Awesome icon for CSV */}
-                    </button>
-                  </li>
-                  {/* Add other export buttons here */}
-                </ul>
-              </div>
-            </div>
-          </nav>
-          {/* heading end */}
-          <div className="card-body">
-            <div className="table-container">
-              <table className="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Customer Name</th>
-                    <th>Department</th>
-                    <th>Phone</th>
-                    <th>Contact No</th>
-                    <th>Email</th>
-                    <th>Gender</th>
-                    <th>Province</th>
-                    <th>District</th>
-                    <th>Municipality</th>
-                    <th>Ward No</th>
-                    <th>Tole Name</th>
-                    <th>Estimated Amount</th>
-                    <th>Enquiry Purpose</th>
-                    <th>Known By</th>
-                    <th>Joining Date</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredEnquiries.length > 0 ? (
-                    filteredEnquiries.map((enquiry, index) => (
-                      <tr key={enquiry.id}>
-                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                        <td>{formatName(enquiry.customer_name)}</td>
-                        <td>{formatName(enquiry.department)}</td>
-                        <td>{enquiry.pri_phone}</td>
-                        <td>{enquiry.sec_phone}</td>
-                        <td>{enquiry.email}</td>
-                        <td>{enquiry.gender}</td>
-                        <td>{formatName(enquiry.province)}</td>
-                        <td>{formatName(enquiry.district)}</td>
-                        <td>{formatName(enquiry.municipality)}</td>
-                        <td>{enquiry.ward_no}</td>
-                        <td>{formatName(enquiry.tole_name)}</td>
-                        <td>{enquiry.estimated_amount}</td>
-                        <td>{enquiry.enquiry_purpose}</td>
-                        <td>{enquiry.known_by}</td>
-                        <td>{enquiry.created}</td>
-                        <td>
-                          <button className="btn btn-primary">Edit</button>
-                          <Link
-                            to={`/detail/${enquiry.id}`}
-                            className="btn btn-info"
-                          >
-                            View
-                          </Link>
-                          <button className="btn btn-danger">Delete</button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="17">No enquiries found</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+  //             <div className="form-inline ml-4" id="navbarSupportedContent">
+  //               <ul className="navbar-nav mr-30">
+  //                 <li className="nav-item ">
+  //                   <button
+  //                     id="employeeTable"
+  //                     className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
+  //                   >
+  //                     <i className="fas fa-file-csv"></i>
+  //                     {/* Font Awesome icon for CSV */}
+  //                   </button>
+  //                 </li>
+  //                 {/* Add other export buttons here */}
+  //               </ul>
+  //             </div>
+  //           </div>
+  //         </nav>
+  //         {/* heading end */}
+  //         <div className="card-body">
+  //           <div className="table-container">
+  //             <table className="table table-bordered">
+  //               <thead>
+  //                 <tr>
+  //                   <th>#</th>
+  //                   <th>Customer Name</th>
+  //                   <th>Department</th>
+  //                   <th>Phone</th>
+  //                   <th>Contact No</th>
+  //                   <th>Email</th>
+  //                   <th>Gender</th>
+  //                   <th>Province</th>
+  //                   <th>District</th>
+  //                   <th>Municipality</th>
+  //                   <th>Ward No</th>
+  //                   <th>Tole Name</th>
+  //                   <th>Estimated Amount</th>
+  //                   <th>Enquiry Purpose</th>
+  //                   <th>Known By</th>
+  //                   <th>Joining Date</th>
+  //                   <th>Action</th>
+  //                 </tr>
+  //               </thead>
+  //               <tbody>
+  //                 {filteredEnquiries.length > 0 ? (
+  //                   filteredEnquiries.map((enquiry, index) => (
+  //                     <tr key={enquiry.id}>
+  //                       <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+  //                       <td>{formatName(enquiry.customer_name)}</td>
+  //                       <td>{formatName(enquiry.department)}</td>
+  //                       <td>{enquiry.pri_phone}</td>
+  //                       <td>{enquiry.sec_phone}</td>
+  //                       <td>{enquiry.email}</td>
+  //                       <td>{enquiry.gender}</td>
+  //                       <td>{formatName(enquiry.province)}</td>
+  //                       <td>{formatName(enquiry.district)}</td>
+  //                       <td>{formatName(enquiry.municipality)}</td>
+  //                       <td>{enquiry.ward_no}</td>
+  //                       <td>{formatName(enquiry.tole_name)}</td>
+  //                       <td>{enquiry.estimated_amount}</td>
+  //                       <td>{enquiry.enquiry_purpose}</td>
+  //                       <td>{enquiry.known_by}</td>
+  //                       <td>{enquiry.created}</td>
+  //                       <td>
+  //                         <button className="btn btn-primary">Edit</button>
+  //                         <Link
+  //                           to={`/detail/${enquiry.id}`}
+  //                           className="btn btn-info"
+  //                         >
+  //                           View
+  //                         </Link>
+  //                         <button className="btn btn-danger">Delete</button>
+  //                       </td>
+  //                     </tr>
+  //                   ))
+  //                 ) : (
+  //                   <tr>
+  //                     <td colSpan="17">No enquiries found</td>
+  //                   </tr>
+  //                 )}
+  //               </tbody>
+  //             </table>
+  //           </div>
 
-            <div className="pagination-wrapper">
-              <div className="pagination-controls">
-                <div className="pagination-info">
-                  <label htmlFor="itemsPerPage">Items per page:</label>
-                  <select
-                    id="itemsPerPage"
-                    value={itemsPerPage}
-                    onChange={handleItemsPerPageChange}
-                  >
-                    <option value={10}>10</option>
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                  </select>
-                </div>
-                <nav>
-                  <ul className="pagination">
-                    <li
-                      className={`page-item ${
-                        currentPage === 1 ? "disabled" : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(currentPage - 1)}
-                      >
-                        &laquo;
-                      </button>
-                    </li>
-                    {Array.from({ length: totalPages }, (_, index) => (
-                      <li
-                        key={index + 1}
-                        className={`page-item ${
-                          currentPage === index + 1 ? "active" : ""
-                        }`}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() => handlePageChange(index + 1)}
-                        >
-                          {index + 1}
-                        </button>
-                      </li>
-                    ))}
-                    <li
-                      className={`page-item ${
-                        currentPage === totalPages ? "disabled" : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(currentPage + 1)}
-                      >
-                        &raquo;
-                      </button>
-                    </li>
-                  </ul>
+  //           <div className="pagination-wrapper">
+  //             <div className="pagination-controls">
+  //               <div className="pagination-info">
+  //                 <label htmlFor="itemsPerPage">Items per page:</label>
+  //                 <select
+  //                   id="itemsPerPage"
+  //                   value={itemsPerPage}
+  //                   onChange={handleItemsPerPageChange}
+  //                 >
+  //                   <option value={10}>10</option>
+  //                   <option value={25}>25</option>
+  //                   <option value={50}>50</option>
+  //                 </select>
+  //               </div>
+  //               <nav>
+  //                 <ul className="pagination">
+  //                   <li
+  //                     className={`page-item ${
+  //                       currentPage === 1 ? "disabled" : ""
+  //                     }`}
+  //                   >
+  //                     <button
+  //                       className="page-link"
+  //                       onClick={() => handlePageChange(currentPage - 1)}
+  //                     >
+  //                       &laquo;
+  //                     </button>
+  //                   </li>
+  //                   {Array.from({ length: totalPages }, (_, index) => (
+  //                     <li
+  //                       key={index + 1}
+  //                       className={`page-item ${
+  //                         currentPage === index + 1 ? "active" : ""
+  //                       }`}
+  //                     >
+  //                       <button
+  //                         className="page-link"
+  //                         onClick={() => handlePageChange(index + 1)}
+  //                       >
+  //                         {index + 1}
+  //                       </button>
+  //                     </li>
+  //                   ))}
+  //                   <li
+  //                     className={`page-item ${
+  //                       currentPage === totalPages ? "disabled" : ""
+  //                     }`}
+  //                   >
+  //                     <button
+  //                       className="page-link"
+  //                       onClick={() => handlePageChange(currentPage + 1)}
+  //                     >
+  //                       &raquo;
+  //                     </button>
+  //                   </li>
+                  {/* </ul>
                 </nav>
               </div>
             </div>
@@ -1950,8 +1950,8 @@ const EnquiryForm = () => {
                               key={municipality.id}
                               value={municipality.id}
                             >
-                              {municipality.name}
-                            </option>
+                              {municipality.name} */}
+                            {/* </option>
                           ))}
                         </select>
                       </div>
@@ -2331,6 +2331,555 @@ const EnquiryForm = () => {
                   <div className="form-group">
                     <button type="submit" className="btn btn-primary">
                       Add Employee
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </TabPane>
+        </TabContent>
+      </div>
+      {/* </div> */}
+    </div>
+  );
+};
+
+export default EnquiryForm; 
+// #-----------------------
+import React, { useState, useEffect } from "react";
+import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
+import { Link } from "react-router-dom";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCategories } from "../../redux/slice/crm/categorySlice";
+import { fetchDepartments } from "../../redux/slice/base/departmentSlice";
+import { fetchDesignations } from "../../redux/slice/base/designationSlice";
+import { fetchDistricts } from "../../redux/slice/base/districtSlice";
+import { fetchMunicipalities } from "../../redux/slice/base/municipalitySlice";
+import { fetchProvinces } from "../../redux/slice/base/provinceSlice";
+import classnames from "classnames";
+
+// import axios from "axios";
+
+import { useNavigate, useParams } from "react-router-dom"; // Import useParams
+import { toast } from "react-toastify";
+import {
+  createEnquiry,
+  updateEnquiry,
+  fetchEnquiryById,
+} from "../../redux/slice/crm/enquirySlice";
+// import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+
+const EnquiryForm = () => {
+  const [activeTab, setActiveTab] = useState("1");
+
+  const { id } = useParams(); // Get the enquiry ID from URL
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [toggleState, setToggleState] = useState({ toggle: false });
+  const [phoneValid, setPhoneValid] = useState(true);
+  const [errors, setErrors] = useState({});
+  // form data filled up
+  const [formData, setFormData] = useState({
+    customer_name: "",
+    category: "",
+    organization_name: "",
+    department: "",
+    designation: "",
+    pri_phone: "",
+    sec_phone: "",
+    email: "",
+    gender: "",
+
+    province: "",
+    // zone: "",
+    district: "",
+    municipality: "",
+    ward_no: "",
+    tole_name: "",
+
+   
+
+    estimated_amount: "",
+    enquiry_purpose: "",
+    known_by: "",
+    created: "",
+    history: "",
+  });
+
+  // Toggle function for switching tabs
+  const toggle = (tab) => {
+    if (activeTab !== tab) {
+      setActiveTab(tab);
+    }
+  };
+  // Retrieve data from the store
+
+  const currentEnquiry = useSelector(
+    (state) => state.enquiry?.currentEnquiry || {}
+  );
+
+  const { list: provinces } = useSelector((state) => state.provinces);
+  const { list: categories } = useSelector((state) => state.categories);
+  const { list: districts } = useSelector((state) => state.districts);
+  const { list: municipalities } = useSelector((state) => state.municipalities);
+  const { list: departments } = useSelector((state) => state.departments);
+  const { list: designations } = useSelector((state) => state.designations);
+
+  
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchEnquiryById(id));
+    }
+  }, [id, dispatch]);
+
+  // pri_phone number validate
+  const validatePhoneNumber = (value) => {
+    const phoneLength = value.replace(/\D/g, "").length;
+    if (phoneLength >= 10 && phoneLength <= 15) {
+      setPhoneValid(true);
+    } else {
+      setPhoneValid(false);
+    }
+    setFormData({ ...formData, pri_phone: value });
+  };
+  // sec phone valid
+
+  const validateSecPhoneNumber = (value) => {
+    const phoneLength = value.replace(/\D/g, "").length;
+    if (phoneLength >= 10 && phoneLength <= 15) {
+      setPhoneValid(true);
+    } else {
+      setPhoneValid(false);
+    }
+    setFormData({ ...formData, sec_phone: value });
+  };
+  // curent enquiry
+  useEffect(() => {
+    if (currentEnquiry && id) {
+      setFormData({
+     
+
+        category: currentEnquiry?.category || "",
+       
+        department: currentEnquiry?.department || "",
+        designation: currentEnquiry?.designation || "",
+       
+        
+
+        province: currentEnquiry?.province || "",
+        district: currentEnquiry?.district || "",
+        municipality: currentEnquiry?.municipality || "",
+        
+      
+      });
+    }
+  }, [currentEnquiry, id]);
+
+  // Fetch data when component mounts
+  useEffect(() => {
+    dispatch(fetchCategories());
+    dispatch(fetchProvinces());
+    dispatch(fetchDistricts());
+    dispatch(fetchDesignations());
+    dispatch(fetchDepartments());
+    dispatch(fetchMunicipalities());
+  }, [dispatch]);
+
+  
+  // Handle form changes
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  //habdle submit for update and create enquiry
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Validate required fields
+    if (!formData.customer_name || !formData.category || !formData.pri_phone) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    if (!phoneValid) {
+      toast.error("Please enter a valid phone number.");
+      return;
+    }
+    // Ensure formData includes department and designation IDs
+    const formDataToSubmit = {
+      ...formData,
+      department: formData.department?.id || formData.department,
+      designation: formData.designation?.id || formData.designation,
+      province: formData.province?.id || formData.province,
+      district: formData.district?.id || formData.district,
+      municipality: formData.municipality?.id || formData.municipality,
+    };
+
+    if (id) {
+      // Update enquiry
+      dispatch(updateEnquiry({ id, ...formData, formDataToSubmit }))
+        .unwrap()
+        .then(() => {
+          toast.success("enquiry updated successfully!");
+          navigate("/dashboard/crm/enquiry");
+        })
+        .catch((error) => {
+          console.error("Update Error:", error);
+          toast.error(
+            `Failed to update enquiry: ${error.message || "An error occurred"}`
+          );
+        });
+    } else {
+      // Create enquiry
+      dispatch(createEnquiry(formDataToSubmit))
+        .unwrap()
+        .then(() => {
+          toast.success("enquiry created successfully!");
+          setFormData({
+          
+            category: "",
+           
+            department: "",
+            designation: "",
+           
+            province: "",
+           
+            district: "",
+            municipality: "",
+           
+          });
+          navigate("/dashboard/crm/enquiry");
+        })
+        .catch((error) => {
+          console.error("Create Error:", error);
+          toast.error(
+            `Failed to create enquiry: ${error.message || "An error occurred"}`
+          );
+        });
+    }
+  };
+
+  return (
+    <div className="content-wrapper" style={{ marginBottom: "20mm" }}>
+      {/* <div className="container-fluid"> */}
+      <div className="card">
+        <Nav tabs>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: activeTab === "1" })}
+              onClick={() => toggle("1")}
+            >
+              General Information
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: activeTab === "2" })}
+              onClick={() => toggle("2")}
+            >
+              Address
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: activeTab === "3" })}
+              onClick={() => toggle("3")}
+            >
+              Company Info
+            </NavLink>
+          </NavItem>
+        </Nav>
+        <TabContent activeTab={activeTab}>
+          <TabPane tabId="1">
+            <div className="card">
+              <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                <div className="container-fluid">
+                  <h5 className="navbar-brand">Add Enquiry</h5>
+                  <div className="navbar-nav ml-auto">
+                    <Link to="/dashboard/crm/enquiry">
+                      <h5>Enquiry Table</h5>
+                    </Link>
+                  </div>
+                </div>
+              </nav>
+              <div className="card-body">
+                <form onSubmit={handleSubmit}>
+                  <div className="row">
+                
+
+                    {/* enquory type */}
+
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="category">categories </label>
+                        <select
+                          id="category"
+                          name="category"
+                          value={formData.category}
+                          onChange={handleInputChange}
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select categories</option>
+                          {categories.length > 0 ? (
+                            categories.map((category) => (
+                              <option key={category.id} value={category.id}>
+                                {category.category_name}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">No categories available</option>
+                          )}
+                        </select>
+                      </div>
+                    </div>
+                
+                    <div className="row">
+                      {/* enquiry purpose */}
+
+                     
+                     
+                    </div>
+
+                    {/* pri phone */}
+                  
+                  </div>
+
+                  {/* </div> */}
+                  <div className="form-group">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => toggle("2")}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </TabPane>
+
+          <TabPane tabId="2">
+            <div className="card">
+              <div className="card-body">
+                <form>
+                  <div className="row mt-3">
+                    <h5 className="btn btn-info mb-2">Permanent Address</h5>
+                  </div>
+                  <div className="row">
+                    {/* Permanent Address Fields */}
+
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="province">Province:</label>
+                        <select
+                          id="province"
+                          name="province"
+                          value={formData.province}
+                          onChange={handleInputChange}
+                          // onChange={(e) =>
+                          //   setFormData({
+                          //     ...formData,
+                          //     province: e.target.value,
+                          //   })
+                          // }
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select province</option>
+
+                          {provinces.length > 0 ? (
+                            provinces.map((province) => (
+                              <option key={province.id} value={province.id}>
+                                {province.name}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">No provinces available</option>
+                          )}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* district */}
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="district">District:</label>
+                        <select
+                          id="district"
+                          name="district"
+                          value={formData.district}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              district: e.target.value,
+                            })
+                          }
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select District</option>
+                          {districts.length > 0 ? (
+                            districts.map((district) => (
+                              <option key={district.id} value={district.id}>
+                                {district.name}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">no districts is available</option>
+                          )}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  {/* municipality */}
+                  <div className="row">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="municipality">Municipality:</label>
+                        <select
+                          id="municipality"
+                          name="municipality"
+                          value={formData.municipality}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              municipality: e.target.value,
+                            })
+                          }
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select Municipality</option>
+                          {municipalities.length > 0 ? (
+                            municipalities.map((municipality) => (
+                              <option
+                                key={municipality.id}
+                                value={municipality.id}
+                              >
+                                {municipality.name}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">
+                              no municipalities available
+                            </option>
+                          )}
+                        </select>
+                      </div>
+                    </div>
+
+                   
+                  </div>
+
+                  
+
+                  <div className="form-group">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => toggle("3")}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </TabPane>
+
+          <TabPane tabId="3">
+            <div className="card">
+              <div className="card-body">
+                <form onSubmit={handleSubmit}>
+                  <div className="row">
+                   
+
+                      
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="department">Departments:</label>
+                        <select
+                          id="department"
+                          name="department"
+                          value={formData.department}
+                          onChange={handleInputChange}
+                          // onChange={(e) =>
+                          //   setFormData({
+                          //     ...formData,
+                          //     department: e.target.value,
+                          //   })
+                          // }
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select department</option>
+                          {departments.length > 0 ? (
+                            departments.map((department) => (
+                              <option key={department.id} value={department.id}>
+                                {department.name}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">no departments available</option>
+                          )}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* designation  */}
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="designation">Designations:</label>
+                        <select
+                          id="designation"
+                          name="designation"
+                          value={formData.designation}
+                          onChange={handleInputChange}
+                          // onChange={(e) =>
+                          //   setFormData({
+                          //     ...formData,
+                          //     designation: e.target.value,
+                          //   })
+                          // }
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select designation</option>
+                          {designations && designations.length > 0 ? (
+                            designations.map((designation) => (
+                              <option
+                                key={designation.id}
+                                value={designation.id}
+                              >
+                                {designation.name}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">No designations available</option>
+                          )}
+                        </select>
+                      </div>
+                    </div>
+
+                 
+                
+                    {/* tole name */}
+                
+                  </div>
+
+                  <div className="form-group">
+                    <button type="submit" className="btn btn-primary">
+                      Add Enquiry
                     </button>
                   </div>
                 </form>

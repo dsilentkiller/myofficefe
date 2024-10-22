@@ -52,12 +52,6 @@ const EnquiryForm = () => {
     ward_no: "",
     tole_name: "",
 
-    // temp_province:"",
-    // temp_district:"",
-    // temp_municipality:"",
-    // temp_ward_no:"",
-    // temp_tole_name:"",
-
     estimated_amount: "",
     enquiry_purpose: "",
     known_by: "",
@@ -177,46 +171,38 @@ const EnquiryForm = () => {
   //habdle submit for update and create enquiry
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Validate required fields
     if (!formData.customer_name || !formData.category || !formData.pri_phone) {
       toast.error("Please fill in all required fields.");
       return;
     }
-
     if (!phoneValid) {
       toast.error("Please enter a valid phone number.");
       return;
     }
-    // Ensure formData includes department and designation IDs
+
     const formDataToSubmit = {
       ...formData,
-      department: formData.department?.id || formData.department,
-      designation: formData.designation?.id || formData.designation,
-      province: formData.province?.id || formData.province,
-      district: formData.district?.id || formData.district,
-      municipality: formData.municipality?.id || formData.municipality,
+      department: formData.department,
+      designation: formData.designation,
     };
 
     if (id) {
-      // Update enquiry
-      dispatch(updateEnquiry({ id, ...formData, formDataToSubmit }))
+      dispatch(updateEnquiry({ id, ...formDataToSubmit }))
         .unwrap()
         .then(() => {
-          toast.success("enquiry updated successfully!");
+          toast.success("Enquiry updated successfully!");
           navigate("/dashboard/crm/enquiry");
         })
         .catch((error) => {
-          console.error("Update Error:", error);
           toast.error(
             `Failed to update enquiry: ${error.message || "An error occurred"}`
           );
         });
     } else {
-      // Create enquiry
       dispatch(createEnquiry(formDataToSubmit))
         .unwrap()
         .then(() => {
-          toast.success("enquiry created successfully!");
+          toast.success("Enquiry created successfully!");
           setFormData({
             customer_name: "",
             category: "",
@@ -228,7 +214,6 @@ const EnquiryForm = () => {
             email: "",
             gender: "",
             province: "",
-            zone: "",
             district: "",
             municipality: "",
             ward_no: "",
@@ -242,7 +227,6 @@ const EnquiryForm = () => {
           navigate("/dashboard/crm/enquiry");
         })
         .catch((error) => {
-          console.error("Create Error:", error);
           toast.error(
             `Failed to create enquiry: ${error.message || "An error occurred"}`
           );
@@ -287,7 +271,7 @@ const EnquiryForm = () => {
                 <div className="container-fluid">
                   <h5 className="navbar-brand">Add Enquiry</h5>
                   <div className="navbar-nav ml-auto">
-                    <Link to="/dashboard/crm/enquiry">
+                    <Link to="dashboard/crm/enquiry">
                       <h5>Enquiry Table</h5>
                     </Link>
                   </div>
@@ -316,11 +300,6 @@ const EnquiryForm = () => {
                           // onChange={(e) => dispatch(setCurrentEnquiry({ ...currentEnquiry, name: e.target.value }))}
                           required
                         />
-                        {errors.customer_name && (
-                          <div className="text-danger">
-                            {errors.customer_name}
-                          </div>
-                        )}
                       </div>
                     </div>
 
@@ -370,11 +349,6 @@ const EnquiryForm = () => {
                           }
                           required
                         />
-                        {errors.estimated_amount && (
-                          <div className="text-danger">
-                            {errors.estimated_amount}
-                          </div>
-                        )}
                       </div>
                     </div>
                     <div className="row">
@@ -400,11 +374,6 @@ const EnquiryForm = () => {
                             className="form-control"
                             required
                           />
-                          {errors.enquiry_purpose && (
-                            <div className="text-danger">
-                              {errors.enquiry_purpose}
-                            </div>
-                          )}
                         </div>
                       </div>
                       {/* known by */}
@@ -427,7 +396,7 @@ const EnquiryForm = () => {
                             <option value="">Select an Option</option>
                             <option value="facebook">Facebook</option>
                             <option value="instagram">Instagram</option>
-                            <option value="linkedIn">linkedIn</option>
+                            <option value="linkedin">LinkedIn</option>
                             <option value="mouth to mouth">
                               Mouth to Mouth
                             </option>
@@ -538,9 +507,6 @@ const EnquiryForm = () => {
                             className="form-control"
                             required
                           />
-                          {errors.email && (
-                            <div className="text-danger">{errors.email}</div>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -578,13 +544,13 @@ const EnquiryForm = () => {
                           id="province"
                           name="province"
                           value={formData.province}
-                          onChange={handleInputChange}
-                          // onChange={(e) =>
-                          //   setFormData({
-                          //     ...formData,
-                          //     province: e.target.value,
-                          //   })
-                          // }
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              province: e.target.value,
+                            })
+                          }
                           className="form-control"
                           required
                         >
@@ -777,13 +743,13 @@ const EnquiryForm = () => {
                           id="department"
                           name="department"
                           value={formData.department}
-                          onChange={handleInputChange}
-                          // onChange={(e) =>
-                          //   setFormData({
-                          //     ...formData,
-                          //     department: e.target.value,
-                          //   })
-                          // }
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              department: e.target.value,
+                            })
+                          }
                           className="form-control"
                           required
                         >
@@ -809,13 +775,13 @@ const EnquiryForm = () => {
                           id="designation"
                           name="designation"
                           value={formData.designation}
-                          onChange={handleInputChange}
-                          // onChange={(e) =>
-                          //   setFormData({
-                          //     ...formData,
-                          //     designation: e.target.value,
-                          //   })
-                          // }
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              designation: e.target.value,
+                            })
+                          }
                           className="form-control"
                           required
                         >
