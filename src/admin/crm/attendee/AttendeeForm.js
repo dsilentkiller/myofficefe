@@ -22,8 +22,6 @@ const AttendeeForm = () => {
     setToggleState((prevState) => ({ ...prevState, toggle: true }));
   }, []); // Empty dependency array ensures this runs only once
 
-  const [phoneValid, setPhoneValid] = useState(true);
-  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     attendee_name: "",
     email: "",
@@ -33,6 +31,8 @@ const AttendeeForm = () => {
     purpose: "",
   });
 
+  const [phoneValid, setPhoneValid] = useState(true);
+  const [errors, setErrors] = useState({});
   const createStatus = useSelector((state) => state.attendees.createStatus);
   const createError = useSelector((state) => state.attendees.createError);
   const currentAttendee = useSelector(

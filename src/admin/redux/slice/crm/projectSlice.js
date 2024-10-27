@@ -23,13 +23,7 @@ export const createProject = createAsyncThunk(
         "http://127.0.0.1:8000/api/project/create/",
         formData
       );
-      if (response.status === 201) {
-        return response.data.result; // Ensure the correct structure is returned
-      } else {
-        return thunkAPI.rejectWithValue({
-          message: "Failed to create project.",
-        });
-      }
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data || { message: error.message }
@@ -37,27 +31,13 @@ export const createProject = createAsyncThunk(
     }
   }
 );
-// Fetch project by ID
-// export const fetchProjectById = createAsyncThunk(
-//   "projects/fetchProjectById",
-//   async (id, thunkAPI) => {
-//     try {
-//       const response = await axios.get(
-//         `http://127.0.0.1:8000/api/project/${id}/`
-//       );
-//       return response.data.result.data;
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
 
 export const fetchProjectById = createAsyncThunk(
   "projects/fetchProjectById",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/project/detail/${id}/`
+        `http://127.0.0.1:8000/api/project/update/${id}/`
       );
       return response.data.result; // Make sure the API returns the correct structure
     } catch (error) {
@@ -77,21 +57,36 @@ export const updateProjectStatus = createAsyncThunk(
     return response.data.result;
   }
 );
-// Update project
 export const updateProject = createAsyncThunk(
   "projects/updateProject",
-  async ({ id, name }, thunkAPI) => {
+  async ({ id, ...data }, thunkAPI) => {
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/api/project/update/${id}/`,
-        { name }
+        data
       );
-      return response.data.result;
+      return response.data.result; // Ensure this returns the updated project data
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
+
+// // Update project action
+// export const updateProject = createAsyncThunk(
+//   "projects/updateProject",
+//   async ({ id, name }, thunkAPI) => {
+//     try {
+//       const response = await axios.put(
+//         `http://127.0.0.1:8000/api/project/update/${id}/`,
+//         { name }
+//       );
+//       return response.data.result; // Ensure API response has the expected structure
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
+//     }
+//   }
+// );
 
 // Delete project
 export const deleteProject = createAsyncThunk(
@@ -114,7 +109,7 @@ export const searchProject = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/project/?search=${searchTerm}`
       );
-      return response.data.result;
+      return response.data.result.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -140,6 +135,9 @@ const projectSlice = createSlice({
     fetchProjectByIdSuccess: (state, action) => {
       state.currentProject = action.payload; // This should update the currentProject
     },
+    setCurrentProject(state, action) {
+      state.currentProject = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
@@ -162,24 +160,16 @@ const projectSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      // .addCase(fetchProjectById.fulfilled, (state, action) => {
-      //   state.isLoading = false;
-      //   state.currentProject = action.payload;
-      //   const index = state.list.findIndex(
-      //     (project) => project.id === action.payload.id
-      //   );
-      //   if (index !== -1) {
-      //     state.list[index] = action.payload;
-      //   } else {
-      //     state.list.push(action.payload);
-      //   }
-      // })
+
       .addCase(fetchProjectById.fulfilled, (state, action) => {
-        state.currentProject = action.payload; // Ensure action.payload is defined
+        // state.isLoading = false;
+        state.currentProject = action.payload; // Make sure payload is correctly updating currentProject
       })
       .addCase(fetchProjectById.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload;
+        // state.error = action.payload;
+        state.currentProject = null; // Reset if fetching fails
+        state.fetchError = action.error.message; // Optional: Handle the error
       })
       .addCase(updateProjectStatus.fulfilled, (state, action) => {
         const updatedProject = action.payload;
@@ -190,37 +180,45 @@ const projectSlice = createSlice({
           state.currentProject = updatedProject;
         }
       })
-      // Create project
+
       .addCase(createProject.pending, (state) => {
         state.createStatus = "loading";
         state.createError = null;
       })
-      // Create project
       .addCase(createProject.fulfilled, (state, action) => {
-        // Ensure that the project data is correctly added to the list
+        state.createStatus = "succeeded";
         state.list.push(action.payload);
-        state.createStatus = "succeeded"; // Set status to succeeded
       })
       .addCase(createProject.rejected, (state, action) => {
         state.createStatus = "failed";
-        state.createError = action.payload; // Store the error message in state
+        state.createError = action.payload;
       })
-      // Update project
-      .addCase(updateProject.pending, (state) => {
-        state.updateStatus = "loading";
-      })
+
       .addCase(updateProject.fulfilled, (state, action) => {
-        state.updateStatus = "succeeded";
+        const updatedProject = action.payload;
+        if (!updatedProject || !updatedProject.id) return;
+
+        // Update project in the list
         const index = state.list.findIndex(
-          (project) => project.id === action.payload.id
+          (project) => project.id === updatedProject.id
         );
+
         if (index !== -1) {
-          state.list[index] = action.payload;
+          state.list[index] = updatedProject;
+        }
+
+        // Also update currentProject if necessary
+        if (
+          state.currentProject &&
+          state.currentProject.id === updatedProject.id
+        ) {
+          state.currentProject = updatedProject;
         }
       })
+
       .addCase(updateProject.rejected, (state, action) => {
         state.updateStatus = "failed";
-        state.updateError = action.payload;
+        state.updateError = action.payload || "Failed to update project";
       })
       // Delete project
       .addCase(deleteProject.pending, (state) => {

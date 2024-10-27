@@ -1,6 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { createSelector } from "reselect";
 
+// Select the enquiries state from the root state
+// const selectEnquiriesState = (state) => state.enquiries || {};
+
+// // Memoized selector to get enquiry by ID
+// export const selectEnquiryById = createSelector(
+//   [selectEnquiriesState, (state, id) => id],
+//   (enquiriesState, id) => {
+//     return enquiriesState.enquiries
+//       ? enquiriesState.enquiries.find((enquiry) => enquiry.id === id)
+//       : {};
+//   }
+// );
 // Search Enquiries
 export const searchEnquiry = createAsyncThunk(
   "enquiry/searchEnquiry",
@@ -18,7 +31,7 @@ export const fetchEnquiries = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/enquiry/");
-      return response.data.result;
+      return response.data.result.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -50,7 +63,7 @@ export const fetchEnquiryById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
+        `http://127.0.0.1:8000/api/enquiry/update/${id}/`
       );
       return response.data.result.data || [];
     } catch (error) {

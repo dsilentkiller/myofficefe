@@ -111,7 +111,7 @@ const AttendeeUpdate = () => {
         <div className="container-fluid">
           <div className="card">
             <div className="card-header">
-              <h4 className="btn btn-primary">
+              <h4 className="btn btn-primary"EnquiryU>
                 {id ? "Update Attendee" : "Add Attendee"}
               </h4>
             </div>

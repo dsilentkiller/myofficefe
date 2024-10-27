@@ -31,6 +31,7 @@ const FollowupForm = () => {
     organization_name: "",
     organization_detail: "",
     purpose: "",
+    // remark :"",
   });
 
   const createStatus = useSelector((state) => state.Followups.createStatus);
