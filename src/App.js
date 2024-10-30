@@ -66,6 +66,9 @@ import EnquiryDelete from "./admin/crm/enquiry/EnquiryDelete";
 import EnquiryDetail from "./admin/crm/enquiry/EnquiryDetail";
 import EnquiryUpdate from "./admin/crm/enquiry/EnquiryUpdate";
 import EventUpdate from "./admin/crm/event/EventUpdate";
+import FollowForm from "./admin/crm/followup/FollowForm";
+import FollowTable from "./admin/crm/followup/FollowupTable";
+import FollowDelete from "./admin/crm/followup/FollowDelete";
 // import ProjectForm from "./admin/"
 function App() {
   return (
@@ -111,9 +114,14 @@ function App() {
                 path="/dashboard/crm/attendee/detail/:id"
                 element={<AttendeeDetail />}
               />
-              <Route path="attendee/update/:id/" element={<AttendeeUpdate />} />
+              <Route path="attendee/update/:id/" element={<AttendeeForm />} />
               <Route path="attendee/delete/:id/" element={<AttendeeDelete />} />
-
+              {/*  {/* localhost/dashbaord/crm/project */}
+              <Route path="follow" element={<FollowTable />} />
+              <Route path="follow/create" element={<FollowForm />} />
+              <Route path="follow/update/:id/" element={<FollowForm />} />
+              <Route path="follow/delete/:id/" element={<FollowDelete />} />
+              <Route path="project/detail/:id/" element={<ProjectDetail />} />
               {/* meeting update */}
               {/* <Route path="meeting-update" element={<MeetingUpdateTable />} />
               <Route

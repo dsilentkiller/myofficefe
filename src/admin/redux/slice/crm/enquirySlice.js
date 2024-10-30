@@ -58,14 +58,28 @@ export const createEnquiry = createAsyncThunk(
 );
 
 // Fetch a single enquiry by ID
+// export const fetchEnquiryById = createAsyncThunk(
+//   "enquiries/fetchEnquiryById",
+//   async (id, thunkAPI) => {
+//     try {
+//       const response = await axios.get(
+//         `http://127.0.0.1:8000/api/enquiry/update/${id}/`
+//       );
+//       return response.data.result.data || [];
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
 export const fetchEnquiryById = createAsyncThunk(
   "enquiries/fetchEnquiryById",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/enquiry/update/${id}/`
+        `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
       );
-      return response.data.result.data || [];
+      return response.data.result.data; // Make sure this matches your actual response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -81,7 +95,7 @@ export const updateEnquiry = createAsyncThunk(
         `http://127.0.0.1:8000/api/enquiry/update/${id}/`,
         { name }
       );
-      return response.data.result;
+      return response.data.result.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || error.message
@@ -122,6 +136,7 @@ const enquirySlice = createSlice({
     list: [], // Initialize list as an empty array
     loading: false,
     error: null,
+    selectedEnquiry: null,
     createStatus: null,
     updateStatus: null,
     deleteStatus: null,
@@ -150,15 +165,16 @@ const enquirySlice = createSlice({
       // Fetch enquiry by ID
       .addCase(fetchEnquiryById.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchEnquiryById.fulfilled, (state, action) => {
-        state.selectedEnquiry = action.payload;
+        // state.currentEnquiry = action.payload;
         state.loading = false;
+        state.selectedEnquiry = action.payload; // Adjust based on your API response
+    
       })
       .addCase(fetchEnquiryById.rejected, (state, action) => {
-        state.error = action.error.message;
         state.loading = false;
+        state.error = action.error.message;
       })
       // .addCase(fetchEnquiryById.pending, (state) => {
       //   state.loading = true;

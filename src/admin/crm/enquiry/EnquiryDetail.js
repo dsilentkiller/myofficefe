@@ -1,33 +1,33 @@
 import React, { useEffect } from "react";
-import {
-  fetchEnquiryById,
-  // selectEnquiryById,
-} from "../../redux/slice/crm/enquirySlice";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { useParams, useNavigate } from "react-router-dom";
+import { fetchEnquiryById } from "../../redux/slice/crm/enquirySlice";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import { selectEnquiryById } from "../../redux/selectors"; // Import the memoized selector
 
-const Enquiry = () => {
+const EnquiryDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const enquiry = useSelector((state) => state.enquiries.selectedEnquiry);
+  const loading = useSelector((state) => state.enquiries.loading);
+  const error = useSelector((state) => state.enquiries.error);
 
-  // Fetch enquiry by ID
   useEffect(() => {
+    console.log("Fetching enquiry with ID:", id);
     dispatch(fetchEnquiryById(id));
   }, [dispatch, id]);
 
-  // Use the memoized selector to get the enquiry by ID
-  // const enquiry = useSelector((state) => selectEnquiryById(state, id));
+  useEffect(() => {
+    if (enquiry) {
+      console.log("Fetched enquiry:", enquiry);
+    }
+    console.log("Current state:", { loading, error, enquiry });
+  }, [enquiry, loading, error]);
 
-  const enquiry = useSelector((state) => state.enquiries || {});
-  // const loading = enquiriesState.loading || false;
-  // const error = enquiriesState.error || null;
-
-  // if (loading) return <div>Loading...</div>;
-  // if (error) return <div>Error: {error.message}</div>;
-
+  if (loading) return <p>Loading enquiry details...</p>;
+  if (error) {
+    console.log("Error fetching enquiry:", error);
+    return <p>Error: {error.detail || "An unknown error occurred."}</p>;
+  }
+  if (!enquiry) return <p>No enquiry found!</p>;
   return (
     <div
       className="container mt-4"
@@ -40,98 +40,98 @@ const Enquiry = () => {
       <div className="row">
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Customer Name</h6>
-          <p>{enquiry?.customer_name}</p>
+          <p>{enquiry.customer_name}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Phone</h6>
-          <p>{enquiry?.pri_phone}</p>
+          <p>{enquiry.pri_phone}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Email</h6>
-          <p>{enquiry?.email}</p>
+          <p>{enquiry.email}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Category</h6>
-          <p>{enquiry?.category}</p>
+          <p>{enquiry.category_name}</p>
         </div>
       </div>
 
       <div className="row">
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Estimated Amount</h6>
-          <p>{enquiry?.estimated_amount}</p>
+          <p>{enquiry.estimated_amount}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Enquiry Purpose</h6>
-          <p>{enquiry?.enquiry_purpose}</p>
+          <p>{enquiry.enquiry_purpose}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Known By</h6>
-          <p>{enquiry?.known_by}</p>
+          <p>{enquiry.known_by}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Gender</h6>
-          <p>{enquiry?.gender}</p>
+          <p>{enquiry.gender}</p>
         </div>
       </div>
 
       <div className="row">
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Secondary Phone</h6>
-          <p>{enquiry?.sec_phone}</p>
+          <p>{enquiry.sec_phone}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Province</h6>
-          <p>{enquiry?.province}</p>
+          <p>{enquiry.province_name}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">District</h6>
-          <p>{enquiry?.district}</p>
+          <p>{enquiry.district_name}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Municipality</h6>
-          <p>{enquiry?.municipality}</p>
+          <p>{enquiry.municipality_name}</p>
         </div>
       </div>
 
       <div className="row">
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Ward No.</h6>
-          <p>{enquiry?.ward_no}</p>
+          <p>{enquiry.ward_no}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Tole Name</h6>
-          <p>{enquiry?.tole_name}</p>
+          <p>{enquiry.tole_name}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Organization Name</h6>
-          <p>{enquiry?.organization_name}</p>
+          <p>{enquiry.organization_name}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Department</h6>
-          <p>{enquiry?.department}</p>
+          <p>{enquiry.department_name}</p>
         </div>
       </div>
 
       <div className="row">
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Designation</h6>
-          <p>{enquiry?.designation}</p>
+          <p>{enquiry.designation_name}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">Enquiry Date</h6>
-          <p>{enquiry?.created}</p>
+          <p>{enquiry.created}</p>
         </div>
         <div className="col-md-3 mb-3">
           <h6 className="text-muted">History</h6>
-          <p>{enquiry?.history}</p>
+          <p>{enquiry.history}</p>
         </div>
       </div>
     </div>
   );
 };
 
-export default Enquiry;
+export default EnquiryDetail;
 
 // import React, { useEffect, useState } from "react";
 // import { fetchEnquiryById } from "../../redux/slice/crm/enquirySlice";

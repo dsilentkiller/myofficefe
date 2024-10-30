@@ -11,6 +11,7 @@ import eventReducer from "./admin/redux/slice/crm/eventSlice";
 import attendeeReducer from "./admin/redux/slice/crm/attendeeSlice";
 import categoryReducer from "./admin/redux/slice/crm/categorySlice";
 import enquiryReducer from "./admin/redux/slice/crm/enquirySlice";
+import followReducer from "./admin/redux/slice/crm/followSlice";
 const store = configureStore({
   reducer: {
     districts: districtReducer,
@@ -23,7 +24,8 @@ const store = configureStore({
     events: eventReducer,
     attendees: attendeeReducer, // Add the attendee slice here
     categories: categoryReducer, //
-    enquiry: enquiryReducer,
+    enquiries: enquiryReducer,
+    follows: followReducer,
   },
 });
 

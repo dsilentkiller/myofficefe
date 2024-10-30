@@ -225,14 +225,14 @@ const ProjectTable = () => {
                                 <td>
                                   <Link
                                     to={`/dashboard/crm/project/update/${project.id}`}
-                                    className="btn btn-primary"
+                                    className="btn btn-warning btn-sm"
                                   >
                                     <FaEdit />
                                   </Link>
                                   <span></span>
                                   <Link
                                     to={`/dashboard/crm/project/detail/${project.id}`}
-                                    className="btn btn-secondary"
+                                    className="btn btn-info btn-sm"
                                   >
                                     View
                                   </Link>

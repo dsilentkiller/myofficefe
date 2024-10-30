@@ -23,40 +23,7 @@ export const fetchAttendees = createAsyncThunk(
     }
   }
 );
-// export const createAttendee = createAsyncThunk(
-//   "attendees/createAttendee",
-//   async (formData, thunkAPI) => {
-//     try {
-//       const response = await axios.post(
-//         "http://127.0.0.1:8000/api/attendee/create/",
-//         formData
-//       );
-//       return response.data.result.data; // Adjust this based on your actual API response structure
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response.result.data);
-//     }
-//   }
-// );
 
-// export const createAttendee = createAsyncThunk(
-//   "attendees/createAttendee",
-//   async (formData, thunkAPI) => {
-//     try {
-//       const response = await axios.post(
-//         "http://127.0.0.1:8000/api/attendee/create/",
-//         formData
-//       );
-//       if (response.status === 201) {
-//         // Ensure it's a successful creation response
-//         return response.data.result.data;
-//       } else {
-//         return thunkAPI.rejectWithValue("Failed to create attendee.");
-//       }
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
 export const createAttendee = createAsyncThunk(
   "attendee/createAttendee",
   async (formData, { rejectWithValue }) => {
@@ -86,7 +53,7 @@ export const fetchAttendeeById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/attendee/detail/${id}/`
+        `http://127.0.0.1:8000/api/attendee/update/${id}/`
       );
       return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
@@ -97,11 +64,11 @@ export const fetchAttendeeById = createAsyncThunk(
 // // Update attendee
 export const updateAttendee = createAsyncThunk(
   "attendee/updateAttendee",
-  async ({ id, name }, thunkAPI) => {
+  async ({ id, ...formData }, thunkAPI) => {
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/api/attendee/update/${id}/`,
-        { name }
+        formData
       );
       return response.data.result;
     } catch (error) {
@@ -205,10 +172,20 @@ const attendeeSlice = createSlice({
         state.updateStatus = "loading";
       })
       .addCase(updateAttendee.fulfilled, (state, action) => {
-        state.updateStatus = "succeeded";
-        const index = state.list.findIndex((p) => p.id === action.payload.id);
+        const updatedAttendee = action.payload;
+        if (!updatedAttendee || !updatedAttendee.id) return;
+
+        // state.updateStatus = "succeeded";
+        const index = state.list.findIndex((p) => p.id === updatedAttendee.id);
         if (index !== -1) {
-          state.list[index] = action.payload;
+          state.list[index] = updatedAttendee;
+        }
+        //also update currentAttendee if necessory
+        if (
+          state.currentAttendee &&
+          state.currentAttendee.id === updatedAttendee.id
+        ) {
+          state.currentAttendee = updatedAttendee;
         }
       })
       .addCase(updateAttendee.rejected, (state, action) => {

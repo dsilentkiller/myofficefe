@@ -71,6 +71,17 @@
   text-overflow: ellipsis; /* Show ellipsis for overflowed text */
 }
 
+.due-soon {
+  background-color: #f8d7da; /* Light red for past due */
+  color: #721c24;
+}
+
+.due-very-soon {
+  background-color: #fff3cd; /* Light yellow for due soon */
+  color: #856404;
+}
+
+
 /* .table th:nth-child(2),
 .table td:nth-child(2) { /* Customer Name */
   /* width: 150px; Set fixed width */

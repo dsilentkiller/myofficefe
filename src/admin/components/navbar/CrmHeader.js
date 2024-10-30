@@ -33,6 +33,12 @@ const CrmHeader = () => {
               Event
             </Link>
           </li>
+          {/* FOLLOWUP */}
+          <li className="nav-item d-none d-sm-inline-block">
+            <Link to="follow" className="nav-link">
+              Followup
+            </Link>
+          </li>
         </ul>
 
         {/* <!-- Right navbar links --> */}

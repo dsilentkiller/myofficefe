@@ -60,6 +60,24 @@ const EnquiryTable = () => {
     dispatch(fetchEnquiries()); // Fetch enquiries using the dispatched action
   }, [dispatch]);
 
+  // format date time
+  const formatDateTime = (dateString) => {
+    if (!dateString) return ""; // Handle empty date
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false, // Change to true for 12-hour format
+    };
+    return new Intl.DateTimeFormat("en-US", options).format(
+      new Date(dateString)
+    );
+  };
+
+  // handle in page number
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -179,22 +197,21 @@ const EnquiryTable = () => {
                       <tr key={enquiry.id}>
                         <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                         <td>{formatName(enquiry.customer_name)}</td>
-                        <td>{enquiry.category}</td>
-                        <td>{formatName(enquiry.department)}</td>
-                        <td>{formatName(enquiry.designation)}</td>
+                        <td>{enquiry.category_name}</td>
+                        <td>{formatName(enquiry.department_name)}</td>
+                        <td>{formatName(enquiry.designation_name)}</td>
                         <td>{enquiry.pri_phone}</td>
                         <td>{enquiry.sec_phone}</td>
                         <td>{enquiry.email}</td>
                         <td>{enquiry.gender}</td>
-                        <td>{formatName(enquiry.province)}</td>
-                        <td>{formatName(enquiry.district)}</td>
-                        <td>{formatName(enquiry.municipality)}</td>
+                        <td>{formatName(enquiry.province_name)}</td>
+                        <td>{formatName(enquiry.district_name)}</td>
+                        <td>{formatName(enquiry.municipality_name)}</td>
                         <td>{enquiry.ward_no}</td>
                         <td>{formatName(enquiry.tole_name)}</td>
                         <td>{enquiry.estimated_amount}</td>
-                        {/* <td>{enquiry.enquiry_purpose}</td> */}
                         <td>{enquiry.known_by}</td>
-                        <td>{enquiry.created}</td>
+                        <td>{formatDateTime(enquiry.created)}</td>
                         <td>{enquiry.history}</td>
                         <td>
                           <Link
@@ -213,7 +230,7 @@ const EnquiryTable = () => {
                             onClick={() => setEnquiryToDelete(enquiry.id)}
                             className="btn btn-danger"
                           >
-                            delete
+                            Delete
                           </button>
                         </td>
                       </tr>
