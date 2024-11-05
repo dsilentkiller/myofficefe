@@ -10,6 +10,7 @@ export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
   return response.data.result;
 });
 
+
 // Async thunk for fetching an event by ID
 export const fetchEventById = createAsyncThunk(
   "events/fetchEventById",

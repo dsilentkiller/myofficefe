@@ -54,12 +54,18 @@ const EnquiryForm = () => {
     tole_name: "",
 
     estimated_amount: "",
-    enquiry_purpose: "",
+    problem: "",
     known_by: "",
     created: "",
     history: "",
   });
+  const createStatus = useSelector((state) => state.enquiries.createStatus);
+  const updateStatus = useSelector((state) => state.enquiries.updateStatus);
+  const createError = useSelector((state) => state.enquiries.createError);
+  const updateError = useSelector((state) => state.enquiries.updateError);
 
+  const enquiries = useSelector((state) => state.enquiries.list || []);
+  const enquiryData = useSelector((state) => state.enquiries.currentEnquiry);
   // Toggle function for switching tabs
   const toggle = (tab) => {
     if (activeTab !== tab) {
@@ -68,10 +74,12 @@ const EnquiryForm = () => {
   };
   // Retrieve data from the store
 
-  const currentEnquiry = useSelector((state) => state.enquiries.currentEnquiry);
+  const enquiryToUpdate = useSelector(
+    (state) => state.enquiries.enquiryToUpdate
+  );
   useEffect(() => {
-    console.log("Current Enquiry State:", currentEnquiry);
-  }, [currentEnquiry]);
+    console.log("Current Enquiry State:", enquiryToUpdate);
+  }, [enquiryToUpdate]);
 
   //Similarly, memoize other selectors for municipalities, departments, and designations.
 
@@ -87,7 +95,11 @@ const EnquiryForm = () => {
       dispatch(fetchEnquiryById(id));
     }
   }, [id, dispatch]);
-
+  useEffect(() => {
+    if (enquiryData) {
+      setFormData(enquiryData); // Set form data when enquiryData is available
+    }
+  }, [enquiryData]);
   // useEffect(() => {
   //   dispatch(fetchEnquiryById(enquiryId));
   // }, [dispatch, enquiryId]);
@@ -114,31 +126,34 @@ const EnquiryForm = () => {
     setFormData({ ...formData, sec_phone: value });
   };
   // curent enquiry
+
   useEffect(() => {
-    if (currentEnquiry && id) {
+    if (enquiryToUpdate && id) {
       setFormData({
-        customer_name: currentEnquiry.customer_name || "",
-        category: currentEnquiry.category || "",
-        organization_name: currentEnquiry.organization_name || "",
-        department: currentEnquiry.department || "",
-        designation: currentEnquiry.designation || "",
-        pri_phone: currentEnquiry.pri_phone || "",
-        sec_phone: currentEnquiry.sec_phone || "",
-        email: currentEnquiry.email || "",
-        gender: currentEnquiry.gender || "",
-        province: currentEnquiry.province || "",
-        district: currentEnquiry.district || "",
-        municipality: currentEnquiry.municipality || "",
-        ward_no: currentEnquiry.ward_no || "",
-        tole_name: currentEnquiry.tole_name || "",
-        estimated_amount: currentEnquiry.estimated_amount || "",
-        enquiry_purpose: currentEnquiry.enquiry_purpose || "",
-        known_by: currentEnquiry.known_by || "",
-        created: currentEnquiry.created || "",
-        history: currentEnquiry.history || "",
+        customer_name: enquiryToUpdate.customer_name || "",
+        category: enquiryToUpdate.category || "",
+        organization_name: enquiryToUpdate.organization_name || "",
+        department: enquiryToUpdate.department || "",
+        designation: enquiryToUpdate.designation || "",
+        pri_phone: enquiryToUpdate.pri_phone || "",
+        sec_phone: enquiryToUpdate.sec_phone || "",
+        email: enquiryToUpdate.email || "",
+        gender: enquiryToUpdate.gender || "",
+        province: enquiryToUpdate.province || "",
+        district: enquiryToUpdate.district || "",
+        municipality: enquiryToUpdate.municipality || "",
+        ward_no: enquiryToUpdate.ward_no || "",
+        tole_name: enquiryToUpdate.tole_name || "",
+        estimated_amount: enquiryToUpdate.estimated_amount || "",
+        problem: enquiryToUpdate.problem || "",
+        known_by: enquiryToUpdate.known_by || "",
+        created: enquiryToUpdate.created || "",
+        history: enquiryToUpdate.history || "",
       });
+    } else if (!enquiryToUpdate && id) {
+      toast.error("Failed to load enquiry details for update.");
     }
-  }, [currentEnquiry, id]);
+  }, [enquiryToUpdate, id]);
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -193,7 +208,7 @@ const EnquiryForm = () => {
     if (id) {
       dispatch(updateEnquiry({ id, ...formDataToSubmit }))
         .unwrap()
-        .then(() => {
+        .then((updatedEnquiry) => {
           toast.success("Enquiry updated successfully!");
           navigate("/dashboard/crm/enquiry");
         })
@@ -255,7 +270,10 @@ const EnquiryForm = () => {
             <div className="card">
               <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
-                  <h5 className="navbar-brand">Add Enquiry</h5>
+                  <h5 className="navbar-brand">
+                    {" "}
+                    {id ? "Update Enquiry" : "Add Enquiry"}
+                  </h5>
                   <div className="navbar-nav ml-auto">
                     <Link to="/dashboard/crm/enquiry">
                       <h5>Enquiry Table</h5>
@@ -283,7 +301,7 @@ const EnquiryForm = () => {
                               customer_name: e.target.value,
                             })
                           }
-                          // onChange={(e) => dispatch(setCurrentEnquiry({ ...currentEnquiry, name: e.target.value }))}
+                          // onChange={(e) => dispatch(setenquiryToUpdate({ ...enquiryToUpdate, name: e.target.value }))}
                           required
                         />
                       </div>
@@ -342,19 +360,17 @@ const EnquiryForm = () => {
 
                       <div className="col-md-4">
                         <div className="form-group">
-                          <label htmlFor="enquiry_purpose">
-                            enquiry_purpose:
-                          </label>
-                          <input
+                          <label htmlFor="problem">problem:</label>
+                          <textfield
                             type="text"
-                            id="enquiry_purpose"
-                            name="enquiry_purpose"
-                            value={formData.enquiry_purpose}
+                            id="problem"
+                            name="problem"
+                            value={formData.problem}
                             // onChange={handleInputChange}
                             onChange={(e) =>
                               setFormData({
                                 ...formData,
-                                enquiry_purpose: e.target.value,
+                                problem: e.target.value,
                               })
                             }
                             className="form-control"
@@ -911,7 +927,7 @@ export default EnquiryForm;
 //     // temp_tole_name:"",
 
 //     estimated_amount: "",
-//     enquiry_purpose: "",
+//     problem: "",
 //     known_by: "",
 //     created: "",
 //     history: "",
@@ -925,8 +941,8 @@ export default EnquiryForm;
 //   };
 //   // Retrieve data from the store
 
-//   const currentEnquiry = useSelector(
-//     (state) => state.enquiry?.currentEnquiry || {}
+//   const enquiryToUpdate = useSelector(
+//     (state) => state.enquiry?.enquiryToUpdate || {}
 //   );
 
 //   const { list: provinces } = useSelector((state) => state.provinces);
@@ -974,33 +990,33 @@ export default EnquiryForm;
 //   };
 //   // curent enquiry
 //   useEffect(() => {
-//     if (currentEnquiry && id) {
+//     if (enquiryToUpdate && id) {
 //       setFormData({
-//         customer_name: currentEnquiry?.customer_name || "",
+//         customer_name: enquiryToUpdate?.customer_name || "",
 
-//         category: currentEnquiry?.category || "",
-//         organization_name: currentEnquiry?.organization_name || "",
-//         department: currentEnquiry?.department || "",
-//         designation: currentEnquiry?.designation || "",
-//         pri_phone: currentEnquiry?.pri_phone || "",
-//         sec_phone: currentEnquiry?.sec_phone || "",
-//         email: currentEnquiry?.email || "",
-//         gender: currentEnquiry?.gender || "",
+//         category: enquiryToUpdate?.category || "",
+//         organization_name: enquiryToUpdate?.organization_name || "",
+//         department: enquiryToUpdate?.department || "",
+//         designation: enquiryToUpdate?.designation || "",
+//         pri_phone: enquiryToUpdate?.pri_phone || "",
+//         sec_phone: enquiryToUpdate?.sec_phone || "",
+//         email: enquiryToUpdate?.email || "",
+//         gender: enquiryToUpdate?.gender || "",
 
-//         province: currentEnquiry?.province || "",
-//         district: currentEnquiry?.district || "",
-//         municipality: currentEnquiry?.municipality || "",
-//         ward_no: currentEnquiry?.ward_no || "",
-//         tole_name: currentEnquiry?.tole_name || "",
+//         province: enquiryToUpdate?.province || "",
+//         district: enquiryToUpdate?.district || "",
+//         municipality: enquiryToUpdate?.municipality || "",
+//         ward_no: enquiryToUpdate?.ward_no || "",
+//         tole_name: enquiryToUpdate?.tole_name || "",
 
-//         estimated_amount: currentEnquiry?.estimated_amount || "",
-//         enquiry_purpose: currentEnquiry?.enquiry_purpose || "",
-//         known_by: currentEnquiry?.known_by || "",
-//         created: currentEnquiry?.created || "",
-//         history: currentEnquiry?.history || "",
+//         estimated_amount: enquiryToUpdate?.estimated_amount || "",
+//         problem: enquiryToUpdate?.problem || "",
+//         known_by: enquiryToUpdate?.known_by || "",
+//         created: enquiryToUpdate?.created || "",
+//         history: enquiryToUpdate?.history || "",
 //       });
 //     }
-//   }, [currentEnquiry, id]);
+//   }, [enquiryToUpdate, id]);
 
 //   // Fetch data when component mounts
 //   useEffect(() => {
@@ -1083,7 +1099,7 @@ export default EnquiryForm;
 //             ward_no: "",
 //             tole_name: "",
 //             estimated_amount: "",
-//             enquiry_purpose: "",
+//             problem: "",
 //             known_by: "",
 //             created: "",
 //             history: "",
@@ -1162,7 +1178,7 @@ export default EnquiryForm;
 //                               customer_name: e.target.value,
 //                             })
 //                           }
-//                           // onChange={(e) => dispatch(setCurrentEnquiry({ ...currentEnquiry, name: e.target.value }))}
+//                           // onChange={(e) => dispatch(setenquiryToUpdate({ ...enquiryToUpdate, name: e.target.value }))}
 //                           required
 //                         />
 //                       </div>
@@ -1221,19 +1237,19 @@ export default EnquiryForm;
 
 //                       <div className="col-md-4">
 //                         <div className="form-group">
-//                           <label htmlFor="enquiry_purpose">
-//                             enquiry_purpose:
+//                           <label htmlFor="problem">
+//                             problem:
 //                           </label>
 //                           <input
 //                             type="text"
-//                             id="enquiry_purpose"
-//                             name="enquiry_purpose"
-//                             value={formData.enquiry_purpose}
+//                             id="problem"
+//                             name="problem"
+//                             value={formData.problem}
 //                             // onChange={handleInputChange}
 //                             onChange={(e) =>
 //                               setFormData({
 //                                 ...formData,
-//                                 enquiry_purpose: e.target.value,
+//                                 problem: e.target.value,
 //                               })
 //                             }
 //                             className="form-control"

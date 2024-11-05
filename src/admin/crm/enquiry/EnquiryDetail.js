@@ -6,7 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 const EnquiryDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+
   const enquiry = useSelector((state) => state.enquiries.selectedEnquiry);
+
   const loading = useSelector((state) => state.enquiries.loading);
   const error = useSelector((state) => state.enquiries.error);
 

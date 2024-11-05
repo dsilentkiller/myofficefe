@@ -57,49 +57,43 @@ export const createEnquiry = createAsyncThunk(
   }
 );
 
-// Fetch a single enquiry by ID
-// export const fetchEnquiryById = createAsyncThunk(
-//   "enquiries/fetchEnquiryById",
-//   async (id, thunkAPI) => {
-//     try {
-//       const response = await axios.get(
-//         `http://127.0.0.1:8000/api/enquiry/update/${id}/`
-//       );
-//       return response.data.result.data || [];
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response.data);
-//     }
-//   }
-// );
-
 export const fetchEnquiryById = createAsyncThunk(
   "enquiries/fetchEnquiryById",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
+        `http://127.0.0.1:8000/api/enquiry/update/${id}/`
       );
-      return response.data.result.data; // Make sure this matches your actual response structure
+      return response.data.result; // Make sure this matches your actual response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
+// Update Project Status
+export const updateEnquiryStatus = createAsyncThunk(
+  "enquiries/updateStatus",
+  async ({ id, status }) => {
+    const response = await axios.put(
+      `http://127.0.0.1:8000/api/enquiry/update/${id}/`,
+      { status }
+    );
+    return response.data.result;
+  }
+);
 
 // Update Enquiry
 export const updateEnquiry = createAsyncThunk(
-  "enquiry/updateEnquiry",
-  async ({ id, name }, thunkAPI) => {
+  "enquiries/updateEnquiry",
+  async ({ id, ...data }, thunkAPI) => {
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/api/enquiry/update/${id}/`,
-        { name }
+        data
       );
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
-      );
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -145,7 +139,14 @@ const enquirySlice = createSlice({
     updateError: null,
     deleteError: null,
   },
-  reducers: {},
+  reducers: {
+    fetchEnquiryByIdSuccess: (state, action) => {
+      state.currentEnquiry = action.payload; // This should update the currentProject
+    },
+    setCurrentEnquiry(state, action) {
+      state.currentEnquiry = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Fetch all enquiries
@@ -165,37 +166,28 @@ const enquirySlice = createSlice({
       // Fetch enquiry by ID
       .addCase(fetchEnquiryById.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchEnquiryById.fulfilled, (state, action) => {
-        // state.currentEnquiry = action.payload;
+        state.currentEnquiry = action.payload;
         state.loading = false;
-        state.selectedEnquiry = action.payload; // Adjust based on your API response
-    
+
+        state.selectedEnquiry = action.payload;
       })
       .addCase(fetchEnquiryById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.currentEnquiry = null;
+        state.fetchError = action.error.message;
       })
-      // .addCase(fetchEnquiryById.pending, (state) => {
-      //   state.loading = true;
-      //   state.error = null;
-      // })
-      // .addCase(fetchEnquiryById.fulfilled, (state, action) => {
-      //   state.loading = false;
-      //   state.currentEnquiry = action.payload;
-      //   const index = state.list.findIndex(
-      //     (enquiry) => enquiry.id === action.payload.id
-      //   );
-      //   if (index !== -1) {
-      //     state.list[index] = action.payload;
-      //   } else {
-      //     state.list.push(action.payload);
-      //   }
-      // })
-      // .addCase(fetchEnquiryById.rejected, (state, action) => {
-      //   state.loading = false;
-      //   state.error = action.payload || action.error.message;
-      // })
+      .addCase(updateEnquiryStatus.fulfilled, (state, action) => {
+        const updatedEnquiry = action.payload;
+        state.list = state.list.map((enquiry) =>
+          enquiry.id === updatedEnquiry.id ? updatedEnquiry : enquiry
+        );
+        if (state.currentEnquiry.id === updatedEnquiry.id) {
+          state.currentEnquiry = updatedEnquiry;
+        }
+      })
 
       // Create Enquiry
       .addCase(createEnquiry.pending, (state) => {

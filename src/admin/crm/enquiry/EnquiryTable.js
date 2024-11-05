@@ -7,6 +7,10 @@ import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
 import { useSelector, useDispatch } from "react-redux"; // Correct import
 import { Link, useNavigate } from "react-router-dom";
 import EnquiryDelete from "./EnquiryDelete";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+// import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
 
 const EnquiryTable = () => {
   const [enquiries, setEnquiries] = useState([]);
@@ -108,6 +112,57 @@ const EnquiryTable = () => {
 
   // if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      enquiries.map((enquiry) => ({
+        ID: enquiry.id,
+        Name: enquiry.customer_name,
+
+        category: enquiry.category,
+        organization_name: enquiry.organization_name,
+        department: enquiry.department,
+        designation: enquiry.designation,
+        pri_phone: enquiry.pri_phone,
+        sec_phone: enquiry.sec_phone,
+        email: enquiry.email,
+        gender: enquiry.gender,
+
+        province: enquiry.province,
+        // zone:enquiry.
+        district: enquiry.district,
+        municipality: enquiry.municipality,
+        ward_no: enquiry.ward_no,
+        tole_name: enquiry.tole_name,
+
+        estimated_amount: enquiry.estimated_amount,
+        enquiry_purpose: enquiry.enquiry_purpose,
+        known_by: enquiry.known_by,
+        created: enquiry.created,
+        history: enquiry.history,
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Designations");
+    XLSX.writeFile(workbook, "enquiries.xlsx");
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text("enquiries List", 20, 10);
+
+    const tableColumn = ["ID", "Name"];
+    const tableRows = enquiries.map((enquiry) => [
+      enquiry.id,
+      enquiry.customer_name,
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+    doc.save("enquiries.pdf");
+  };
 
   return (
     <div className="content-wrapper">
@@ -150,11 +205,20 @@ const EnquiryTable = () => {
                 <ul className="navbar-nav mr-30">
                   <li className="nav-item ">
                     <button
-                      id="employeeTable"
+                      id="exportExcel"
                       className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
+                      onClick={exportToExcel}
                     >
-                      <i className="fas fa-file-csv"></i>
-                      {/* Font Awesome icon for CSV */}
+                      Export Excel
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      id="exportPDF"
+                      className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
+                      onClick={exportToPDF}
+                    >
+                      Export PDF
                     </button>
                   </li>
                   {/* Add other export buttons here */}

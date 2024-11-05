@@ -101,16 +101,7 @@ const ProjectForm = () => {
     }
   };
 
-  useEffect(() => {
-    if (createStatus === "succeeded") {
-      toast.success("Project created successfully!");
-      navigate("/dashboard/crm/project");
-    } else if (createStatus === "failed") {
-      toast.error(
-        `Create Error: ${createError?.message || "An error occurred"}`
-      );
-    }
-  }, [createStatus, createError, navigate]);
+
 
   useEffect(() => {
     if (updateStatus === "succeeded") {

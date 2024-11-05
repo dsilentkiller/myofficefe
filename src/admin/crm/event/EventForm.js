@@ -20,6 +20,11 @@ const EventForm = ({
 
   const dispatch = useDispatch();
 
+  const handleSelectAttendee = (index, value) => {
+    const updatedAttendeeIds = [...attendeeIds];
+    updatedAttendeeIds[index] = value; // This should correctly set the attendee ID
+    setAttendeeIds(updatedAttendeeIds);
+  };
   useEffect(() => {
     dispatch(fetchAttendees());
   }, [dispatch]);
@@ -34,12 +39,6 @@ const EventForm = ({
     setAttendeeIds(eventData.attendees?.map((attendee) => attendee.id) || []);
   }, [eventData]);
 
-  const handleSelectAttendee = (index, value) => {
-    const updatedAttendeeIds = [...attendeeIds];
-    updatedAttendeeIds[index] = value;
-    setAttendeeIds(updatedAttendeeIds);
-  };
-
   const handleRemoveAttendee = (index) => {
     const updatedAttendeeIds = attendeeIds.filter((_, i) => i !== index);
     setAttendeeIds(updatedAttendeeIds);
@@ -53,7 +52,6 @@ const EventForm = ({
   if (error) return <p>Error loading attendees: {error}</p>;
 
   const handleSave = () => {
-    console.log("attendee", attendeeIds);
     const selectedAttendees = attendeeIds
       .filter((id) => id)
       .map((id) => {
@@ -68,7 +66,7 @@ const EventForm = ({
       title: eventData.title,
       start: eventData.start.toISOString(),
       end: eventData.end.toISOString(),
-      attendees: selectedAttendees,
+      attendees: selectedAttendees, // IDs to save
       notes: eventData.notes || "",
     };
 
