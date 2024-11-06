@@ -31,7 +31,7 @@ export const fetchEnquiries = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/enquiry/");
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
@@ -56,9 +56,9 @@ export const createEnquiry = createAsyncThunk(
     }
   }
 );
-
-export const fetchEnquiryById = createAsyncThunk(
-  "enquiries/fetchEnquiryById",
+// fetch enquiry by id upodate
+export const fetchEnquiryByIdUpdate = createAsyncThunk(
+  "enquiries/fetchEnquiryByIdUpdate",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
@@ -70,6 +70,22 @@ export const fetchEnquiryById = createAsyncThunk(
     }
   }
 );
+
+// fetch enquiry by id
+export const fetchEnquiryById = createAsyncThunk(
+  "enquiries/fetchEnquiryById",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
+      );
+      return response.data; // Return the enquiry data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data || error.message); // Handle errors
+    }
+  }
+);
+
 // Update Project Status
 export const updateEnquiryStatus = createAsyncThunk(
   "enquiries/updateStatus",
@@ -162,8 +178,7 @@ const enquirySlice = createSlice({
         state.loading = false;
         state.error = action.payload || action.error.message;
       })
-
-      // Fetch enquiry by ID
+      // Fetch enquiry by ID update
       .addCase(fetchEnquiryById.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -179,6 +194,24 @@ const enquirySlice = createSlice({
         state.currentEnquiry = null;
         state.fetchError = action.error.message;
       })
+
+      // Fetch enquiry by ID update
+      .addCase(fetchEnquiryByIdUpdate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchEnquiryByIdUpdate.fulfilled, (state, action) => {
+        state.currentEnquiry = action.payload;
+        state.loading = false;
+
+        state.selectedEnquiry = action.payload;
+      })
+      .addCase(fetchEnquiryByIdUpdate.rejected, (state, action) => {
+        state.loading = false;
+        state.currentEnquiry = null;
+        state.fetchError = action.error.message;
+      })
+
       .addCase(updateEnquiryStatus.fulfilled, (state, action) => {
         const updatedEnquiry = action.payload;
         state.list = state.list.map((enquiry) =>

@@ -16,6 +16,12 @@ const CrmHeader = () => {
               Enquiry
             </Link>
           </li>
+          {/* FOLLOWUP */}
+          <li className="nav-item d-none d-sm-inline-block">
+            <Link to="follow" className="nav-link">
+              Followup
+            </Link>
+          </li>
           <li className="nav-item d-none d-sm-inline-block">
             <Link to="project" className="nav-link">
               project
@@ -31,12 +37,6 @@ const CrmHeader = () => {
           <li className="nav-item d-none d-sm-inline-block">
             <Link to="event" className="nav-link">
               Event
-            </Link>
-          </li>
-          {/* FOLLOWUP */}
-          <li className="nav-item d-none d-sm-inline-block">
-            <Link to="follow" className="nav-link">
-              Followup
             </Link>
           </li>
         </ul>

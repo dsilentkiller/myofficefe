@@ -22,7 +22,7 @@ const EnquiryTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   const [enquiryToDelete, setEnquiryToDelete] = useState(null);
-
+  const maxHistoryLength = 100; // Maximum characters to show for history
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // const { enquiries, isLoading } = useSelector((state) => state.enquiries);
@@ -37,7 +37,16 @@ const EnquiryTable = () => {
     const fetchEnquiries = async () => {
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/enquiry/");
-        setEnquiries(response.data.result || []); // Ensure the data is from 'result'
+        // setEnquiries(response.data.result || []); // Ensure the data is from 'result'
+        const data = response.data.result || [];
+
+        // Sort enquiries by next_follow_up_date in descending order
+        const sortedEnquiries = data.sort((a, b) => {
+          const dateA = new Date(a.next_follow_up_date);
+          const dateB = new Date(b.next_follow_up_date);
+          return dateB - dateA; // Descending order
+        });
+        setEnquiries(sortedEnquiries);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching enquiries:", error); // Log the error for debugging
@@ -65,8 +74,24 @@ const EnquiryTable = () => {
   }, [dispatch]);
 
   // format date time
+  // const formatDateTime = (dateString) => {
+  //   if (!dateString) return ""; // Handle empty date
+  //   const options = {
+  //     year: "numeric",
+  //     month: "2-digit",
+  //     day: "2-digit",
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //     second: "2-digit",
+  //     hour12: false, // Change to true for 12-hour format
+  //   };
+  //   return new Intl.DateTimeFormat("en-US", options).format(
+  //     new Date(dateString)
+  //   );
+  // };
+  // Helper function to format date as a readable string
   const formatDateTime = (dateString) => {
-    if (!dateString) return ""; // Handle empty date
+    if (!dateString) return "";
     const options = {
       year: "numeric",
       month: "2-digit",
@@ -74,11 +99,24 @@ const EnquiryTable = () => {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
-      hour12: false, // Change to true for 12-hour format
+      hour12: false,
     };
     return new Intl.DateTimeFormat("en-US", options).format(
       new Date(dateString)
     );
+  };
+
+  // Helper function to check if the next follow-up date is tomorrow
+  const isTomorrow = (dateString) => {
+    const now = new Date();
+    const tomorrow = new Date(now.setDate(now.getDate() + 1));
+    const nextFollowUp = new Date(dateString);
+
+    // Set time to midnight for comparison
+    tomorrow.setHours(0, 0, 0, 0);
+    nextFollowUp.setHours(0, 0, 0, 0);
+
+    return tomorrow.getTime() === nextFollowUp.getTime();
   };
 
   // handle in page number
@@ -89,6 +127,13 @@ const EnquiryTable = () => {
   const handleItemsPerPageChange = (event) => {
     setItemsPerPage(Number(event.target.value));
     setCurrentPage(1); // Reset to first page when items per page changes
+  };
+  // Truncate the history text to maxHistoryLength
+  const truncateHistory = (history) => {
+    if (history && history.length > maxHistoryLength) {
+      return history.substring(0, maxHistoryLength) + "..."; // Add ellipsis
+    }
+    return history;
   };
   if (loading) {
     return <div>Loading...</div>;
@@ -234,6 +279,8 @@ const EnquiryTable = () => {
                   <tr>
                     <th>#</th>
                     <th>Customer Name</th>
+                    <th>Enquiry Date</th>
+                    <th>next follow date</th>
                     <th>category</th>
                     <th>Department</th>
                     <th>designation</th>
@@ -250,55 +297,75 @@ const EnquiryTable = () => {
                     {/* <th>Enquiry Purpose</th> */}
 
                     <th>Known By</th>
-                    <th>Joining Date</th>
+
                     <th>History</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredEnquiries.length > 0 ? (
-                    filteredEnquiries.map((enquiry, index) => (
-                      <tr key={enquiry.id}>
-                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                        <td>{formatName(enquiry.customer_name)}</td>
-                        <td>{enquiry.category_name}</td>
-                        <td>{formatName(enquiry.department_name)}</td>
-                        <td>{formatName(enquiry.designation_name)}</td>
-                        <td>{enquiry.pri_phone}</td>
-                        <td>{enquiry.sec_phone}</td>
-                        <td>{enquiry.email}</td>
-                        <td>{enquiry.gender}</td>
-                        <td>{formatName(enquiry.province_name)}</td>
-                        <td>{formatName(enquiry.district_name)}</td>
-                        <td>{formatName(enquiry.municipality_name)}</td>
-                        <td>{enquiry.ward_no}</td>
-                        <td>{formatName(enquiry.tole_name)}</td>
-                        <td>{enquiry.estimated_amount}</td>
-                        <td>{enquiry.known_by}</td>
-                        <td>{formatDateTime(enquiry.created)}</td>
-                        <td>{enquiry.history}</td>
-                        <td>
-                          <Link
-                            className="btn btn-primary"
-                            to={`update/${enquiry.id}`}
+                    filteredEnquiries.map((enquiry, index) => {
+                      // Check if next follow-up date is tomorrow
+                      const isRedMark = isTomorrow(enquiry.next_follow_up_date);
+                      return (
+                        <tr key={enquiry.id}>
+                          <td>
+                            {(currentPage - 1) * itemsPerPage + index + 1}
+                          </td>
+                          <td>{formatName(enquiry.customer_name)}</td>
+                          <td>{formatDateTime(enquiry.created)}</td>
+                          <td
+                            style={{
+                              backgroundColor: isRedMark
+                                ? "red"
+                                : "transparent",
+                              color: isRedMark ? "white" : "black",
+                            }}
                           >
-                            Edit
-                          </Link>
-                          <Link
-                            to={`detail/${enquiry.id}`}
-                            className="btn btn-info"
-                          >
-                            View
-                          </Link>
-                          <button
-                            onClick={() => setEnquiryToDelete(enquiry.id)}
-                            className="btn btn-danger"
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))
+                            {formatDateTime(enquiry.next_follow_up_date)}
+                          </td>
+                          <td>{enquiry.category_name}</td>
+                          <td>{formatName(enquiry.department_name)}</td>
+                          <td>{formatName(enquiry.designation_name)}</td>
+                          <td>{enquiry.pri_phone}</td>
+                          <td>{enquiry.sec_phone}</td>
+                          <td>{enquiry.email}</td>
+                          <td>{enquiry.gender}</td>
+                          <td>{formatName(enquiry.province_name)}</td>
+                          <td>{formatName(enquiry.district_name)}</td>
+                          <td>{formatName(enquiry.municipality_name)}</td>
+                          <td>{enquiry.ward_no}</td>
+                          <td>{formatName(enquiry.tole_name)}</td>
+                          <td>{enquiry.estimated_amount}</td>
+                          <td>{enquiry.known_by}</td>
+
+                          <td>
+                            {/* Display truncated history */}
+                            <p>{truncateHistory(enquiry.history)}</p>
+                          </td>
+                          <td>
+                            <Link
+                              className="btn btn-primary"
+                              to={`update/${enquiry.id}`}
+                            >
+                              Edit
+                            </Link>
+                            <Link
+                              to={`detail/${enquiry.id}`}
+                              className="btn btn-info"
+                            >
+                              View
+                            </Link>
+                            <button
+                              onClick={() => setEnquiryToDelete(enquiry.id)}
+                              className="btn btn-danger"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
                   ) : (
                     <tr>
                       <td colSpan="17">No enquiries found</td>

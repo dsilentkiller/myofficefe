@@ -101,8 +101,6 @@ const ProjectForm = () => {
     }
   };
 
-
-
   useEffect(() => {
     if (updateStatus === "succeeded") {
       toast.success("Project updated successfully!");

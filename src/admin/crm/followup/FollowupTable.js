@@ -11,6 +11,8 @@ const FollowTable = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [followToDelete, setFollowToDelete] = useState(null);
+  const [filteredFollows, setFilteredFollows] = useState([]);
+
   const fetchError = useSelector((state) => state.follows?.fetchError);
 
   const {
@@ -21,6 +23,7 @@ const FollowTable = () => {
 
   useEffect(() => {
     dispatch(fetchFollows());
+    console.log(follows);
   }, [dispatch]);
 
   const handleDelete = (id) => {
@@ -70,12 +73,42 @@ const FollowTable = () => {
     return "";
   };
 
+  useEffect(() => {
+    //fetching data
+    // const fetchFollows = async () => {
+    //   try {
+    //     const response = await axios.get("http://127.0.0.1:8000/api/enquiry/");
+    //     setFollows(response.data.result || []); // Ensure the data is from 'result'
+    //     setLoading(false);
+    //   } catch (error) {
+    //     console.error("Error fetching Follows:", error); // Log the error for debugging
+    //     setError(error);
+    //     setLoading(false);
+    //   }
+    // };
+
+    // fetchFollows();
+
+    //live search handling
+    if (searchTerm) {
+      setFilteredFollows(
+        follows.filter((enquiry) =>
+          enquiry.enquiry_id.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredFollows(follows);
+    }
+  }, [searchTerm, follows]);
+
   // Filter and sort follows by created date (latest first)
-  const sortedFollows = follows
-    .filter((follow) =>
-      follow.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => new Date(b.created) - new Date(a.created));
+  // const FilteredFollows = follows;
+  // console
+  //   .log("follows", follows)
+  //   .filter((follow) =>
+  //     follow.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  //   )
+  //   .sort((a, b) => new Date(b.created) - new Date(a.created));
 
   return (
     <div className="content-wrapper">
@@ -110,31 +143,29 @@ const FollowTable = () => {
           </nav>
           <div className="card-body">
             <div className="table-container">
-              {isLoading ? (
-                <p>Loading...</p>
-              ) : fetchError ? (
-                <p className="text-danger">{fetchError}</p>
-              ) : (
+              {isLoading && <p>Loading...</p>}
+              {fetchError && <p className="text-danger">{fetchError}</p>}
+              {!isLoading && !fetchError && (
                 <table className="table table-bordered">
                   <thead>
                     <tr>
                       <th>#</th>
                       <th>Name</th>
                       <th>Follow by</th>
-                      <th>Due Date</th>
+                      <th>next follow up date</th>
                       <th>Remark</th>
                       <th>Notes</th>
-                      <th>Created</th>
+                      <th>last followup at</th>
                       <th>Updated</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {sortedFollows.length > 0 ? (
-                      sortedFollows.map((follow, index) => (
+                    {filteredFollows.length > 0 ? (
+                      filteredFollows.map((follow, index) => (
                         <tr key={follow.id}>
                           <td>{index + 1}</td>
-                          <td>{follow.name}</td>
+                          <td>{follow.enquiry_name}</td>
                           <td>{formatName(follow.follow_by)}</td>
                           <td className={getDueDateClass(follow.due_date)}>
                             {formatDateTime(follow.due_date)}
@@ -270,7 +301,7 @@ export default FollowTable;
 //   };
 
 //   // Sort follows by created date (latest first)
-//   const sortedFollows = follows
+//   const FilteredFollows = follows
 //     .filter((follow) =>
 //       follow.name?.toLowerCase().includes(searchTerm.toLowerCase())
 //     )
@@ -340,8 +371,8 @@ export default FollowTable;
 //                     </tr>
 //                   </thead>
 //                   <tbody>
-//                     {sortedFollows.length > 0 ? (
-//                       sortedFollows.map((follow, index) => (
+//                     {ilteredFollows.length > 0 ? (
+//                       FilteredFollows.map((follow, index) => (
 //                         <tr key={follow.id}>
 //                           <td>{index + 1}</td>
 //                           <td>{follow.name}</td>

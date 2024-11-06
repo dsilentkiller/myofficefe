@@ -6,9 +6,7 @@ export const fetchFollows = createAsyncThunk(
   "follows/fetchFollow",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/enquiry/follow-up/"
-      );
+      const response = await axios.get("http://127.0.0.1:8000/api/follow-up/");
       console.log(response.data); // Log response to verify structure
       return response.data.result; // Ensure the correct structure here
     } catch (error) {
@@ -23,7 +21,7 @@ export const createFollow = createAsyncThunk(
   async (formData, thunkAPI) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/enquiry/follow-up/create/",
+        "http://127.0.0.1:8000/api/follow-up/create/",
         formData
       );
       return response.data.result;
@@ -40,7 +38,7 @@ export const fetchFollowById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/enquiry/follow-up/update/${id}/`
+        `http://127.0.0.1:8000/api/follow-up/update/${id}/`
       );
       return response.data.result; // Make sure the API returns the correct structure
     } catch (error) {
@@ -54,7 +52,7 @@ export const updateFollowStatus = createAsyncThunk(
   "follows/updateStatus",
   async ({ id, status }) => {
     const response = await axios.put(
-      `http://127.0.0.1:8000/api/enquiry/follow-up/${id}/`,
+      `http://127.0.0.1:8000/api/follow-up/${id}/`,
       { status }
     );
     return response.data.result;
@@ -65,7 +63,7 @@ export const updateFollow = createAsyncThunk(
   async ({ id, ...data }, thunkAPI) => {
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/enquiry/follow-up/update/${id}/`,
+        `http://127.0.0.1:8000/api/follow-up/update/${id}/`,
         data
       );
       return response.data.result; // Ensure this returns the updated follow data
@@ -80,9 +78,7 @@ export const deleteFollow = createAsyncThunk(
   "follows/deleteFollow",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(
-        `http://127.0.0.1:8000/api/enquiry/follow-up/delete/${id}/`
-      );
+      await axios.delete(`http://127.0.0.1:8000/api/follow-up/delete/${id}/`);
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
@@ -96,7 +92,7 @@ export const searchFollow = createAsyncThunk(
   async (searchTerm, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/enquiry/follow-up/?search=${searchTerm}`
+        `http://127.0.0.1:8000/api/follow-up/?search=${searchTerm}`
       );
       return response.data.result.data;
     } catch (error) {

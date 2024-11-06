@@ -14,28 +14,35 @@ const FollowForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [toggleState, setToggleState] = useState({ toggle: false });
-  const { list: enquiries } = useSelector((state) => state.enquiries);
 
   useEffect(() => {
     setToggleState((prevState) => ({ ...prevState, toggle: true }));
   }, []);
 
-  useEffect(() => {
-    dispatch(fetchEnquiries());
-  }, [dispatch]);
-
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    name: "",
+    enquiry_id: "",
     follow_by: "",
     due_date: "",
     remark: "",
     notes: "",
     created: "",
     purpose: "",
+    enquiry: "", // Ensure enquiry is part of form data
   });
+  const {
+    list: enquiries,
+    isLoading,
+    error,
+  } = useSelector((state) => state.enquiries);
 
-  const createStatus = useSelector((state) => state.follows.createStatus);
+  useEffect(() => {
+    dispatch(fetchEnquiries()); // Fetch enquiries on mount
+  }, [dispatch]);
+
+  console.log("Is loading: ", isLoading);
+  console.log("Fetched enquiries: ", enquiries);
+  console.log("Error: ", error);
   const currentFollow = useSelector((state) => state.follows.currentFollow);
 
   useEffect(() => {
@@ -46,14 +53,15 @@ const FollowForm = () => {
 
   useEffect(() => {
     if (currentFollow && id) {
-      console.log("Current Follow Data:", currentFollow); // Debugging line
+      console.log("Current Follow Data:", currentFollow);
       setFormData({
-        name: currentFollow.name || "",
+        enquiry_id: currentFollow.enquiry_id || "",
         follow_by: currentFollow.follow_by || "",
         due_date: currentFollow.due_date || "",
         remark: currentFollow.remark || "",
         notes: currentFollow.notes || "",
         created: currentFollow.created || "",
+        enquiry: currentFollow.enquiry || "", // Make sure to populate enquiry ID if it exists
       });
     }
   }, [currentFollow, id]);
@@ -65,41 +73,34 @@ const FollowForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const payload = { id, ...formData };
-    console.log("Update Payload:", payload); // Log the payload
-    try {
-      if (id) {
-        dispatch(updateFollow({ id, ...formData }))
-          .unwrap()
-          .then(() => {
-            toast.success("Follow updated successfully!");
-            navigate("/dashboard/crm/follow");
-          })
-          .catch((error) => {
-            console.error("Update Error:", error);
-            toast.error(
-              `Failed to update Follow: ${error.message || "An error occurred"}`
-            );
-          });
-      } else {
-        dispatch(createFollow(formData))
-          .unwrap()
-          .then(() => {
-            toast.success("Follow created successfully!");
-            navigate("/dashboard/crm/follow");
-          })
-          .catch((error) => {
-            console.error("Create Error:", error);
-            setErrors(error.errors || {});
-            toast.error(
-              `Failed to create Follow: ${error.message || "An error occurred"}`
-            );
-          });
-      }
-    } catch (error) {
-      console.error("Update Error:", error);
-      toast.error(
-        `Failed to update Follow: ${error.message || "An error occurred"}`
-      );
+    if (id) {
+      dispatch(updateFollow(payload))
+        .unwrap()
+        .then(() => {
+          toast.success("Follow up updated successfully!");
+          navigate("/dashboard/crm/follow");
+        })
+        .catch((error) => {
+          console.error("Update Error:", error);
+          setErrors(error.errors || {});
+          toast.error(
+            `Failed to update Follow: ${error.message || "An error occurred"}`
+          );
+        });
+    } else {
+      dispatch(createFollow(formData))
+        .unwrap()
+        .then(() => {
+          toast.success("Follow created successfully!");
+          navigate("/dashboard/crm/follow");
+        })
+        .catch((error) => {
+          console.error("Create Error:", error);
+          setErrors(error.errors || {});
+          toast.error(
+            `Failed to create Follow: ${error.message || "An error occurred"}`
+          );
+        });
     }
   };
 
@@ -116,20 +117,32 @@ const FollowForm = () => {
             <div className="card-body">
               <form onSubmit={handleSubmit}>
                 <div className="row">
-                  <div className="col-md-6">
+                  <div className="col-md-4">
                     <div className="form-group">
-                      <label htmlFor="name">Customer name </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        className="form-control"
-                        placeholder="Enter name"
+                      <label htmlFor="enquiry">customer name:</label>
+                      <select
+                        id="enquiry_id"
+                        name="enquiry_id"
+                        value={formData.enquiry_id}
                         onChange={handleChange}
+                        className="form-control"
                         required
-                      />
-                      {errors.name && <p>{errors.name}</p>}
+                      >
+                        <option value="">Select enquiry</option>
+                        {isLoading ? (
+                          <option>Loading...</option>
+                        ) : error ? (
+                          <option>Error loading enquiries</option>
+                        ) : enquiries.length > 0 ? (
+                          enquiries.map((enquiry) => (
+                            <option key={enquiry.id} value={enquiry.id}>
+                              {enquiry.customer_name}
+                            </option>
+                          ))
+                        ) : (
+                          <option>No enquiries available</option>
+                        )}
+                      </select>
                     </div>
                   </div>
 
@@ -147,7 +160,7 @@ const FollowForm = () => {
                         <option value="">Select an Option</option>
                         <option value="call">Call</option>
                         <option value="whatsapp">WhatsApp</option>
-                        <option value="linkedIn">linkedIn</option>
+                        <option value="linkedIn">LinkedIn</option>
                         <option value="viber">Viber</option>
                         <option value="email">Email</option>
                         <option value="meetup">Meetup</option>
@@ -159,7 +172,7 @@ const FollowForm = () => {
                 <div className="row">
                   <div className="col-md-6">
                     <div className="form-group">
-                      <label htmlFor="due_date">Due Date:</label>
+                      <label htmlFor="due_date">Next Follow up Date:</label>
                       <input
                         type="date"
                         id="due_date"
@@ -209,7 +222,7 @@ const FollowForm = () => {
 
                   <div className="col-md-6">
                     <div className="form-group">
-                      <label htmlFor="created">Follow-up Date:</label>
+                      <label htmlFor="created">Today Date:</label>
                       <input
                         type="date"
                         id="created"
@@ -239,6 +252,280 @@ const FollowForm = () => {
 };
 
 export default FollowForm;
+
+// import React, { useState, useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useNavigate, useParams } from "react-router-dom";
+// import { toast } from "react-toastify";
+// import {
+//   createFollow,
+//   updateFollow,
+//   fetchFollowById,
+// } from "../../redux/slice/crm/followSlice";
+// import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
+
+// const FollowForm = () => {
+//   const { id } = useParams();
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+//   const [toggleState, setToggleState] = useState({ toggle: false });
+//   const { list: enquiries } = useSelector((state) => state.enquiries);
+//   // const { list: designations } = useSelector((state) => state.designations);
+//   useEffect(() => {
+//     setToggleState((prevState) => ({ ...prevState, toggle: true }));
+//   }, []);
+
+//   useEffect(() => {
+//     dispatch(fetchEnquiries());
+//     console.log(enquiries);
+//   }, [dispatch]);
+
+//   const [errors, setErrors] = useState({});
+//   const [formData, setFormData] = useState({
+//     name: "",
+//     follow_by: "",
+//     due_date: "",
+//     remark: "",
+//     notes: "",
+//     created: "",
+//     purpose: "",
+//   });
+
+//   // const createStatus = useSelector((state) => state.follows.createStatus);
+//   const currentFollow = useSelector((state) => state.follows.currentFollow);
+
+//   useEffect(() => {
+//     if (id) {
+//       dispatch(fetchFollowById(id));
+//     }
+//   }, [id, dispatch]);
+
+//   useEffect(() => {
+//     if (currentFollow && id) {
+//       console.log("Current Follow Data:", currentFollow); // Debugging line
+//       setFormData({
+//         name: currentFollow.name || "",
+//         follow_by: currentFollow.follow_by || "",
+//         due_date: currentFollow.due_date || "",
+//         remark: currentFollow.remark || "",
+//         notes: currentFollow.notes || "",
+//         created: currentFollow.created || "",
+//       });
+//     }
+//   }, [currentFollow, id]);
+
+//   const handleChange = (e) => {
+//     setFormData({ ...formData, [e.target.name]: e.target.value });
+//   };
+
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     const payload = { id, ...formData };
+//     console.log("Update Payload:", payload); // Log the payload
+//     try {
+//       if (id) {
+//         dispatch(updateFollow({ id, ...formData }))
+//           .unwrap()
+//           .then(() => {
+//             toast.success("Follow up updated successfully!");
+//             navigate("/dashboard/crm/follow");
+//           })
+//           .catch((error) => {
+//             console.error("Update Error:", error);
+//             toast.error(
+//               `Failed to update Follow: ${error.message || "An error occurred"}`
+//             );
+//           });
+//       } else {
+//         dispatch(createFollow(formData))
+//           .unwrap()
+//           .then(() => {
+//             toast.success("Follow created successfully!");
+//             navigate("/dashboard/crm/follow");
+//           })
+//           .catch((error) => {
+//             console.error("Create Error:", error);
+//             setErrors(error.errors || {});
+//             toast.error(
+//               `Failed to create Follow: ${error.message || "An error occurred"}`
+//             );
+//           });
+//       }
+//     } catch (error) {
+//       console.error("Update Error:", error);
+//       toast.error(
+//         `Failed to update Follow: ${error.message || "An error occurred"}`
+//       );
+//     }
+//   };
+
+//   return (
+//     <div className="content-wrapper">
+//       <div className="container">
+//         <div className="container-fluid">
+//           <div className="card">
+//             <div className="card-header">
+//               <h4 className="btn btn-primary">
+//                 {id ? "Update Follow" : "Add Follow"}
+//               </h4>
+//             </div>
+//             <div className="card-body">
+//               <form onSubmit={handleSubmit}>
+//                 <div className="row">
+//                   <div className="col-md-4">
+//                     <div className="form-group">
+//                       <label htmlFor="enquiry">enquirys:</label>
+//                       <select
+//                         id="enquiries"
+//                         name="enquiries"
+//                         value={formData.enquiries}
+//                         // onChange={handleInputChange}
+//                         onChange={(e) =>
+//                           setFormData({
+//                             ...formData,
+//                             enquiry: e.target.value,
+//                           })
+//                         }
+//                         className="form-control"
+//                         required
+//                       >
+//                         <option value="">Select enquiry</option>
+//                         {enquiries.length > 0 ? (
+//                           enquiries.map((enquiry) => (
+//                             <option key={enquiries.id} value={enquiry.id}>
+//                               {enquiries.name}
+//                             </option>
+//                           ))
+//                         ) : (
+//                           <option value="">no enquirys available</option>
+//                         )}
+//                       </select>
+//                     </div>
+//                   </div>
+
+//                   {/* <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="name">Customer name </label>
+//                       <input
+//                         type="text"
+//                         id="name"
+//                         name="name"
+//                         value={formData.name}
+//                         className="form-control"
+//                         placeholder="Enter name"
+//                         onChange={handleChange}
+//                         required
+//                       />
+//                       {errors.name && <p>{errors.name}</p>}
+//                     </div>
+//                   </div> */}
+
+//                   <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="follow_by">Follow by:</label>
+//                       <select
+//                         id="follow_by"
+//                         name="follow_by"
+//                         value={formData.follow_by}
+//                         onChange={handleChange}
+//                         className="form-control"
+//                         required
+//                       >
+//                         <option value="">Select an Option</option>
+//                         <option value="call">Call</option>
+//                         <option value="whatsapp">WhatsApp</option>
+//                         <option value="linkedIn">linkedIn</option>
+//                         <option value="viber">Viber</option>
+//                         <option value="email">Email</option>
+//                         <option value="meetup">Meetup</option>
+//                       </select>
+//                     </div>
+//                   </div>
+//                 </div>
+
+//                 <div className="row">
+//                   <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="due_date">Due Date:</label>
+//                       <input
+//                         type="date"
+//                         id="due_date"
+//                         name="due_date"
+//                         value={formData.due_date}
+//                         className="form-control"
+//                         onChange={handleChange}
+//                         required
+//                       />
+//                       {errors.due_date && <p>{errors.due_date}</p>}
+//                     </div>
+//                   </div>
+
+//                   <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="remark">Remark:</label>
+//                       <textarea
+//                         id="remark"
+//                         name="remark"
+//                         value={formData.remark}
+//                         className="form-control"
+//                         placeholder="Enter remark"
+//                         onChange={handleChange}
+//                         required
+//                       />
+//                       {errors.remark && <p>{errors.remark}</p>}
+//                     </div>
+//                   </div>
+//                 </div>
+
+//                 <div className="row">
+//                   <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="notes">Notes:</label>
+//                       <textarea
+//                         id="notes"
+//                         name="notes"
+//                         value={formData.notes}
+//                         className="form-control"
+//                         placeholder="Enter notes"
+//                         onChange={handleChange}
+//                         required
+//                       />
+//                       {errors.notes && <p>{errors.notes}</p>}
+//                     </div>
+//                   </div>
+
+//                   <div className="col-md-6">
+//                     <div className="form-group">
+//                       <label htmlFor="created">Follow-up Date:</label>
+//                       <input
+//                         type="date"
+//                         id="created"
+//                         name="created"
+//                         value={formData.created}
+//                         className="form-control"
+//                         onChange={handleChange}
+//                         required
+//                       />
+//                       {errors.created && <p>{errors.created}</p>}
+//                     </div>
+//                   </div>
+//                 </div>
+
+//                 {errors.non_field_errors && <p>{errors.non_field_errors[0]}</p>}
+
+//                 <button type="submit" className="btn btn-primary">
+//                   {id ? "Update" : "Save"}
+//                 </button>
+//               </form>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default FollowForm;
 
 // // for both create and update form
 // import React, { useState, useEffect } from "react";
