@@ -101,16 +101,16 @@ const ProjectForm = () => {
     }
   };
 
-  useEffect(() => {
-    if (updateStatus === "succeeded") {
-      toast.success("Project updated successfully!");
-      navigate("/dashboard/crm/project");
-    } else if (updateStatus === "failed") {
-      toast.error(
-        `Update Error: ${updateError?.message || "An error occurred"}`
-      );
-    }
-  }, [updateStatus, updateError, navigate]);
+  // useEffect(() => {
+  //   if (updateStatus === "succeeded") {
+  //     toast.success("Project updated successfully!");
+  //     navigate("/dashboard/crm/project");
+  //   } else if (updateStatus === "failed") {
+  //     toast.error(
+  //       `Update Error: ${updateError?.message || "An error occurred"}`
+  //     );
+  //   }
+  // }, [updateStatus, updateError, navigate]);
 
   return (
     <div className="content-wrapper">

@@ -6,9 +6,9 @@ export const fetchFollows = createAsyncThunk(
   "follows/fetchFollow",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/follow-up/");
-      console.log(response.data); // Log response to verify structure
-      return response.data.result; // Ensure the correct structure here
+      const response = await axios.get("http://127.0.0.1:8000/api/followup/");
+      console.log(response.data);
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -17,30 +17,42 @@ export const fetchFollows = createAsyncThunk(
 
 // Create a follow action
 export const createFollow = createAsyncThunk(
-  "follows/createFollow",
-  async (formData, thunkAPI) => {
+  "follow/create",
+  async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/follow-up/create/",
+        "http://127.0.0.1:8000/api/followup/create/",
         formData
       );
-      return response.data.result;
+      return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || { message: error.message }
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
-
+// detail id wise
 export const fetchFollowById = createAsyncThunk(
   "follows/fetchFollowById",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/follow-up/update/${id}/`
+        `http://127.0.0.1:8000/api/followup/detail/${id}/`
       );
-      return response.data.result; // Make sure the API returns the correct structure
+      return response.data.result;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+//updatefollwbyid
+export const updateFollowById = createAsyncThunk(
+  "follows/updateFollowById",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/followup/update/${id}/`
+      );
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -52,33 +64,34 @@ export const updateFollowStatus = createAsyncThunk(
   "follows/updateStatus",
   async ({ id, status }) => {
     const response = await axios.put(
-      `http://127.0.0.1:8000/api/follow-up/${id}/`,
+      `http://127.0.0.1:8000/api/followup/${id}/`,
       { status }
     );
     return response.data.result;
   }
 );
-export const updateFollow = createAsyncThunk(
-  "follows/updateFollow",
-  async ({ id, ...data }, thunkAPI) => {
-    try {
-      const response = await axios.put(
-        `http://127.0.0.1:8000/api/follow-up/update/${id}/`,
-        data
-      );
-      return response.data.result; // Ensure this returns the updated follow data
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || error.message);
-    }
-  }
-);
+
+// export const updateFollow = createAsyncThunk(
+//   "follows/updateFollow",
+//   async ({ id, ...data }, thunkAPI) => {
+//     try {
+//       const response = await axios.put(
+//         `http://127.0.0.1:8000/api/followup/update/${id}/`,
+//         data
+//       );
+//       return response.data.result;
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
+//     }
+//   }
+// );
 
 // Delete follow
 export const deleteFollow = createAsyncThunk(
   "follows/deleteFollow",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/follow-up/delete/${id}/`);
+      await axios.delete(`http://127.0.0.1:8000/api/followup/delete/${id}/`);
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
@@ -92,7 +105,7 @@ export const searchFollow = createAsyncThunk(
   async (searchTerm, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/follow-up/?search=${searchTerm}`
+        `http://127.0.0.1:8000/api/followup/?search=${searchTerm}`
       );
       return response.data.result.data;
     } catch (error) {
@@ -115,11 +128,11 @@ const followSlice = createSlice({
     createError: null,
     updateError: null,
     deleteError: null,
-    fetchError: null, // Add fetchError heres
+    fetchError: null,
   },
   reducers: {
     fetchFollowByIdSuccess: (state, action) => {
-      state.currentFollow = action.payload; // This should update the currentFollow
+      state.currentFollow = action.payload;
     },
     setCurrentFollow(state, action) {
       state.currentFollow = action.payload;
@@ -139,34 +152,49 @@ const followSlice = createSlice({
       })
       .addCase(fetchFollows.rejected, (state, action) => {
         state.isLoading = false;
-        state.fetchError = action.payload; // Use fetchError to handle errors
+        state.fetchError = action.payload;
       })
       // Fetch follow by ID
       .addCase(fetchFollowById.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-
       .addCase(fetchFollowById.fulfilled, (state, action) => {
-        // state.isLoading = false;
-        state.currentFollow = action.payload; // Make sure payload is correctly updating currentFollow
+        state.isLoading = false;
+        state.currentFollow = action.payload;
       })
       .addCase(fetchFollowById.rejected, (state, action) => {
         state.isLoading = false;
-        // state.error = action.payload;
-        state.currentFollow = null; // Reset if fetching fails
-        state.fetchError = action.error.message; // Optional: Handle the error
+        state.currentFollow = null;
+        state.fetchError = action.error.message;
+      })
+      // update follow by id
+      .addCase(updateFollowById.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateFollowById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.currentFollow = action.payload;
+      })
+      .addCase(updateFollowById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.currentFollow = null;
+        state.fetchError = action.error.message;
       })
       .addCase(updateFollowStatus.fulfilled, (state, action) => {
         const updatedFollow = action.payload;
-        state.list = state.list.map((follow) =>
-          follow.id === updatedFollow.id ? updatedFollow : follow
+        const index = state.list.findIndex(
+          (follow) => follow.id === updatedFollow.id
         );
-        if (state.currentFollow.id === updatedFollow.id) {
+        if (index !== -1) {
+          state.list[index] = updatedFollow;
+        }
+        if (state.currentFollow?.id === updatedFollow.id) {
           state.currentFollow = updatedFollow;
         }
       })
-
+      // create follow
       .addCase(createFollow.pending, (state) => {
         state.createStatus = "loading";
         state.createError = null;
@@ -177,36 +205,28 @@ const followSlice = createSlice({
       })
       .addCase(createFollow.rejected, (state, action) => {
         state.createStatus = "failed";
-        state.createError = action.payload; // Logs any specific validation errors
+        state.createError = action.payload;
         console.error("Create Follow Error:", action.payload);
       })
+      // .addCase(updateFollow.fulfilled, (state, action) => {
+      //   const updatedFollow = action.payload;
+      //   if (!updatedFollow || !updatedFollow.id) return;
 
-      .addCase(updateFollow.fulfilled, (state, action) => {
-        const updatedFollow = action.payload;
-        if (!updatedFollow || !updatedFollow.id) return;
+      //   const index = state.list.findIndex(
+      //     (follow) => follow.id === updatedFollow.id
+      //   );
+      //   if (index !== -1) {
+      //     state.list[index] = updatedFollow;
+      //   }
 
-        // Update follow in the list
-        const index = state.list.findIndex(
-          (follow) => follow.id === updatedFollow.id
-        );
-
-        if (index !== -1) {
-          state.list[index] = updatedFollow;
-        }
-
-        // Also update currentFollow if necessary
-        if (
-          state.currentFollow &&
-          state.currentFollow.id === updatedFollow.id
-        ) {
-          state.currentFollow = updatedFollow;
-        }
-      })
-
-      .addCase(updateFollow.rejected, (state, action) => {
-        state.updateStatus = "failed";
-        state.updateError = action.payload || "Failed to update follow";
-      })
+      //   if (state.currentFollow?.id === updatedFollow.id) {
+      //     state.currentFollow = updatedFollow;
+      //   }
+      // })
+      // .addCase(updateFollow.rejected, (state, action) => {
+      //   state.updateStatus = "failed";
+      //   state.updateError = action.payload || "Failed to update follow";
+      // })
       // Delete follow
       .addCase(deleteFollow.pending, (state) => {
         state.deleteStatus = "loading";

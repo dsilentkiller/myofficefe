@@ -46,23 +46,25 @@ export const fetchDistrictById = createAsyncThunk(
     }
   }
 );
-
+// Example of the updateDistrict action in the Redux slice
 export const updateDistrict = createAsyncThunk(
   "districts/updateDistrict",
-  async ({ id, name }, thunkAPI) => {
+  async (districtData, thunkAPI) => {
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/setup/district/update/${id}/`,
-        { name }
+        `http://127.0.0.1:8000/api/setup/district/update/${districtData.id}/`,
+        {
+          name: districtData.name,
+          province: districtData.province,
+        }
       );
-      return response.data.result.data;
+      return response.data.result.data; // Adjust based on your API response structure
     } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || "An error occurred";
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
+
 // export const updateDistrict = createAsyncThunk(
 //   "district/updateDistrict",
 //   async (district) => {
@@ -120,6 +122,22 @@ const districtSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(updateDistrict.fulfilled, (state, action) => {
+        const updatedDistrict = action.payload;
+        const index = state.list.findIndex(
+          (district) => district.id === updatedDistrict.id
+        );
+        if (index !== -1) {
+          state.list[index] = updatedDistrict; // Update both name and province
+        }
+      })
+      .addCase(updateDistrict.rejected, (state, action) => {
+        state.updateStatus = "failed";
+        state.updateError = action.error.message;
+      })
+      .addCase(updateDistrict.pending, (state) => {
+        state.updateStatus = "loading";
+      })
       // Fetch district
       .addCase(fetchDistricts.pending, (state) => {
         state.isLoading = true;
@@ -169,21 +187,21 @@ const districtSlice = createSlice({
       })
       // Update district
 
-      .addCase(updateDistrict.pending, (state) => {
-        state.updateStatus = "loading";
-        state.updateError = null;
-      })
-      .addCase(updateDistrict.fulfilled, (state, action) => {
-        state.updateStatus = "succeeded";
-        const index = state.list.findIndex((p) => p.id === action.payload.id);
-        if (index !== -1) {
-          state.list[index] = action.payload;
-        }
-      })
-      .addCase(updateDistrict.rejected, (state, action) => {
-        state.updateStatus = "failed";
-        state.updateError = action.payload;
-      })
+      // .addCase(updateDistrict.pending, (state) => {
+      //   state.updateStatus = "loading";
+      //   state.updateError = null;
+      // })
+      // .addCase(updateDistrict.fulfilled, (state, action) => {
+      //   state.updateStatus = "succeeded";
+      //   const index = state.list.findIndex((p) => p.id === action.payload.id);
+      //   if (index !== -1) {
+      //     state.list[index] = action.payload;
+      //   }
+      // })
+      // .addCase(updateDistrict.rejected, (state, action) => {
+      //   state.updateStatus = "failed";
+      //   state.updateError = action.payload;
+      // })
       //  delete district
       .addCase(deleteDistrict.pending, (state) => {
         state.deleteStatus = "loading";

@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   createFollow,
-  updateFollow,
+  updateFollowById,
   fetchFollowById,
 } from "../../redux/slice/crm/followSlice";
 import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
@@ -13,58 +13,41 @@ const FollowForm = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [toggleState, setToggleState] = useState({ toggle: false });
-
-  useEffect(() => {
-    setToggleState((prevState) => ({ ...prevState, toggle: true }));
-  }, []);
-
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    enquiry_id: "",
+    enquiry: "",
     follow_by: "",
     due_date: "",
     remark: "",
     notes: "",
-    created: "",
-    purpose: "",
-    enquiry: "", // Ensure enquiry is part of form data
   });
-  const {
-    list: enquiries,
-    isLoading,
-    error,
-  } = useSelector((state) => state.enquiries);
+
+  const enquiries = useSelector((state) => state.enquiries.list);
+  const followToUpdate = useSelector((state) => state.follows.CurrentFollow);
+  const isLoading = useSelector((state) => state.enquiries.isLoading);
+  const error = useSelector((state) => state.enquiries.error);
 
   useEffect(() => {
-    dispatch(fetchEnquiries()); // Fetch enquiries on mount
-  }, [dispatch]);
-
-  console.log("Is loading: ", isLoading);
-  console.log("Fetched enquiries: ", enquiries);
-  console.log("Error: ", error);
-  const currentFollow = useSelector((state) => state.follows.currentFollow);
-
-  useEffect(() => {
+    dispatch(fetchEnquiries());
     if (id) {
       dispatch(fetchFollowById(id));
     }
-  }, [id, dispatch]);
+  }, [dispatch, id]);
 
   useEffect(() => {
-    if (currentFollow && id) {
-      console.log("Current Follow Data:", currentFollow);
+    if (followToUpdate && id) {
+      console.log("Follow data to update:", followToUpdate);
       setFormData({
-        enquiry_id: currentFollow.enquiry_id || "",
-        follow_by: currentFollow.follow_by || "",
-        due_date: currentFollow.due_date || "",
-        remark: currentFollow.remark || "",
-        notes: currentFollow.notes || "",
-        created: currentFollow.created || "",
-        enquiry: currentFollow.enquiry || "", // Make sure to populate enquiry ID if it exists
+        enquiry: followToUpdate.enquiry || "",
+        follow_by: followToUpdate.follow_by || "",
+        due_date: followToUpdate.due_date || "",
+        remark: followToUpdate.remark || "",
+        notes: followToUpdate.notes || "",
       });
+    } else if (!followToUpdate && id) {
+      toast.error("Failed to load follow details for update.");
     }
-  }, [currentFollow, id]);
+  }, [followToUpdate, id]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -72,19 +55,28 @@ const FollowForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const payload = { id, ...formData };
+    const payload = {
+      id, // include the id here for updating
+      enquiry: formData.enquiry,
+      follow_by: formData.follow_by,
+      due_date: formData.due_date,
+      remark: formData.remark,
+      notes: formData.notes,
+    };
+
     if (id) {
-      dispatch(updateFollow(payload))
+      dispatch(updateFollowById(payload)) // Use id with the payload
         .unwrap()
-        .then(() => {
-          toast.success("Follow up updated successfully!");
+        .then((updatedFollow) => {
+          // Fix syntax here
+          toast.success("Follow updated successfully!");
           navigate("/dashboard/crm/follow");
         })
         .catch((error) => {
           console.error("Update Error:", error);
-          setErrors(error.errors || {});
+          setErrors(error?.errors || {});
           toast.error(
-            `Failed to update Follow: ${error.message || "An error occurred"}`
+            `Failed to update Follow: ${error?.message || "Unknown error"}`
           );
         });
     } else {
@@ -92,13 +84,20 @@ const FollowForm = () => {
         .unwrap()
         .then(() => {
           toast.success("Follow created successfully!");
+          setFormData({
+            enquiry: "",
+            follow_by: "",
+            due_date: "",
+            remark: "",
+            notes: "",
+          });
           navigate("/dashboard/crm/follow");
         })
         .catch((error) => {
           console.error("Create Error:", error);
-          setErrors(error.errors || {});
+          setErrors(error?.errors || {});
           toast.error(
-            `Failed to create Follow: ${error.message || "An error occurred"}`
+            `Failed to create Follow: ${error?.message || "Unknown error"}`
           );
         });
     }
@@ -121,9 +120,9 @@ const FollowForm = () => {
                     <div className="form-group">
                       <label htmlFor="enquiry">customer name:</label>
                       <select
-                        id="enquiry_id"
-                        name="enquiry_id"
-                        value={formData.enquiry_id}
+                        id="enquiry"
+                        name="enquiry"
+                        value={formData.enquiry}
                         onChange={handleChange}
                         className="form-control"
                         required
@@ -287,12 +286,12 @@ export default FollowForm;
 //     due_date: "",
 //     remark: "",
 //     notes: "",
-//     created: "",
+//
 //     purpose: "",
 //   });
 
 //   // const createStatus = useSelector((state) => state.follows.createStatus);
-//   const currentFollow = useSelector((state) => state.follows.currentFollow);
+//   const followToUpdate = useSelector((state) => state.follows.followToUpdate);
 
 //   useEffect(() => {
 //     if (id) {
@@ -301,18 +300,18 @@ export default FollowForm;
 //   }, [id, dispatch]);
 
 //   useEffect(() => {
-//     if (currentFollow && id) {
-//       console.log("Current Follow Data:", currentFollow); // Debugging line
+//     if (followToUpdate && id) {
+//       console.log("Current Follow Data:", followToUpdate); // Debugging line
 //       setFormData({
-//         name: currentFollow.name || "",
-//         follow_by: currentFollow.follow_by || "",
-//         due_date: currentFollow.due_date || "",
-//         remark: currentFollow.remark || "",
-//         notes: currentFollow.notes || "",
-//         created: currentFollow.created || "",
+//         name: followToUpdate.name || "",
+//         follow_by: followToUpdate.follow_by || "",
+//         due_date: followToUpdate.due_date || "",
+//         remark: followToUpdate.remark || "",
+//         notes: followToUpdate.notes || "",
+//         created: followToUpdate.created || "",
 //       });
 //     }
-//   }, [currentFollow, id]);
+//   }, [followToUpdate, id]);
 
 //   const handleChange = (e) => {
 //     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -564,14 +563,14 @@ export default FollowForm;
 //     due_date: "",
 //     remark: "",
 //     notes: "",
-//     created: "",
+//
 //     purpose: "",
 //     // remark :"",
 //   });
 
 //   const createStatus = useSelector((state) => state.follows.createStatus);
 //   // const createError = useSelector((state) => state.Follows.createError);
-//   const currentFollow = useSelector((state) => state.follows.currentFollow);
+//   const followToUpdate = useSelector((state) => state.follows.followToUpdate);
 
 //   useEffect(() => {
 //     if (id) {
@@ -580,18 +579,18 @@ export default FollowForm;
 //   }, [id, dispatch]);
 
 //   useEffect(() => {
-//     if (currentFollow && id) {
+//     if (followToUpdate && id) {
 //       setFormData({
-//         name: currentFollow.name || "",
-//         follow_by: currentFollow.follow_by || "",
-//         due_date: currentFollow.due_date || "",
-//         remark: currentFollow.remark || "",
-//         notes: currentFollow.notes || "",
-//         created: currentFollow.created || "",
-//         // purpose: currentFollow.purpose || "",
+//         name: followToUpdate.name || "",
+//         follow_by: followToUpdate.follow_by || "",
+//         due_date: followToUpdate.due_date || "",
+//         remark: followToUpdate.remark || "",
+//         notes: followToUpdate.notes || "",
+//         created: followToUpdate.created || "",
+//         // purpose: followToUpdate.purpose || "",
 //       });
 //     }
-//   }, [currentFollow, id]);
+//   }, [followToUpdate, id]);
 
 //   const handleChange = (e) => {
 //     setFormData({ ...formData, [e.target.name]: e.target.value });

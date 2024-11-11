@@ -73,22 +73,6 @@ const EnquiryTable = () => {
     dispatch(fetchEnquiries()); // Fetch enquiries using the dispatched action
   }, [dispatch]);
 
-  // format date time
-  // const formatDateTime = (dateString) => {
-  //   if (!dateString) return ""; // Handle empty date
-  //   const options = {
-  //     year: "numeric",
-  //     month: "2-digit",
-  //     day: "2-digit",
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //     second: "2-digit",
-  //     hour12: false, // Change to true for 12-hour format
-  //   };
-  //   return new Intl.DateTimeFormat("en-US", options).format(
-  //     new Date(dateString)
-  //   );
-  // };
   // Helper function to format date as a readable string
   const formatDateTime = (dateString) => {
     if (!dateString) return "";
@@ -172,10 +156,10 @@ const EnquiryTable = () => {
         email: enquiry.email,
         gender: enquiry.gender,
 
-        province: enquiry.province,
+        province: enquiry.province_name,
         // zone:enquiry.
-        district: enquiry.district,
-        municipality: enquiry.municipality,
+        district: enquiry.district_name,
+        municipality: enquiry.municipality_name,
         ward_no: enquiry.ward_no,
         tole_name: enquiry.tole_name,
 
@@ -199,6 +183,28 @@ const EnquiryTable = () => {
     const tableRows = enquiries.map((enquiry) => [
       enquiry.id,
       enquiry.customer_name,
+
+      enquiry.category,
+      enquiry.organization_name,
+      enquiry.department,
+      enquiry.designation,
+      enquiry.pri_phone,
+      enquiry.sec_phone,
+      enquiry.email,
+      enquiry.gender,
+
+      enquiry.province_name,
+      // zone:enquiry.
+      enquiry.district_name,
+      enquiry.municipality_name,
+      enquiry.ward_no,
+      enquiry.tole_name,
+
+      enquiry.estimated_amount,
+      enquiry.enquiry_purpose,
+      enquiry.known_by,
+      enquiry.created,
+      enquiry.history,
     ]);
 
     autoTable(doc, {
