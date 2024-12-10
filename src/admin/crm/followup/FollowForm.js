@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import {
   createFollow,
   updateFollowById,
-  fetchFollowById,
 } from "../../redux/slice/crm/followSlice";
 import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
 
@@ -30,7 +29,7 @@ const FollowForm = () => {
   useEffect(() => {
     dispatch(fetchEnquiries());
     if (id) {
-      dispatch(fetchFollowById(id));
+      dispatch(updateFollowById(id));
     }
   }, [dispatch, id]);
 
@@ -44,8 +43,8 @@ const FollowForm = () => {
         remark: followToUpdate.remark || "",
         notes: followToUpdate.notes || "",
       });
-    } else if (!followToUpdate && id) {
-      toast.error("Failed to load follow details for update.");
+      // } else if (!followToUpdate && id) {
+      //   toast.error("Failed to load follow details for update.");
     }
   }, [followToUpdate, id]);
 
@@ -55,20 +54,23 @@ const FollowForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const payload = {
-      id, // include the id here for updating
-      enquiry: formData.enquiry,
-      follow_by: formData.follow_by,
-      due_date: formData.due_date,
-      remark: formData.remark,
-      notes: formData.notes,
-    };
+    // const payload = {
+    //   id, // include the id here for updating
+    //   enquiry: formData.enquiry,
+    //   follow_by: formData.follow_by,
+    //   due_date: formData.due_date,
+    //   remark: formData.remark,
+    //   notes: formData.notes,
+    // };
 
     if (id) {
-      dispatch(updateFollowById(payload)) // Use id with the payload
+      console.log("form data before update:", formData);
+      dispatch(updateFollowById(id, ...formData)) // Use id with the payload
         .unwrap()
         .then((updatedFollow) => {
+          console.log("Updated follow:", updatedFollow);
           // Fix syntax here
+          setFormData(updatedFollow); // Assuming updatedfollow is the entire object
           toast.success("Follow updated successfully!");
           navigate("/dashboard/crm/follow");
         })

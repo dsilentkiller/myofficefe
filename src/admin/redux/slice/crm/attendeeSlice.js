@@ -6,7 +6,7 @@ export const searchAttendee = createAsyncThunk(
   "attendee/searchAttendee",
   async (searchTerm) => {
     const response = await axios.get(
-      `http://127.0.0.1:8000/api/attendee/?search=${searchTerm}`
+      `http://127.0.0.1:8000/api/event/attendee/?search=${searchTerm}`
     );
     return response.data.result;
   }
@@ -16,7 +16,9 @@ export const fetchAttendees = createAsyncThunk(
   "attendees/fetchAttendees",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/attendee/");
+      const response = await axios.get(
+        "http://127.0.0.1:8000/api/event/attendee/"
+      );
       return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -29,7 +31,7 @@ export const createAttendee = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/attendee/create/",
+        "http://127.0.0.1:8000/api/event/attendee/create/",
         formData
       );
       toast.success("Attendee created successfully!");
@@ -53,7 +55,7 @@ export const fetchAttendeeById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/attendee/update/${id}/`
+        `http://127.0.0.1:8000/api/event/attendee/detail/${id}/`
       );
       return response.data.result; // Adjust this based on your actual API response structure
     } catch (error) {
@@ -67,7 +69,7 @@ export const updateAttendee = createAsyncThunk(
   async ({ id, ...formData }, thunkAPI) => {
     try {
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/attendee/update/${id}/`,
+        `http://127.0.0.1:8000/api/event/attendee/update/${id}/`,
         formData
       );
       return response.data.result;
@@ -85,7 +87,7 @@ export const deleteAttendee = createAsyncThunk(
     try {
       // Make sure this URL is correct
       await axios.delete(
-        `     http://127.0.0.1:8000/api/attendee/delete/${id}/`
+        `     http://127.0.0.1:8000/api/event/attendee/delete/${id}/`
       );
       return id; // Return the ID of the deleted attendee
     } catch (error) {

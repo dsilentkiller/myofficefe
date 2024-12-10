@@ -6,10 +6,10 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchProject,
-  updateProject,
+  // updateProject,
   deleteProject,
-  updateStatus,
-  updateError,
+  // updateStatus,
+  // updateError,
 } from "../../redux/slice/crm/projectSlice";
 import "../../../admin/css/Table.css";
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -21,7 +21,6 @@ import ProjectDelete from "./ProjectDelete";
 const ProjectTable = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [projectToDelete, setProjectToDelete] = useState(null);
   const projects = useSelector((state) => state.projects?.list || []);
@@ -47,7 +46,7 @@ const ProjectTable = () => {
     };
 
     notify(updateStatus, "Project updated successfully!", updateError);
-    notify(deleteStatus, "Project deleted successfully!", deleteError);
+    // notify(deleteStatus, "Project deleted successfully!", deleteError);
     notify(createStatus, "Project created successfully!", createError);
   }, [
     updateStatus,
@@ -103,21 +102,21 @@ const ProjectTable = () => {
       .join(" ");
   }, []);
 
-  useEffect(() => {
-    if (createStatus === "succeeded") {
-      toast.success("Project created successfully!");
-      setFormData({
-        project_name: "",
-        description: "",
-        start_date: "",
-        end_date: "",
-        status: "",
-      });
-      navigate("/dashboard/crm/project/");
-    } else if (createStatus === "failed") {
-      toast.error(`Error: ${createError || "An error occurred"}`);
-    }
-  }, [createStatus, createError, navigate]);
+  // useEffect(() => {
+  //   if (createStatus === "succeeded") {
+  //     toast.success("Project created successfully!");
+  //     setFormData({
+  //       project_name: "",
+  //       description: "",
+  //       start_date: "",
+  //       end_date: "",
+  //       status: "",
+  //     });
+  //     navigate("/dashboard/crm/project/");
+  //   } else if (createStatus === "failed") {
+  //     toast.error(`Error: ${createError || "An error occurred"}`);
+  //   }
+  // }, [createStatus, createError, navigate]);
 
   const exportExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(projects);

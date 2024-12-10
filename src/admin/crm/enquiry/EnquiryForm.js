@@ -54,6 +54,7 @@ const EnquiryForm = () => {
     municipality: "",
     ward_no: "",
     tole_name: "",
+    sec_address: "",
 
     estimated_amount: "",
     problem: "",
@@ -155,6 +156,7 @@ const EnquiryForm = () => {
         municipality: enquiryToUpdate.municipality || "",
         ward_no: enquiryToUpdate.ward_no || "",
         tole_name: enquiryToUpdate.tole_name || "",
+        sec_address: enquiryData.tole_name || "",
         estimated_amount: enquiryToUpdate.estimated_amount || "",
         problem: enquiryToUpdate.problem || "",
         known_by: enquiryToUpdate.known_by || "",
@@ -683,6 +685,28 @@ const EnquiryForm = () => {
                           id="tole_name"
                           name="tole_name"
                           value={formData.tole_name}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              tole_name: e.target.value,
+                            })
+                          }
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    {/* sec address */}
+                    {/* tole name */}
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="sec_address">Tole Name:</label>
+                        <input
+                          type="text"
+                          id="sec_address"
+                          name="sec_address"
+                          value={formData.sec_address}
                           // onChange={handleInputChange}
                           onChange={(e) =>
                             setFormData({

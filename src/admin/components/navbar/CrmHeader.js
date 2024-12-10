@@ -28,11 +28,11 @@ const CrmHeader = () => {
             </Link>
           </li>
           {/* enquiry */}
-          <li className="nav-item d-none d-sm-inline-block">
+          {/* <li className="nav-item d-none d-sm-inline-block">
             <Link to="attendee" className="nav-link">
               Attendees
             </Link>
-          </li>
+          </li> */}
           {/* enquiry */}
           <li className="nav-item d-none d-sm-inline-block">
             <Link to="event" className="nav-link">

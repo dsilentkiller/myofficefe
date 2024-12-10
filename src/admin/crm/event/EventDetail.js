@@ -6,6 +6,11 @@ import { useParams } from "react-router-dom";
 
 const EventDetail = () => {
   const { id } = useParams();
+
+  if (!id) {
+    console.error("Event ID is undefined!");
+  }
+
   const dispatch = useDispatch();
   const event = useSelector((state) => state.events.selectedEvent);
   const loading = useSelector((state) => state.events.loading);
@@ -13,9 +18,18 @@ const EventDetail = () => {
   const attendees = useSelector((state) => state.attendees.list || []);
 
   useEffect(() => {
-    dispatch(fetchEventById(id));
-    dispatch(fetchAttendees()); // Fetch attendees for their names
+    if (id) {
+      dispatch(fetchEventById(id));
+      dispatch(fetchAttendees()); // Fetch attendees for their names
+    } else {
+      console.error("Event ID is undefined. Cannot fetch event details.");
+    }
   }, [dispatch, id]);
+  if (!id) {
+    return (
+      <p>Error: Event ID is missing. Please check the URL or try again.</p>
+    );
+  }
 
   if (loading) {
     return <p>Loading event details...</p>;
@@ -30,18 +44,63 @@ const EventDetail = () => {
   }
 
   return (
-    <div>
-      <h2>{event.title}</h2>
-      <div>
-        <strong>Start:</strong> {new Date(event.start).toLocaleString()}
-      </div>
-      <div>
-        <strong>End:</strong> {new Date(event.end).toLocaleString()}
+    // <div>
+    //   <h2>{event.title}</h2>
+    //   <div>
+    //     <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+    //   </div>
+    //   <div>
+    //     <strong>End:</strong> {new Date(event.end).toLocaleString()}
+    //   </div>
+    //   <div>
+    //     <strong>organization name:</strong>{" "}
+    //     {new Date(event.end).toLocaleString()}
+    //   </div>
+    //   <div>
+    //     <strong>organization address:</strong>{" "}
+    //     {new Date(event.end).toLocaleString()}
+    //   </div>
+    //   <div>
+    //     <h5>Attendees</h5>
+    //     {event.attendees_details && event.attendees_details.length > 0 ? (
+    //       <ul>
+    //         {event.attendees_details.map((attendee) => (
+    //           <li key={attendee.id}>
+    //             {attendee.name} ({attendee.email})
+    //           </li>
+    //         ))}
+    //       </ul>
+    //     ) : (
+    //       <p>No attendees available for this event.</p>
+    //     )}
+    //   </div>
+    //   <div>
+    //     <strong>description</strong>{" "}
+    //     {event.description ? event.description : "No description available."}
+    //   </div>
+    // </div>
+
+    <div className="event-detail-container">
+      <h2 className="event-title">{event.title}</h2>
+      <div className="event-metadata">
+        <p>
+          <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+        </p>
+        <p>
+          <strong>End:</strong> {new Date(event.end).toLocaleString()}
+        </p>
+        <p>
+          <strong>Organization Name:</strong> {event.organization_name || "N/A"}
+        </p>
+        <p>
+          <strong>Organization Address:</strong>{" "}
+          {event.organization_address || "N/A"}
+        </p>
       </div>
       <div>
         <h5>Attendees</h5>
         {event.attendees_details && event.attendees_details.length > 0 ? (
-          <ul>
+          <ul className="attendees-list">
             {event.attendees_details.map((attendee) => (
               <li key={attendee.id}>
                 {attendee.name} ({attendee.email})
@@ -52,9 +111,9 @@ const EventDetail = () => {
           <p>No attendees available for this event.</p>
         )}
       </div>
-      <div>
-        <strong>Notes:</strong>{" "}
-        {event.notes ? event.notes : "No notes available."}
+      <div className="event-description">
+        <strong>Description:</strong>{" "}
+        {event.description || "No description available."}
       </div>
     </div>
   );
@@ -128,8 +187,8 @@ export default EventDetail;
 //               )}
 //             </Col>
 //             <div>
-//               <strong>Notes:</strong>{" "}
-//               {event.notes ? event.notes : "No notes available."}
+//               <strong>description:</strong>{" "}
+//               {event.description ? event.description : "No description available."}
 //             </div>
 
 //             <Button
@@ -217,8 +276,8 @@ export default EventDetail;
 //         <strong>End:</strong> {new Date(event.end).toLocaleString()}
 //       </p>
 //       <p>
-//         <strong>Notes:</strong>{" "}
-//         {event.notes ? event.notes : "No notes available."}
+//         <strong>description:</strong>{" "}
+//         {event.description ? event.description : "No description available."}
 //       </p>
 
 //       <h5>Attendees</h5>
@@ -315,7 +374,7 @@ export default EventDetail;
 //         <strong>End:</strong> {new Date(event.end).toLocaleString()}
 //       </p>
 //       <p>
-//         <strong>Notes:</strong> {event.notes}
+//         <strong>description:</strong> {event.description}
 //       </p>
 //       <h5>Attendees</h5>
 //       {event.attendees && event.attendees.length > 0 ? (

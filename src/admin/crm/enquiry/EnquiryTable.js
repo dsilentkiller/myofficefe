@@ -23,6 +23,7 @@ const EnquiryTable = () => {
   const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   const [enquiryToDelete, setEnquiryToDelete] = useState(null);
   const maxHistoryLength = 100; // Maximum characters to show for history
+  const maxEnquiryPurposeLength = 100;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // const { enquiries, isLoading } = useSelector((state) => state.enquiries);
@@ -119,6 +120,13 @@ const EnquiryTable = () => {
     }
     return history;
   };
+  //enquiry purpose
+  const truncateEnquiryPurpose = (enquiry_purpose) => {
+    if (enquiry_purpose && enquiry_purpose.length > maxEnquiryPurposeLength) {
+      return enquiry_purpose.substring(0, maxEnquiryPurposeLength) + "..."; // Add ellipsis
+    }
+    return enquiry_purpose;
+  };
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -147,10 +155,10 @@ const EnquiryTable = () => {
         ID: enquiry.id,
         Name: enquiry.customer_name,
 
-        category: enquiry.category,
+        category: enquiry.category_name,
         organization_name: enquiry.organization_name,
-        department: enquiry.department,
-        designation: enquiry.designation,
+        department: enquiry.department_name,
+        designation: enquiry.designation_name,
         pri_phone: enquiry.pri_phone,
         sec_phone: enquiry.sec_phone,
         email: enquiry.email,
@@ -300,7 +308,7 @@ const EnquiryTable = () => {
                     <th>WardNo</th>
                     <th>Tole Name</th>
                     <th>Budget</th>
-                    {/* <th>Enquiry Purpose</th> */}
+                    <th>Enquiry Purpose</th>
 
                     <th>Known By</th>
 
@@ -343,6 +351,9 @@ const EnquiryTable = () => {
                           <td>{enquiry.ward_no}</td>
                           <td>{formatName(enquiry.tole_name)}</td>
                           <td>{enquiry.estimated_amount}</td>
+                          <td>
+                            {truncateEnquiryPurpose(enquiry.enquiry_purpose)}
+                          </td>
                           <td>{enquiry.known_by}</td>
 
                           <td>

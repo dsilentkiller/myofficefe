@@ -246,6 +246,8 @@ import EventUpdate from "./admin/crm/event/EventUpdate";
 import FollowForm from "./admin/crm/followup/FollowForm";
 import FollowTable from "./admin/crm/followup/FollowupTable";
 import FollowDelete from "./admin/crm/followup/FollowDelete";
+import FollowDetail from "./admin/crm/followup/FollowDetail";
+import LoginForm from "./admin/accounts/LoginForm";
 // import ProjectForm from "./admin/"
 function App() {
   return (
@@ -285,20 +287,26 @@ function App() {
               <Route path="event/detail/:id/" element={<EventDetail />} />
 
               {/* dashboard/crm/attendees */}
-              <Route path="attendee" element={<AttendeeTable />} />
+              {/* <Route path="attendee" element={<AttendeeTable />} />
               <Route path="attendee/create/" element={<AttendeeForm />} />
               <Route
                 path="/dashboard/crm/attendee/detail/:id"
                 element={<AttendeeDetail />}
-              />
+              /> */}
               <Route path="attendee/update/:id/" element={<AttendeeForm />} />
               <Route path="attendee/delete/:id/" element={<AttendeeDelete />} />
               {/*  {/* localhost/dashbaord/crm/project */}
               <Route path="follow" element={<FollowTable />} />
               <Route path="follow/create" element={<FollowForm />} />
               <Route path="follow/update/:id/" element={<FollowForm />} />
-              <Route path="follow/delete/:id/" element={<FollowDelete />} />
-              <Route path="project/detail/:id/" element={<ProjectDetail />} />
+              <Route
+                path="/dashboard/crm/follow/delete/:id/"
+                element={<FollowDelete />}
+              />
+              <Route
+                path="/dashboard/crm/follow/detail/:id/"
+                element={<FollowDetail />}
+              />
               {/* meeting update */}
               {/* <Route path="meeting-update" element={<MeetingUpdateTable />} />
               <Route

@@ -14,7 +14,8 @@ const FollowTable = () => {
   const [filteredFollows, setFilteredFollows] = useState([]);
 
   const fetchError = useSelector((state) => state.follows?.fetchError);
-
+  const maxRemarkLength = 90; // Maximum characters to show for remark
+  const maxNotesLength = 90;
   const {
     list: follows = [],
     isLoading,
@@ -34,7 +35,7 @@ const FollowTable = () => {
     dispatch(deleteFollow(id))
       .unwrap()
       .then(() => {
-        toast.success("Follow deleted successfully!");
+        // toast.success("Follow deleted successfully!");
         setFollowToDelete(null);
         dispatch(fetchFollows());
       })
@@ -71,6 +72,22 @@ const FollowTable = () => {
     if (daysDifference <= 0) return "due-soon"; // Past due
     if (daysDifference <= 7) return "due-very-soon"; // Due within a week
     return "";
+  };
+  // Truncate the remark text to maxremarkLength
+  const truncateRemark = (remark) => {
+    if (remark && remark.length > maxRemarkLength) {
+      return remark.substring(0, maxRemarkLength) + "..."; // Add ellipsis
+    }
+    return remark;
+  };
+
+  //
+  // Truncate the notes text to maxnotesLength
+  const truncateNotes = (notes) => {
+    if (notes && notes.length > maxNotesLength) {
+      return notes.substring(0, maxNotesLength) + "..."; // Add ellipsis
+    }
+    return notes;
   };
 
   useEffect(() => {
@@ -153,10 +170,10 @@ const FollowTable = () => {
                       <th>Name</th>
                       <th>Follow by</th>
                       <th>next follow up date</th>
+                      <th>last followup at</th>
                       <th>Remark</th>
                       <th>Notes</th>
-                      <th>last followup at</th>
-                      <th>Updated</th>
+
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -170,10 +187,10 @@ const FollowTable = () => {
                           <td className={getDueDateClass(follow.due_date)}>
                             {formatDateTime(follow.due_date)}
                           </td>
-                          <td>{follow.remark}</td>
-                          <td>{follow.notes}</td>
                           <td>{formatDateTime(follow.created)}</td>
-                          <td>{formatDateTime(follow.updated)}</td>
+                          <td>{truncateRemark(follow.remark)}</td>
+                          <td>{truncateNotes(follow.notes)}</td>
+
                           <td>
                             <button
                               onClick={() =>

@@ -181,6 +181,7 @@ const projectSlice = createSlice({
         }
       })
 
+      //create project
       .addCase(createProject.pending, (state) => {
         state.createStatus = "loading";
         state.createError = null;
@@ -193,7 +194,7 @@ const projectSlice = createSlice({
         state.createStatus = "failed";
         state.createError = action.payload;
       })
-
+//update project
       .addCase(updateProject.fulfilled, (state, action) => {
         const updatedProject = action.payload;
         if (!updatedProject || !updatedProject.id) return;

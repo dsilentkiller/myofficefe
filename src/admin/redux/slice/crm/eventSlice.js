@@ -6,10 +6,11 @@ import axios from "axios";
 
 // Async thunk for fetching events
 export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
-  const response = await axios.get("http://127.0.0.1:8000/api/event/");
+  const response = await axios.get(
+    "http://127.0.0.1:8000/api/event/event-list/"
+  );
   return response.data.result;
 });
-
 
 // Async thunk for fetching an event by ID
 export const fetchEventById = createAsyncThunk(
@@ -19,12 +20,31 @@ export const fetchEventById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/event/detail/${id}/`
       );
-      return response.data;
+      if (!response.data.result) {
+        throw new Error("Invalid response structure");
+      }
+      return response.data.result;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(
+        error.response?.data || "An error occurred while fetching the event."
+      );
     }
   }
 );
+
+// export const fetchEventById = createAsyncThunk(
+//   "events/fetchEventById",
+//   async (id, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.get(
+//         `http://127.0.0.1:8000/api/event/detail/${id}/`
+//       );
+//       return response.data.result;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
 // Fetch all projects action
 export const fetchProject = createAsyncThunk(
   "projects/fetchProject",

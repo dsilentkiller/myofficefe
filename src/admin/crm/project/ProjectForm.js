@@ -21,8 +21,8 @@ const ProjectForm = () => {
     status: "",
   });
 
-  const createStatus = useSelector((state) => state.projects.createStatus);
-  const updateStatus = useSelector((state) => state.projects.updateStatus);
+  // const createStatus = useSelector((state) => state.projects.createStatus);
+  // const updateStatus = useSelector((state) => state.projects.updateStatus);
   const createError = useSelector((state) => state.projects.createError);
   const updateError = useSelector((state) => state.projects.updateError);
   const projectToUpdate = useSelector((state) => state.projects.currentProject);

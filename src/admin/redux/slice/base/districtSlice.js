@@ -47,20 +47,44 @@ export const fetchDistrictById = createAsyncThunk(
   }
 );
 // Example of the updateDistrict action in the Redux slice
+// export const updateDistrict = createAsyncThunk(
+//   "districts/updateDistrict",
+//   async (districtData, thunkAPI) => {
+//     try {
+//       const response = await axios.put(
+//         `http://127.0.0.1:8000/api/setup/district/update/${districtData.id}/`,
+//         {
+//           name: districtData.name,
+//           province: districtData.province,
+//         }
+//       );
+//       return response.data.result.data; // Adjust based on your API response structure
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
+//     }
+//   }
+// );
+
 export const updateDistrict = createAsyncThunk(
   "districts/updateDistrict",
-  async (districtData, thunkAPI) => {
+  async (districtData, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
+      const response = await fetch(
         `http://127.0.0.1:8000/api/setup/district/update/${districtData.id}/`,
         {
-          name: districtData.name,
-          province: districtData.province,
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(districtData),
         }
       );
-      return response.data.result.data; // Adjust based on your API response structure
+      if (!response.ok) {
+        throw new Error("Failed to update district");
+      }
+      return await response.json();
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error.message);
     }
   }
 );
