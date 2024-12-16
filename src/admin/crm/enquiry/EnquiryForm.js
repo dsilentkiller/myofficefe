@@ -49,11 +49,11 @@ const EnquiryForm = () => {
     gender: "",
 
     province: "",
-    // zone: "",
+
     district: "",
     municipality: "",
-    ward_no: "",
-    tole_name: "",
+
+    street_address: "",
     sec_address: "",
 
     estimated_amount: "",
@@ -154,9 +154,9 @@ const EnquiryForm = () => {
         province: enquiryToUpdate.province || "",
         district: enquiryToUpdate.district || "",
         municipality: enquiryToUpdate.municipality || "",
-        ward_no: enquiryToUpdate.ward_no || "",
-        tole_name: enquiryToUpdate.tole_name || "",
-        sec_address: enquiryData.tole_name || "",
+
+        street_address: enquiryToUpdate.street_address || "",
+        sec_address: enquiryData.sec_address || "",
         estimated_amount: enquiryToUpdate.estimated_amount || "",
         problem: enquiryToUpdate.problem || "",
         known_by: enquiryToUpdate.known_by || "",
@@ -654,42 +654,20 @@ const EnquiryForm = () => {
                         </select>
                       </div>
                     </div>
-
-                    {/*ward no  */}
+                    {/* street */}
                     <div className="col-md-4">
                       <div className="form-group">
-                        <label htmlFor="ward_no">Ward No:</label>
-                        <input
-                          type="number"
-                          id="ward_no"
-                          name="ward_no"
-                          value={formData.ward_no}
-                          // onChange={handleInputChange}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              ward_no: e.target.value,
-                            })
-                          }
-                          className="form-control"
-                          required
-                        />
-                      </div>
-                    </div>
-                    {/* tole name */}
-                    <div className="col-md-4">
-                      <div className="form-group">
-                        <label htmlFor="tole_name">Tole Name:</label>
+                        <label htmlFor="street_address">street address:</label>
                         <input
                           type="text"
-                          id="tole_name"
-                          name="tole_name"
-                          value={formData.tole_name}
+                          id="street_address"
+                          name="street_address"
+                          value={formData.street_address}
                           // onChange={handleInputChange}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
-                              tole_name: e.target.value,
+                              street_address: e.target.value,
                             })
                           }
                           className="form-control"
@@ -697,11 +675,11 @@ const EnquiryForm = () => {
                         />
                       </div>
                     </div>
-                    {/* sec address */}
-                    {/* tole name */}
+
+                    {/* sec_address */}
                     <div className="col-md-4">
                       <div className="form-group">
-                        <label htmlFor="sec_address">Tole Name:</label>
+                        <label htmlFor="sec_address">Additional address:</label>
                         <input
                           type="text"
                           id="sec_address"
@@ -711,7 +689,7 @@ const EnquiryForm = () => {
                           onChange={(e) =>
                             setFormData({
                               ...formData,
-                              tole_name: e.target.value,
+                              street_address: e.target.value,
                             })
                           }
                           className="form-control"
@@ -882,7 +860,7 @@ const EnquiryForm = () => {
                         />
                       </div>
                     </div>
-                    {/* tole name */}
+                    {/* sec_address */}
                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="history">History:</label>
@@ -979,7 +957,7 @@ export default EnquiryForm;
 //     district: "",
 //     municipality: "",
 //     ward_no: "",
-//     tole_name: "",
+//     street_address: "",
 
 //     estimated_amount: "",
 //     problem: "",
@@ -1133,7 +1111,7 @@ export default EnquiryForm;
 //         district: enquiryToUpdate.district || "",
 //         municipality: enquiryToUpdate.municipality || "",
 //         ward_no: enquiryToUpdate.ward_no || "",
-//         tole_name: enquiryToUpdate.tole_name || "",
+//         street_address: enquiryToUpdate.street_address || "",
 //         estimated_amount: enquiryToUpdate.estimated_amount || "",
 //         problem: enquiryToUpdate.problem || "",
 //         known_by: enquiryToUpdate.known_by || "",
@@ -1700,20 +1678,20 @@ export default EnquiryForm;
 //                         />
 //                       </div>
 //                     </div>
-//                     {/* tole name */}
+//                     {/* sec_address */}
 //                     <div className="col-md-4">
 //                       <div className="form-group">
-//                         <label htmlFor="tole_name">Tole Name:</label>
+//                         <label htmlFor="street_address">sec_address:</label>
 //                         <input
 //                           type="text"
-//                           id="tole_name"
-//                           name="tole_name"
-//                           value={formData.tole_name}
+//                           id="street_address"
+//                           name="street_address"
+//                           value={formData.street_address}
 //                           // onChange={handleInputChange}
 //                           onChange={(e) =>
 //                             setFormData({
 //                               ...formData,
-//                               tole_name: e.target.value,
+//                               street_address: e.target.value,
 //                             })
 //                           }
 //                           className="form-control"
@@ -1884,7 +1862,7 @@ export default EnquiryForm;
 //                         />
 //                       </div>
 //                     </div> */}
-//                     {/* tole name */}
+//                     {/* sec_address */}
 //                     <div className="col-md-4">
 //                       <div className="form-group">
 //                         <label htmlFor="history">History:</label>

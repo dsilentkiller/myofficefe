@@ -70,21 +70,30 @@ const EventForm = ({ handleClose, show }) => {
   const handleClick = () => {
     setToggle((prev) => !prev);
   };
-
-  // Handle form save logic
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!validateFields()) return;
 
-    dispatch(createEvent(eventData))
-      .unwrap()
-      .then(() => {
-        toast.success("Event created successfully!");
-        handleClose(); // Close the modal on success
-      })
-      .catch((error) => {
-        toast.error(`Error creating event: ${error}`);
-      });
+    try {
+      await dispatch(
+        createEvent({
+          ...eventData,
+          start: eventData.start.toISOString(),
+          end: eventData.end.toISOString(),
+          attendees: eventData.attendees.map(({ name, email }) => ({
+            name,
+            email,
+          })),
+        })
+      ).unwrap();
+
+      toast.success("Event created successfully!");
+      handleClose();
+    } catch (error) {
+      toast.error(`Error creating event: ${error.message || error}`);
+    }
   };
+
+  
 
   return (
     <Modal show={show} onHide={handleClose} className="event-modal">
@@ -186,15 +195,7 @@ const EventForm = ({ handleClose, show }) => {
                   }
                   isInvalid={!!errors[`attendee_${index}_email`]} // Ensure proper error key
                 />
-                {/* <Form.Control
-                type="text"
-                  placeholder="Phone"
-                   value={attendee.pri_phone}
-                   onChange={(e) => 
-                  handleAttendeeChange(index, "pri_phone", e.target.value)
-                  }
-                   isInvalid={!!errors[`attendee_${index}_phone`]} // Ensure proper error key
-               /> */}
+              
                 <Button
                   variant="danger"
                   onClick={() => handleRemoveAttendee(index)}

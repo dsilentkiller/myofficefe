@@ -91,21 +91,6 @@ const FollowTable = () => {
   };
 
   useEffect(() => {
-    //fetching data
-    // const fetchFollows = async () => {
-    //   try {
-    //     const response = await axios.get("http://127.0.0.1:8000/api/enquiry/");
-    //     setFollows(response.data.result || []); // Ensure the data is from 'result'
-    //     setLoading(false);
-    //   } catch (error) {
-    //     console.error("Error fetching Follows:", error); // Log the error for debugging
-    //     setError(error);
-    //     setLoading(false);
-    //   }
-    // };
-
-    // fetchFollows();
-
     //live search handling
     if (searchTerm) {
       setFilteredFollows(
@@ -117,15 +102,6 @@ const FollowTable = () => {
       setFilteredFollows(follows);
     }
   }, [searchTerm, follows]);
-
-  // Filter and sort follows by created date (latest first)
-  // const FilteredFollows = follows;
-  // console
-  //   .log("follows", follows)
-  //   .filter((follow) =>
-  //     follow.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  //   )
-  //   .sort((a, b) => new Date(b.created) - new Date(a.created));
 
   return (
     <div className="content-wrapper">
@@ -182,7 +158,7 @@ const FollowTable = () => {
                       filteredFollows.map((follow, index) => (
                         <tr key={follow.id}>
                           <td>{index + 1}</td>
-                          <td>{follow.enquiry_name}</td>
+                          <td>{follow.customer_name}</td>
                           <td>{formatName(follow.follow_by)}</td>
                           <td className={getDueDateClass(follow.due_date)}>
                             {formatDateTime(follow.due_date)}

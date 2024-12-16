@@ -8,18 +8,53 @@ import {
 } from "../../redux/slice/crm/followSlice";
 import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
 
-const FollowForm = () => {
+const FollowForm = (enquiryId) => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    enquiry: "",
+    enquiry: enquiryId,
     follow_by: "",
     due_date: "",
     remark: "",
     notes: "",
   });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (id) {
+      dispatch(updateFollowById({ id, ...formData }))
+        .unwrap()
+        .then(() => {
+          toast.success("Follow updated successfully!");
+          navigate("/dashboard/crm/follow");
+        })
+        .catch((error) => {
+          setErrors(error.errors || {});
+          toast.error(error.message || "Failed to update follow.");
+        });
+    } else {
+      dispatch(createFollow(formData))
+        .unwrap()
+        .then(() => {
+          toast.success("Follow created successfully!");
+          setFormData({
+            enquiry: enquiryId,
+            follow_by: "",
+            due_date: "",
+            remark: "",
+            notes: "",
+          });
+          navigate("/dashboard/crm/follow");
+        })
+        .catch((error) => {
+          setErrors(error.errors || {});
+          toast.error(error.message || "Failed to create follow.");
+        });
+    }
+  };
 
   const enquiries = useSelector((state) => state.enquiries.list);
   const followToUpdate = useSelector((state) => state.follows.CurrentFollow);
@@ -37,7 +72,7 @@ const FollowForm = () => {
     if (followToUpdate && id) {
       console.log("Follow data to update:", followToUpdate);
       setFormData({
-        enquiry: followToUpdate.enquiry || "",
+        enquiry: followToUpdate.enquiry_id || "",
         follow_by: followToUpdate.follow_by || "",
         due_date: followToUpdate.due_date || "",
         remark: followToUpdate.remark || "",
@@ -52,58 +87,58 @@ const FollowForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // const payload = {
-    //   id, // include the id here for updating
-    //   enquiry: formData.enquiry,
-    //   follow_by: formData.follow_by,
-    //   due_date: formData.due_date,
-    //   remark: formData.remark,
-    //   notes: formData.notes,
-    // };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  // const payload = {
+  //   id, // include the id here for updating
+  //   enquiry: formData.enquiry,
+  //   follow_by: formData.follow_by,
+  //   due_date: formData.due_date,
+  //   remark: formData.remark,
+  //   notes: formData.notes,
+  // };
 
-    if (id) {
-      console.log("form data before update:", formData);
-      dispatch(updateFollowById(id, ...formData)) // Use id with the payload
-        .unwrap()
-        .then((updatedFollow) => {
-          console.log("Updated follow:", updatedFollow);
-          // Fix syntax here
-          setFormData(updatedFollow); // Assuming updatedfollow is the entire object
-          toast.success("Follow updated successfully!");
-          navigate("/dashboard/crm/follow");
-        })
-        .catch((error) => {
-          console.error("Update Error:", error);
-          setErrors(error?.errors || {});
-          toast.error(
-            `Failed to update Follow: ${error?.message || "Unknown error"}`
-          );
-        });
-    } else {
-      dispatch(createFollow(formData))
-        .unwrap()
-        .then(() => {
-          toast.success("Follow created successfully!");
-          setFormData({
-            enquiry: "",
-            follow_by: "",
-            due_date: "",
-            remark: "",
-            notes: "",
-          });
-          navigate("/dashboard/crm/follow");
-        })
-        .catch((error) => {
-          console.error("Create Error:", error);
-          setErrors(error?.errors || {});
-          toast.error(
-            `Failed to create Follow: ${error?.message || "Unknown error"}`
-          );
-        });
-    }
-  };
+  // if (id) {
+  //   console.log("form data before update:", formData);
+  //   dispatch(updateFollowById(id, ...formData)) // Use id with the payload
+  //     .unwrap()
+  //     .then((updatedFollow) => {
+  //       console.log("Updated follow:", updatedFollow);
+  //       // Fix syntax here
+  //       setFormData(updatedFollow); // Assuming updatedfollow is the entire object
+  //       toast.success("Follow updated successfully!");
+  //       navigate("/dashboard/crm/follow");
+  //     })
+  // .catch((error) => {
+  //   console.error("Update Error:", error);
+  //   setErrors(error?.errors || {});
+  //   toast.error(
+  //     `Failed to update Follow: ${error?.message || "Unknown error"}`
+  //   );
+  // });
+  // } else {
+  //   dispatch(createFollow(formData))
+  //     .unwrap()
+  //     .then(() => {
+  //       toast.success("Follow created successfully!");
+  //       setFormData({
+  //         enquiry: enquiryId,
+  //         follow_by: "",
+  //         due_date: "",
+  //         remark: "",
+  //         notes: "",
+  //       });
+  //       navigate("/dashboard/crm/follow");
+  //     })
+  //     .catch((error) => {
+  //       console.error("Create Error:", error);
+  //       setErrors(error?.errors || {});
+  //       toast.error(
+  //         `Failed to create Follow: ${error?.message || "Unknown error"}`
+  //       );
+  //     });
+  // }
+  // };
 
   return (
     <div className="content-wrapper">
@@ -123,8 +158,8 @@ const FollowForm = () => {
                       <label htmlFor="enquiry">customer name:</label>
                       <select
                         id="enquiry"
-                        name="enquiry"
-                        value={formData.enquiry}
+                        name="enquiry_id"
+                        value={formData.enquiry_id}
                         onChange={handleChange}
                         className="form-control"
                         required

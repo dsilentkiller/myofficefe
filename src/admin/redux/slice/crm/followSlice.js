@@ -14,7 +14,7 @@ export const fetchFollows = createAsyncThunk(
   }
 );
 
-// Create a project action
+// Create a follow action
 export const createFollow = createAsyncThunk(
   "follows/createFollow",
   async (formData, thunkAPI) => {
@@ -25,51 +25,28 @@ export const createFollow = createAsyncThunk(
       );
       return response.data.result;
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || { message: error.message }
-      );
-    }
-  }
-);
-export const fetchFollowById = createAsyncThunk(
-  "follows/fetchFollowById",
-  async (id, thunkAPI) => {
-    try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/followup/detail/${id}/`
-      );
-      return response.data.result; // Make sure the API returns the correct structure
-    } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
-//update follow by id
-export const updateFollowByIdById = createAsyncThunk(
-  "follows/fetchFollowsById",
-  async (id, thunkAPI) => {
+
+
+export const fetchFollowById = createAsyncThunk(
+  "follows/fetchFollowById",
+  async (enquiryId, thunkAPI) => {
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/followup/update/${id}/`
+        `http://127.0.0.1:8000/api/followup/?enquiry_id=${enquiryId}`
       );
-      return response.data.result; // Make sure the API returns the correct structure
+      return response.data.result; // Adjust based on your API's response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
-// Update Project Status
-export const updateFollowByIdStatus = createAsyncThunk(
-  "follows/updateStatus",
-  async ({ id, status }) => {
-    const response = await axios.put(
-      `http://127.0.0.1:8000/api/followup/${id}/`,
-      { status }
-    );
-    return response.data.result;
-  }
-);
+
+// Update follow by ID
 export const updateFollowById = createAsyncThunk(
   "follows/updateFollowById",
   async ({ id, ...data }, thunkAPI) => {
@@ -78,30 +55,14 @@ export const updateFollowById = createAsyncThunk(
         `http://127.0.0.1:8000/api/followup/update/${id}/`,
         data
       );
-      return response.data.result; // Ensure this returns the updated project data
+      return response.data.result; // Ensure this returns the updated follow data
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
-// // Update project action
-// export const updateFollowById = createAsyncThunk(
-//   "follows/updateFollowById",
-//   async ({ id, name }, thunkAPI) => {
-//     try {
-//       const response = await axios.put(
-//         `http://127.0.0.1:8000/api/followup/update/${id}/`,
-//         { name }
-//       );
-//       return response.data.result; // Ensure API response has the expected structure
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
-
-// Delete project
+// Delete follow
 export const deleteFollow = createAsyncThunk(
   "follows/deleteFollow",
   async (id, thunkAPI) => {
@@ -114,7 +75,7 @@ export const deleteFollow = createAsyncThunk(
   }
 );
 
-// Search project action
+// Search follow
 export const searchFollow = createAsyncThunk(
   "follows/searchFollow",
   async (searchTerm, thunkAPI) => {
@@ -145,16 +106,33 @@ const followSlice = createSlice({
     deleteError: null,
   },
   reducers: {
-    fetchFollowsByIdSuccess: (state, action) => {
-      state.currentFollow = action.payload; // This should update the currentFollow
+    setFollows(state, action) {
+      state.list = action.payload;
+    },
+    setLoading(state, action) {
+      state.isLoading = action.payload;
+    },
+    setError(state, action) {
+      state.error = action.payload;
     },
     setCurrentFollow(state, action) {
       state.currentFollow = action.payload;
     },
   },
-
   extraReducers: (builder) => {
     builder
+      //fetch follow by id
+      // .addCase(fetchFollowByEnquiryId.pending, (state) => {
+      //   state.isLoading = true;
+      // })
+      // .addCase(fetchFollowByEnquiryId.fulfilled, (state, action) => {
+      //   state.isLoading = false;
+      //   state.list = action.payload;
+      // })
+      // .addCase(fetchFollowByEnquiryId.rejected, (state, action) => {
+      //   state.isLoading = false;
+      //   state.fetchError = action.payload;
+      // })
       // Fetch follows
       .addCase(fetchFollows.pending, (state) => {
         state.isLoading = true;
@@ -168,49 +146,38 @@ const followSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
-      // Fetch project by ID
-      // .addCase(updateFollowByIdById.pending, (state) => {
-      //   state.isLoading = true;
-      //   state.error = null;
-      // })
-
-      // .addCase(updateFollowByIdById.fulfilled, (state, action) => {
-      //   // state.isLoading = false;
-      //   state.currentFollow = action.payload; // Make sure payload is correctly updating currentFollow
-      // })
-      // .addCase(updateFollowByIdById.rejected, (state, action) => {
-      //   state.isLoading = false;
-      //   // state.error = action.payload;
-      //   state.currentFollow = null; // Reset if fetching fails
-      //   state.fetchError = action.error.message; // Optional: Handle the error
-      // })
-      // fetch follow by id
+      // Fetch follow by ID
       .addCase(fetchFollowById.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-
       .addCase(fetchFollowById.fulfilled, (state, action) => {
-        // state.isLoading = false;
-        state.currentFollow = action.payload; // Make sure payload is correctly updating currentFollow
+        state.isLoading = false;
+        state.currentFollow = action.payload;
       })
       .addCase(fetchFollowById.rejected, (state, action) => {
         state.isLoading = false;
-        // state.error = action.payload;
-        state.currentFollow = null; // Reset if fetching fails
-        state.fetchError = action.error.message; // Optional: Handle the error
+        state.currentFollow = null;
+        state.error = action.payload;
       })
-      .addCase(updateFollowByIdStatus.fulfilled, (state, action) => {
+      // Update follow by ID
+      .addCase(updateFollowById.fulfilled, (state, action) => {
         const updatedFollow = action.payload;
-        state.list = state.list.map((project) =>
-          project.id === updatedFollow.id ? updatedFollow : project
+        const index = state.list.findIndex(
+          (follow) => follow.id === updatedFollow.id
         );
-        if (state.currentFollow.id === updatedFollow.id) {
+        if (index !== -1) {
+          state.list[index] = updatedFollow;
+        }
+        if (state.currentFollow?.id === updatedFollow.id) {
           state.currentFollow = updatedFollow;
         }
       })
-
-      //create project
+      .addCase(updateFollowById.rejected, (state, action) => {
+        state.updateStatus = "failed";
+        state.updateError = action.payload;
+      })
+      // Create follow
       .addCase(createFollow.pending, (state) => {
         state.createStatus = "loading";
         state.createError = null;
@@ -223,34 +190,7 @@ const followSlice = createSlice({
         state.createStatus = "failed";
         state.createError = action.payload;
       })
-      //update project
-      .addCase(updateFollowById.fulfilled, (state, action) => {
-        const updatedFollow = action.payload;
-        if (!updatedFollow || !updatedFollow.id) return;
-
-        // Update project in the list
-        const index = state.list.findIndex(
-          (project) => project.id === updatedFollow.id
-        );
-
-        if (index !== -1) {
-          state.list[index] = updatedFollow;
-        }
-
-        // Also update currentFollow if necessary
-        if (
-          state.currentFollow &&
-          state.currentFollow.id === updatedFollow.id
-        ) {
-          state.currentFollow = updatedFollow;
-        }
-      })
-
-      .addCase(updateFollowById.rejected, (state, action) => {
-        state.updateStatus = "failed";
-        state.updateError = action.payload || "Failed to update project";
-      })
-      // Delete project
+      // Delete follow
       .addCase(deleteFollow.pending, (state) => {
         state.deleteStatus = "loading";
         state.deleteError = null;
@@ -258,14 +198,14 @@ const followSlice = createSlice({
       .addCase(deleteFollow.fulfilled, (state, action) => {
         state.deleteStatus = "succeeded";
         state.list = state.list.filter(
-          (project) => project.id !== action.payload
+          (follow) => follow.id !== action.payload
         );
       })
       .addCase(deleteFollow.rejected, (state, action) => {
         state.deleteStatus = "failed";
-        state.deleteError = action.payload || "Failed to delete project";
+        state.deleteError = action.payload;
       })
-      // Search project
+      // Search follow
       .addCase(searchFollow.pending, (state) => {
         state.isLoading = true;
       })
@@ -279,6 +219,9 @@ const followSlice = createSlice({
       });
   },
 });
+
+export const { setFollows, setLoading, setError, setCurrentFollow } =
+  followSlice.actions;
 
 export default followSlice.reducer;
 

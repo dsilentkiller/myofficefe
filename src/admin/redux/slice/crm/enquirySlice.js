@@ -79,7 +79,7 @@ export const fetchEnquiryById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
       );
-      return response.data; // Return the enquiry data
+      return response.data.result; // Return the enquiry data
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data || error.message); // Handle errors
     }

@@ -1,152 +1,36 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchEventById } from "../../redux/slice/crm/eventSlice";
-import { fetchAttendees } from "../../redux/slice/crm/attendeeSlice"; // Import to fetch attendees
-import { useParams } from "react-router-dom";
-
-const EventDetail = () => {
-  const { id } = useParams();
-
-  if (!id) {
-    console.error("Event ID is undefined!");
-  }
-
-  const dispatch = useDispatch();
-  const event = useSelector((state) => state.events.selectedEvent);
-  const loading = useSelector((state) => state.events.loading);
-  const error = useSelector((state) => state.events.error);
-  const attendees = useSelector((state) => state.attendees.list || []);
-
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchEventById(id));
-      dispatch(fetchAttendees()); // Fetch attendees for their names
-    } else {
-      console.error("Event ID is undefined. Cannot fetch event details.");
-    }
-  }, [dispatch, id]);
-  if (!id) {
-    return (
-      <p>Error: Event ID is missing. Please check the URL or try again.</p>
-    );
-  }
-
-  if (loading) {
-    return <p>Loading event details...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error.detail || "An unknown error occurred."}</p>;
-  }
-
-  if (!event) {
-    return <p>No event found!</p>;
-  }
-
-  return (
-    // <div>
-    //   <h2>{event.title}</h2>
-    //   <div>
-    //     <strong>Start:</strong> {new Date(event.start).toLocaleString()}
-    //   </div>
-    //   <div>
-    //     <strong>End:</strong> {new Date(event.end).toLocaleString()}
-    //   </div>
-    //   <div>
-    //     <strong>organization name:</strong>{" "}
-    //     {new Date(event.end).toLocaleString()}
-    //   </div>
-    //   <div>
-    //     <strong>organization address:</strong>{" "}
-    //     {new Date(event.end).toLocaleString()}
-    //   </div>
-    //   <div>
-    //     <h5>Attendees</h5>
-    //     {event.attendees_details && event.attendees_details.length > 0 ? (
-    //       <ul>
-    //         {event.attendees_details.map((attendee) => (
-    //           <li key={attendee.id}>
-    //             {attendee.name} ({attendee.email})
-    //           </li>
-    //         ))}
-    //       </ul>
-    //     ) : (
-    //       <p>No attendees available for this event.</p>
-    //     )}
-    //   </div>
-    //   <div>
-    //     <strong>description</strong>{" "}
-    //     {event.description ? event.description : "No description available."}
-    //   </div>
-    // </div>
-
-    <div className="event-detail-container">
-      <h2 className="event-title">{event.title}</h2>
-      <div className="event-metadata">
-        <p>
-          <strong>Start:</strong> {new Date(event.start).toLocaleString()}
-        </p>
-        <p>
-          <strong>End:</strong> {new Date(event.end).toLocaleString()}
-        </p>
-        <p>
-          <strong>Organization Name:</strong> {event.organization_name || "N/A"}
-        </p>
-        <p>
-          <strong>Organization Address:</strong>{" "}
-          {event.organization_address || "N/A"}
-        </p>
-      </div>
-      <div>
-        <h5>Attendees</h5>
-        {event.attendees_details && event.attendees_details.length > 0 ? (
-          <ul className="attendees-list">
-            {event.attendees_details.map((attendee) => (
-              <li key={attendee.id}>
-                {attendee.name} ({attendee.email})
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No attendees available for this event.</p>
-        )}
-      </div>
-      <div className="event-description">
-        <strong>Description:</strong>{" "}
-        {event.description || "No description available."}
-      </div>
-    </div>
-  );
-};
-
-export default EventDetail;
-
-// import React, { useEffect, useState } from "react";
-// import { Button, Col, Row, Container } from "react-bootstrap";
-// import { useParams, useNavigate } from "react-router-dom";
+//1st
+// import React, { useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { fetchEventById } from "../../redux/slice/crm/eventSlice";
-// import EventDelete from "./EventDelete";
-// import { toast, ToastContainer } from "react-toastify";
+// import { fetchAttendees } from "../../redux/slice/crm/attendeeSlice"; // Import to fetch attendees
+// import { useParams } from "react-router-dom";
 
 // const EventDetail = () => {
 //   const { id } = useParams();
+
+//   if (!id) {
+//     console.error("Event ID is undefined!");
+//   }
+
 //   const dispatch = useDispatch();
 //   const event = useSelector((state) => state.events.selectedEvent);
 //   const loading = useSelector((state) => state.events.loading);
 //   const error = useSelector((state) => state.events.error);
-//   const navigate = useNavigate();
-//   const [eventToDelete, setEventToDelete] = useState(null);
+//   const attendees = useSelector((state) => state.attendees.list || []);
 
 //   useEffect(() => {
-//     dispatch(fetchEventById(id));
-//   }, [dispatch, id]);
-
-//   useEffect(() => {
-//     if (event) {
-//       console.log("Fetched event:", event);
+//     if (id) {
+//       dispatch(fetchEventById(id));
+//       dispatch(fetchAttendees()); // Fetch attendees for their names
+//     } else {
+//       console.error("Event ID is undefined. Cannot fetch event details.");
 //     }
-//   }, [event]);
+//   }, [dispatch, id]);
+//   if (!id) {
+//     return (
+//       <p>Error: Event ID is missing. Please check the URL or try again.</p>
+//     );
+//   }
 
 //   if (loading) {
 //     return <p>Loading event details...</p>;
@@ -161,68 +45,192 @@ export default EventDetail;
 //   }
 
 //   return (
-//     <Container className="content-wrapper">
-//       <h2 className="btn btn primary">{event.title}</h2>
-//       <div className="row">
-//         <div className="col">
-//           <Col md={12}>
-//             <div className="col-md-8">
-//               <strong>Start:</strong> {new Date(event.start).toLocaleString()}
-//             </div>
-//             <div className="col-md-8">
-//               <strong>End:</strong> {new Date(event.end).toLocaleString()}
-//             </div>
-//             <Col md={8}>
-//               <h5>Attendees</h5>
-//               {event.attendees && event.attendees.length > 0 ? (
-//                 <ul>
-//                   {event.attendees.map((attendee) => (
-//                     <li key={attendee.id}>
-//                       {attendee.attendee_name} ({attendee.email})
-//                     </li>
-//                   ))}
-//                 </ul>
-//               ) : (
-//                 <p>No attendees available for this event.</p>
-//               )}
-//             </Col>
-//             <div>
-//               <strong>description:</strong>{" "}
-//               {event.description ? event.description : "No description available."}
-//             </div>
+//     // <div>
+//     //   <h2>{event.title}</h2>
+//     //   <div>
+//     //     <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+//     //   </div>
+//     //   <div>
+//     //     <strong>End:</strong> {new Date(event.end).toLocaleString()}
+//     //   </div>
+//     //   <div>
+//     //     <strong>organization name:</strong>{" "}
+//     //     {new Date(event.end).toLocaleString()}
+//     //   </div>
+//     //   <div>
+//     //     <strong>organization address:</strong>{" "}
+//     //     {new Date(event.end).toLocaleString()}
+//     //   </div>
+//     //   <div>
+//     //     <h5>Attendees</h5>
+//     //     {event.attendees_details && event.attendees_details.length > 0 ? (
+//     //       <ul>
+//     //         {event.attendees_details.map((attendee) => (
+//     //           <li key={attendee.id}>
+//     //             {attendee.name} ({attendee.email})
+//     //           </li>
+//     //         ))}
+//     //       </ul>
+//     //     ) : (
+//     //       <p>No attendees available for this event.</p>
+//     //     )}
+//     //   </div>
+//     //   <div>
+//     //     <strong>description</strong>{" "}
+//     //     {event.description ? event.description : "No description available."}
+//     //   </div>
+//     // </div>
 
-//             <Button
-//               variant="primary"
-//               onClick={() =>
-//                 navigate(`/dashboard/crm/event/update/${event.id}`)
-//               }
-//             >
-//               Update Event
-//             </Button>
-//             <Button
-//               variant="danger"
-//               onClick={() => setEventToDelete(event.id)}
-//               className="ms-2"
-//             >
-//               Delete Event
-//             </Button>
-//           </Col>
-//         </div>
+//     <div className="event-detail-container">
+//       <h2 className="event-title">{event.title}</h2>
+//       <div className="event-metadata">
+//         <p>
+//           <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+//         </p>
+//         <p>
+//           <strong>End:</strong> {new Date(event.end).toLocaleString()}
+//         </p>
+//         <p>
+//           <strong>Organization Name:</strong> {event.organization_name || "N/A"}
+//         </p>
+//         <p>
+//           <strong>Organization Address:</strong>{" "}
+//           {event.organization_address || "N/A"}
+//         </p>
 //       </div>
-
-//       {eventToDelete !== null && (
-//         <EventDelete
-//           id={eventToDelete}
-//           onClose={() => setEventToDelete(null)}
-//         />
-//       )}
-
-//       <ToastContainer />
-//     </Container>
+//       <div>
+//         <h5>Attendees</h5>
+//         {event.attendees_details && event.attendees_details.length > 0 ? (
+//           <ul className="attendees-list">
+//             {event.attendees_details.map((attendee) => (
+//               <li key={attendee.id}>
+//                 {attendee.name} ({attendee.email})
+//               </li>
+//             ))}
+//           </ul>
+//         ) : (
+//           <p>No attendees available for this event.</p>
+//         )}
+//       </div>
+//       <div className="event-description">
+//         <strong>Description:</strong>{" "}
+//         {event.description || "No description available."}
+//       </div>
+//     </div>
 //   );
 // };
 
 // export default EventDetail;
+
+import React, { useEffect, useState } from "react";
+import { Button, Col, Row, Container } from "react-bootstrap";
+import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchEventById } from "../../redux/slice/crm/eventSlice";
+import EventDelete from "./EventDelete";
+import { toast, ToastContainer } from "react-toastify";
+
+const EventDetail = () => {
+  const { id } = useParams();
+  console.log(id);
+  const dispatch = useDispatch();
+  const event = useSelector((state) => state.events.currentEvent);
+  const loading = useSelector((state) => state.events.loading);
+  const error = useSelector((state) => state.events.error);
+  const navigate = useNavigate();
+  const [eventToDelete, setEventToDelete] = useState(null);
+
+  useEffect(() => {
+    dispatch(fetchEventById(id))
+      .unwrap() // Unwrap the thunk to handle the returned data or errors
+      .then((data) => console.log("Event fetched:", data))
+      .catch((error) => console.log("Error fetching event:", error));
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    if (event) {
+      console.log("Fetched event:", event);
+    }
+  }, [event]);
+
+  if (loading) {
+    return <p>Loading event details...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error.detail || "An unknown error occurred."}</p>;
+  }
+
+  if (!event) {
+    return <p>No event found!</p>;
+  }
+
+  return (
+    <Container className="content-wrapper">
+      <h2 className="btn btn primary">{event.title}</h2>
+      <div className="row">
+        <div className="col">
+          <Col md={12}>
+            <div className="col-md-8">
+              <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+            </div>
+            <div className="col-md-8">
+              <strong>End:</strong> {new Date(event.end).toLocaleString()}
+            </div>
+            <Col md={8}>
+              <h5>Attendees</h5>
+              {event.attendees && event.attendees.length > 0 ? (
+                <ul>
+                  {event.attendees.map((attendee) => (
+                    <li key={attendee.id}>
+                      {attendee.attendee_name} ({attendee.email})
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No attendees available for this event.</p>
+              )}
+            </Col>
+            <div>
+              <strong>description:</strong>{" "}
+              {event.description
+                ? event.description
+                : "No description available."}
+            </div>
+
+            <Button
+              variant="primary"
+              onClick={() =>
+                event?.id && navigate(`/dashboard/crm/event/update/${event.id}`)
+              }
+            >
+              Update Event
+            </Button>
+
+            <Button
+              variant="danger"
+              onClick={() => setEventToDelete(event.id)}
+              className="ms-2"
+            >
+              Delete Event
+            </Button>
+          </Col>
+        </div>
+      </div>
+
+      {eventToDelete !== null && (
+        <EventDelete
+          id={eventToDelete}
+          onClose={() => setEventToDelete(null)}
+        />
+      )}
+
+      <ToastContainer />
+    </Container>
+  );
+};
+
+export default EventDetail;
 
 // import React, { useEffect, useState } from "react";
 // import { Button } from "react-bootstrap";

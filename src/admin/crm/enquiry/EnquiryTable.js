@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 // import EnquiryForm from "./EnquiryForm";
 import "../../css/Table.css";
 import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
-import { useSelector, useDispatch } from "react-redux"; // Correct import
+import {  useDispatch } from "react-redux"; // Correct import
 import { Link, useNavigate } from "react-router-dom";
 import EnquiryDelete from "./EnquiryDelete";
 import jsPDF from "jspdf";
@@ -251,11 +251,6 @@ const EnquiryTable = () => {
                       onChange={handleSearchChange}
                       required
                     />
-                    {/* <div className="input-group-append">
-                        <button type="submit" className="btn btn-info">
-
-                        </button>
-                      </div> */}
                   </div>
                 </form>
               </div>
@@ -305,8 +300,8 @@ const EnquiryTable = () => {
                     <th>Province</th>
                     <th>District</th>
                     <th>Municipality</th>
-                    <th>WardNo</th>
-                    <th>Tole Name</th>
+                    <th>street address</th>
+                 
                     <th>Budget</th>
                     <th>Enquiry Purpose</th>
 
@@ -348,8 +343,8 @@ const EnquiryTable = () => {
                           <td>{formatName(enquiry.province_name)}</td>
                           <td>{formatName(enquiry.district_name)}</td>
                           <td>{formatName(enquiry.municipality_name)}</td>
-                          <td>{enquiry.ward_no}</td>
-                          <td>{formatName(enquiry.tole_name)}</td>
+                          <td>{enquiry.street_address}</td>
+                          {/* <td>{formatName(enquiry.tole_name)}</td> */}
                           <td>{enquiry.estimated_amount}</td>
                           <td>
                             {truncateEnquiryPurpose(enquiry.enquiry_purpose)}

@@ -269,6 +269,7 @@ function App() {
               <Route path="enquiry/create/" element={<EnquiryForm />} />
               <Route path="enquiry/delete/" element={<EnquiryDelete />} />
               <Route path="enquiry/detail/:id/" element={<EnquiryDetail />} />
+              {/* <Route path="/follow/:followId" element={<EnquiryDetail />} /> */}
               <Route path="enquiry/update/:id/" element={<EnquiryForm />} />
               {/* <Route path="enquiry/update/:id/" element={<EnquiryUpdate />} /> */}
 

@@ -4,9 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchDistricts,
   updateDistrict,
-  updateError,
-  updateStatus,
 } from "../../redux/slice/base/districtSlice";
+import { fetchProvinces } from "../../redux/slice/base/provinceSlice";
 import { Link } from "react-router-dom";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import "../../../admin/css/Table.css";
@@ -25,21 +24,16 @@ const DistrictList = () => {
   const [filteredDistricts, setFilteredDistricts] = useState([]);
   const [districtToDelete, setDistrictToDelete] = useState(null);
 
+  // const provincesLoading = useSelector((state) => state.provinces.isLoading);
+  // const provincesError = useSelector((state) => state.provinces.error);
+
   //----- Fetching data from the database or API call using fetchDistricts -------------
   useEffect(() => {
     dispatch(fetchDistricts());
+    dispatch(fetchProvinces());
   }, [dispatch]);
 
-  //----- Update status toast--------
-  useEffect(() => {
-    if (updateStatus === "succeeded") {
-      toast.success("District updated successfully!");
-    } else if (updateStatus === "failed") {
-      toast.error(
-        `Failed to update district: ${updateError || "Unknown error"}`
-      );
-    }
-  }, [updateStatus, updateError]);
+  const provinces = useSelector((state) => state.provinces.list);
 
   //------------ This is filtered district names in the search table ---------
   useEffect(() => {
@@ -79,22 +73,41 @@ const DistrictList = () => {
 
   //---- Handle update district (both district name and province) ---
   // Handle the update for both district name and province name
+  // Define handleUpdate before the return statement
+
   const handleUpdate = (e) => {
     e.preventDefault();
     if (editId !== null) {
-      // Dispatching the updateDistrict action with both district name and province name
+      if (!provinces || provinces.length === 0) {
+        toast.error("Provinces data is not available. Please try again later.");
+        return;
+      }
+
+      const provinceId = provinces.find((p) => p.name === newProvinceName)?.id;
+
+      if (!provinceId) {
+        toast.error("Invalid province selected");
+        return;
+      }
+
       dispatch(
         updateDistrict({
           id: editId,
           name: newDistrictName,
-          province: newProvinceName, // Make sure to send province too
+          province: provinceId,
         })
-      );
-
-      // Reset the edit state
-      setEditId(null);
-      setNewDistrictName("");
-      setNewProvinceName("");
+      )
+        .unwrap()
+        .then(() => {
+          toast.success("District updated successfully!");
+          setEditId(null);
+          setNewDistrictName("");
+          setNewProvinceName("");
+        })
+        .catch((error) => {
+          console.error("Failed to update district:", error);
+          toast.error(`Failed to update district: ${error.message}`);
+        });
     }
   };
 
@@ -173,19 +186,45 @@ const DistrictList = () => {
                               formatName(district.name)
                             )}
                           </td>
-                          <td>
+                          {/* <td>
                             {editId === district.id ? (
                               <input
                                 type="text"
-                                value={newProvinceName}
+                                value={newProvinceName || ""}
                                 onChange={(e) =>
                                   setNewProvinceName(e.target.value)
                                 }
+                                placeholder="Enter province manually" // Optional fallback
                               />
                             ) : (
                               formatName(district.province_name)
                             )}
+                          </td> */}
+                          <td>
+                            {editId === district.id ? (
+                              <select
+                                value={newProvinceName || ""}
+                                onChange={(e) =>
+                                  setNewProvinceName(e.target.value)
+                                }
+                                className="form-control"
+                              >
+                                <option value="">Select Province</option>
+                                {provinces &&
+                                  provinces.map((province) => (
+                                    <option
+                                      key={province.id}
+                                      value={province.name}
+                                    >
+                                      {province.name}
+                                    </option>
+                                  ))}
+                              </select>
+                            ) : (
+                              formatName(district.province_name)
+                            )}
                           </td>
+
                           <td>
                             {editId === district.id ? (
                               <button

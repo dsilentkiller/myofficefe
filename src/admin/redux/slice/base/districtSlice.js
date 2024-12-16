@@ -67,24 +67,17 @@ export const fetchDistrictById = createAsyncThunk(
 
 export const updateDistrict = createAsyncThunk(
   "districts/updateDistrict",
-  async (districtData, { rejectWithValue }) => {
+  async (district, { rejectWithValue }) => {
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/setup/district/update/${districtData.id}/`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(districtData),
-        }
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/setup/district/update/${district.id}/`,
+        district
       );
-      if (!response.ok) {
-        throw new Error("Failed to update district");
-      }
-      return await response.json();
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(
+        error.response?.data || "Failed to update district"
+      );
     }
   }
 );
@@ -147,17 +140,23 @@ const districtSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(updateDistrict.fulfilled, (state, action) => {
-        const updatedDistrict = action.payload;
-        const index = state.list.findIndex(
-          (district) => district.id === updatedDistrict.id
+        state.updateStatus = "succeeded";
+        state.list = state.list.map((district) =>
+          district.id === action.payload.id ? action.payload : district
         );
-        if (index !== -1) {
-          state.list[index] = updatedDistrict; // Update both name and province
-        }
       })
+      // .addCase(updateDistrict.fulfilled, (state, action) => {
+      //   const updatedDistrict = action.payload;
+      //   const index = state.list.findIndex(
+      //     (district) => district.id === updatedDistrict.id
+      //   );
+      //   if (index !== -1) {
+      //     state.list[index] = updatedDistrict; // Update both name and province
+      //   }
+      // })
       .addCase(updateDistrict.rejected, (state, action) => {
         state.updateStatus = "failed";
-        state.updateError = action.error.message;
+        state.updateError = action.payload || "An error occurred during update";
       })
       .addCase(updateDistrict.pending, (state) => {
         state.updateStatus = "loading";

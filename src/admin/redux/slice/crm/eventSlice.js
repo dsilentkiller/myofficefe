@@ -14,43 +14,26 @@ export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
 
 // Async thunk for fetching an event by ID
 export const fetchEventById = createAsyncThunk(
-  "events/fetchEventById",
-  async (id, { rejectWithValue }) => {
+  "enquiries/fetchEventById",
+  async (id, { thunkAPI }) => {
+    console.log("Fetching event with ID:", id); // Check if ID is correct
     try {
       const response = await axios.get(
         `http://127.0.0.1:8000/api/event/detail/${id}/`
       );
-      if (!response.data.result) {
-        throw new Error("Invalid response structure");
-      }
       return response.data.result;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data || "An error occurred while fetching the event."
-      );
+      return thunkAPI.rejectWithValue("Failed to fetch event");
     }
   }
 );
 
-// export const fetchEventById = createAsyncThunk(
-//   "events/fetchEventById",
-//   async (id, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.get(
-//         `http://127.0.0.1:8000/api/event/detail/${id}/`
-//       );
-//       return response.data.result;
-//     } catch (error) {
-//       return rejectWithValue(error.response.data);
-//     }
-//   }
-// );
-// Fetch all projects action
-export const fetchProject = createAsyncThunk(
-  "projects/fetchProject",
+// Fetch all Events action
+export const fetchEvent = createAsyncThunk(
+  "Events/fetchEvent",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/project/");
+      const response = await axios.get("http://127.0.0.1:8000/api/Event/");
       return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
@@ -75,15 +58,15 @@ export const createEvent = createAsyncThunk(
 );
 
 // Async thunk for updating an event
-export const updateEvent = createAsyncThunk(
-  "events/updateEvent",
+export const fetchEventByIdUpdate = createAsyncThunk(
+  "events/fetchEventByIdUpdate",
   async ({ id, eventData }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/api/event/update/${id}/`,
         eventData
       );
-      return response.data;
+      return response.data.result;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -113,7 +96,11 @@ const eventSlice = createSlice({
     selectedEvent: null, // Ensure this is part of the initial state
     error: null,
   },
-  reducers: {},
+  reducers: {
+    setCurrentEvent(state, action) {
+      state.currentEvent = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     // Fetch events
     builder
@@ -135,10 +122,13 @@ const eventSlice = createSlice({
       })
       .addCase(fetchEventById.fulfilled, (state, action) => {
         state.loading = false;
+        state.currentEvent = action.payload; // Correct case
         state.selectedEvent = action.payload;
       })
       .addCase(fetchEventById.rejected, (state, action) => {
         state.loading = false;
+
+        state.currentEvent = null;
         state.error = action.payload || "Failed to fetch event";
       });
 
@@ -158,17 +148,17 @@ const eventSlice = createSlice({
 
     // Update event
     builder
-      .addCase(updateEvent.pending, (state) => {
+      .addCase(fetchEventByIdUpdate.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(updateEvent.fulfilled, (state, action) => {
+      .addCase(fetchEventByIdUpdate.fulfilled, (state, action) => {
         state.status = "succeeded";
         const index = state.events.findIndex(
           (event) => event.id === action.payload.id
         );
         state.events[index] = action.payload;
       })
-      .addCase(updateEvent.rejected, (state, action) => {
+      .addCase(fetchEventByIdUpdate.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
