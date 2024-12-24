@@ -63,11 +63,23 @@ const EventSystem = () => {
       toast.error("Failed to save event!");
     }
   };
+  // const handleSelectEvent = (event) => {
+  //   setEventData(event);
+  //   setShowModal(true);
+  //   console.log("Navigating to event detail with ID:", event.id);
+  //   navigate(`/dashboard/crm/event/detail/${event.id}`);
+  // };
   const handleSelectEvent = (event) => {
-    setEventData(event);
-    setShowModal(true);
-    console.log("Navigating to event detail with ID:", event.id);
-    navigate(`/dashboard/crm/event/detail/${event.id}`);
+    // setEventData(event);
+    // setShowModal(true);
+    console.log("Selected Event:", event); // Log the event before checking ID
+    if (event?.id) {
+      console.log("Navigating to event detail with ID:", event.id);
+      navigate(`/dashboard/crm/event/detail/${event.id}`);
+    } else {
+      console.error("Event ID is undefined or null.");
+      toast.error("Event ID is missing.");
+    }
   };
 
   const handleDateClick = (date) => {
@@ -101,6 +113,7 @@ const EventSystem = () => {
             localizer={localizer}
             events={events.map((event) => ({
               ...event,
+              id:event.id,//passing event id
               start: new Date(event.start), // Ensure start is a Date object
               end: new Date(event.end), // Ensure end is a Date object
             }))}

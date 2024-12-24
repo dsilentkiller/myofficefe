@@ -10,60 +10,84 @@ import "../../../admin/css/Table.css";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import DeleteMunicipality from "./Delete";
 import { toast } from "react-toastify";
-import "../../css/Table.css";
+
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 import * as XLSX from "xlsx";
+import { fetchDistricts } from "../../redux/slice/base/districtSlice";
+// import { fetchdistricts } from "../../redux/slice/base/districtSlice";
 
-const MunicipalityList = () => {
+import "../../../admin/css/Table.css";
+// import DeleteDistrict from "./DeleteDistrict"; // Adjust the path as needed
+
+const MunicipalityTable = () => {
   const dispatch = useDispatch();
+  const {
+    list: municipalities,
+
+    deleteError,
+  } = useSelector((state) => state.municipalities);
   const [editId, setEditId] = useState(null);
-  const [newName, setNewName] = useState("");
+  const [newMunicipalityName, setNewMunicipalityName] = useState("");
+  const [newDistrictName, setNewDistrictName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [municipalityToDelete, setMunicipalityToDelete] = useState(null);
   const [filteredMunicipalities, setFilteredMunicipalities] = useState([]);
 
-  const {
-    list: municipalities,
-    isLoading,
-    error,
-    // deleteStatus,
-    deleteError,
-    updateStatus,
-    updateError,
-  } = useSelector((state) => state.municipalities);
+  const [filteredDistricts, setFilteredDistricts] = useState([]);
+  const [districtToDelete, setDistrictToDelete] = useState(null);
+
+  const districts = useSelector((state) => state.districts.list);
+  const isLoading = useSelector((state) => state.districts.isLoading);
+  const error = useSelector((state) => state.districts.error);
+  useEffect(() => {
+    console.log("Districts from Redux state:", districts);
+  }, [districts]);
 
   useEffect(() => {
     dispatch(fetchMunicipalities());
+    dispatch(fetchDistricts());
   }, [dispatch]);
-
-  const handleEdit = (id, name) => {
+  // #---------handle edit district (both district and municipality)
+  const handleEdit = (id, name, district) => {
     setEditId(id);
-    setNewName(name);
+    setNewMunicipalityName(name);
+    setNewDistrictName(district);
   };
-
+  //---- Handle update district (both district name and municipality) ---
   const handleUpdate = (e) => {
     e.preventDefault();
-    if (editId !== null) {
-      dispatch(updateMunicipality({ id: editId, name: newName }));
-      setEditId(null);
-      setNewName("");
+
+    // Find the districtId based on the district name
+    const districtId =
+      districts &&
+      districts.find((district) => district.name === newDistrictName)?.id;
+
+    if (editId !== null && districtId) {
+      dispatch(
+        updateMunicipality({
+          id: editId,
+          name: newMunicipalityName,
+          districtId: districtId, // Send the district ID
+        })
+      )
+        .unwrap()
+        .then((response) => {
+          console.log("Update response:", response); // Log the response here
+          toast.success("Municipality updated successfully!");
+          setEditId(null);
+          setNewMunicipalityName("");
+          setNewDistrictName(""); // Reset after update
+        })
+        .catch((error) => {
+          console.error("Failed to update municipality:", error);
+          toast.error(`Failed to update municipality: ${error.message}`);
+        });
+    } else {
+      toast.error("Please select a valid district");
     }
   };
-
-  // Update status and error handling with safe access to message property
-  useEffect(() => {
-    if (updateStatus === "succeeded") {
-      toast.success("Municipality updated successfully!");
-    } else if (updateStatus === "failed") {
-      toast.error(
-        `Failed to update municipality: ${
-          updateError?.message || "Unknown error"
-        }`
-      );
-    }
-  }, [updateStatus, updateError]);
 
   const handleDelete = (id) => {
     setMunicipalityToDelete(id);
@@ -86,6 +110,14 @@ const MunicipalityList = () => {
         );
       });
   };
+  //-- Formatting name (capitalizing first letter) ---
+  const formatName = (name) => {
+    if (!name) return "";
+    return name
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -94,14 +126,49 @@ const MunicipalityList = () => {
   useEffect(() => {
     if (searchTerm) {
       setFilteredMunicipalities(
-        municipalities.filter(
-          (municipality) =>
-            municipality.name &&
-            municipality.name.toLowerCase().includes(searchTerm.toLowerCase())
+        (municipalities || []).filter((municipality) =>
+          //     municipality.name &&
+          //     municipality.name.toLowerCase().includes(searchTerm.toLowerCase())
+          {
+            // Ensure district.name and district.province are defined before calling toLowerCase()
+            const municipalityName = municipality.name
+              ? municipality.name.toLowerCase()
+              : "";
+            const districtName = municipality.district
+              ? municipality.district.toLowerCase()
+              : "";
+
+            return (
+              municipalityName.includes(searchTerm.toLowerCase()) ||
+              districtName.includes(searchTerm.toLowerCase())
+            );
+          }
         )
       );
     } else {
       setFilteredMunicipalities(municipalities);
+    }
+  }, [searchTerm, municipalities]);
+  useEffect(() => {
+    if (searchTerm) {
+      setFilteredDistricts(
+        municipalities.filter((municipality) => {
+          // Ensure district.name and district.district are defined before calling toLowerCase()
+          const municipalityName = municipality.name
+            ? municipality.name.toLowerCase()
+            : "";
+          const districtName = municipality.district
+            ? municipality.district.toLowerCase()
+            : "";
+
+          return (
+            districtName.includes(searchTerm.toLowerCase()) ||
+            districtName.includes(searchTerm.toLowerCase())
+          );
+        })
+      );
+    } else {
+      setFilteredDistricts(municipalities);
     }
   }, [searchTerm, municipalities]);
 
@@ -119,7 +186,7 @@ const MunicipalityList = () => {
 
   const exportToPDF = () => {
     const doc = new jsPDF();
-    doc.text("Municipalities List", 20, 10);
+    doc.text("Municipalities municipalities", 20, 10);
 
     const tableColumn = ["ID", "Name"];
     const tableRows = municipalities.map((municipality) => [
@@ -142,7 +209,7 @@ const MunicipalityList = () => {
           <div className="card">
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
               <div className="container-fluid">
-                <h5 className="navbar-brand">Municipality List</h5>
+                <h5 className="navbar-brand">Municipality municipalities</h5>
                 <div className="navbar-nav ml-auto">
                   <Link to="create" className="nav-link btn btn-primary">
                     <h5>Add Municipality</h5>
@@ -210,7 +277,8 @@ const MunicipalityList = () => {
                               <thead>
                                 <tr>
                                   <th>#</th>
-                                  <th>Name</th>
+                                  <th>Municipality</th>
+                                  <th>District</th>
                                   <th>Action</th>
                                 </tr>
                               </thead>
@@ -224,15 +292,48 @@ const MunicipalityList = () => {
                                           {editId === municipality.id ? (
                                             <input
                                               type="text"
-                                              value={newName}
+                                              value={newMunicipalityName}
                                               onChange={(e) =>
-                                                setNewName(e.target.value)
+                                                setNewMunicipalityName(
+                                                  e.target.value
+                                                )
                                               }
                                             />
                                           ) : (
                                             municipality.name
                                           )}
                                         </td>
+                                        <td>
+                                          {editId === municipality.id ? (
+                                            <select
+                                              value={newDistrictName || ""}
+                                              onChange={(e) =>
+                                                setNewDistrictName(
+                                                  e.target.value
+                                                )
+                                              }
+                                              className="form-control"
+                                            >
+                                              <option value="">
+                                                Select district
+                                              </option>
+                                              {districts &&
+                                                districts.map((district) => (
+                                                  <option
+                                                    key={district.id}
+                                                    value={district.name}
+                                                  >
+                                                    {district.name}
+                                                  </option>
+                                                ))}
+                                            </select>
+                                          ) : (
+                                            formatName(
+                                              municipality.district_name || ""
+                                            ) // Handle undefined safely
+                                          )}
+                                        </td>
+
                                         <td>
                                           {editId === municipality.id ? (
                                             <button
@@ -246,7 +347,8 @@ const MunicipalityList = () => {
                                               onClick={() =>
                                                 handleEdit(
                                                   municipality.id,
-                                                  municipality.name
+                                                  municipality.name,
+                                                  municipality.district
                                                 )
                                               }
                                               className="btn btn-primary"
@@ -254,6 +356,7 @@ const MunicipalityList = () => {
                                               <FaEdit />
                                             </button>
                                           )}
+
                                           <button
                                             onClick={() =>
                                               handleDelete(municipality.id)
@@ -282,20 +385,28 @@ const MunicipalityList = () => {
                   </div>
                 </div>
               </div>
-              <DeleteMunicipality
+              {/* Delete Confirmation Modal */}
+              {/* <DeleteMunicipality
                 id={municipalityToDelete}
                 onConfirm={confirmDelete}
                 onClose={() => setMunicipalityToDelete(null)}
-              />
+              /> */}
             </div>
           </div>
         </div>
       </div>
+      {/* Delete Confirmation Modal */}
+      {municipalityToDelete !== null && (
+        <deleteMunicipality
+          id={municipalityToDelete}
+          onClose={() => setMunicipalityToDelete(null)}
+        />
+      )}
     </div>
   );
 };
 
-export default MunicipalityList;
+export default MunicipalityTable;
 
 //2 import React, { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
@@ -309,7 +420,7 @@ export default MunicipalityList;
 // import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
 // import DeleteMunicipality from "./Delete";
 
-// const MunicipalityList = () => {
+// const Municipalitymunicipalities = () => {
 //   const dispatch = useDispatch();
 
 //   // Access updateStatus state property
@@ -318,12 +429,12 @@ export default MunicipalityList;
 //   ); // Corrected state access
 //   const updateError = useSelector((state) => state.municipalities.updateError);
 //   const [editId, setEditId] = useState(null);
-//   const [newName, setNewName] = useState("");
+//   const [newMunicipality, setNewName] = useState("");
 //   const [searchTerm, setSearchTerm] = useState("");
 //   const [municipalityToDelete, setMunicipalityToDelete] = useState(null);
 
 //   const {
-//     list: municipalities,
+//     municipalities: municipalities,
 //     isLoading,
 //     error,
 //   } = useSelector((state) => state.municipalities);
@@ -360,7 +471,7 @@ export default MunicipalityList;
 //           <div className="card">
 //             <nav className="navbar navbar-expand-lg navbar-light bg-light">
 //               <div className="container-fluid">
-//                 <h5 className="navbar-brand">Municipality List</h5>
+//                 <h5 className="navbar-brand">Municipality municipalities</h5>
 //                 <div className="navbar-nav ml-auto">
 //                   <Link to="create" className="nav-link btn btn-info">
 //                     <h5>Add Municipality</h5>
@@ -505,7 +616,7 @@ export default MunicipalityList;
 //   );
 // };
 
-// export default MunicipalityList;
+// export default Municipalitymunicipalities;
 
 //v22 final
 // import { toast } from "react-toastify";
@@ -521,7 +632,7 @@ export default MunicipalityList;
 // import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
 // import DeleteMunicipality from "./Delete";
 
-// const MunicipalityList = () => {
+// const Municipalitymunicipalities = () => {
 //   const dispatch = useDispatch();
 
 //   // Access updateStatus state property
@@ -530,12 +641,12 @@ export default MunicipalityList;
 //   ); // Corrected state access
 //   const updateError = useSelector((state) => state.municipalities.updateError);
 //   const [editId, setEditId] = useState(null);
-//   const [newName, setNewName] = useState("");
+//   const [newMunicipality, setNewName] = useState("");
 //   const [searchTerm, setSearchTerm] = useState("");
 //   const [municipalityToDelete, setMunicipalityToDelete] = useState(null);
 
 //   const {
-//     list: municipalities,
+//     municipalities: municipalities,
 //     isLoading,
 //     error,
 //   } = useSelector((state) => state.municipalities);
@@ -570,7 +681,7 @@ export default MunicipalityList;
 //       .then(() => {
 //         toast.success("Municipality deleted successfully!");
 //         setMunicipalityToDelete(null); // Close the modal after successful deletion
-//         dispatch(fetchMunicipality()); // Refresh the list
+//         dispatch(fetchMunicipality()); // Refresh the municipalities
 //       })
 //       .catch((error) => {
 //         // Handle and log the error more robustly
@@ -588,7 +699,7 @@ export default MunicipalityList;
 //           <div className="card">
 //             <nav className="navbar navbar-expand-lg navbar-light bg-light">
 //               <div className="container-fluid">
-//                 <h5 className="navbar-brand">Municipality List</h5>
+//                 <h5 className="navbar-brand">Municipality municipalities</h5>
 //                 <div className="navbar-nav ml-auto">
 //                   <Link to="create" className="nav-link btn btn-info">
 //                     <h5>Add Municipality</h5>
@@ -733,7 +844,7 @@ export default MunicipalityList;
 //   );
 // };
 
-// export default MunicipalityList;
+// export default Municipalitymunicipalities;
 
 //v1
 // import React, { useEffect, useState } from "react";
@@ -748,7 +859,7 @@ export default MunicipalityList;
 // import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
 // import DeleteMunicipality from "./Delete";
 
-// const MunicipalityList = () => {
+// const Municipalitymunicipalities = () => {
 //   const dispatch = useDispatch();
 
 //   // Access updateStatus state property
@@ -757,14 +868,14 @@ export default MunicipalityList;
 //   ); // Corrected state access
 //   const updateError = useSelector((state) => state.municipalities.updateError);
 //   const [editId, setEditId] = useState(null);
-//   const [newName, setNewName] = useState("");
+//   const [newMunicipality, setNewName] = useState("");
 //   const [searchTerm, setSearchTerm] = useState("");
 //   const [municipalityToDelete, setMunicipalityToDelete] = useState(null);
 //   // const [searchTerm, setSearchTerm] = useState("");
 //   const [filteredMunicipalities, setFilteredMunicipalities] = useState([]);
 //   // const [municipalitieToDelete, setmunicipalitieToDelete] = useState(null);
 //   const {
-//     list: municipalities,
+//     municipalities: municipalities,
 //     isLoading,
 //     error,
 //   } = useSelector((state) => state.municipalities);
@@ -830,7 +941,7 @@ export default MunicipalityList;
 //           <div className="card">
 //             <nav className="navbar navbar-expand-lg navbar-light bg-light">
 //               <div className="container-fluid">
-//                 <h5 className="navbar-brand">Municipality List</h5>
+//                 <h5 className="navbar-brand">Municipality municipalities</h5>
 //                 <div className="navbar-nav ml-auto">
 //                   <Link to="create" className="nav-link btn btn-info">
 //                     <h5>Add Municipality</h5>
@@ -980,221 +1091,6 @@ export default MunicipalityList;
 //   );
 // };
 
-// export default MunicipalityList;
+// export default Municipalitymunicipalities;
 
 //v2
-
-{
-  /* 
-// import React, { useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { 
-//   fetchMunicipality,
-//   updateMunicipality,
-//   deleteMunicipality,
-// } from "../../redux/slice/municipalitySlice";
-// import { Link } from "react-router-dom";
-// import "../../../admin/css/Table.css"; // Ensure this includes necessary styles
-// // import "../../../admin/css/Table.css"; // Make sure this includes necessary styles
-// import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
-// import { useState } from "react";
-
-// const MunicipalityList = () => {
-//   const dispatch = useDispatch();
-
-//   // Access updateStatus state property
-//   const updateStatus = useSelector((state) => state.municipalities.updateStatus);
-//   const updateError = useSelector((state) => state.municipalities.updateError);
-//   const [editId, setEditId] = useState(null);
-//   const [newName, setNewName] = useState("");
-//   const [searchTerm, setSearchTerm] = useState("");
-//   const [filteredMunicipalities, setFilteredMunicipalities] = useState([]);
-//   const [municipalityToDelete, setMunicipalityToDelete] = useState(null);
-//   const {
-//     list: municipalities,
-//     isLoading,
-//     error,
-//   } = useSelector((state) => state.municipalities);
-//   useEffect(() => {
-//     dispatch(fetchMunicipality());
-//   }, [dispatch]);
-
-//   //---to update item in a table --
-//   const handleEdit = (id, name) => {
-//     setEditId(id);
-//     setNewName(name);
-//   };
-//   //----to handle update item in Municipality table
-//   const handleUpdate = (e) => {
-//     e.preventDefault();
-//     if (editId !== null) {
-//       dispatch(updateMunicipality({ id: editId, name: newName }));
-//       setEditId(null);
-//       setNewName("");
-//     }
-//   };
-//   return (
-//     <div className="content-wrapper">
-//       <div className="row justify-content-center">
-//         <div className="col-lg-10">
-//           <div className="card">
-//             <nav className="navbar navbar-expand-lg navbar-light bg-light">
-//               <div className="container-fluid">
-//                 <h5 className="navbar-brand">Municipality List</h5>
-//                 <div className="navbar-nav ml-auto">
-//                   <Link to="create" className="nav-link btn btn-info">
-//                     <h5>Add Municipality</h5>
-//                   </Link>
-//                   <form
-//                     method="get"
-//                     action="search"
-//                     className="form-inline ml-3"
-//                   >
-//                     <div className="input-group">
-//                       <input
-//                         type="search"
-//                         id="default-search"
-//                         name="q"
-//                         className="form-control"
-//                         placeholder="Search Mockups, Logos..."
-//                         required
-//                       />
-//                       <div className="input-group-append">
-//                         <button type="submit" className="btn btn-info">
-//                           Search
-//                         </button>
-//                       </div>
-//                     </div>
-//                   </form>
-//                 </div>
-
-//                 <div className="form-inline ml-4" id="navbarSupportedContent">
-//                   <ul className="navbar-nav mr-30">
-//                     <li className="nav-item">
-//                       <button
-//                         id="municipalityTable"
-//                         className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
-//                       >
-//                         <i className="fas fa-file-csv"></i>
-//                       </button>
-//                     </li>
-//                     {/* Add other export buttons here */
-}
-//                   </ul>
-//                 </div>
-//               </div>
-//             </nav>
-
-//             <div className="card-body">
-//               <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-//                 <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-//                   <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-//                     <div className="overflow-x-auto overflow-y-auto max-h-[400px]">
-//                       <div className="overflow-x-auto">
-//                         {isLoading ? (
-//                           <p>Loading...</p>
-//                         ) : error ? (
-//                           <p>Error: {error}</p>
-//                         ) : (
-//                           <table className="table table-bordered">
-//                             <thead>
-//                               <tr>
-//                                 <th>#</th>
-//                                 <th>Name</th>
-//                                 <th>Created</th>
-//                                 <th>Updated</th>
-//                                 <th>Action</th>
-//                               </tr>
-//                             </thead>
-//                             <tbody>
-//                               {municipalities.length > 0 ? (
-//                                 municipalities.map((municipality,index) => (
-//                                   <tr key={municipality.id}>
-//                                     <td>{index + 1} </td>
-//                                     <td>{municipality.name}</td>
-//                                     {/* <td>{municipality.created}</td> */}
-//                                     {/* <td>{municipality.updated}</td> */}
-//                                     {/* <td>
-//                                       <Link to={`update/${municipality.id}`}>
-//                                         <FaEdit />
-//                                       </Link>
-//                                       |
-//                                       {/* <Link to={`detail/${municipality.id}`}>
-//                                         View
-//                                       </Link> */}
-
-//                                     {/* <Link to={`delete/${municipality.id}`}>
-//                                         <FaTrash />
-//                                       </Link>
-//                                     </td> */}
-//                                     {/* <td> */}
-//                                     <td>
-//                             {editId === municipality.id ? (
-//                               <input
-//                                 type="text"
-//                                 value={newName}
-//                                 onChange={(e) => setNewName(e.target.value)}
-//                               />
-//                             ) : (
-//                               formatName(municipality.name)
-//                             )}
-//                           </td>
-//                           <td>
-//                             {editId === municipality.id ? (
-//                               <button
-//                                 onClick={handleUpdate}
-//                                 className="btn btn-success"
-//                               >
-//                                 Save
-//                               </button>
-//                             ) : (
-//                               <button
-//                                 onClick={() =>
-//                                   handleEdit(municipality.id, municipality.name)
-//                                 }
-//                                 className="btn btn-primary"
-//                               >
-//                                 <FaEdit />
-//                               </button>
-//                             )}
-//                             <span> </span>
-//                             <button
-//                               onClick={() => setMunicipalityToDelete(municipality.id)}
-//                               className="btn btn-danger"
-//                             >
-//                               <FaTrash />
-//                             </button>
-//                           </td>
-//                         </tr>
-//                       ))
-//                     ) : (
-//                       <tr>
-//                         <td colSpan="3">No municipalities found</td>
-//                       </tr>
-//                     )}
-//                   </tbody>
-//                 </table>
-//               </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//         </div>
-//         </div>
-
-//       {/* Delete Confirmation Modal */}
-//       {municipalityToDelete !== null && (
-//         <DeleteMunicipality
-//           id={municipalityToDelete}
-//           onClose={() => setMunicipalityToDelete(null)}
-//         />
-//       )}
-//     </div>
-//     </div>
-//     </div>
-//     </div>
-//     </div>
-//   );
-// };
-
-// export default MunicipalityList;

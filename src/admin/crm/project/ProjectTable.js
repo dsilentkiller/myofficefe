@@ -148,7 +148,7 @@ const ProjectTable = () => {
   return (
     <div className="content-wrapper">
       <div className="row justify-content-center">
-        <div className="col-lg-12">
+        <div className="col-lg-12 col-md-12 col-sm-12">
           <div className="card">
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
               <div className="container-fluid">

@@ -14,19 +14,20 @@ export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
 
 // Async thunk for fetching an event by ID
 export const fetchEventById = createAsyncThunk(
-  "enquiries/fetchEventById",
-  async (id, { thunkAPI }) => {
-    console.log("Fetching event with ID:", id); // Check if ID is correct
+  "events/fetchEventById",
+  async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/event/detail/${id}/`
-      );
-      return response.data.result;
+      const response = await fetch(`http://127.0.0.1:8000/api/event/detail/${id}/`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch event");
+      }
+      return await response.json();
     } catch (error) {
-      return thunkAPI.rejectWithValue("Failed to fetch event");
+      return rejectWithValue(error.message);
     }
   }
 );
+
 
 // Fetch all Events action
 export const fetchEvent = createAsyncThunk(

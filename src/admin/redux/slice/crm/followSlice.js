@@ -30,7 +30,6 @@ export const createFollow = createAsyncThunk(
   }
 );
 
-
 export const fetchFollowById = createAsyncThunk(
   "follows/fetchFollowById",
   async (enquiryId, thunkAPI) => {
@@ -44,7 +43,6 @@ export const fetchFollowById = createAsyncThunk(
     }
   }
 );
-
 
 // Update follow by ID
 export const updateFollowById = createAsyncThunk(
@@ -152,8 +150,9 @@ const followSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchFollowById.fulfilled, (state, action) => {
+        console.log("Follow-up data received:", action.payload); // Check the response data
+        state.list = action.payload;
         state.isLoading = false;
-        state.currentFollow = action.payload;
       })
       .addCase(fetchFollowById.rejected, (state, action) => {
         state.isLoading = false;

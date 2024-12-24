@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 
-const Sidebar = () => {
+const LeftSidebar = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const toggleUserMenu = () => {
@@ -38,30 +38,16 @@ const Sidebar = () => {
 
             {/* User */}
             <li className={`nav-item ${userMenuOpen ? "menu-open" : ""}`}>
-              <Link to="#" className="nav-link" onClick={toggleUserMenu}>
+              <Link to="/dashboard/customer/" className="nav-link" onClick={toggleUserMenu}>
                 <i className="nav-icon fas fa-user"></i>
-                <p>
-                  User
-                  <i className="fas fa-angle-left right"></i>
-                </p>
+                    <p>Customer</p>
               </Link>
               <ul
                 className="nav nav-treeview"
                 style={{ display: userMenuOpen ? "block" : "none" }}
               >
-                <li className="nav-item">
-                  <Link to="employee-list/" className="nav-link">
-                    {/* Update anchor tag to Link */}
-                    <i className="far fa-circle nav-icon"></i>
-                    <p>Employee</p>
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="#" className="nav-link">
-                    <i className="far fa-circle nav-icon"></i>
-                    <p>Customer</p>
-                  </Link>
-                </li>
+
+
 
                 {/* <ul className="nav nav-treeview">
                   <li className="nav-item">
@@ -117,4 +103,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default LeftSidebar;

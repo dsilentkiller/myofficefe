@@ -53,14 +53,15 @@ export const fetchMunicipalityById = createAsyncThunk(
     }
   }
 );
-// // Update municipality
+
+// Update municipality
 export const updateMunicipality = createAsyncThunk(
   "municipalities/updateMunicipality",
-  async ({ id, name }, thunkAPI) => {
+  async ({ id, name, districtId }, thunkAPI) => {
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/api/setup/municipality/update/${id}/`,
-        { name }
+        { name, district: districtId } // Include district ID here
       );
       return response.data.result.data;
     } catch (error) {
@@ -93,19 +94,6 @@ export const deleteMunicipality = createAsyncThunk(
     }
   }
 );
-
-// export const deleteMunicipality = createAsyncThunk(
-//   "municipalities/deleteMunicipality",
-//   async (id, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.delete(`/api/municipalities/${id}`);
-//       return id; // Return the ID of the deleted municipality
-//     } catch (error) {
-//       // Use rejectWithValue to return a custom error message
-//       return rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
 
 const municipalitySlice = createSlice({
   name: "municipalities",
@@ -177,10 +165,13 @@ const municipalitySlice = createSlice({
         state.updateStatus = "loading";
       })
       .addCase(updateMunicipality.fulfilled, (state, action) => {
-        state.updateStatus = "succeeded";
-        const index = state.list.findIndex((p) => p.id === action.payload.id);
+        // Ensure the response matches the expected format
+        const updatedMunicipality = action.payload; // Make sure action.payload has the correct data structure
+        const index = state.list.findIndex(
+          (municipality) => municipality.id === updatedMunicipality.id
+        );
         if (index !== -1) {
-          state.list[index] = action.payload;
+          state.list[index] = updatedMunicipality;
         }
       })
       .addCase(updateMunicipality.rejected, (state, action) => {

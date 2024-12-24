@@ -13,7 +13,7 @@
 //   }
 
 //   const dispatch = useDispatch();
-//   const event = useSelector((state) => state.events.selectedEvent);
+//   const event = useSelector((state) => state.events.sselectedEvent);
 //   const loading = useSelector((state) => state.events.loading);
 //   const error = useSelector((state) => state.events.error);
 //   const attendees = useSelector((state) => state.attendees.list || []);
@@ -46,75 +46,75 @@
 
 //   return (
 //     // <div>
-//     //   <h2>{event.title}</h2>
+//     //   <h2>{selectedEvent.title}</h2>
 //     //   <div>
-//     //     <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+//     //     <strong>Start:</strong> {new Date(selectedEvent.start).toLocaleString()}
 //     //   </div>
 //     //   <div>
-//     //     <strong>End:</strong> {new Date(event.end).toLocaleString()}
+//     //     <strong>End:</strong> {new Date(selectedEvent.end).toLocaleString()}
 //     //   </div>
 //     //   <div>
 //     //     <strong>organization name:</strong>{" "}
-//     //     {new Date(event.end).toLocaleString()}
+//     //     {new Date(selectedEvent.end).toLocaleString()}
 //     //   </div>
 //     //   <div>
 //     //     <strong>organization address:</strong>{" "}
-//     //     {new Date(event.end).toLocaleString()}
+//     //     {new Date(selectedEvent.end).toLocaleString()}
 //     //   </div>
 //     //   <div>
 //     //     <h5>Attendees</h5>
-//     //     {event.attendees_details && event.attendees_details.length > 0 ? (
+//     //     {selectedEvent.attendees_details && selectedEvent.attendees_details.length > 0 ? (
 //     //       <ul>
-//     //         {event.attendees_details.map((attendee) => (
+//     //         {selectedEvent.attendees_details.map((attendee) => (
 //     //           <li key={attendee.id}>
 //     //             {attendee.name} ({attendee.email})
 //     //           </li>
 //     //         ))}
 //     //       </ul>
 //     //     ) : (
-//     //       <p>No attendees available for this event.</p>
+//     //       <p>No attendees available for this selectedEvent.</p>
 //     //     )}
 //     //   </div>
 //     //   <div>
 //     //     <strong>description</strong>{" "}
-//     //     {event.description ? event.description : "No description available."}
+//     //     {selectedEvent.description ? selectedEvent.description : "No description available."}
 //     //   </div>
 //     // </div>
 
 //     <div className="event-detail-container">
-//       <h2 className="event-title">{event.title}</h2>
+//       <h2 className="event-title">{selectedEvent.title}</h2>
 //       <div className="event-metadata">
 //         <p>
-//           <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+//           <strong>Start:</strong> {new Date(selectedEvent.start).toLocaleString()}
 //         </p>
 //         <p>
-//           <strong>End:</strong> {new Date(event.end).toLocaleString()}
+//           <strong>End:</strong> {new Date(selectedEvent.end).toLocaleString()}
 //         </p>
 //         <p>
-//           <strong>Organization Name:</strong> {event.organization_name || "N/A"}
+//           <strong>Organization Name:</strong> {selectedEvent.organization_name || "N/A"}
 //         </p>
 //         <p>
 //           <strong>Organization Address:</strong>{" "}
-//           {event.organization_address || "N/A"}
+//           {selectedEvent.organization_address || "N/A"}
 //         </p>
 //       </div>
 //       <div>
 //         <h5>Attendees</h5>
-//         {event.attendees_details && event.attendees_details.length > 0 ? (
+//         {selectedEvent.attendees_details && selectedEvent.attendees_details.length > 0 ? (
 //           <ul className="attendees-list">
-//             {event.attendees_details.map((attendee) => (
+//             {selectedEvent.attendees_details.map((attendee) => (
 //               <li key={attendee.id}>
 //                 {attendee.name} ({attendee.email})
 //               </li>
 //             ))}
 //           </ul>
 //         ) : (
-//           <p>No attendees available for this event.</p>
+//           <p>No attendees available for this selectedEvent.</p>
 //         )}
 //       </div>
 //       <div className="event-description">
 //         <strong>Description:</strong>{" "}
-//         {event.description || "No description available."}
+//         {selectedEvent.description || "No description available."}
 //       </div>
 //     </div>
 //   );
@@ -134,7 +134,8 @@ const EventDetail = () => {
   const { id } = useParams();
   console.log(id);
   const dispatch = useDispatch();
-  const event = useSelector((state) => state.events.currentEvent);
+  const event = useSelector((state) => state.events.events);
+  const selectedEvent = useSelector((state) => state.events.selectedEvent);
   const loading = useSelector((state) => state.events.loading);
   const error = useSelector((state) => state.events.error);
   const navigate = useNavigate();
@@ -147,11 +148,11 @@ const EventDetail = () => {
       .catch((error) => console.log("Error fetching event:", error));
   }, [dispatch, id]);
 
-  useEffect(() => {
-    if (event) {
-      console.log("Fetched event:", event);
-    }
-  }, [event]);
+  // useEffect(() => {
+  //   if (event) {
+  //     console.log("Fetched event:", event);
+  //   }
+  // }, [event]);
 
   if (loading) {
     return <p>Loading event details...</p>;
@@ -161,27 +162,92 @@ const EventDetail = () => {
     return <p>Error: {error.detail || "An unknown error occurred."}</p>;
   }
 
-  if (!event) {
-    return <p>No event found!</p>;
-  }
+  // if (!event) {
+  //   return <p>No event found!</p>;
+  // }
 
-  return (
+  // return selectedEvent? (
+  //   <Container className="content-wrapper">
+  //     <h2 className="btn btn primary">{selectedEvent.title}</h2>
+  //     <div className="row">
+  //       <div className="col">
+  //         <Col md={12}>
+  //           <div className="col-md-8">
+  //             <strong>Start:</strong> {new Date(selectedEvent.start).toLocaleString()}
+  //           </div>
+  //           <div className="col-md-8">
+  //             <strong>End:</strong> {new Date(selectedEvent.end).toLocaleString()}
+  //           </div>
+  //           <Col md={8}>
+  //             <h5>Attendees</h5>
+  //             {selectedEvent.attendees && selectedEvent.attendees.length > 0 ? (
+  //               <ul>
+  //                 {selectedEvent.attendees.map((attendee) => (
+  //                   <li key={attendee.id}>
+  //                     {attendee.attendee_name} ({attendee.email})
+  //                   </li>
+  //                 ))}
+  //               </ul>
+  //             ) : (
+  //               <p>No attendees available for this selectedEvent.</p>
+  //             )}
+  //           </Col>
+  //           <div>
+  //             <strong>description:</strong>{" "}
+  //             {selectedEvent.description
+  //               ? selectedEvent.description
+  //               : "No description available."}
+  //           </div>
+
+  //           <Button
+  //             variant="primary"
+  //             onClick={() =>
+  //               event?.id && navigate(`/dashboard/crm/event/update/${selectedEvent.id}`)
+  //             }
+  //           >
+  //             Update Event
+  //           </Button>
+
+  //           <Button
+  //             variant="danger"
+  //             onClick={() => setEventToDelete(selectedEvent.id)}
+  //             className="ms-2"
+  //           >
+  //             Delete Event
+  //           </Button>
+  //         </Col>
+  //       </div>
+  //     </div>
+
+  //     {eventToDelete !== null && (
+  //       <EventDelete
+  //         id={eventToDelete}
+  //         onClose={() => setEventToDelete(null)}
+  //       />
+  //     )}
+
+  //     <ToastContainer />
+  //   </Container>
+  // );
+  return selectedEvent ? (
     <Container className="content-wrapper">
-      <h2 className="btn btn primary">{event.title}</h2>
+      <h2 className="btn btn-primary">{selectedEvent.title}</h2>
       <div className="row">
         <div className="col">
           <Col md={12}>
             <div className="col-md-8">
-              <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+              <strong>Start:</strong>{" "}
+              {new Date(selectedEvent.start).toLocaleString()}
             </div>
             <div className="col-md-8">
-              <strong>End:</strong> {new Date(event.end).toLocaleString()}
+              <strong>End:</strong>{" "}
+              {new Date(selectedEvent.end).toLocaleString()}
             </div>
             <Col md={8}>
               <h5>Attendees</h5>
-              {event.attendees && event.attendees.length > 0 ? (
+              {selectedEvent.attendees && selectedEvent.attendees.length > 0 ? (
                 <ul>
-                  {event.attendees.map((attendee) => (
+                  {selectedEvent.attendees.map((attendee) => (
                     <li key={attendee.id}>
                       {attendee.attendee_name} ({attendee.email})
                     </li>
@@ -192,24 +258,21 @@ const EventDetail = () => {
               )}
             </Col>
             <div>
-              <strong>description:</strong>{" "}
-              {event.description
-                ? event.description
-                : "No description available."}
+              <strong>Description:</strong>{" "}
+              {selectedEvent.description || "No description available."}
             </div>
-
             <Button
               variant="primary"
               onClick={() =>
-                event?.id && navigate(`/dashboard/crm/event/update/${event.id}`)
+                selectedEvent?.id &&
+                navigate(`/dashboard/crm/event/update/${selectedEvent.id}`)
               }
             >
               Update Event
             </Button>
-
             <Button
               variant="danger"
-              onClick={() => setEventToDelete(event.id)}
+              onClick={() => setEventToDelete(selectedEvent.id)}
               className="ms-2"
             >
               Delete Event
@@ -217,17 +280,18 @@ const EventDetail = () => {
           </Col>
         </div>
       </div>
-
       {eventToDelete !== null && (
         <EventDelete
           id={eventToDelete}
           onClose={() => setEventToDelete(null)}
         />
       )}
-
       <ToastContainer />
     </Container>
+  ) : (
+    <p>No event details available!</p>
   );
+
 };
 
 export default EventDetail;
@@ -243,7 +307,7 @@ export default EventDetail;
 // const EventDetail = () => {
 //   const { id } = useParams(); // Get the event ID from the URL
 //   const dispatch = useDispatch();
-//   const event = useSelector((state) => state.events.selectedEvent);
+//   const event = useSelector((state) => state.events.sselectedEvent);
 //   const loading = useSelector((state) => state.events.loading);
 //   const error = useSelector((state) => state.events.error);
 //   const navigate = useNavigate();
@@ -276,41 +340,41 @@ export default EventDetail;
 
 //   return (
 //     <div className="content-wrapper">
-//       <h2>{event.title}</h2>
+//       <h2>{selectedEvent.title}</h2>
 //       <p>
-//         <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+//         <strong>Start:</strong> {new Date(selectedEvent.start).toLocaleString()}
 //       </p>
 //       <p>
-//         <strong>End:</strong> {new Date(event.end).toLocaleString()}
+//         <strong>End:</strong> {new Date(selectedEvent.end).toLocaleString()}
 //       </p>
 //       <p>
 //         <strong>description:</strong>{" "}
-//         {event.description ? event.description : "No description available."}
+//         {selectedEvent.description ? selectedEvent.description : "No description available."}
 //       </p>
 
 //       <h5>Attendees</h5>
-//       {event.attendees && event.attendees.length > 0 ? (
+//       {selectedEvent.attendees && selectedEvent.attendees.length > 0 ? (
 //         <ul>
-//           {event.attendees.map((attendee) => (
+//           {selectedEvent.attendees.map((attendee) => (
 //             <li key={attendee.id}>
 //               {attendee.attendee_name} ({attendee.email})
 //             </li>
 //           ))}
 //         </ul>
 //       ) : (
-//         <p>No attendees available for this event.</p>
+//         <p>No attendees available for this selectedEvent.</p>
 //       )}
 
 //       <Button
 //         variant="primary"
-//         onClick={() => navigate(`/dashboard/crm/event/update/${event.id}`)}
+//         onClick={() => navigate(`/dashboard/crm/event/update/${selectedEvent.id}`)}
 //       >
 //         Update Event
 //       </Button>
 
 //       <Button
 //         variant="danger"
-//         onClick={() => setEventToDelete(event.id)}
+//         onClick={() => setEventToDelete(selectedEvent.id)}
 //         className="ms-2"
 //       >
 //         Delete Event
@@ -342,7 +406,7 @@ export default EventDetail;
 // const EventDetail = () => {
 //   const { id } = useParams(); // Get the event ID from the URL
 //   const dispatch = useDispatch();
-//   const event = useSelector((state) => state.events.selectedEvent);
+//   const event = useSelector((state) => state.events.sselectedEvent);
 //   const loading = useSelector((state) => state.events.loading);
 //   const error = useSelector((state) => state.events.error);
 //   const navigate = useNavigate();
@@ -374,37 +438,37 @@ export default EventDetail;
 
 //   return (
 //     <div>
-//       <h2>{event.title}</h2>
+//       <h2>{selectedEvent.title}</h2>
 //       <p>
-//         <strong>Start:</strong> {new Date(event.start).toLocaleString()}
+//         <strong>Start:</strong> {new Date(selectedEvent.start).toLocaleString()}
 //       </p>
 //       <p>
-//         <strong>End:</strong> {new Date(event.end).toLocaleString()}
+//         <strong>End:</strong> {new Date(selectedEvent.end).toLocaleString()}
 //       </p>
 //       <p>
-//         <strong>description:</strong> {event.description}
+//         <strong>description:</strong> {selectedEvent.description}
 //       </p>
 //       <h5>Attendees</h5>
-//       {event.attendees && event.attendees.length > 0 ? (
+//       {selectedEvent.attendees && selectedEvent.attendees.length > 0 ? (
 //         <ul>
-//           {event.attendees.map((attendee) => (
+//           {selectedEvent.attendees.map((attendee) => (
 //             <li key={attendee.id}>
 //               {attendee.attendee_name} ({attendee.email})
 //             </li>
 //           ))}
 //         </ul>
 //       ) : (
-//         <p>No attendees available for this event.</p>
+//         <p>No attendees available for this selectedEvent.</p>
 //       )}
 //       <Button
 //         variant="primary"
-//         onClick={() => navigate(`/dashboard/crm/event/update/${event.id}`)}
+//         onClick={() => navigate(`/dashboard/crm/event/update/${selectedEvent.id}`)}
 //       >
 //         Update Event
 //       </Button>
 //       <Button
 //         variant="danger"
-//         onClick={() => setEventToDelete(event.id)}
+//         onClick={() => setEventToDelete(selectedEvent.id)}
 //         className="ms-2"
 //       >
 //         Delete Event

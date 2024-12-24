@@ -1,19 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { createSelector } from "reselect";
+// import { createSelector } from "reselect";
 
-// Select the enquiries state from the root state
-// const selectEnquiriesState = (state) => state.enquiries || {};
 
-// // Memoized selector to get enquiry by ID
-// export const selectEnquiryById = createSelector(
-//   [selectEnquiriesState, (state, id) => id],
-//   (enquiriesState, id) => {
-//     return enquiriesState.enquiries
-//       ? enquiriesState.enquiries.find((enquiry) => enquiry.id === id)
-//       : {};
-//   }
-// );
 // Search Enquiries
 export const searchEnquiry = createAsyncThunk(
   "enquiry/searchEnquiry",
@@ -72,6 +61,20 @@ export const fetchEnquiryByIdUpdate = createAsyncThunk(
 );
 
 // fetch enquiry by id
+// export const fetchEnquiryById = createAsyncThunk(
+//   "enquiries/fetchEnquiryById",
+//   async (id, thunkAPI) => {
+//     try {
+//       const response = await axios.get(
+//         `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
+//       );
+//       return response.data.result.data; // Return the enquiry data
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response.data || error.message); // Handle errors
+//     }
+//   }
+// );
+
 export const fetchEnquiryById = createAsyncThunk(
   "enquiries/fetchEnquiryById",
   async (id, thunkAPI) => {
@@ -79,9 +82,29 @@ export const fetchEnquiryById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
       );
-      return response.data.result; // Return the enquiry data
+
+      // Log the full response to inspect its structure
+      console.log("API Response:", response);
+
+      // Check if the structure is as expected
+      if (response.data && response.data.result && response.data.result.data) {
+        return response.data.result.data;
+      } else {
+        throw new Error("Unexpected response structure");
+      }
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data || error.message); // Handle errors
+      console.error("Error fetching enquiry by ID:", error);
+      if (error.response) {
+        return thunkAPI.rejectWithValue(error.response.data || error.message);
+      } else if (error.request) {
+        return thunkAPI.rejectWithValue(
+          "Network error. Please try again later."
+        );
+      } else {
+        return thunkAPI.rejectWithValue(
+          error.message || "An unexpected error occurred."
+        );
+      }
     }
   }
 );
@@ -107,7 +130,7 @@ export const updateEnquiry = createAsyncThunk(
         `http://127.0.0.1:8000/api/enquiry/update/${id}/`,
         data
       );
-      return response.data.result;
+      return response.data.result.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -184,12 +207,15 @@ const enquirySlice = createSlice({
         state.error = null;
       })
       .addCase(fetchEnquiryById.fulfilled, (state, action) => {
+        console.log("Fetched Enquiry Payload:", action.payload); // Log the payload
+        state.selectedEnquiry = action.payload;
         state.currentEnquiry = action.payload;
         state.loading = false;
 
-        state.selectedEnquiry = action.payload;
+        state.currentEnquiry = action.payload;
       })
       .addCase(fetchEnquiryById.rejected, (state, action) => {
+        console.error("Fetch enquiry failed:", action.error.message); // Log error message
         state.loading = false;
         state.currentEnquiry = null;
         state.fetchError = action.error.message;
@@ -284,4 +310,5 @@ const enquirySlice = createSlice({
       });
   },
 });
+export const { setEnquiry, setLoading, setError } = enquirySlice.actions;
 export default enquirySlice.reducer;

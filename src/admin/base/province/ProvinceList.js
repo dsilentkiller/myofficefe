@@ -11,6 +11,7 @@ import "../../../admin/css/Table.css"; // Make sure this includes necessary styl
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+
 const ProvinceList = () => {
   const [newProvinceName, setNewProvinceName] = useState("");
   const [editId, setEditId] = useState(null);

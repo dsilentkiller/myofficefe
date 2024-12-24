@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createMunicipality } from "../../redux/slice/base/municipalitySlice";
-
+import {
+  fetchMunicipalityByDistrict,
+  fetchDistricts,
+} from "../../redux/slice/base/districtSlice";
 const MunicipalityForm = () => {
   const [formData, setFormData] = useState({ name: "" });
   const dispatch = useDispatch();
@@ -11,7 +14,11 @@ const MunicipalityForm = () => {
   const createStatus = useSelector(
     (state) => state.municipalities.createStatus
   );
+  useEffect(() => {
+    dispatch(fetchDistricts());
+  }, [dispatch]);
   const createError = useSelector((state) => state.municipalities.createError);
+  const districts = useSelector((state) => state.districts.list);
 
   useEffect(() => {
     if (createStatus === "succeeded") {
@@ -30,7 +37,11 @@ const MunicipalityForm = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+  const handleDistrictChange = (e) => {
+    const districtId = e.target.value;
+    setFormData({ ...formData, district: districtId });
+    dispatch(fetchMunicipalityByDistrict(districtId));
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(createMunicipality(formData));
@@ -58,6 +69,25 @@ const MunicipalityForm = () => {
                     onChange={handleChange}
                     required
                   />
+                </div>
+                {/* district */}
+                <div className="form-group">
+                  <label htmlFor="district">district:</label>
+                  <select
+                    id="district"
+                    name="district"
+                    value={formData.district}
+                    className="form-control"
+                    onChange={handleDistrictChange}
+                    required
+                  >
+                    <option value="">Select district</option>
+                    {districts.map((district) => (
+                      <option key={district.id} value={district.id}>
+                        {district.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <button type="submit" className="btn btn-primary">
                   Add Municipality

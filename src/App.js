@@ -4,8 +4,8 @@
 // // import UserDashboard from "./admin/layouts/UserDashboard";
 // // import EmployeeForm from "./admin/container/user/employee/Form";
 // // import EmployeeList from "./admin/container/user/employee/EmployeeList";
-// // import CustomerList from "./admin/container/user/customer/List";
-// // import CustomerForm from "./admin/container/user/customer/Form";
+// // import customerList from "./admin/container/user/customer/List";
+// // import customerForm from "./admin/container/user/customer/Form";
 // // import LeaveCategoryList from "./admin/container/leave/leave_category/List";
 // // import LeaveForm from "./admin/container/leave/Form";
 // // import LeaveDashboard from "./admin/layouts/LeaveDashboard";
@@ -181,22 +181,22 @@ import AdminDashboard from "./admin/AdminDashboard";
 import UserDashboard from "./admin/layouts/UserDashboard";
 import EmployeeForm from "./admin/container/user/employee/Form";
 import EmployeeList from "./admin/container/user/employee/EmployeeList";
-import CustomerList from "./admin/container/user/customer/List";
-import CustomerForm from "./admin/container/user/customer/Form";
+import CustomerTable from "./admin/client/customer/CustomerTable";
+import CustomerForm from "./admin/client/customer/CustomerForm";
 import LeaveCategoryList from "./admin/container/leave/leave_category/List";
 import LeaveForm from "./admin/container/leave/Form";
 import LeaveDashboard from "./admin/layouts/LeaveDashboard";
 // import AssetsDashboard from "./admin/layouts/AssetDashboard";
-import AssetsForm from "./admin/container/assets/AssetsForm";
-import AssetsList from "./admin/container/assets/AssetList";
+import AssetsForm from "./admin/hrm/assets/AssetsForm";
+import AssetsList from "./admin/hrm/assets/AssetList";
 // import AssignAssetsForm from "./admin/container/assets/AssignAssetsForm";
 // import AssignAssetsList from "./admin/container/assets/AssignAssetsList";
 import LeaveCategoryForm from "./admin/container/leave/leave_category/Form";
 import LeaveList from "./admin/container/leave/List";
 // import AssetDashboard from "./admin/layouts/AssetDashboard";
 import SetupDashboard from "./admin/layouts/SetupDashboard";
-import ZoneList from "./admin/base/zone/List";
-import ZoneForm from "./admin/base/zone/Form";
+// import ZoneList from "./admin/base/zone/List";
+// import ZoneForm from "./admin/base/zone/Form";
 import ProvinceList from "./admin/base/province/ProvinceList";
 
 import DesignationTable from "./admin/base/designation/DesignationTable";
@@ -241,13 +241,17 @@ import CategoryDelete from "./admin/crm/category/CategoryDelete";
 import EventDetail from "./admin/crm/event/EventDetail";
 import EnquiryDelete from "./admin/crm/enquiry/EnquiryDelete";
 import EnquiryDetail from "./admin/crm/enquiry/EnquiryDetail";
-import EnquiryUpdate from "./admin/crm/enquiry/EnquiryUpdate";
+// import EnquiryUpdate from "./admin/crm/enquiry/EnquiryUpdate";
 import EventUpdate from "./admin/crm/event/EventUpdate";
 import FollowForm from "./admin/crm/followup/FollowForm";
 import FollowTable from "./admin/crm/followup/FollowupTable";
 import FollowDelete from "./admin/crm/followup/FollowDelete";
 import FollowDetail from "./admin/crm/followup/FollowDetail";
-import LoginForm from "./admin/accounts/LoginForm";
+import ClientDashboard from "./admin/layouts/ClientDashboard";
+import HrmDashboard from "./admin/layouts/HrmDashboard";
+
+// import customerDashboard from "./admin/layouts";
+// import LoginForm from "./admin/accounts/LoginForm";
 // import ProjectForm from "./admin/"
 function App() {
   return (
@@ -327,15 +331,27 @@ function App() {
                 element={<MeetingUpdateDetail />}
               /> */}
             </Route>
+            {/* customer */}
+            <Route path="customer" element={<ClientDashboard />}>
+              {/* localhost/dashbaord/customer */}
+              <Route path="customer-list" element={<CustomerTable/>} />
+              <Route path="create" element={<CustomerForm />} />
+              <Route path="update/:id/" element={<CustomerForm />} />
+              {/* // <Route path="customer/detail/:id/" element={<CustomerDetail />} /> */}
+            </Route>
+
 
             {/* localhost/dashboard/user */}
-            <Route path="user" element={<UserDashboard />}>
+
+
               {/* localhost/dashbaord/user/employee */}
-              <Route path="employee" element={<EmployeeList />} />
-              <Route path="employee/create" element={<EmployeeForm />} />
-              <Route path="customer" element={<CustomerList />} />
-              <Route path="customer/create" element={<CustomerForm />} />
-            </Route>
+              {/* Nested routes under HrmDashboard */}
+          <Route path="hrm" element={<HrmDashboard />}>
+            <Route path="employee" element={<EmployeeList />} />
+            <Route path="employee/create" element={<EmployeeForm />} />
+
+          </Route>
+
 
             {/* ----  Leave Routes---- */}
             <Route path="leave" element={<LeaveDashboard />}>
@@ -370,9 +386,9 @@ function App() {
                 path="department/delete/:id"
                 element={<DepartmentDelete />}
               />
-              {/* zone */}
+              {/* zone
               <Route path="zone" element={<ZoneList />} />
-              <Route path="zone/create" element={<ZoneForm />} />
+              <Route path="zone/create" element={<ZoneForm />} /> */}
 
               {/* district route=>localhost/dashboard/setup/district*/}
               <Route path="district" element={<DistrictTable />} />
@@ -418,3 +434,10 @@ function App() {
 }
 
 export default App;
+   {/* <Route path="user" element={<UserDashboard />}>
+              {/* localhost/dashbaord/user/employee */}
+              {/* <Route path="employee" element={<EmployeeList />} />
+              <Route path="employee/create" element={<EmployeeForm />} />
+              <Route path="customer" element={<customerList />} />
+              <Route path="customer/create" element={<customerForm />} />
+            </Route> */}

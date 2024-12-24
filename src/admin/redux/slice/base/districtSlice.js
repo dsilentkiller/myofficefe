@@ -1,6 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+// fetch municipality bydistrict
 
+export const fetchMunicipalityByDistrict = createAsyncThunk(
+  "districts/fetchMunicipalityByDistrict",
+  async (districtId, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/setup/municipalities/?district=${districtId}`
+      );
+      return response.data.result; // Adjust based on API response
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.result.data);
+    }
+  }
+);
 // Thunks
 export const fetchDistricts = createAsyncThunk(
   "districts/fetchDistricts",
@@ -9,8 +23,10 @@ export const fetchDistricts = createAsyncThunk(
       const response = await axios.get(
         "http://127.0.0.1:8000/api/setup/district/"
       );
-      return response.data.result.data; // Adjust based on your API response
+      console.log("Fetched districts:", response.data); // Add this line
+      return response.data.result.data; // Adjust based on the actual API response structure
     } catch (error) {
+      console.error("Error fetching districts:", error); // Log error if it occurs
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -47,23 +63,7 @@ export const fetchDistrictById = createAsyncThunk(
   }
 );
 // Example of the updateDistrict action in the Redux slice
-// export const updateDistrict = createAsyncThunk(
-//   "districts/updateDistrict",
-//   async (districtData, thunkAPI) => {
-//     try {
-//       const response = await axios.put(
-//         `http://127.0.0.1:8000/api/setup/district/update/${districtData.id}/`,
-//         {
-//           name: districtData.name,
-//           province: districtData.province,
-//         }
-//       );
-//       return response.data.result.data; // Adjust based on your API response structure
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
+
 
 export const updateDistrict = createAsyncThunk(
   "districts/updateDistrict",
@@ -82,16 +82,6 @@ export const updateDistrict = createAsyncThunk(
   }
 );
 
-// export const updateDistrict = createAsyncThunk(
-//   "district/updateDistrict",
-//   async (district) => {
-//     const response = await axios.put(
-//       `http://127.0.0.1:8000/api/setup/district/${district.id}/`,
-//       district
-//     );
-//     return response.data.result.data; // Assuming the API returns the updated district
-//   }
-// );
 
 // search
 export const searchDistrict = createAsyncThunk(
@@ -210,21 +200,6 @@ const districtSlice = createSlice({
       })
       // Update district
 
-      // .addCase(updateDistrict.pending, (state) => {
-      //   state.updateStatus = "loading";
-      //   state.updateError = null;
-      // })
-      // .addCase(updateDistrict.fulfilled, (state, action) => {
-      //   state.updateStatus = "succeeded";
-      //   const index = state.list.findIndex((p) => p.id === action.payload.id);
-      //   if (index !== -1) {
-      //     state.list[index] = action.payload;
-      //   }
-      // })
-      // .addCase(updateDistrict.rejected, (state, action) => {
-      //   state.updateStatus = "failed";
-      //   state.updateError = action.payload;
-      // })
       //  delete district
       .addCase(deleteDistrict.pending, (state) => {
         state.deleteStatus = "loading";

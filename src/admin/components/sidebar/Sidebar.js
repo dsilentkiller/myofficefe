@@ -84,26 +84,36 @@ const Sidebar = () => {
                   </p>
                 </Link>
               </li>
+              {/* clients */}
 
+            {/* <li className="nav-item">
+                <Link to="/dashboard/customer/list/" className="nav-link">
+                <i className="nav-icon fas fa-user"></i>
+                  <p>
+                  customer
+                    {/* <span className="right badge badge-danger">New</span> */}
+                  {/* </p>
+                </Link>
+              </li>  */}
               <li className="nav-item">
-                <Link to="/dashboard/user/employee" className="nav-link">
+                <Link to="/dashboard/customer/" className="nav-link">
                   <i className="nav-icon fas fa-user"></i>
                   <p>
-                    User
+                    Customer
                     {/* <i className="fas fa-angle-left right"></i> */}
                   </p>
                 </Link>
               </li>
               {/* leave */}
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link to="/dashboard/leave" className="nav-link">
-                  <i className="nav-icon fas fa-th"></i>
+                <i className="nav-icon fas fa-user"></i>
                   <p>
-                    Leave
+                   leave */}
                     {/* <span className="right badge badge-danger">New</span> */}
-                  </p>
+                  {/* </p>
                 </Link>
-              </li>
+              </li> */}
               {/* assets */}
               <li className="nav-item">
                 <Link to="/dashboard/assets" className="nav-link">

@@ -28,11 +28,6 @@ const EnquiryTable = () => {
   const navigate = useNavigate();
   // const { enquiries, isLoading } = useSelector((state) => state.enquiries);
 
-  // Handle search
-  // const filteredEnquiries = enquiries.filter((enquiry) =>
-  //   enquiry.customer_name.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
-
   useEffect(() => {
     //fetching data
     const fetchEnquiries = async () => {
@@ -301,12 +296,9 @@ const EnquiryTable = () => {
                     <th>District</th>
                     <th>Municipality</th>
                     <th>street address</th>
-                 
-                    <th>Budget</th>
+                     <th>Budget</th>
                     <th>Enquiry Purpose</th>
-
                     <th>Known By</th>
-
                     <th>History</th>
                     <th>Action</th>
                   </tr>
@@ -356,18 +348,18 @@ const EnquiryTable = () => {
                             <p>{truncateHistory(enquiry.history)}</p>
                           </td>
                           <td>
-                            <Link
+                            <button
                               className="btn btn-primary"
                               to={`update/${enquiry.id}`}
                             >
                               Edit
-                            </Link>
-                            <Link
+                            </button>
+                            <button
                               to={`detail/${enquiry.id}`}
                               className="btn btn-info"
                             >
                               View
-                            </Link>
+                            </button>
                             <button
                               onClick={() => setEnquiryToDelete(enquiry.id)}
                               className="btn btn-danger"

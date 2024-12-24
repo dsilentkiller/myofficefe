@@ -1,8 +1,9 @@
-
-
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createDistrict, updateDistrict } from "../../redux/slice/base/districtSlice";
+import {
+  createDistrict,
+  updateDistrict,
+} from "../../redux/slice/base/districtSlice";
 import {
   fetchProvinces,
   fetchDistrictsByProvince,
@@ -19,6 +20,7 @@ const DistrictForm = () => {
   const createStatus = useSelector((state) => state.districts.createStatus);
   const createError = useSelector((state) => state.districts.createError);
   const { list: provinces } = useSelector((state) => state.provinces);
+  const districts = useSelector((state) => state.districts.list || []);
   const district = useSelector((state) =>
     state.districts.list.find((d) => d.id === districtId)
   ); // Fetch the district if editing
@@ -42,6 +44,17 @@ const DistrictForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Check if district name already exists
+    const existingDistrict = districts.some(
+      (dist) =>
+        dist.name && dist.name.toLowerCase() === formData.name.toLowerCase()
+    );
+
+    if (existingDistrict) {
+      toast.error("District with this name already exists.");
+      return;
+    }
+
     if (districtId) {
       dispatch(updateDistrict({ id: districtId, ...formData }));
     } else {
@@ -51,7 +64,11 @@ const DistrictForm = () => {
 
   useEffect(() => {
     if (createStatus === "succeeded") {
-      toast.success(districtId ? "District updated successfully!" : "District created successfully!");
+      toast.success(
+        districtId
+          ? "District updated successfully!"
+          : "District created successfully!"
+      );
       setFormData({ name: "", province: "" });
       navigate("/dashboard/setup/district");
     }
@@ -123,11 +140,6 @@ const DistrictForm = () => {
 };
 
 export default DistrictForm;
-
-
-
-
-
 
 // import React, { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
