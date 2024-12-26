@@ -17,7 +17,7 @@ import { toast } from "react-toastify";
 import {
   createCustomer,
   fetchCustomerByIdUpdate,
-  
+
 } from "../../redux/slice/customer/customerSlice";
 import "react-phone-input-2/lib/style.css";
 
@@ -63,7 +63,7 @@ const CustomerForm = () => {
   const { list: departments } = useSelector((state) => state.departments);
   const { list: designations } = useSelector((state) => state.designations);
   const customers = useSelector((state) => state.customers.list || []);
-    
+
   // Retrieve data from the store
   const customerToUpdate = useSelector(
     (state) => state.customers.customerToUpdate
@@ -74,7 +74,7 @@ const CustomerForm = () => {
   }, [customerToUpdate]);
  // Retrieve data from the store
 
-  
+
 
   useEffect(() => {
     if (id) {
@@ -482,9 +482,9 @@ const validateSecPhoneNumber = (value) => {
                         </select>
                       </div>
                     </div>
-                 
+
                   {/* municipality */}
-               
+
                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="municipality">Municipality:</label>
@@ -583,208 +583,210 @@ const validateSecPhoneNumber = (value) => {
           <TabPane tabId="3">
             <div className="card">
               <div className="card-body">
-                <form onSubmit={handleSubmit}>
-                  <div className="row">
-                      {/* organization name */}
+                  <form onSubmit={handleSubmit}>
+                    <div className="row">
+                        {/* organization name */}
+                        <div className="col-md-4">
+                            <div className="form-group">
+                              <label htmlFor="name">Organization name :</label>
+                              <input
+                                type="text"
+                                id="organization_name"
+                                name="organization_name"
+                                value={formData.organization_name}
+                                // onChange={handleInputChange}
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    organization_name: e.target.value,
+                                  })
+                                }
+                                className="form-control"
+                                required
+                              />
+                            </div>
+                        </div>
 
-                      <div className="form-group">
-                        <label htmlFor="name">Organization name :</label>
-                        <input
-                          type="text"
-                          id="organization_name"
-                          name="organization_name"
-                          value={formData.organization_name}
-                          // onChange={handleInputChange}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              organization_name: e.target.value,
-                            })
-                          }
-                          className="form-control"
-                          required
-                        />
+                      {/* category */}
+                            <div className="col-md-4">
+                                      <div className="form-group">
+                                        <label htmlFor="category">categories </label>
+                                        <select
+                                          id="category"
+                                          name="category"
+                                          value={formData.category}
+                                          onChange={handleInputChange}
+                                          className="form-control"
+                                          required
+                                        >
+                                          <option value="">Select categories</option>
+                                          {categories.length > 0 ? (
+                                            categories.map((category) => (
+                                              <option key={category.id} value={category.id}>
+                                                {category.category_name}
+                                              </option>
+                                            ))
+                                          ) : (
+                                            <option value="">No categories available</option>
+                                          )}
+                                        </select>
+                                      </div>
+                            </div>
+                              <div className="col-md-4">
+                                  <div className="form-group">
+                                    <label htmlFor="department">Departments:</label>
+                                    <select
+                                      id="department"
+                                      name="department"
+                                      value={formData.department}
+                                      // onChange={handleInputChange}
+                                      onChange={(e) =>
+                                        setFormData({
+                                          ...formData,
+                                          department: e.target.value,
+                                        })
+                                      }
+                                      className="form-control"
+                                      required
+                                    >
+                                      <option value="">Select department</option>
+                                      {departments.length > 0 ? (
+                                        departments.map((department) => (
+                                          <option key={department.id} value={department.id}>
+                                            {department.name}
+                                          </option>
+                                        ))
+                                      ) : (
+                                        <option value="">no departments available</option>
+                                      )}
+                                    </select>
+                                  </div>
+                              </div>
+
+                      {/* designation  */}
+                      <div className="col-md-4">
+                        <div className="form-group">
+                          <label htmlFor="designation">Designations:</label>
+                          <select
+                            id="designation"
+                            name="designation"
+                            value={formData.designation}
+                            // onChange={handleInputChange}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                designation: e.target.value,
+                              })
+                            }
+                            className="form-control"
+                            required
+                          >
+                            <option value="">Select designation</option>
+                            {designations && designations.length > 0 ? (
+                              designations.map((designation) => (
+                                <option
+                                  key={designation.id}
+                                  value={designation.id}
+                                >
+                                  {designation.name}
+                                </option>
+                              ))
+                            ) : (
+                              <option value="">No designations available</option>
+                            )}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="col-md-4">
+                        <div className="form-group">
+                          <label htmlFor="estimated_budget">estimated_budget:</label>
+                          <input
+                            type="number"
+                            id="estimated_budget"
+                            name="estimated_budget"
+                            value={formData.estimated_budget}
+                            onChange={handleInputChange}
+                            className="form-control"
+                            required
+                          />
+                        </div>
                       </div>
 
-                    {/* category */}
-                    <div className="col-md-4">
-                      <div className="form-group">
-                        <label htmlFor="category">categories </label>
-                        <select
-                          id="category"
-                          name="category"
-                          value={formData.category}
-                          onChange={handleInputChange}
-                          className="form-control"
-                          required
-                        >
-                          <option value="">Select categories</option>
-                          {categories.length > 0 ? (
-                            categories.map((category) => (
-                              <option key={category.id} value={category.id}>
-                                {category.category_name}
-                              </option>
-                            ))
-                          ) : (
-                            <option value="">No categories available</option>
-                          )}
-                        </select>
+                      {/* work status */}
+
+                      <div className="col-md-4">
+                        <div className="form-group">
+                          <label htmlFor="joining_date">Joining Date:</label>
+                          <input
+                            type="date"
+                            id="joining_date"
+                            name="joining_date"
+                            value={formData.joining_date}
+                            onChange={handleInputChange}
+                            className="form-control"
+                            required
+                          />
+                        </div>
                       </div>
+                      <div className="col-md-4">
+                        <div className="form-group">
+                          <label htmlFor="work_status">Status</label>
+                          <select
+                            id="work_status"
+                            name="work_status"
+                            value={formData.work_status}
+                            onChange={handleInputChange}
+                            className="form-control"
+                            required
+                          >
+                            <option value="">Select status</option>
+                            <option value="new">new</option>
+                            <option value="pending">pending</option>
+                            <option value="completed">completed</option>
+                            <option value="active">active</option>
+                            <option value="issue">Issue</option>
+                            <option value="terminated ">terminated by force</option>
+                            <option value="inactive">inactive</option>
+                          </select>
+                        </div>
+                      </div>
+
+
+
+                      {/* history */}
+
+                      <div className="col-md-4">
+                        <div className="form-group">
+                          <label htmlFor="history">
+                          history:
+                          </label>
+                          <textarea
+                            type="text"
+                            id="history"
+                            name="history"
+                            value={formData.history}
+                            onChange={handleInputChange}
+                            className="form-control"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      </div>
+                    <div className="form-group">
+                      <button type="submit" className="btn btn-primary">
+                        Add customer
+                      </button>
                     </div>
-                  <div className="col-md-4">
-                      <div className="form-group">
-                        <label htmlFor="department">Departments:</label>
-                        <select
-                          id="department"
-                          name="department"
-                          value={formData.department}
-                          // onChange={handleInputChange}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              department: e.target.value,
-                            })
-                          }
-                          className="form-control"
-                          required
-                        >
-                          <option value="">Select department</option>
-                          {departments.length > 0 ? (
-                            departments.map((department) => (
-                              <option key={department.id} value={department.id}>
-                                {department.name}
-                              </option>
-                            ))
-                          ) : (
-                            <option value="">no departments available</option>
-                          )}
-                        </select>
-                      </div>
-                    </div>
 
-                    {/* designation  */}
-                    <div className="col-md-4">
-                      <div className="form-group">
-                        <label htmlFor="designation">Designations:</label>
-                        <select
-                          id="designation"
-                          name="designation"
-                          value={formData.designation}
-                          // onChange={handleInputChange}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              designation: e.target.value,
-                            })
-                          }
-                          className="form-control"
-                          required
-                        >
-                          <option value="">Select designation</option>
-                          {designations && designations.length > 0 ? (
-                            designations.map((designation) => (
-                              <option
-                                key={designation.id}
-                                value={designation.id}
-                              >
-                                {designation.name}
-                              </option>
-                            ))
-                          ) : (
-                            <option value="">No designations available</option>
-                          )}
-                        </select>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <div className="form-group">
-                        <label htmlFor="estimated_budget">estimated_budget:</label>
-                        <input
-                          type="number"
-                          id="estimated_budget"
-                          name="estimated_budget"
-                          value={formData.estimated_budget}
-                          onChange={handleInputChange}
-                          className="form-control"
-                          required
-                        />
-                      </div>
-                    </div>
-                    
-                    {/* work status */}         
-
-                    <div className="col-md-4">
-                      <div className="form-group">
-                        <label htmlFor="joining_date">Joining Date:</label>
-                        <input
-                          type="date"
-                          id="joining_date"
-                          name="joining_date"
-                          value={formData.joining_date}
-                          onChange={handleInputChange}
-                          className="form-control"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <div className="form-group">
-                        <label htmlFor="work_status">Status</label>
-                        <select
-                          id="work_status"
-                          name="work_status"
-                          value={formData.work_status}
-                          onChange={handleInputChange}
-                          className="form-control"
-                          required
-                        >
-                          <option value="">Select status</option>
-                          <option value="new">new</option>
-                          <option value="pending">pending</option>
-                          <option value="completed">completed</option>
-                          <option value="active">active</option>
-                          <option value="issue">Issue</option>
-                          <option value="terminated ">terminated by force</option>
-                          <option value="inactive">inactive</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-
-                    {/* history */}
-
-                    <div className="col-md-4">
-                      <div className="form-group">
-                        <label htmlFor="history">
-                         history:
-                        </label>
-                        <textarea
-                          type="text"
-                          id="history"
-                          name="history"
-                          value={formData.history}
-                          onChange={handleInputChange}
-                          className="form-control"
-                          required
-                        />
-                      </div>
-                    </div>
-
-
-                  <div className="form-group">
-                    <button type="submit" className="btn btn-primary">
-                      Add customer
-                    </button>
-                  </div>
-                </form>
+                  </form>
               </div>
             </div>
           </TabPane>
         </TabContent>
       </div>
-      {/* </div> */}
-    </div>
+      </div>
+    // </div>
   );
 };
 

@@ -11,7 +11,6 @@ import { fetchDistricts } from "../../redux/slice/base/districtSlice";
 import { fetchMunicipalities } from "../../redux/slice/base/municipalitySlice";
 import { fetchProvinces } from "../../redux/slice/base/provinceSlice";
 import classnames from "classnames";
-
 import { useNavigate, useParams } from "react-router-dom"; // Import useParams
 import { toast } from "react-toastify";
 import {
@@ -57,7 +56,7 @@ const EnquiryUpdate = () => {
   // pri_phone number validate
   const validatePhoneNumber = (value) => {
     const phoneLength = value.replace(/\D/g, "").length;
-    if (phoneLength >= 10 && phoneLength <= 15) {
+    if (phoneLength >= 10 && phoneLength <= 17) {
       setPhoneValid(true);
     } else {
       setPhoneValid(false);
@@ -68,7 +67,7 @@ const EnquiryUpdate = () => {
 
   const validateSecPhoneNumber = (value) => {
     const phoneLength = value.replace(/\D/g, "").length;
-    if (phoneLength >= 10 && phoneLength <= 15) {
+    if (phoneLength >= 10 && phoneLength <= 17) {
       setPhoneValid(true);
     } else {
       setPhoneValid(false);
@@ -86,12 +85,12 @@ const EnquiryUpdate = () => {
   const { list: designations } = useSelector((state) => state.designations);
   // Fetch data when component mounts
   useEffect(() => {
-    // dispatch(fetchCategories());
-    // dispatch(fetchProvinces());
-    // dispatch(fetchDistricts());
-    // dispatch(fetchDesignations());
-    // dispatch(fetchDepartments());
-    // dispatch(fetchMunicipalities());
+    dispatch(fetchCategories());
+    dispatch(fetchProvinces());
+    dispatch(fetchDistricts());
+    dispatch(fetchDesignations());
+    dispatch(fetchDepartments());
+    dispatch(fetchMunicipalities());
   }, [dispatch]);
 
   // Fetch enquiry details on component mount

@@ -1,86 +1,89 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { AppBar, Toolbar, Typography, IconButton, Box } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";  // Icon for menu (if needed for mobile)
+import SearchIcon from "@mui/icons-material/Search";  // Icon for search
+import CategoryIcon from "@mui/icons-material/Category";  // Icon for Category
+import EventIcon from "@mui/icons-material/Event";  // Icon for Event
+import AssignmentIcon from "@mui/icons-material/Assignment";  // Icon for Enquiry
+import FollowTheSignsIcon from "@mui/icons-material/FollowTheSigns"; // Icon for Followup
+
 const CrmHeader = () => {
   return (
     <div>
-      <nav className="main-header navbar navbar-expand navbar-white navbar-light">
-        {/* <!-- Left navbar links --> */}
-        <ul className="navbar-nav">
-          <li className="nav-item d-none d-sm-inline-block">
-            <Link to="category" className="nav-link">
+      <AppBar position="static" color="primary">
+        <Toolbar>
+          {/* Mobile Menu Icon (optional) */}
+          <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+            <MenuIcon />
+          </IconButton>
+
+          {/* App title (if any) */}
+          <Typography variant="h6" sx={{  flexGrow: 1 }}>
+            CRM Dashboard
+          </Typography>
+
+          {/* Left Navbar Links */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Link to="category" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+              <IconButton color="inherit">
+                <CategoryIcon />
+              </IconButton>
               Category
             </Link>
-          </li>
-          <li className="nav-item d-none d-sm-inline-block">
-            <Link to="enquiry" className="nav-link">
+
+            <Link to="enquiry" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+              <IconButton color="inherit">
+                <AssignmentIcon />
+              </IconButton>
               Enquiry
             </Link>
-          </li>
-          {/* FOLLOWUP */}
-          <li className="nav-item d-none d-sm-inline-block">
-            <Link to="follow" className="nav-link">
+
+            <Link to="follow" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+              <IconButton color="inherit">
+                <FollowTheSignsIcon />
+              </IconButton>
               Followup
             </Link>
-          </li>
-          <li className="nav-item d-none d-sm-inline-block">
-            <Link to="project" className="nav-link">
-              project
+
+            <Link to="project" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+              <IconButton color="inherit">
+                <AssignmentIcon />
+              </IconButton>
+              Project
             </Link>
-          </li>
-          {/* enquiry */}
-          {/* <li className="nav-item d-none d-sm-inline-block">
-            <Link to="attendee" className="nav-link">
-              Attendees
-            </Link>
-          </li> */}
-          {/* enquiry */}
-          <li className="nav-item d-none d-sm-inline-block">
-            <Link to="event" className="nav-link">
+
+            <Link to="event" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+              <IconButton color="inherit">
+                <EventIcon />
+              </IconButton>
               Event
             </Link>
-          </li>
-        </ul>
+          </Box>
 
-        {/* <!-- Right navbar links --> */}
-        <ul className="navbar-nav ml-auto">
-          {/* <!-- Navbar Search --> */}
-          <li className="nav-item">
-            <Link
-              className="nav-link"
-              data-widget="navbar-search"
-              to="#"
-              role="button"
-            >
-              <i className="fas fa-search"></i>
-            </Link>
-            <div className="navbar-search-block">
-              <form className="form-inline">
-                <div className="input-group input-group-sm">
-                  <input
-                    className="form-control form-control-navbar"
-                    type="search"
-                    placeholder="Search"
-                    aria-label="Search"
-                  />
-                  <div className="input-group-append">
-                    <button className="btn btn-navbar" type="submit">
-                      <i className="fas fa-search"></i>
-                    </button>
-                    <button
-                      className="btn btn-navbar"
-                      type="button"
-                      data-widget="navbar-search"
-                    >
-                      <i className="fas fa-times"></i>
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </li>
-        </ul>
-      </nav>
+          {/* Right Navbar Search */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton color="inherit">
+              <SearchIcon />
+            </IconButton>
+            <input
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+              style={{
+                backgroundColor: "#fff",
+                borderRadius: "4px",
+                padding: "5px 10px",
+                marginRight: "10px",
+                border: "none",
+                outline: "none",
+              }}
+            />
+          </Box>
+        </Toolbar>
+      </AppBar>
     </div>
   );
 };
+
 export default CrmHeader;

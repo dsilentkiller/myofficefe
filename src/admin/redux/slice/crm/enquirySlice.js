@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-// import { createSelector } from "reselect";
-
 
 // Search Enquiries
 export const searchEnquiry = createAsyncThunk(
@@ -28,7 +26,6 @@ export const fetchEnquiries = createAsyncThunk(
 );
 
 // Create Enquiry
-// Create Enquiry (improved error handling)
 export const createEnquiry = createAsyncThunk(
   "enquiries/createEnquiry",
   async (formData, thunkAPI) => {
@@ -45,7 +42,18 @@ export const createEnquiry = createAsyncThunk(
     }
   }
 );
-// fetch enquiry by id upodate
+export const updateEnquiry = createAsyncThunk(
+  "enquiries/updateEnquiry",
+  async ({ id, status }) => {
+    const response = await axios.put(
+      `http://127.0.0.1:8000/api/enquiry/update/${id}/`,
+      { status }
+    );
+    return response.data.result;
+  }
+);
+
+// Fetch enquiry by ID update
 export const fetchEnquiryByIdUpdate = createAsyncThunk(
   "enquiries/fetchEnquiryByIdUpdate",
   async (id, thunkAPI) => {
@@ -53,28 +61,17 @@ export const fetchEnquiryByIdUpdate = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/enquiry/update/${id}/`
       );
-      return response.data.result; // Make sure this matches your actual response structure
+      return response.data.result.data; // Make sure this matches your actual response structure
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      console.error("Error fetching enquiry by ID update:", error);
+      return thunkAPI.rejectWithValue(
+        error.response ? error.response.data : error.message
+      );
     }
   }
 );
 
-// fetch enquiry by id
-// export const fetchEnquiryById = createAsyncThunk(
-//   "enquiries/fetchEnquiryById",
-//   async (id, thunkAPI) => {
-//     try {
-//       const response = await axios.get(
-//         `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
-//       );
-//       return response.data.result.data; // Return the enquiry data
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response.data || error.message); // Handle errors
-//     }
-//   }
-// );
-
+// Fetch enquiry by ID
 export const fetchEnquiryById = createAsyncThunk(
   "enquiries/fetchEnquiryById",
   async (id, thunkAPI) => {
@@ -82,29 +79,9 @@ export const fetchEnquiryById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
       );
-
-      // Log the full response to inspect its structure
-      console.log("API Response:", response);
-
-      // Check if the structure is as expected
-      if (response.data && response.data.result && response.data.result.data) {
-        return response.data.result.data;
-      } else {
-        throw new Error("Unexpected response structure");
-      }
+      return response.data.result; // Ensure this is correct
     } catch (error) {
-      console.error("Error fetching enquiry by ID:", error);
-      if (error.response) {
-        return thunkAPI.rejectWithValue(error.response.data || error.message);
-      } else if (error.request) {
-        return thunkAPI.rejectWithValue(
-          "Network error. Please try again later."
-        );
-      } else {
-        return thunkAPI.rejectWithValue(
-          error.message || "An unexpected error occurred."
-        );
-      }
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -118,22 +95,6 @@ export const updateEnquiryStatus = createAsyncThunk(
       { status }
     );
     return response.data.result;
-  }
-);
-
-// Update Enquiry
-export const updateEnquiry = createAsyncThunk(
-  "enquiries/updateEnquiry",
-  async ({ id, ...data }, thunkAPI) => {
-    try {
-      const response = await axios.put(
-        `http://127.0.0.1:8000/api/enquiry/update/${id}/`,
-        data
-      );
-      return response.data.result.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || error.message);
-    }
   }
 );
 
@@ -153,6 +114,7 @@ export const deleteEnquiry = createAsyncThunk(
     }
   }
 );
+
 export const fetchCategories = createAsyncThunk(
   "enquiry/fetchCategories",
   async () => {
@@ -162,7 +124,6 @@ export const fetchCategories = createAsyncThunk(
     return response.data.result;
   }
 );
-
 const enquirySlice = createSlice({
   name: "enquiries",
   initialState: {
@@ -179,11 +140,11 @@ const enquirySlice = createSlice({
     deleteError: null,
   },
   reducers: {
-    fetchEnquiryByIdSuccess: (state, action) => {
-      state.currentEnquiry = action.payload; // This should update the currentProject
-    },
     setCurrentEnquiry(state, action) {
       state.currentEnquiry = action.payload;
+    },
+    fetchEnquiryByIdSuccess: (state, action) => {
+      state.currentEnquiry = action.payload; // This should update the currentProject
     },
   },
   extraReducers: (builder) => {
@@ -201,43 +162,34 @@ const enquirySlice = createSlice({
         state.loading = false;
         state.error = action.payload || action.error.message;
       })
-      // Fetch enquiry by ID update
-      .addCase(fetchEnquiryById.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchEnquiryById.fulfilled, (state, action) => {
-        console.log("Fetched Enquiry Payload:", action.payload); // Log the payload
-        state.selectedEnquiry = action.payload;
-        state.currentEnquiry = action.payload;
-        state.loading = false;
 
-        state.currentEnquiry = action.payload;
-      })
-      .addCase(fetchEnquiryById.rejected, (state, action) => {
-        console.error("Fetch enquiry failed:", action.error.message); // Log error message
-        state.loading = false;
-        state.currentEnquiry = null;
-        state.fetchError = action.error.message;
-      })
-
-      // Fetch enquiry by ID update
+      // Fetch enquiry by ID update (only one should be here)
       .addCase(fetchEnquiryByIdUpdate.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchEnquiryByIdUpdate.fulfilled, (state, action) => {
+        console.log("Fetched Enquiry Data:", action.payload);
         state.currentEnquiry = action.payload;
+        state.selectedEnquiry = action.payload; // Keep if necessary
         state.loading = false;
+    })
 
-        state.selectedEnquiry = action.payload;
-      })
       .addCase(fetchEnquiryByIdUpdate.rejected, (state, action) => {
         state.loading = false;
         state.currentEnquiry = null;
         state.fetchError = action.error.message;
       })
 
+      // Fetch enquiry by ID
+      .addCase(fetchEnquiryById.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchEnquiryById.fulfilled, (state, action) => {
+        state.currentEnquiry = action.payload;
+        state.loading = false;
+        state.selectedEnquiry = action.payload;
+      })
       .addCase(updateEnquiryStatus.fulfilled, (state, action) => {
         const updatedEnquiry = action.payload;
         state.list = state.list.map((enquiry) =>
@@ -246,6 +198,11 @@ const enquirySlice = createSlice({
         if (state.currentEnquiry.id === updatedEnquiry.id) {
           state.currentEnquiry = updatedEnquiry;
         }
+      })
+      .addCase(updateEnquiryStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.updateStatus = "failed";
+        state.updateError = action.payload || action.error.message;
       })
 
       // Create Enquiry
@@ -260,24 +217,6 @@ const enquirySlice = createSlice({
       .addCase(createEnquiry.rejected, (state, action) => {
         state.createStatus = "failed";
         state.createError = action.payload || action.error.message;
-      })
-
-      // Update Enquiry
-      .addCase(updateEnquiry.pending, (state) => {
-        state.updateStatus = "loading";
-      })
-      .addCase(updateEnquiry.fulfilled, (state, action) => {
-        state.updateStatus = "succeeded";
-        const index = state.list.findIndex(
-          (enquiry) => enquiry.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.list[index] = action.payload;
-        }
-      })
-      .addCase(updateEnquiry.rejected, (state, action) => {
-        state.updateStatus = "failed";
-        state.updateError = action.payload || action.error.message;
       })
 
       // Delete Enquiry
@@ -295,6 +234,24 @@ const enquirySlice = createSlice({
         state.deleteStatus = "failed";
         state.deleteError = action.payload || action.error.message;
       })
+        // Update Enquiry
+      .addCase(updateEnquiry.pending, (state) => {
+        state.updateStatus = "loading";
+      })
+      .addCase(updateEnquiry.fulfilled, (state, action) => {
+        state.updateStatus = "succeeded";
+        const index = state.list.findIndex(
+          (enquiry) => enquiry.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.list[index] = action.payload;
+        }
+      })
+      .addCase(updateEnquiry.rejected, (state, action) => {
+        state.updateStatus = "failed";
+        state.updateError = action.payload || action.error.message;
+      })
+
 
       // Search Enquiries
       .addCase(searchEnquiry.pending, (state) => {
@@ -310,5 +267,420 @@ const enquirySlice = createSlice({
       });
   },
 });
-export const { setEnquiry, setLoading, setError } = enquirySlice.actions;
+export const { setCurrentEnquiry, setEnquiry, setLoading, setError } = enquirySlice.actions;
 export default enquirySlice.reducer;
+// const enquirySlice = createSlice({
+//   name: "enquiries",
+//   initialState: {
+//     list: [],
+//     loading: false,
+//     error: null,
+//     selectedEnquiry: null,
+//     createStatus: null,
+//     updateStatus: null,
+//     deleteStatus: null,
+//     currentEnquiry: null,
+//     createError: null,
+//     updateError: null,
+//     deleteError: null,
+//   },
+//   reducers: {
+//     setCurrentEnquiry(state, action) {
+//       state.currentEnquiry = action.payload;
+//     },
+//   },
+//   extraReducers: (builder) => {
+//     builder
+//       // Fetch all enquiries
+//       .addCase(fetchEnquiries.pending, (state) => {
+//         state.loading = true;
+//         state.error = null;
+//       })
+//       .addCase(fetchEnquiries.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.list = action.payload || [];
+//       })
+//       .addCase(fetchEnquiries.rejected, (state, action) => {
+//         state.loading = false;
+//         state.error = action.payload || action.error.message;
+//       })
+
+//       // Fetch enquiry by ID
+//       .addCase(fetchEnquiryById.pending, (state) => {
+//         state.status = "loading";
+//       })
+//       .addCase(fetchEnquiryById.fulfilled, (state, action) => {
+//         state.currentEnquiry = action.payload;
+//         state.loading = false;
+//       })
+//       .addCase(fetchEnquiryById.rejected, (state, action) => {
+//         state.loading = false;
+//         state.fetchError = action.error.message;
+//       })
+
+//       // Fetch enquiry by ID update (FIXED: Removed duplicate cases)
+//       .addCase(fetchEnquiryByIdUpdate.pending, (state) => {
+//         state.loading = true;
+//         state.error = null;
+//       })
+//       .addCase(fetchEnquiryByIdUpdate.fulfilled, (state, action) => {
+//         state.currentEnquiry = action.payload;
+//         state.selectedEnquiry = action.payload;
+//         state.loading = false;
+//       })
+//       .addCase(fetchEnquiryByIdUpdate.rejected, (state, action) => {
+//         state.loading = false;
+//         state.currentEnquiry = null;
+//         state.fetchError = action.error.message;
+//       })
+
+//       // Update Status
+//       .addCase(updateEnquiryStatus.fulfilled, (state, action) => {
+//         const updatedEnquiry = action.payload;
+//         state.list = state.list.map((enquiry) =>
+//           enquiry.id === updatedEnquiry.id ? updatedEnquiry : enquiry
+//         );
+//         if (state.currentEnquiry.id === updatedEnquiry.id) {
+//           state.currentEnquiry = updatedEnquiry;
+//         }
+//       })
+
+//       // Create Enquiry
+//       .addCase(createEnquiry.pending, (state) => {
+//         state.createStatus = "loading";
+//         state.createError = null;
+//       })
+//       .addCase(createEnquiry.fulfilled, (state, action) => {
+//         state.createStatus = "succeeded";
+//         state.list.push(action.payload);
+//       })
+//       .addCase(createEnquiry.rejected, (state, action) => {
+//         state.createStatus = "failed";
+//         state.createError = action.payload || action.error.message;
+//       })
+
+//       // Delete Enquiry
+//       .addCase(deleteEnquiry.pending, (state) => {
+//         state.deleteStatus = "loading";
+//         state.deleteError = null;
+//       })
+//       .addCase(deleteEnquiry.fulfilled, (state, action) => {
+//         state.deleteStatus = "succeeded";
+//         state.list = state.list.filter(
+//           (enquiry) => enquiry.id !== action.payload
+//         );
+//       })
+//       .addCase(deleteEnquiry.rejected, (state, action) => {
+//         state.deleteStatus = "failed";
+//         state.deleteError = action.payload || action.error.message;
+//       })
+
+//       // Search Enquiries
+//       .addCase(searchEnquiry.pending, (state) => {
+//         state.loading = true;
+//       })
+//       .addCase(searchEnquiry.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.list = action.payload || [];
+//       })
+//       .addCase(searchEnquiry.rejected, (state, action) => {
+//         state.loading = false;
+//         state.error = action.payload || action.error.message;
+//       });
+//   },
+// });
+
+// export const { setCurrentEnquiry } = enquirySlice.actions;
+// export default enquirySlice.reducer;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+// import axios from "axios";
+// // import { createSelector } from "reselect";
+
+
+// // Search Enquiries
+// export const searchEnquiry = createAsyncThunk(
+//   "enquiry/searchEnquiry",
+//   async (searchTerm) => {
+//     const response = await axios.get(
+//       `http://127.0.0.1:8000/api/enquiry/?search=${searchTerm}`
+//     );
+//     return response.data.result.data;
+//   }
+// );
+
+// // Fetch all enquiries
+// export const fetchEnquiries = createAsyncThunk(
+//   "enquiries/fetchEnquiries",
+//   async (_, thunkAPI) => {
+//     try {
+//       const response = await axios.get("http://127.0.0.1:8000/api/enquiry/");
+//       return response.data.result;
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
+// // Create Enquiry
+// // Create Enquiry (improved error handling)
+// export const createEnquiry = createAsyncThunk(
+//   "enquiries/createEnquiry",
+//   async (formData, thunkAPI) => {
+//     try {
+//       const response = await axios.post(
+//         "http://127.0.0.1:8000/api/enquiry/create/",
+//         formData
+//       );
+//       return response.data.result.data || [];
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(
+//         error.response?.data?.message || error.message
+//       );
+//     }
+//   }
+// );
+// // fetch enquiry by id upodate
+// export const fetchEnquiryByIdUpdate = createAsyncThunk(
+//   "enquiries/fetchEnquiryByIdUpdate",
+//   async (id, thunkAPI) => {
+//     try {
+//       const response = await axios.get(
+//         `http://127.0.0.1:8000/api/enquiry/update/${id}/`
+//       );
+//       return response.data.result; // Make sure this matches your actual response structure
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+// export const fetchEnquiryById = createAsyncThunk(
+//   "enquiries/fetchEnquiryById",
+//   async (id, thunkAPI) => {
+//     try {
+//       const response = await axios.get(
+//         `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
+//       );
+//       return response.data.result; // Make sure the API returns the correct structure
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
+//     }
+//   }
+// );
+
+// // Update Project Status
+// export const updateEnquiryStatus = createAsyncThunk(
+//   "enquiries/updateStatus",
+//   async ({ id, status }) => {
+//     const response = await axios.put(
+//       `http://127.0.0.1:8000/api/enquiry/update/${id}/`,
+//       { status }
+//     );
+//     return response.data.result;
+//   }
+// );
+
+// // Update Enquiry
+// // export const updateEnquiry = createAsyncThunk(
+// //   "enquiries/updateEnquiry",
+// //   async ({ id, ...data }, thunkAPI) => {
+// //     try {
+// //       const response = await axios.put(
+// //         `http://127.0.0.1:8000/api/enquiry/update/${id}/`,
+// //         data
+// //       );
+// //       return response.data.result.data;
+// //     } catch (error) {
+// //       return thunkAPI.rejectWithValue(error.response?.data || error.message);
+// //     }
+// //   }
+// // );
+
+// // Delete Enquiry
+// export const deleteEnquiry = createAsyncThunk(
+//   "enquiries/deleteEnquiry",
+//   async (id, thunkAPI) => {
+//     try {
+//       await axios.delete(`http://127.0.0.1:8000/api/enquiry/delete/${id}/`);
+//       return id;
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(
+//         error.response?.data?.message ||
+//           error.message ||
+//           "An unknown error occurred"
+//       );
+//     }
+//   }
+// );
+// export const fetchCategories = createAsyncThunk(
+//   "enquiry/fetchCategories",
+//   async () => {
+//     const response = await axios.get(
+//       "http://127.0.0.1:8000/api/enquiry/category/"
+//     );
+//     return response.data.result;
+//   }
+// );
+
+// const enquirySlice = createSlice({
+//   name: "enquiries",
+//   initialState: {
+//     list: [], // Initialize list as an empty array
+//     loading: false,
+//     error: null,
+//     selectedEnquiry: null,
+//     createStatus: null,
+//     updateStatus: null,
+//     deleteStatus: null,
+//     currentEnquiry: null,
+//     createError: null,
+//     updateError: null,
+//     deleteError: null,
+//   },
+//   reducers: {
+//     setCurrentEnquiry(state, action) {
+//       state.currentEnquiry = action.payload;
+//     },
+//     fetchEnquiryByIdSuccess: (state, action) => {
+//       state.currentEnquiry = action.payload; // This should update the currentProject
+//     },
+//     // setCurrentEnquiry(state, action) {
+//     //   state.currentEnquiry = action.payload;
+//     // },
+//   },
+//   extraReducers: (builder) => {
+//     builder
+//       // Fetch all enquiries
+//       .addCase(fetchEnquiries.pending, (state) => {
+//         state.loading = true;
+//         state.error = null;
+//       })
+//       .addCase(fetchEnquiries.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.list = action.payload || []; // Ensure list is an array
+//       })
+//       .addCase(fetchEnquiries.rejected, (state, action) => {
+//         state.loading = false;
+//         state.error = action.payload || action.error.message;
+//       })
+//       // Fetch enquiry by ID update
+
+//       .addCase(fetchEnquiryById.pending, (state) => {
+//         state.status = "loading";
+//       })
+
+//       .addCase(fetchEnquiryByIdUpdate.fulfilled, (state, action) => {
+//         state.currentEnquiry = action.payload;
+//         state.selectedEnquiry = action.payload;
+//         state.loading = false;
+//     })
+//     .addCase(fetchEnquiryByIdUpdate.rejected, (state, action) => {
+//         state.loading = false;
+//         state.currentEnquiry = null;
+//         state.fetchError = action.error.message;
+//     })
+
+//       // Fetch enquiry by ID update
+//       .addCase(fetchEnquiryByIdUpdate.pending, (state) => {
+//         state.loading = true;
+//         state.error = null;
+//       })
+//       .addCase(fetchEnquiryByIdUpdate.fulfilled, (state, action) => {
+//         state.currentEnquiry = action.payload;
+//         state.loading = false;
+
+//         state.selectedEnquiry = action.payload;
+//       })
+//       .addCase(fetchEnquiryByIdUpdate.rejected, (state, action) => {
+//         state.loading = false;
+//         state.currentEnquiry = null;
+//         state.fetchError = action.error.message;
+//       })
+
+//       .addCase(updateEnquiryStatus.fulfilled, (state, action) => {
+//         const updatedEnquiry = action.payload;
+//         state.list = state.list.map((enquiry) =>
+//           enquiry.id === updatedEnquiry.id ? updatedEnquiry : enquiry
+//         );
+//         if (state.currentEnquiry.id === updatedEnquiry.id) {
+//           state.currentEnquiry = updatedEnquiry;
+//         }
+//       })
+
+//       // Create Enquiry
+//       .addCase(createEnquiry.pending, (state) => {
+//         state.createStatus = "loading";
+//         state.createError = null;
+//       })
+//       .addCase(createEnquiry.fulfilled, (state, action) => {
+//         state.createStatus = "succeeded";
+//         state.list.push(action.payload);
+//       })
+//       .addCase(createEnquiry.rejected, (state, action) => {
+//         state.createStatus = "failed";
+//         state.createError = action.payload || action.error.message;
+//       })
+
+//       // Update Enquiry
+//       // .addCase(updateEnquiry.pending, (state) => {
+//       //   state.updateStatus = "loading";
+//       // })
+//       // .addCase(updateEnquiry.fulfilled, (state, action) => {
+//       //   state.updateStatus = "succeeded";
+//       //   const index = state.list.findIndex(
+//       //     (enquiry) => enquiry.id === action.payload.id
+//       //   );
+//       //   if (index !== -1) {
+//       //     state.list[index] = action.payload;
+//       //   }
+//       // })
+//       // .addCase(updateEnquiry.rejected, (state, action) => {
+//       //   state.updateStatus = "failed";
+//       //   state.updateError = action.payload || action.error.message;
+//       // })
+
+//       // Delete Enquiry
+//       .addCase(deleteEnquiry.pending, (state) => {
+//         state.deleteStatus = "loading";
+//         state.deleteError = null;
+//       })
+//       .addCase(deleteEnquiry.fulfilled, (state, action) => {
+//         state.deleteStatus = "succeeded";
+//         state.list = state.list.filter(
+//           (enquiry) => enquiry.id !== action.payload
+//         );
+//       })
+//       .addCase(deleteEnquiry.rejected, (state, action) => {
+//         state.deleteStatus = "failed";
+//         state.deleteError = action.payload || action.error.message;
+//       })
+
+//       // Search Enquiries
+//       .addCase(searchEnquiry.pending, (state) => {
+//         state.loading = true;
+//       })
+//       .addCase(searchEnquiry.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.list = action.payload || []; // Ensure the list is an array
+//       })
+//       .addCase(searchEnquiry.rejected, (state, action) => {
+//         state.loading = false;
+//         state.error = action.payload || action.error.message;
+//       });
+//   },
+// });
+// export const {setCurrentEnquiry ,setEnquiry, setLoading, setError } = enquirySlice.actions;
+// export default enquirySlice.reducer;

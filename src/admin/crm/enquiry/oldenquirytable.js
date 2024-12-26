@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -21,22 +19,6 @@ import {
   TableChart as TableIcon,
   FileDownload as ExcelIcon,
 } from "@mui/icons-material";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TablePagination,
-
-  TableSortLabel,
-} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import DeleteIcon from "@mui/icons-material/Delete";
-
 
 const EnquiryTable = () => {
   const [enquiries, setEnquiries] = useState([]);
@@ -44,7 +26,7 @@ const EnquiryTable = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  // const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   const [enquiryToDelete, setEnquiryToDelete] = useState(null);
@@ -52,11 +34,7 @@ const EnquiryTable = () => {
   const maxEnquiryPurposeLength = 100;
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("name");
-  const [selected, setSelected] = useState([]);
- const [page, setPage] = useState(0);
-const [rowsPerPage, setRowsPerPage] = useState(10);
+  // const { enquiries, isLoading } = useSelector((state) => state.enquiries);
 
   useEffect(() => {
     //fetching data
@@ -95,8 +73,6 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
     }
   }, [currentPage, itemsPerPage, searchTerm, enquiries]);
 
-
-
   useEffect(() => {
     dispatch(fetchEnquiries()); // Fetch enquiries using the dispatched action
   }, [dispatch]);
@@ -121,32 +97,25 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
   // Helper function to check if the next follow-up date is tomorrow
   const isTomorrow = (dateString) => {
     const now = new Date();
-    const tomorrow = new Date(now);
-    tomorrow.setDate(now.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0); // Reset time to midnight
+    const tomorrow = new Date(now.setDate(now.getDate() + 1));
     const nextFollowUp = new Date(dateString);
-    nextFollowUp.setHours(0, 0, 0, 0); // Reset time to midnight
+
+    // Set time to midnight for comparison
+    tomorrow.setHours(0, 0, 0, 0);
+    nextFollowUp.setHours(0, 0, 0, 0);
 
     return tomorrow.getTime() === nextFollowUp.getTime();
   };
-// pagination handle
-const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
 
-  const handlePageChange = (event, newPage) => {
-    setCurrentPage(newPage + 1);
+  // handle in page number
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   const handleItemsPerPageChange = (event) => {
-    setItemsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(1); // Reset to the first page
+    setItemsPerPage(Number(event.target.value));
+    setCurrentPage(1); // Reset to first page when items per page changes
   };
-
-
-  // Calculate the rows to be displayed based on the current page and items per page
-  const paginatedRows = filteredEnquiries.slice(
-    currentPage * itemsPerPage,
-    currentPage * itemsPerPage + itemsPerPage
-  );
   // Truncate the history text to maxHistoryLength
   const truncateHistory = (history) => {
     if (history && history.length > maxHistoryLength) {
@@ -168,15 +137,6 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
   if (error) {
     return <div>Error loading enquiries: {error.message}</div>;
   }
-
-//sorting by customer name
-  const handleSortRequest = (property) => {
-    const isAscending = orderBy === property && order === "asc";
-    setOrder(isAscending ? "desc" : "asc");
-    setOrderBy(property);
-  };
-
-
   //--- handle searchitem in a table ----
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -190,7 +150,7 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
       .join(" ");
   };
 
-  // export to excel;
+  // if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(
@@ -225,7 +185,7 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
     XLSX.utils.book_append_sheet(workbook, worksheet, "Designations");
     XLSX.writeFile(workbook, "enquiries.xlsx");
   };
-//export to pdf
+
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.text("enquiries List", 20, 10);
@@ -273,12 +233,15 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
           {/* heading */}
           <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
-
+              {/* <h5 className="navbar-brand">Enquiry Table</h5> */}
                {/* Enquiry Table Title */}
-        <Typography left variant="h6" sx={{ textAlign: 'left', fontWeight: 'bold', color: '#333', flexGrow: 1 }}>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Enquiry Table
         </Typography>
               <div className="navbar-nav ml-auto">
+                {/* <Link to="create" className="nav-link btn btn-info">
+                  <h5>Add Enquiry</h5>
+                </Link> */}
                 <Button
           variant="contained"
           color="primary"
@@ -289,6 +252,25 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
         >
           Add Enquiry
         </Button>
+                {/* <form
+                  method="get"
+                  action="/enquiry/search"
+                  className="form-inline ml-3"
+                >
+                  <div className="input-group">
+                    <input
+                      type="search"
+                      id="default-search"
+                      name="searchTerm"
+                      className="form-control"
+                      placeholder="Search Mockups, Logos..."
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                      required
+                    />
+                  </div>
+
+                </form> */}
 
                       {/* Search Bar */}
         <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
@@ -329,13 +311,36 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
         </Button>
               </div>
 
+              <div className="form-inline ml-4" id="navbarSupportedContent">
+                <ul className="navbar-nav mr-30">
+                  <li className="nav-item ">
+                    <button
+                      id="exportExcel"
+                      className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
+                      onClick={exportToExcel}
+                    >
+                      Export Excel
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      id="exportPDF"
+                      className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
+                      onClick={exportToPDF}
+                    >
+                      Export PDF
+                    </button>
+                  </li>
+                  {/* Add other export buttons here */}
+                </ul>
+              </div>
             </div>
           </nav>
           {/* heading end */}
           <div className="card-body">
             <div className="table-container">
               <table className="table table-bordered">
-                {/* <thead>
+                <thead>
                   <tr>
                     <th>#</th>
                     <th>Customer Name</th>
@@ -358,33 +363,9 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
                     <th>History</th>
                     <th>Action</th>
                   </tr>
-                </thead> */}
-                <TableHead>
-                    <TableRow>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>#</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Customer Name</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Enquiry Date</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Next Follow Up Date</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Category</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Department</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Designation</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Phone</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Email</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Gender</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Province</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>District</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Municipality</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Street Address</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Budget</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Enquiry Purpose</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Known By</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>History</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-
+                </thead>
                 <tbody>
-                {filteredEnquiries.length > 0 ? (
+                  {filteredEnquiries.length > 0 ? (
                     filteredEnquiries.map((enquiry, index) => {
                       // Check if next follow-up date is tomorrow
                       const isRedMark = isTomorrow(enquiry.next_follow_up_date);
@@ -394,13 +375,6 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
                             {(currentPage - 1) * itemsPerPage + index + 1}
                           </td>
                           <td>{formatName(enquiry.customer_name)}</td>
-                          {/* <TableSortLabel
-                                                  active={orderBy === "customer_name"}
-                                                  direction={order}
-                                                  onClick={() => handleSortRequest("customer_name")}
-                                                >
-                                                  Name */}
-                          {/* </TableSortLabel> */}
                           <td>{formatDateTime(enquiry.created)}</td>
                           <td
                             style={{
@@ -416,7 +390,7 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
                           <td>{formatName(enquiry.department_name)}</td>
                           <td>{formatName(enquiry.designation_name)}</td>
                           <td>{enquiry.pri_phone}</td>
-                          {/* <td>{enquiry.sec_phone}</td> */}
+                          <td>{enquiry.sec_phone}</td>
                           <td>{enquiry.email}</td>
                           <td>{enquiry.gender}</td>
                           <td>{formatName(enquiry.province_name)}</td>
@@ -434,7 +408,7 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
                             {/* Display truncated history */}
                             <p>{truncateHistory(enquiry.history)}</p>
                           </td>
-                          {/* <td>
+                          <td>
                             <Link
                               className="btn btn-primary"
                               to={`/dashboard/crm/enquiry/update/${enquiry.id}`}
@@ -453,27 +427,7 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
                             >
                               Delete
                             </button>
-                          </td> */}
-                          <TableCell>
-                      <IconButton
-                        color="primary"
-                        href={`/dashboard/crm/enquiry/update/${enquiry.id}`}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        color="info"
-                        href={`/dashboard/crm/enquiry/detail/${enquiry.id}`}
-                      >
-                        <VisibilityIcon />
-                      </IconButton>
-                      <IconButton
-                        color="error"
-                        onClick={() => setEnquiryToDelete(enquiry.id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
+                          </td>
                         </tr>
                       );
                     })
@@ -486,16 +440,65 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
               </table>
             </div>
 
-           {/* Pagination */}
-           <TablePagination
-              rowsPerPageOptions={[10, 25, 50,100]}
-              component="div"
-              count={filteredEnquiries.length}
-              rowsPerPage={itemsPerPage}
-              page={currentPage - 1}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleItemsPerPageChange}
-            />
+            <div className="pagination-wrapper">
+              <div className="pagination-controls">
+                <div className="pagination-info">
+                  <label htmlFor="itemsPerPage">Items per page:</label>
+                  <select
+                    id="itemsPerPage"
+                    value={itemsPerPage}
+                    onChange={handleItemsPerPageChange}
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                  </select>
+                </div>
+                <nav>
+                  <ul className="pagination">
+                    <li
+                      className={`page-item ${
+                        currentPage === 1 ? "disabled" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                      >
+                        &laquo;
+                      </button>
+                    </li>
+                    {Array.from({ length: totalPages }, (_, index) => (
+                      <li
+                        key={index + 1}
+                        className={`page-item ${
+                          currentPage === index + 1 ? "active" : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => handlePageChange(index + 1)}
+                        >
+                          {index + 1}
+                        </button>
+                      </li>
+                    ))}
+                    <li
+                      className={`page-item ${
+                        currentPage === totalPages ? "disabled" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                      >
+                        &raquo;
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
           </div>
         </div>
         {/* Delete Confirmation Modal */}

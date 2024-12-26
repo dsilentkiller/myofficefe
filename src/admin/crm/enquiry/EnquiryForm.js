@@ -12,24 +12,19 @@ import { fetchDistricts } from "../../redux/slice/base/districtSlice";
 import { fetchMunicipalities } from "../../redux/slice/base/municipalitySlice";
 import { fetchProvinces } from "../../redux/slice/base/provinceSlice";
 import classnames from "classnames";
-// import ProvinceDistrictSelector from "../selector/ProvinceDistrictSelector";
-// import { createSelector } from "reselect";
-
-// import axios from "axios";
-
 import { useNavigate, useParams } from "react-router-dom"; // Import useParams
 import { toast } from "react-toastify";
 import {
   createEnquiry,
-  updateEnquiry,
-  fetchEnquiryById,
+  updatedEnquiry,
+  fetchEnquiryByIdUpdate,
 } from "../../redux/slice/crm/enquirySlice";
-// import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { AppBar, Toolbar, Typography, IconButton, Button } from "@mui/material";
+import { ArrowBack as ArrowBackIcon, TableChart as TableChartIcon } from "@mui/icons-material";
 
 const EnquiryForm = () => {
   const [activeTab, setActiveTab] = useState("1");
-
   const { id } = useParams(); // Get the enquiry ID from URL
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -47,15 +42,11 @@ const EnquiryForm = () => {
     sec_phone: "",
     email: "",
     gender: "",
-
     province: "",
-
     district: "",
     municipality: "",
-
     street_address: "",
     sec_address: "",
-
     estimated_amount: "",
     problem: "",
     known_by: "",
@@ -70,14 +61,6 @@ const EnquiryForm = () => {
 
   const enquiries = useSelector((state) => state.enquiries.list || []);
   const enquiryData = useSelector((state) => state.enquiries.currentEnquiry);
-  // added select district by province name
-  // const handleProvinceChange = (provinceId) => {
-  //   setFormData((prev) => ({ ...prev, province: provinceId, district: "" }));
-  // };
-
-  // const handleDistrictChange = (districtId) => {
-  //   setFormData((prev) => ({ ...prev, district: districtId }));
-  // };
   // Toggle function for switching tabs
   const toggle = (tab) => {
     if (activeTab !== tab) {
@@ -92,9 +75,7 @@ const EnquiryForm = () => {
   useEffect(() => {
     console.log("Current Enquiry State:", enquiryToUpdate);
   }, [enquiryToUpdate]);
-
   //Similarly, memoize other selectors for municipalities, departments, and designations.
-
   const { list: provinces } = useSelector((state) => state.provinces);
   const { list: categories } = useSelector((state) => state.categories);
   const { list: districts } = useSelector((state) => state.districts);
@@ -104,7 +85,7 @@ const EnquiryForm = () => {
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchEnquiryById(id));
+      dispatch(fetchEnquiryByIdUpdate(id));
     }
   }, [id, dispatch]);
   useEffect(() => {
@@ -220,7 +201,7 @@ const EnquiryForm = () => {
     console.log("Form data before submission:", formDataToSubmit); // Debug log
 
     if (id) {
-      dispatch(updateEnquiry({ id, ...formDataToSubmit }))
+      dispatch(fetchEnquiryByIdUpdate({ id, ...formDataToSubmit }))
         .unwrap()
         .then((updatedEnquiry) => {
           toast.success("Enquiry updated successfully!");
@@ -282,7 +263,8 @@ const EnquiryForm = () => {
         <TabContent activeTab={activeTab}>
           <TabPane tabId="1">
             <div className="card">
-              <nav className="navbar navbar-expand-lg navbar-light bg-light">
+              {/*  */}
+              {/* <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
                   <h5 className="navbar-brand">
                     {" "}
@@ -294,7 +276,33 @@ const EnquiryForm = () => {
                     </Link>
                   </div>
                 </div>
-              </nav>
+              </nav> */}
+               <AppBar position="static" color="default" elevation={3}>
+      <Toolbar>
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="back"
+          component={Link}
+          to="/dashboard/crm/enquiry"
+        >
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant="h6" color="inherit" sx={{ flexGrow: 1 }}>
+          {id ? "Update Enquiry" : "Add Enquiry"}
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<TableChartIcon />}
+          component={Link}
+          to="/dashboard/crm/enquiry"
+        >
+          Enquiry Table
+        </Button>
+      </Toolbar>
+    </AppBar>
+              {/*  */}
               <div className="card-body">
                 <form onSubmit={handleSubmit}>
                   {/* <ProvinceDistrictSelector

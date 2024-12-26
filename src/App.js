@@ -249,6 +249,7 @@ import FollowDelete from "./admin/crm/followup/FollowDelete";
 import FollowDetail from "./admin/crm/followup/FollowDetail";
 import ClientDashboard from "./admin/layouts/ClientDashboard";
 import HrmDashboard from "./admin/layouts/HrmDashboard";
+import CustomerDetail from "./admin/client/customer/CustomerDetail";
 
 // import customerDashboard from "./admin/layouts";
 // import LoginForm from "./admin/accounts/LoginForm";
@@ -337,7 +338,7 @@ function App() {
               <Route path="customer-list" element={<CustomerTable/>} />
               <Route path="create" element={<CustomerForm />} />
               <Route path="update/:id/" element={<CustomerForm />} />
-              {/* // <Route path="customer/detail/:id/" element={<CustomerDetail />} /> */}
+              <Route path="detail/:id/" element={<CustomerDetail />} />
             </Route>
 
 

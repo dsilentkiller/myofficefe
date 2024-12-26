@@ -10,11 +10,11 @@ const FollowDetail = () => {
     (state) => state.follows
   );
 
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchFollowById(id));
-    }
-  }, [dispatch, id]);
+  // useEffect(() => {
+  //   if (id) {
+  //     dispatch(fetchFollowById(id));
+  //   }
+  // }, [dispatch, id]);
 
   useEffect(() => {
     console.log("currentFollow data:", currentFollow);
