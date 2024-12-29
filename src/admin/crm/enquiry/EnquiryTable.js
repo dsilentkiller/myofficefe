@@ -36,7 +36,8 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { toast } from "react-toastify";
 
 const EnquiryTable = () => {
   const [enquiries, setEnquiries] = useState([]);
@@ -58,7 +59,50 @@ const EnquiryTable = () => {
  const [page, setPage] = useState(0);
 const [rowsPerPage, setRowsPerPage] = useState(10);
 
+
+//########### importing excell file #############
+ //########### importing excel file #############
+ const importExcel = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: "array" });
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const parsedData = XLSX.utils.sheet_to_json(sheet);
+
+    const formattedRows = parsedData.map((row, index) => ({
+      id: index + 1,
+      name: row.Name || "Unknown",
+      dueDate: row.DueDate || "2024-12-31",
+      status: row.Status || "Pending",
+    }));
+    setEnquiries((prevRows) => [...prevRows, ...formattedRows]);
+  };
+
+  reader.readAsArrayBuffer(file);
+};
+
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    importExcel(event);
+    toast.success("Excel file imported successfully!");
+  } else {
+    toast.error("Please select a valid Excel file!");
+  }
+};
+
+
+//################ fech enquiries############################################
+
+
   useEffect(() => {
+    
+  
     //fetching data
     const fetchEnquiries = async () => {
       try {
@@ -83,7 +127,7 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
 
     fetchEnquiries();
 
-    //live search handling
+    //##########  live search handling function handling ##############
     if (searchTerm) {
       setFilteredEnquiries(
         enquiries.filter((enquiry) =>
@@ -101,7 +145,7 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
     dispatch(fetchEnquiries()); // Fetch enquiries using the dispatched action
   }, [dispatch]);
 
-  // Helper function to format date as a readable string
+  //########### Helper function to format date as a readable string ###############
   const formatDateTime = (dateString) => {
     if (!dateString) return "";
     const options = {
@@ -118,7 +162,7 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
     );
   };
 
-  // Helper function to check if the next follow-up date is tomorrow
+  // ################ Helper function to check if the next follow-up date is tomorrow################
   const isTomorrow = (dateString) => {
     const now = new Date();
     const tomorrow = new Date(now);
@@ -129,7 +173,7 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
 
     return tomorrow.getTime() === nextFollowUp.getTime();
   };
-// pagination handle
+//################# pagination handle#############
 const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
 
   const handlePageChange = (event, newPage) => {
@@ -142,7 +186,7 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
   };
 
 
-  // Calculate the rows to be displayed based on the current page and items per page
+  // ######### Calculate the rows to be displayed based on the current page and items per page###
   const paginatedRows = filteredEnquiries.slice(
     currentPage * itemsPerPage,
     currentPage * itemsPerPage + itemsPerPage
@@ -154,7 +198,7 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
     }
     return history;
   };
-  //enquiry purpose
+  //##### truncate enquiry purpose######################
   const truncateEnquiryPurpose = (enquiry_purpose) => {
     if (enquiry_purpose && enquiry_purpose.length > maxEnquiryPurposeLength) {
       return enquiry_purpose.substring(0, maxEnquiryPurposeLength) + "..."; // Add ellipsis
@@ -169,7 +213,7 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
     return <div>Error loading enquiries: {error.message}</div>;
   }
 
-//sorting by customer name
+//############# sorting by customer name##############
   const handleSortRequest = (property) => {
     const isAscending = orderBy === property && order === "asc";
     setOrder(isAscending ? "desc" : "asc");
@@ -177,11 +221,11 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
   };
 
 
-  //--- handle searchitem in a table ----
+  //###############  handle searchitem in a table ----
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
-  //--converting first letter  capital
+  //##############converting first letter  capital
   const formatName = (name) => {
     if (!name) return "";
     return name
@@ -190,6 +234,7 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
       .join(" ");
   };
 
+  
   // export to excel;
   if (error) return <div>Error: {error}</div>;
   const exportToExcel = () => {
@@ -275,20 +320,21 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
             <div className="container-fluid">
 
                {/* Enquiry Table Title */}
-        <Typography left variant="h6" sx={{ textAlign: 'left', fontWeight: 'bold', color: '#333', flexGrow: 1 }}>
-          Enquiry Table
-        </Typography>
-              <div className="navbar-nav ml-auto">
-                <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          component={Link}
-          to="create"
-          sx={{ marginRight: 2 }}
-        >
-          Add Enquiry
-        </Button>
+                <Typography left variant="h6" sx={{ textAlign: 'left', fontWeight: 'bold', color: '#333', flexGrow: 1 }}>
+                  Enquiry Table
+                </Typography>
+              
+                <div className="navbar-nav ml-auto">
+                        <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AddIcon />}
+                  component={Link}
+                  to="create"
+                  sx={{ marginRight: 2 }}
+                >
+                  Add Enquiry
+                </Button>
 
                       {/* Search Bar */}
         <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
@@ -327,9 +373,35 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
         >
           Export PDF
         </Button>
+            <Button
+                variant="contained"  // You can also use "outlined" if you prefer
+                // component="label"
+                sx={{
+                  marginBottom: '8px',
+                  marginLeft:1,
+                  marginRight: 1,
+                  backgroundColor: '#3f51b5',  // Your custom color
+                  color: 'white',  // Text color
+                  '&:hover': {
+                    backgroundColor: '#303f9f',  // Darker shade on hover
+                  },
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <UploadFileIcon sx={{ marginRight: 1 }} />
+                Import Excel
+                <input
+                  type="file"
+                  accept=".xlsx, .xls"
+                  hidden
+                  onChange={handleFileChange}  // Call the function to handle file import
+                />
+              </Button>
               </div>
 
-            </div>
+        </div>
           </nav>
           {/* heading end */}
           <div className="card-body">

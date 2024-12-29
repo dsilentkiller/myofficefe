@@ -13,6 +13,7 @@ import categoryReducer from "./admin/redux/slice/crm/categorySlice";
 import enquiryReducer from "./admin/redux/slice/crm/enquirySlice";
 import followReducer from "./admin/redux/slice/crm/followSlice";
 import customerReducer from "./admin/redux/slice/customer/customerSlice";
+import accountReducer from "./admin/redux/slice/crm/accountSlice";
 const store = configureStore({
   reducer: {
     districts: districtReducer,
@@ -28,6 +29,7 @@ const store = configureStore({
     enquiries: enquiryReducer,
     follows: followReducer,
     customers:customerReducer,
+    account:accountReducer,
   },
 });
 

@@ -25,35 +25,35 @@ const CrmHeader = () => {
 
           {/* Left Navbar Links */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Link to="category" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+            <Link to="/dashboard/crm/category/" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
               <IconButton color="inherit">
                 <CategoryIcon />
               </IconButton>
               Category
             </Link>
 
-            <Link to="enquiry" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+            <Link to="/dashboard/crm/enquiry" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
               <IconButton color="inherit">
                 <AssignmentIcon />
               </IconButton>
               Enquiry
             </Link>
 
-            <Link to="follow" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+            <Link to="/dashboard/crm/follow" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
               <IconButton color="inherit">
                 <FollowTheSignsIcon />
               </IconButton>
               Followup
             </Link>
 
-            <Link to="project" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+            <Link to="/dashboard/crm/project" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
               <IconButton color="inherit">
                 <AssignmentIcon />
               </IconButton>
               Project
             </Link>
 
-            <Link to="event" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+            <Link to="/dashboard/crm/event" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
               <IconButton color="inherit">
                 <EventIcon />
               </IconButton>

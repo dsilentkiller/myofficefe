@@ -5,18 +5,18 @@ import LeaveForm from "../container/leave/Form";
 import LeaveList from "../container/leave/List";
 import LeaveDashboard from "../layouts/LeaveDashboard";
 
-function CustomerRoutes() {
+function LeaveRoutes() {
   return (
     <div>
-      {/* Customer Routes */}
+      {/* Leave Routes */}
       <Route path="/leave" element={<LeaveDashboard />}>
         <Route path="create" element={<LeaveForm />} />
         <Route path="list" element={<LeaveList />} />
-        {/* Catch-all for /Customer routes */}
-        {/* <Route path="*" element={<Navigate to="/Customer" replace />} /> */}
+        {/* Catch-all for /Leave routes */}
+        {/* <Route path="*" element={<Navigate to="/Leave" replace />} /> */}
       </Route>
     </div>
   );
 }
 
-export default CustomerRoutes;
+export default LeaveRoutes;

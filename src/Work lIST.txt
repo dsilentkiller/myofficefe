@@ -1,3 +1,24 @@
+For enquiry and followup  table 
+1. remeaning all field and previous things same, add Import excel file to table feature, 
+     add button import excel file with icon using mui professional design
+2. when status is not change and due date is tomarrow or due date lost till a week it must pinned in table with red color
+ // Highlight rows or next follow date  in red when the due date is tomorrow or within the past week, and the status remains unchanged
+
+3. ascending and descending arrow in  every field must work properly add according to field name and design must be  professional
+##Ensure the sorting functionality works for all fields with proper icons for ascending and descending order.
+4.export excel and export pdf button and feature properly applied accoding to Fields
+5.multiple field selected and deleted feature must work 
+6.table update/edt and cancel or delete function enable 
+7.design table look professionally
+8.live search in table from entire table
+9.pagination feautre  in table data properly used.
+
+10.redesign the button a professional look using Material-UI (MUI),Apply appropriate MUI styling (sx) for better spacing, colors, and overall appearance,Ensure the icon is placed correctly on the button. and color
+
+
+
+
+
 1.create ProjectForm   2.Create ProjectTable  3.projectSlice   
 note: 1> project list can be search  2> projectlist can be edit and delete
   3> Toast Message must be shown after created , updated ,deleted 

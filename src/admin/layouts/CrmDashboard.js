@@ -5,15 +5,7 @@ import Sidebar from "../components/sidebar/Sidebar";
 import Footer from "../components/footer/Footer";
 import { Outlet } from "react-router-dom";
 import CrmHeader from "../components/navbar/CrmHeader";
-// import { Route, Routes } from "react-router-dom";
-// import EmployeeList from "../container/user/employee/EmployeeList";
-// import EmployeeForm from "../container/user/employee/Form";
-// import EmployeeDetail from "../container/user/employee/Detail";
-// import CustomerList from "../container/user/customer/List";
-// import CustomerForm from "../container/user/customer/Form";
-// import CustomerDetail from "../container/user/customer/Detail";
-// import EnquiryForm from "../container/user/enquiry/Form";
-// import EnquiryList from "../container/user/enquiry/List";
+
 
 function CrmDashboard() {
   return (
