@@ -21,8 +21,6 @@ const ProjectForm = () => {
     status: "",
   });
 
-  // const createStatus = useSelector((state) => state.projects.createStatus);
-  // const updateStatus = useSelector((state) => state.projects.updateStatus);
   const createError = useSelector((state) => state.projects.createError);
   const updateError = useSelector((state) => state.projects.updateError);
   const projectToUpdate = useSelector((state) => state.projects.currentProject);
@@ -101,16 +99,6 @@ const ProjectForm = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (updateStatus === "succeeded") {
-  //     toast.success("Project updated successfully!");
-  //     navigate("/dashboard/crm/project");
-  //   } else if (updateStatus === "failed") {
-  //     toast.error(
-  //       `Update Error: ${updateError?.message || "An error occurred"}`
-  //     );
-  //   }
-  // }, [updateStatus, updateError, navigate]);
 
   return (
     <div className="content-wrapper">

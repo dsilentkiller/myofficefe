@@ -98,35 +98,23 @@ const Sidebar = () => {
             marginTop: "10px",
           }}
         >
-          <ListItemIcon sx={{ color: "#ffffff" }}>
+          <ListItemIcon >
             <PersonIcon />
           </ListItemIcon>
-          <ListItemText primary="Customer" sx={{ color: "#ffffff" }} />
-          {userMenuOpen ? <ExpandLess sx={{ color: "#ffffff" }} /> : <ExpandMore sx={{ color: "#ffffff" }} />}
+          <ListItemText primary="Customer" component={Link} to="/dashboard/customer/" sx={{ color: "#ffffff" }} />
+          {/* {userMenuOpen ? <ExpandLess sx={{ color: "#ffffff" }} /> : <ExpandMore sx={{ color: "#ffffff" }} />} */}
         </ListItem>
 
-        <Collapse in={userMenuOpen} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItem button component={Link} to="/dashboard/customer/employee" sx={{ color: "#bdc3c7", pl: 4 }}>
-              <ListItemText primary="Employee" sx={{ color: "#ecf0f1" }} />
-            </ListItem>
-            <ListItem button component={Link} to="/dashboard/customer/customer" sx={{ color: "#bdc3c7", pl: 4 }}>
-              <ListItemText primary="Customer" sx={{ color: "#ecf0f1" }} />
-            </ListItem>
-            <ListItem button component={Link} to="/dashboard/customer/user" sx={{ color: "#bdc3c7", pl: 4 }}>
-              <ListItemText primary="User" sx={{ color: "#ecf0f1" }} />
-            </ListItem>
-          </List>
-        </Collapse>
 
-        {/* Additional menu items can go here */}
+
+
       </List>
     </Drawer>
   );
 };
 
 export default Sidebar;
-//old sidebar 
+//old sidebar
 
 
 // import React, { useState } from "react";

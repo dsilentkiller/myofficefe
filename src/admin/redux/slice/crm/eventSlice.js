@@ -30,17 +30,17 @@ export const fetchEventById = createAsyncThunk(
 
 
 // Fetch all Events action
-export const fetchEvent = createAsyncThunk(
-  "Events/fetchEvent",
-  async (_, thunkAPI) => {
-    try {
-      const response = await axios.get("http://127.0.0.1:8000/api/Event/");
-      return response.data.result;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || error.message);
-    }
-  }
-);
+// export const fetchEvent = createAsyncThunk(
+//   "Events/fetchEvent",
+//   async (_, thunkAPI) => {
+//     try {
+//       const response = await axios.get("http://127.0.0.1:8000/api/event/");
+//       return response.data.result;
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
+//     }
+//   }
+// );
 
 // Async thunk for creating a new event
 export const createEvent = createAsyncThunk(
@@ -95,6 +95,7 @@ const eventSlice = createSlice({
     events: [],
     status: "idle",
     selectedEvent: null, // Ensure this is part of the initial state
+    currentEvent:null,
     error: null,
   },
   reducers: {

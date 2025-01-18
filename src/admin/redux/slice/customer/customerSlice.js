@@ -1,6 +1,22 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { createSelector } from "reselect";
+// New async thunk to convert an enquiry to a customer
+export const convertEnquiryToCustomer = createAsyncThunk(
+  "customers/convertEnquiryToCustomer",
+  async (enquiryId, thunkAPI) => {
+    try {
+      // Make the POST request to the backend to convert the enquiry to a customer
+      const response = await axios.post(
+        `http://127.0.0.1:8000/api/customer/convert_enquiry_to_customer/${enquiryId}/`
+      );
+      return response.data; // This will return the success message or customer data
+    } catch (error) {
+      // Handle error appropriately
+      return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
 
 // Search customers
 export const searchCustomer = createAsyncThunk(
@@ -168,6 +184,8 @@ const customerSlice = createSlice({
     createError: null,
     updateError: null,
     deleteError: null,
+    conversionStatus: null, // Add this to track conversion status
+    conversionError: null,  // Add this to track any error during conversion
   },
   reducers: {
     fetchCustomerByIdSuccess: (state, action) => {
@@ -198,6 +216,30 @@ const customerSlice = createSlice({
         state.loading = false;
         state.error = action.payload || action.error.message;
       })
+      // Handle Convert Enquiry to Customer (new action)
+      .addCase(convertEnquiryToCustomer.pending, (state) => {
+        state.conversionStatus = "loading";
+        state.conversionError = null;
+      })
+      .addCase(convertEnquiryToCustomer.fulfilled, (state, action) => {
+        state.conversionStatus = "succeeded";
+        state.message = action.payload.message; // Save the success message
+      })
+      .addCase(convertEnquiryToCustomer.rejected, (state, action) => {
+        state.conversionStatus = "failed";
+        state.conversionError = action.payload || action.error.message;
+      })
+      // .addCase(fetchCustomerById.pending, (state) => {
+      //   state.status = 'loading';
+      // })
+      // .addCase(fetchCustomerById.fulfilled, (state, action) => {
+      //   state.status = 'succeeded';
+      //   state.customerToView = action.payload.data; // Adjust this based on the API response structure
+      // })
+      // .addCase(fetchCustomerById.rejected, (state, action) => {
+      //   state.status = 'failed';
+      //   state.error = action.error.message;
+      // })
       // Fetch customers by ID update
       .addCase(fetchCustomerById.pending, (state) => {
         state.loading = true;

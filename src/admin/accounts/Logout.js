@@ -84,7 +84,7 @@ const Logout = () => {
       </Dialog>
 
       {/* Snackbar (Toast Message) for logout success */}
-      <Snackbar
+      {/* <Snackbar
         open={openToast}
         autoHideDuration={3000} // Automatically hide after 3 seconds
         onClose={handleCloseToast}
@@ -92,7 +92,7 @@ const Logout = () => {
         <Alert onClose={handleCloseToast} severity="success" sx={{ width: "100%" }}>
           Logout successfully!
         </Alert>
-      </Snackbar>
+      </Snackbar> */}
     </Box>
   );
 };

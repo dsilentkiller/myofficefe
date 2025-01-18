@@ -114,6 +114,7 @@ const provinceSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+    
       .addCase(fetchDistrictsByProvince.pending, (state) => {
         state.isLoading = true;
         state.error = null;

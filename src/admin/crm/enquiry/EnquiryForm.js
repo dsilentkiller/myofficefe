@@ -148,7 +148,7 @@ const EnquiryForm = () => {
     } else if (!enquiryToUpdate && id) {
       toast.error("Failed to load enquiry details for update.");
     }
-  }, [enquiryToUpdate, id]);
+  }, [enquiryToUpdate,id]);
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -1440,30 +1440,30 @@ export default EnquiryForm;
 //                       </div>
 //                     </div>
 //                     {/* gender */}
-//                     <div className="col-md-4">
-//                       <div className="form-group">
-//                         <label htmlFor="gender">Gender:</label>
-//                         <select
-//                           id="gender"
-//                           name="gender"
-//                           value={formData.gender}
-//                           // onChange={handleInputChange}
-//                           onChange={(e) =>
-//                             setFormData({
-//                               ...formData,
-//                               gender: e.target.value,
-//                             })
-//                           }
-//                           className="form-control"
-//                           required
-//                         >
-//                           <option value="">Select Gender</option>
-//                           <option value="male">Male</option>
-//                           <option value="female">Female</option>
-//                           <option value="other">Other</option>
-//                         </select>
-//                       </div>
-//                     </div>
+                    // <div className="col-md-4">
+                    //   <div className="form-group">
+                    //     <label htmlFor="gender">Gender:</label>
+                    //     <select
+                    //       id="gender"
+                    //       name="gender"
+                    //       value={formData.gender}
+                    //       // onChange={handleInputChange}
+                    //       onChange={(e) =>
+                    //         setFormData({
+                    //           ...formData,
+                    //           gender: e.target.value,
+                    //         })
+                    //       }
+                    //       className="form-control"
+                    //       required
+                    //     >
+                    //       <option value="">Select Gender</option>
+                    //       <option value="male">Male</option>
+                    //       <option value="female">Female</option>
+                    //       <option value="other">Other</option>
+                    //     </select>
+                    //   </div>
+                    // </div>
 //                   </div>
 
 //                   {/* pri phone */}

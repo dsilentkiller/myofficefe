@@ -1,9 +1,118 @@
+
+// import React from 'react';
+// import { Card, CardContent, Typography, Button, Grid } from '@mui/material';
+// import { useNavigate } from 'react-router-dom';
+
+// const HrmDashboard = () => {
+//   const navigate = useNavigate();
+
+//   const handleNavigation = (path) => {
+//     navigate(path);
+//   };
+
+//   return (
+//     <Grid container spacing={4} justifyContent="center">
+//       {/* Leave Card */}
+//       <Grid item xs={12} sm={6} md={3}>
+//         <Card sx={{ maxWidth: 345 }}>
+//           <CardContent>
+//             <Typography variant="h5" component="div">
+//               Leave
+//             </Typography>
+//             <Typography variant="body2" color="text.secondary">
+//               Manage employee leaves and approvals.
+//             </Typography>
+//             <Button
+//               variant="contained"
+//               sx={{ marginTop: 2 }}
+//               onClick={() => handleNavigation('leave/list')}
+//             >
+//               Go to Leave Dashboard
+//             </Button>
+//           </CardContent>
+//         </Card>
+//       </Grid>
+
+//       {/* Assets Card */}
+//       <Grid item xs={12} sm={6} md={3}>
+//         <Card sx={{ maxWidth: 345 }}>
+//           <CardContent>
+//             <Typography variant="h5" component="div">
+//               Assets
+//             </Typography>
+//             <Typography variant="body2" color="text.secondary">
+//               Manage company assets.
+//             </Typography>
+//             <Button
+//               variant="contained"
+//               sx={{ marginTop: 2 }}
+//               onClick={() => handleNavigation('assets')}
+//             >
+//               Go to Assets Dashboard
+//             </Button>
+//           </CardContent>
+//         </Card>
+//       </Grid>
+
+//       {/* Employee Card */}
+//       <Grid item xs={12} sm={6} md={3}>
+//         <Card sx={{ maxWidth: 345 }}>
+//           <CardContent>
+//             <Typography variant="h5" component="div">
+//               Employee
+//             </Typography>
+//             <Typography variant="body2" color="text.secondary">
+//               View employee details and management.
+//             </Typography>
+//             <Button
+//               variant="contained"
+//               sx={{ marginTop: 2 }}
+//               onClick={() => handleNavigation('employee')}
+//             >
+//               Go to Employee Dashboard
+//             </Button>
+//           </CardContent>
+//         </Card>
+//       </Grid>
+
+//       {/* Shift Card */}
+//       <Grid item xs={12} sm={6} md={3}>
+//         <Card sx={{ maxWidth: 345 }}>
+//           <CardContent>
+//             <Typography variant="h5" component="div">
+//               Shift
+//             </Typography>
+//             <Typography variant="body2" color="text.secondary">
+//               Manage employee shifts and schedules.
+//             </Typography>
+//             <Button
+//               variant="contained"
+//               sx={{ marginTop: 2 }}
+//               onClick={() => handleNavigation('/dashboard/hrm/shift')}
+//             >
+//               Go to Shift Dashboard
+//             </Button>
+//           </CardContent>
+//         </Card>
+//       </Grid>
+//     </Grid>
+//   );
+// };
+
+// export default HrmDashboard;
+
+//new dashboard
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../components/footer/Footer";
 import DefaultHeader from "../components/navbar/DefaultHeader";
 import HrmSidebar from "../components/sidebar/HrmSidebar";
+import { Outlet } from 'react-router-dom';
+import HrmNavbar from "../components/navbar/Hrmheader";
 
+import { Card, CardContent, Typography, CardActionArea, Box } from "@mui/material";
+import { AccountCircle, People, Work, CalendarToday, AttachMoney, Business, Build , People as EmployeeIcon, Storage as AdditionalAssetIcon } from "@mui/icons-material"; // Icons for different sections
+// import "../css/hrmDashboard.css"
 const HrmDashboard = () => {
   // Static data for demonstration purposes (can be dynamic as needed)
   const [enquiriesCount, setEnquiriesCount] = useState(30);
@@ -18,121 +127,429 @@ const HrmDashboard = () => {
           <div className="flex flex-col">
             <DefaultHeader />
           </div>
+          <div className="flex flex-col">
+            <HrmNavbar/>
+          </div>
 
           <div className="content-wrapper mt-6">
             <div className="row justify-content-center">
               {/* Employee Card */}
-              <div className="col-lg-3 col-md-4 col-6 mb-4">
-                <Link to="/dashboard/hrm/employee/" className="card-link">
-                  <div className="small-box bg-primary shadow-lg rounded-lg p-4">
-                    <div className="inner text-center">
-                      <i className="fas fa-users fa-2x mb-3"></i> {/* Employee Icon */}
-                      <h2>{hrCount}</h2>
-                      <p className="fw-bold">Employees</p>
-                    </div>
-                  </div>
+              {/* <div className="col-lg-1 col-md-2 col-4 mb-4">
+                <Link to="employee/employee-list" className="card-link">
+                  <Card className="card-sm">
+                    <CardActionArea>
+                      <CardContent className="text-center">
+                        <People style={{ fontSize: 40 }} />
+                        <Typography variant="h6">{hrCount}</Typography>
+                        <Typography variant="body2" color="textPrimary">Employees</Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
                 </Link>
-              </div>
+
+              </div>  */}
 
               {/* Leave Card */}
-              <div className="col-lg-3 col-md-4 col-6 mb-4">
-                <Link to="/dashboard/crm/enquiry/" className="card-link">
-                  <div className="small-box bg-warning shadow-lg rounded-lg p-4">
-                    <div className="inner text-center">
-                      <i className="fas fa-calendar-alt fa-2x mb-3"></i> {/* Leave Icon */}
-                      <h2>{enquiriesCount}</h2>
-                      <p className="fw-bold">Leave Requests</p>
-                    </div>
-                  </div>
+              {/* <div className="col-lg-1 col-md-2 col-4 mb-4">
+                <Link to="leave" className="card-link">
+                  <Card className="card-sm">
+                    <CardActionArea>
+                      <CardContent className="text-center">
+                        <CalendarToday style={{ fontSize: 40 }} />
+                        <Typography variant="h6">{enquiriesCount}</Typography>
+                        <Typography variant="body2" color="textSecondary">Leave</Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
                 </Link>
-              </div>
+              </div> */}
 
               {/* Assets Card */}
-              <div className="col-lg-3 col-md-4 col-6 mb-4">
+              {/* <div className="col-lg-1 col-md-2 col-4 mb-4">
                 <Link to="/dashboard/customer/list" className="card-link">
-                  <div className="small-box bg-danger shadow-lg rounded-lg p-4">
-                    <div className="inner text-center">
-                      <i className="fas fa-boxes fa-2x mb-3"></i> {/* Assets Icon */}
-                      <h2>{clientsCount}</h2>
-                      <p className="fw-bold">Assets</p>
-                    </div>
-                  </div>
+                  <Card className="card-sm">
+                    <CardActionArea>
+                      <CardContent className="text-center">
+                        <Business style={{ fontSize: 40 }} />
+                        <Typography variant="h6">{clientsCount}</Typography>
+                        <Typography variant="body2" color="textSecondary">Assets</Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
                 </Link>
-              </div>
+              </div> */}
 
               {/* Attendance Card */}
-              <div className="col-lg-3 col-md-4 col-6 mb-4">
+              {/* <div className="col-lg-1 col-md-2 col-4 mb-4">
                 <Link to="/dashboard/hr" className="card-link">
-                  <div className="small-box bg-info shadow-lg rounded-lg p-4">
-                    <div className="inner text-center">
-                      <i className="fas fa-clock fa-2x mb-3"></i> {/* Attendance Icon */}
-                      <h2>{hrCount}</h2>
-                      <p className="fw-bold">Attendance</p>
-                    </div>
-                  </div>
+                  <Card className="card-sm">
+                    <CardActionArea>
+                      <CardContent className="text-center">
+                        <Work style={{ fontSize: 40 }} />
+                        <Typography variant="h6">{hrCount}</Typography>
+                        <Typography variant="body2" color="textSecondary">Attendance</Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
                 </Link>
-              </div>
+              </div> */}
 
               {/* Tasks Card */}
-              <div className="col-lg-3 col-md-4 col-6 mb-4">
+              {/* <div className="col-lg-1 col-md-2 col-4 mb-4">
                 <Link to="/dashboard/hr" className="card-link">
-                  <div className="small-box bg-success shadow-lg rounded-lg p-4">
-                    <div className="inner text-center">
-                      <i className="fas fa-tasks fa-2x mb-3"></i> {/* Tasks Icon */}
-                      <h2>{hrCount}</h2>
-                      <p className="fw-bold">Tasks</p>
-                    </div>
-                  </div>
+                  <Card className="card-sm">
+                    <CardActionArea>
+                      <CardContent className="text-center">
+                        <Build style={{ fontSize: 40 }} />
+                        <Typography variant="h6">{hrCount}</Typography>
+                        <Typography variant="body2" color="textSecondary">Tasks</Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
                 </Link>
-              </div>
-                           {/* Payroll Card */}
-                           <div className="col-lg-3 col-md-4 col-6 mb-4">
+              </div> */}
+
+              {/* Payroll Card */}
+              {/* <div className="col-lg-1 col-md-2 col-4 mb-4">
                 <Link to="/dashboard/payroll" className="card-link">
-                  <div className="small-box bg-secondary shadow-lg rounded-lg p-4">
-                    <div className="inner text-center">
-                      <i className="fas fa-dollar-sign fa-2x mb-3"></i> {/* Payroll Icon */}
-                      <h2>{hrCount}</h2>
-                      <p className="fw-bold">Payroll</p>
-                    </div>
-                  </div>
+                  <Card className="card-sm">
+                    <CardActionArea>
+                      <CardContent className="text-center">
+                        <AttachMoney style={{ fontSize: 40 }} />
+                        <Typography variant="h6">{hrCount}</Typography>
+                        <Typography variant="body2" color="textSecondary">Payroll</Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
                 </Link>
-              </div>
+              </div> */}
 
               {/* Shifts Card */}
-              <div className="col-lg-3 col-md-4 col-6 mb-4">
+              {/* <div className="col-lg-1 col-md-2 col-4 mb-4">
                 <Link to="/dashboard/shifts" className="card-link">
-                  <div className="small-box bg-dark shadow-lg rounded-lg p-4">
-                    <div className="inner text-center">
-                      <i className="fas fa-briefcase fa-2x mb-3"></i> {/* Shift Icon */}
-                      <h2>{hrCount}</h2>
-                      <p className="fw-bold">Shifts</p>
-                    </div>
-                  </div>
+                  <Card className="card-sm">
+                    <CardActionArea>
+                      <CardContent className="text-center">
+                        <Work style={{ fontSize: 40 }} />
+                        <Typography variant="h6">{hrCount}</Typography>
+                        <Typography variant="body2" color="textSecondary">Shifts</Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
                 </Link>
-              </div>
-
-              {/* Setup Card */}
-              <div className="col-lg-3 col-md-4 col-6 mb-4">
-                <Link to="/dashboard/hr" className="card-link">
-                  <div className="small-box bg-secondary shadow-lg rounded-lg p-4">
-                    <div className="inner text-center">
-                      <i className="fas fa-cogs fa-2x mb-3"></i> {/* Setup Icon */}
-                      <h2>{hrCount}</h2>
-                      <p className="fw-bold">Setup</p>
-                    </div>
-                  </div>
-                </Link>
-              </div>
+              </div> */}
+                {/* Employee Card */}
+        {/* <Box item xs={12} sm={6} md={3}>
+          <Card component={Link} to="/dashboard/hrm/employee" className="card-link">
+            <CardContent className="card-content">
+              <EmployeeIcon fontSize="large" color="primary" />
+              <Typography variant="h5" gutterBottom>
+                Employees
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                View and manage employees
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box> */}
             </div>
           </div>
         </div>
       </div>
       <Footer />
+      <Outlet /> {/* This will render the nested routes */}
     </div>
   );
 };
 
 export default HrmDashboard;
+
+
+// import React, { useState } from "react";
+// import { Link } from "react-router-dom";
+// import Footer from "../components/footer/Footer";
+// import DefaultHeader from "../components/navbar/DefaultHeader";
+// import HrmSidebar from "../components/sidebar/HrmSidebar";
+// import { Outlet } from 'react-router-dom';
+
+// import { Card, CardContent, Typography, CardActionArea, Box } from "@mui/material";
+// import { AccountCircle, People, Work, CalendarToday, AttachMoney, Business, Build } from "@mui/icons-material"; // Icons for different sections
+
+// const HrmDashboard = () => {
+//   // Static data for demonstration purposes (can be dynamic as needed)
+//   const [enquiriesCount, setEnquiriesCount] = useState(30);
+//   const [clientsCount, setClientsCount] = useState(40);
+//   const [hrCount, setHrCount] = useState(10);
+
+//   return (
+//     <div className="container-wrapper">
+//       <div className="d-flex min-h-screen bg-light">
+//         <HrmSidebar />
+//         <div className="flex-grow-1 bg-light">
+//           <div className="flex flex-col">
+//             <DefaultHeader />
+//           </div>
+
+//           <div className="content-wrapper mt-6">
+//             <div className="row justify-content-center">
+//               {/* Employee Card */}
+//               <div className="col-lg-1 col-md-2 col-4 mb-4">
+//                 <Link to="employee" className="card-link">
+//                   <Card className="card-sm">
+//                     <CardActionArea>
+//                       <CardContent className="text-center">
+//                         <People style={{ fontSize: 40 }} />
+//                         <Typography variant="h6">{hrCount}</Typography>
+//                         <Typography variant="body2" color="textSecondary">Employees</Typography>
+//                       </CardContent>
+//                     </CardActionArea>
+//                   </Card>
+//                 </Link>
+//               </div>
+
+//               {/* Leave Card */}
+//               <div className="col-lg-1 col-md-2 col-4 mb-4">
+//                 <Link to="leave" className="card-link">
+//                   <Card className="card-sm">
+//                     <CardActionArea>
+//                       <CardContent className="text-center">
+//                         <CalendarToday style={{ fontSize: 40 }} />
+//                         <Typography variant="h6">{enquiriesCount}</Typography>
+//                         <Typography variant="body2" color="textSecondary">Leave Requests</Typography>
+//                       </CardContent>
+//                     </CardActionArea>
+//                   </Card>
+//                 </Link>
+//               </div>
+
+//               {/* Assets Card */}
+//               <div className="col-lg-1 col-md-2 col-4 mb-4">
+//                 <Link to="/dashboard/customer/list" className="card-link">
+//                   <Card className="card-sm">
+//                     <CardActionArea>
+//                       <CardContent className="text-center">
+//                         <Business style={{ fontSize: 40 }} />
+//                         <Typography variant="h6">{clientsCount}</Typography>
+//                         <Typography variant="body2" color="textSecondary">Assets</Typography>
+//                       </CardContent>
+//                     </CardActionArea>
+//                   </Card>
+//                 </Link>
+//               </div>
+
+//               {/* Attendance Card */}
+//               <div className="col-lg-1 col-md-2 col-4 mb-4">
+//                 <Link to="/dashboard/hr" className="card-link">
+//                   <Card className="card-sm">
+//                     <CardActionArea>
+//                       <CardContent className="text-center">
+//                         <Work style={{ fontSize: 40 }} />
+//                         <Typography variant="h6">{hrCount}</Typography>
+//                         <Typography variant="body2" color="textSecondary">Attendance</Typography>
+//                       </CardContent>
+//                     </CardActionArea>
+//                   </Card>
+//                 </Link>
+//               </div>
+
+//               {/* Tasks Card */}
+//               <div className="col-lg-1 col-md-2 col-4 mb-4">
+//                 <Link to="/dashboard/hr" className="card-link">
+//                   <Card className="card-sm">
+//                     <CardActionArea>
+//                       <CardContent className="text-center">
+//                         <Build style={{ fontSize: 40 }} />
+//                         <Typography variant="h6">{hrCount}</Typography>
+//                         <Typography variant="body2" color="textSecondary">Tasks</Typography>
+//                       </CardContent>
+//                     </CardActionArea>
+//                   </Card>
+//                 </Link>
+//               </div>
+
+//               {/* Payroll Card */}
+//               <div className="col-lg-1 col-md-2 col-4 mb-4">
+//                 <Link to="/dashboard/payroll" className="card-link">
+//                   <Card className="card-sm">
+//                     <CardActionArea>
+//                       <CardContent className="text-center">
+//                         <AttachMoney style={{ fontSize: 40 }} />
+//                         <Typography variant="h6">{hrCount}</Typography>
+//                         <Typography variant="body2" color="textSecondary">Payroll</Typography>
+//                       </CardContent>
+//                     </CardActionArea>
+//                   </Card>
+//                 </Link>
+//               </div>
+
+//               {/* Shifts Card */}
+//               <div className="col-lg-1 col-md-2 col-4 mb-4">
+//                 <Link to="/dashboard/shifts" className="card-link">
+//                   <Card className="card-sm">
+//                     <CardActionArea >
+//                       <CardContent className="text-center"  to="/dashboard/shifts">
+//                         <Work style={{ fontSize: 40 }} />
+//                         <Typography variant="h6">{hrCount}</Typography>
+//                         <Typography variant="body2" color="textSecondary">Shifts</Typography>
+//                       </CardContent>
+//                     </CardActionArea>
+//                   </Card>
+//                 </Link>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//       <Footer />
+//       <Outlet /> {/* This will render the nested routes */}
+//     </div>
+//   );
+// };
+
+// export default HrmDashboard;
+
+
+// import React, { useState } from "react";
+// import { Link } from "react-router-dom";
+// import Footer from "../components/footer/Footer";
+// import DefaultHeader from "../components/navbar/DefaultHeader";
+// import HrmSidebar from "../components/sidebar/HrmSidebar";
+// import { Outlet } from 'react-router-dom';
+
+// import { Card, CardContent, Typography, CardActionArea, Box } from "@mui/material";
+// import { AccountCircle, People, Work } from "@mui/icons-material"; // Icons for CRM, Clients, HRM
+// const HrmDashboard = () => {
+//   // Static data for demonstration purposes (can be dynamic as needed)
+//   const [enquiriesCount, setEnquiriesCount] = useState(30);
+//   const [clientsCount, setClientsCount] = useState(40);
+//   const [hrCount, setHrCount] = useState(10);
+
+//   return (
+//     <div className="container-wrapper">
+//       <div className="d-flex min-h-screen bg-light">
+//         <HrmSidebar />
+//         <div className="flex-grow-1 bg-light">
+//           <div className="flex flex-col">
+//             <DefaultHeader />
+//           </div>
+
+//           <div className="content-wrapper mt-6">
+//             <div className="row justify-content-center">
+//               {/* Employee Card */}
+//               <div className="col-lg-3 col-md-4 col-6 mb-4">
+//                 <Link to="employee" className="card-link">
+//                   <div className="small-box bg-primary shadow-lg rounded-lg p-4">
+//                     <div className="inner text-center">
+//                       <i className="fas fa-users fa-2x mb-3"></i> {/* Employee Icon */}
+//                       <h2>{hrCount}</h2>
+//                       <p className="fw-bold">Employees</p>
+//                     </div>
+//                   </div>
+//                 </Link>
+//               </div>
+
+//               {/* Leave Card */}
+//               <div className="col-lg-3 col-md-4 col-6 mb-4">
+//                 <Link to="leave" className="card-link">
+//                   <div className="small-box bg-warning shadow-lg rounded-lg p-4">
+//                     <div className="inner text-center">
+//                       <i className="fas fa-calendar-alt fa-2x mb-3"></i> {/* Leave Icon */}
+//                       <h2>{enquiriesCount}</h2>
+//                       <p className="fw-bold">Leave Requests</p>
+//                     </div>
+//                   </div>
+//                 </Link>
+//               </div>
+
+
+//               {/* Assets Card */}
+//               <div className="col-lg-3 col-md-4 col-6 mb-4">
+//                 <Link to="/dashboard/customer/list" className="card-link">
+//                   <div className="small-box bg-danger shadow-lg rounded-lg p-4">
+//                     <div className="inner text-center">
+//                       <i className="fas fa-boxes fa-2x mb-3"></i> {/* Assets Icon */}
+//                       <h2>{clientsCount}</h2>
+//                       <p className="fw-bold">Assets</p>
+//                     </div>
+//                   </div>
+//                 </Link>
+//               </div>
+
+//               {/* Attendance Card */}
+//               <div className="col-lg-3 col-md-4 col-6 mb-4">
+//                 <Link to="/dashboard/hr" className="card-link">
+//                   <div className="small-box bg-info shadow-lg rounded-lg p-4">
+//                     <div className="inner text-center">
+//                       <i className="fas fa-clock fa-2x mb-3"></i> {/* Attendance Icon */}
+//                       <h2>{hrCount}</h2>
+//                       <p className="fw-bold">Attendance</p>
+//                     </div>
+//                   </div>
+//                 </Link>
+//               </div>
+
+//               {/* Tasks Card */}
+//               <div className="col-lg-3 col-md-4 col-6 mb-4">
+//                 <Link to="/dashboard/hr" className="card-link">
+//                   <div className="small-box bg-success shadow-lg rounded-lg p-4">
+//                     <div className="inner text-center">
+//                       <i className="fas fa-tasks fa-2x mb-3"></i> {/* Tasks Icon */}
+//                       <h2>{hrCount}</h2>
+//                       <p className="fw-bold">Tasks</p>
+//                     </div>
+//                   </div>
+//                 </Link>
+//               </div>
+//                            {/* Payroll Card */}
+//                            <div className="col-lg-3 col-md-4 col-6 mb-4">
+//                 <Link to="/dashboard/payroll" className="card-link">
+//                   <div className="small-box bg-secondary shadow-lg rounded-lg p-4">
+//                     <div className="inner text-center">
+//                       <i className="fas fa-dollar-sign fa-2x mb-3"></i> {/* Payroll Icon */}
+//                       <h2>{hrCount}</h2>
+//                       <p className="fw-bold">Payroll</p>
+//                     </div>
+//                   </div>
+//                 </Link>
+//               </div>
+
+//               {/* Shifts Card */}
+//               <div className="col-lg-3 col-md-4 col-6 mb-4">
+//                 <Link to="/dashboard/shifts" className="card-link">
+//                   <div className="small-box bg-dark shadow-lg rounded-lg p-4">
+//                     <div className="inner text-center">
+//                       <i className="fas fa-briefcase fa-2x mb-3"></i> {/* Shift Icon */}
+//                       <h2>{hrCount}</h2>
+//                       <p className="fw-bold">Shifts</p>
+//                     </div>
+//                   </div>
+//                 </Link>
+//               </div>
+
+//               {/* Setup Card */}
+//               <div className="col-lg-3 col-md-4 col-6 mb-4">
+//                 <Link to="/dashboard/hr" className="card-link">
+//                   <div className="small-box bg-secondary shadow-lg rounded-lg p-4">
+//                     <div className="inner text-center">
+//                       <i className="fas fa-cogs fa-2x mb-3"></i> {/* Setup Icon */}
+//                       <h2>{hrCount}</h2>
+//                       <p className="fw-bold">Setup</p>
+//                     </div>
+//                   </div>
+//                 </Link>
+//               </div>
+//             </div>
+//           </div>
+//        <Outlet />     {/* //This will render the nested routes */}
+//         </div>
+//       </div>
+//       <Footer />
+
+//     </div>
+//   );
+// };
+
+// export default HrmDashboard;
 
 // import React, { useState } from "react";
 // import { Link } from "react-router-dom";

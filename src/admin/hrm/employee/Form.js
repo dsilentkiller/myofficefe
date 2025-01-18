@@ -29,15 +29,8 @@ const EmployeeForm = ({ addEmployee }) => {
     zone: "",
     district: "",
     municipality: "",
-    ward_no: "",
-    tole_name: "",
 
-    temp_department: "",
-    temp_zone: "",
-    temp_district: "",
-    temp_municipality: "",
-    temp_ward_no: "",
-    temp_tole_name: "",
+    street_address: "",
 
     pri_phone: "",
     sec_phone: "",
@@ -67,19 +60,19 @@ const EmployeeForm = ({ addEmployee }) => {
         temp_zone: formData.zone,
         temp_district: formData.district,
         temp_municipality: formData.municipality,
-        temp_ward_no: formData.ward_no,
-        temp_tole_name: formData.tole_name,
+        temp_sec_address: formData.sec_address,
+        temp_street_address: formData.street_address,
       });
-    } else {
-      setFormData({
-        ...formData,
-        temp_department: "",
-        temp_zone: "",
-        temp_district: "",
-        temp_municipality: "",
-        temp_ward_no: "",
-        temp_tole_name: "",
-      });
+    // } else {
+    //   setFormData({
+    //     ...formData,
+    //     temp_department: "",
+    //     temp_zone: "",
+    //     temp_district: "",
+    //     temp_municipality: "",
+    //     temp_sec_address: "",
+    //     temp_street_address: "",
+    //   });
     }
   }
   useEffect(() => {
@@ -110,17 +103,7 @@ const EmployeeForm = ({ addEmployee }) => {
         console.error("There was an error fetching the designations!", error);
       }
     };
-    const fetchZones = async () => {
-      try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/setup/zones/"
-        );
-        console.log(response.data); // Log the response data to inspect its structure
-        setZones(response.data); // Assuming response.data should be an array
-      } catch (error) {
-        console.error("There was an error fetching the zones!", error);
-      }
-    };
+
     const fetchDistricts = async () => {
       try {
         const response = await axios.get(
@@ -161,77 +144,12 @@ const EmployeeForm = ({ addEmployee }) => {
 
     fetchDepartments();
     fetchDesignations();
-    fetchZones();
     fetchDistricts();
     fetchMunicipalities();
   }, []);
 
-  // useEffect(() => {
-  // Fetch departments data
 
-  // Fetch zones data
 
-  // const fetchZone = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "http://127.0.0.1:8000/api/setup/zone/create/"
-  //     );
-  //     setZones(response.data);
-  //   } catch (error) {
-  //     console.error("There was an error fetching the zones!", error);
-  //   }
-  // };
-
-  // Fetch districts data
-  //   const fetchDistricts = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         "http://127.0.0.1:8000/api/setup/district/"
-  //       );
-  //       setDistricts(response.data);
-  //     } catch (error) {
-  //       console.error("There was an error fetching the district!", error);
-  //     }
-  //   };
-
-  //   // Fetch municipalities data
-  //   const fetchMunicipalities = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         "http://127.0.0.1:8000/api/setup/municipality/"
-  //       );
-  //       setMunicipalities(response.data);
-  //     } catch (error) {
-  //       console.error("There was an error fetching the municipality!", error);
-  //     }
-  //   };
-
-  //   const fetchDepartments = async () => {
-  //     try {
-  //       const response = await axios.get("api/setup/department/create/");
-  //       setDepartments(response.data);
-  //     } catch (error) {
-  //       console.error("There was an error fetching the departments!", error);
-  //     }
-  //   };
-
-  //   const fetchDesignations = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         "http://127.0.0.1:8000/api/setup/designation/create/"
-  //       );
-  //       setDesignations(response.data);
-  //     } catch (error) {
-  //       console.error("There was an error fetching the designations!", error);
-  //     }
-  //   };
-
-  //   fetchDepartments();
-  //   fetchDesignations();
-  //   fetchMunicipalities();
-  //   fetchDistricts();
-  //   fetchZone();
-  // }, []);
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -240,7 +158,7 @@ const EmployeeForm = ({ addEmployee }) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/employee/new/",
+        "http://127.0.0.1:8000/api/employee/create/",
         formData
       );
       console.log(response.data);
@@ -453,26 +371,7 @@ const EmployeeForm = ({ addEmployee }) => {
                       </div>
                     </div>
 
-                    <div className="col-md-4">
-                      <div className="form-group">
-                        <label htmlFor="zone">Zone:</label>
-                        <select
-                          id="zone"
-                          name="zone"
-                          value={formData.zone}
-                          onChange={handleChange}
-                          className="form-control"
-                          required
-                        >
-                          <option value="">Select Zone</option>
-                          {zones.map((zone) => (
-                            <option key={zone.id} value={zone.id}>
-                              {zone.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
+
                     {/* district */}
                     <div className="col-md-4">
                       <div className="form-group">
@@ -521,34 +420,22 @@ const EmployeeForm = ({ addEmployee }) => {
                       </div>
                     </div>
                     {/*  */}
+
                     <div className="col-md-4">
                       <div className="form-group">
-                        <label htmlFor="ward_no">Ward No:</label>
+                        <label htmlFor="sec_address">Temporary address</label>
                         <input
                           type="text"
-                          id="ward_no"
-                          name="ward_no"
-                          value={formData.ward_no}
+                          id="sec_address"
+                          name="sec_address"
+                          value={formData.sec_address}
                           onChange={handleChange}
                           className="form-control"
                           required
                         />
                       </div>
                     </div>
-                    <div className="col-md-4">
-                      <div className="form-group">
-                        <label htmlFor="tole_name">Tole Name:</label>
-                        <input
-                          type="text"
-                          id="tole_name"
-                          name="tole_name"
-                          value={formData.tole_name}
-                          onChange={handleChange}
-                          className="form-control"
-                          required
-                        />
-                      </div>
-                    </div>
+
                   </div>
 
                   {/* "Same as Permanent Address" Checkbox */}
@@ -657,12 +544,12 @@ const EmployeeForm = ({ addEmployee }) => {
                     </div>
                     <div className="col-md-4">
                       <div className="form-group">
-                        <label htmlFor="temp_ward_no">Ward No:</label>
+                        <label htmlFor="temp_sec_address">Ward No:</label>
                         <input
                           type="text"
-                          id="temp_ward_no"
-                          name="temp_ward_no"
-                          value={formData.temp_ward_no}
+                          id="temp_sec_address"
+                          name="temp_sec_address"
+                          value={formData.temp_sec_address}
                           onChange={handleChange}
                           className="form-control"
                           required
@@ -671,12 +558,12 @@ const EmployeeForm = ({ addEmployee }) => {
                     </div>
                     <div className="col-md-4">
                       <div className="form-group">
-                        <label htmlFor="temp_tole_name">Tole Name:</label>
+                        <label htmlFor="temp_street_address">Tole Name:</label>
                         <input
                           type="text"
-                          id="temp_tole_name"
-                          name="temp_tole_name"
-                          value={formData.temp_tole_name}
+                          id="temp_street_address"
+                          name="temp_street_address"
+                          value={formData.temp_street_address}
                           onChange={handleChange}
                           className="form-control"
                           required

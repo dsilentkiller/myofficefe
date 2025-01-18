@@ -72,21 +72,6 @@ export const updateProject = createAsyncThunk(
   }
 );
 
-// // Update project action
-// export const updateProject = createAsyncThunk(
-//   "projects/updateProject",
-//   async ({ id, name }, thunkAPI) => {
-//     try {
-//       const response = await axios.put(
-//         `http://127.0.0.1:8000/api/project/update/${id}/`,
-//         { name }
-//       );
-//       return response.data.result; // Ensure API response has the expected structure
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
 
 // Delete project
 export const deleteProject = createAsyncThunk(
@@ -233,9 +218,10 @@ const projectSlice = createSlice({
         );
       })
       .addCase(deleteProject.rejected, (state, action) => {
-        state.deleteStatus = "failed";
-        state.deleteError = action.payload || "Failed to delete project";
+        // state.deleteStatus = "failed";
+        state.deleteError = action.payload ;
       })
+   
       // Search project
       .addCase(searchProject.pending, (state) => {
         state.isLoading = true;

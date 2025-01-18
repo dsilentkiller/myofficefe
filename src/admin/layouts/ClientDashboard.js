@@ -22,7 +22,7 @@ function ClientDashboard() {
             <div className="flex flex-col bg-light fixed-position">
               <ClientHeader />
             </div>
-<Outlet />
+            <Outlet />
             <div className="flex-grow flex justify-center items-center p-3"></div>
             <div className="flex flex-col bg-light absolute bottom-0 w-full">
               <Footer />

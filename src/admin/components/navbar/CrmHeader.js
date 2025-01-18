@@ -59,6 +59,14 @@ const CrmHeader = () => {
               </IconButton>
               Event
             </Link>
+            {/* quotation */}
+            <Link to="/dashboard/crm/quotation" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+              <IconButton color="inherit">
+                <AssignmentIcon />
+              </IconButton>
+              Quotation
+            </Link>
+
           </Box>
 
           {/* Right Navbar Search */}

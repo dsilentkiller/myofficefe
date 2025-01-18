@@ -1,3 +1,4 @@
+
 //this work fine best code ever
 import React, { useState, useEffect } from "react";
 import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
@@ -20,6 +21,8 @@ import {
 
 } from "../../redux/slice/customer/customerSlice";
 import "react-phone-input-2/lib/style.css";
+
+import { TextField, MenuItem, Select, FormControl, InputLabel, Button, Grid, Typography, Box } from "@mui/material";
 
 const CustomerForm = () => {
   const [activeTab, setActiveTab] = useState("1");
@@ -63,7 +66,105 @@ const CustomerForm = () => {
   const { list: departments } = useSelector((state) => state.departments);
   const { list: designations } = useSelector((state) => state.designations);
   const customers = useSelector((state) => state.customers.list || []);
+// ##added
+const [filteredDistricts, setFilteredDistricts] = useState([]);
+const [filteredMunicipalities, setFilteredMunicipalities] = useState([]);
+  // Fetch districts when a province is selected
+  useEffect(() => {
+    dispatch(fetchCategories());
+    dispatch(fetchProvinces());
+    dispatch(fetchDistricts());
+    dispatch(fetchDesignations());
+    dispatch(fetchDepartments());
+    dispatch(fetchMunicipalities());
+  }, [dispatch]);
+  useEffect(() => {
+    console.log("Provinces:", provinces);
+    console.log("Districts:", districts);
+    // console.log("Municipalities:", municipalities);
+  }, [provinces, districts]);
 
+  // Handle changes in selection
+  // const handleProvinceChange = (event) => {
+  //   setSelectedProvince(event.target.value);
+  // };
+
+  // const handleDistrictChange = (event) => {
+  //   setSelectedDistrict(event.target.value);
+  // };
+
+  // const handleMunicipalityChange = (event) => {
+  //   setSelectedMunicipality(event.target.value);
+  // };
+
+
+  // Log district data and formData.province for debugging
+  useEffect(() => {
+    console.log("Districts Data:", districts);
+    console.log("Selected Province ID:", formData.province);
+
+    if (formData.province) {
+      // Log the province_id from each district
+      districts.forEach((district) => {
+        console.log("District Province ID:", district.province_id);
+      });
+
+      // Filter districts based on selected province
+      const filtered = districts.filter(
+        (district) => district.province_id === formData.province
+      );
+      console.log("Filtered Districts:", filtered);
+      setFilteredDistricts(filtered);
+    } else {
+      setFilteredDistricts([]);
+    }
+  }, [formData.province, districts]); // Re-filter districts when the selected province changes
+
+// Update districts when province changes
+// useEffect(() => {
+//   if (formData.province) {
+//     setFilteredDistricts(districts.filter(district => district.provinceId === formData.province));
+//   } else {
+//     setFilteredDistricts([]);
+//   }
+// }, [formData.province, districts]);
+
+// Update municipalities when district changes
+useEffect(() => {
+  if (formData.district) {
+    setFilteredMunicipalities(municipalities.filter(municipality => municipality.districtId === formData.district));
+  } else {
+    setFilteredMunicipalities([]);
+  }
+}, [formData.district, municipalities]);
+
+const handleChange = (event) => {
+  const { name, value } = event.target;
+  setFormData({
+    ...formData,
+    [name]: value,
+  });
+};
+
+  // Update districts when province changes
+  useEffect(() => {
+    if (formData.province) {
+      setFilteredDistricts(districts.filter((district) => district.provinceId === formData.province));
+    } else {
+      setFilteredDistricts([]);
+    }
+  }, [formData.province, districts]);
+
+  // Update municipalities when district changes
+  useEffect(() => {
+    if (formData.district) {
+      setFilteredMunicipalities(municipalities.filter((municipality) => municipality.districtId === formData.district));
+    } else {
+      setFilteredMunicipalities([]);
+    }
+  }, [formData.district, municipalities]);
+
+//###
   // Retrieve data from the store
   const customerToUpdate = useSelector(
     (state) => state.customers.customerToUpdate
@@ -82,19 +183,7 @@ const CustomerForm = () => {
     }
   }, [id, dispatch]);
 
-  useEffect(() => {
-    dispatch(fetchCategories());
-    dispatch(fetchProvinces());
-    dispatch(fetchDistricts());
-    dispatch(fetchDesignations());
-    dispatch(fetchDepartments());
-    dispatch(fetchMunicipalities());
-  }, [dispatch]);
-  useEffect(() => {
-    console.log("Provinces:", provinces);
-    console.log("Districts:", districts);
-    // console.log("Municipalities:", municipalities);
-  }, [provinces, districts]);
+
 // pri_phone number validate
 const validatePhoneNumber = (value) => {
   const phoneLength = value.replace(/\D/g, "").length;
@@ -150,6 +239,12 @@ const validateSecPhoneNumber = (value) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+  // Handle form submission (optional)
+    // console.log('Form submitted with:', {
+    //   province: selectedProvince,
+    //   district: selectedDistrict,
+    //   municipality: selectedMunicipality,
+    // })
 
     // Validate required fields
     if (!formData.customer_name || !formData.category || !formData.pri_phone) {
@@ -219,9 +314,6 @@ const validateSecPhoneNumber = (value) => {
       [name]: value,
     }));
   };
-
-
-
 
   return (
     <div className="content-wrapper" style={{ marginBottom: "20mm" }}>
@@ -419,14 +511,14 @@ const validateSecPhoneNumber = (value) => {
                   <div className="row">
                     {/* Permanent Address Fields */}
 
-                    <div className="col-md-4">
+                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="province">Province:</label>
                         <select
                           id="province"
                           name="province"
-                          value={formData.province}
-                          // onChange={handleInputChange}
+                          value={formData.province} 
+                           // onChange={handleInputChange}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
@@ -452,7 +544,7 @@ const validateSecPhoneNumber = (value) => {
                     </div>
 
                     {/* district */}
-                    <div className="col-md-4">
+                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="district">District:</label>
                         <select
@@ -481,47 +573,47 @@ const validateSecPhoneNumber = (value) => {
                           )}
                         </select>
                       </div>
-                    </div>
+                    </div> 
 
                   {/* municipality */}
 
                     <div className="col-md-4">
-                      <div className="form-group">
-                        <label htmlFor="municipality">Municipality:</label>
-                        <select
-                          id="municipality"
-                          name="municipality"
-                          value={formData.municipality}
-                          // onChange={handleInputChange}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              municipality: e.target.value,
-                            })
-                          }
-                          className="form-control"
-                          required
-                        >
-                          <option value="">Select Municipality</option>
-                          {municipalities.length > 0 ? (
-                            municipalities.map((municipality) => (
-                              <option
-                                key={municipality.id}
-                                value={municipality.id}
-                              >
-                                {municipality.name}
-                              </option>
-                            ))
-                          ) : (
-                            <option value="">
-                              no municipalities available
-                            </option>
-                          )}
-                        </select>
-                      </div>
+                          <div className="form-group">
+                            <label htmlFor="municipality">Municipality:</label>
+                            <select
+                              id="municipality"
+                              name="municipality"
+                              value={formData.municipality}
+                              // onChange={handleInputChange}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  municipality: e.target.value,
+                                })
+                              }
+                              className="form-control"
+                              required
+                            >
+                              <option value="">Select Municipality</option>
+                              {municipalities.length > 0 ? (
+                                municipalities.map((municipality) => (
+                                  <option
+                                    key={municipality.id}
+                                    value={municipality.id}
+                                  >
+                                    {municipality.name}
+                                  </option>
+                                ))
+                              ) : (
+                                <option value="">
+                                  no municipalities available
+                                </option>
+                              )}
+                            </select>
+                          </div>
                     </div>
                     {/* street */}
-                    <div className="col-md-4">
+                  <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="street_address">street address:</label>
                         <input
@@ -540,10 +632,10 @@ const validateSecPhoneNumber = (value) => {
                           required
                         />
                       </div>
-                    </div>
+                  </div> 
 
                     {/* sec_address */}
-                    <div className="col-md-4">
+                     <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="sec_address">Additional address:</label>
                         <input
@@ -563,7 +655,7 @@ const validateSecPhoneNumber = (value) => {
                         />
                       </div>
                     </div>
-                  </div>
+                  </div> 
 
 
 
@@ -579,205 +671,326 @@ const validateSecPhoneNumber = (value) => {
                 </form>
               </div>
             </div>
-          </TabPane>
+    </TabPane>  
+      {/* <Box sx={{ padding: 3 }}>
+      <Typography variant="h5" sx={{ mb: 2, color: '#1976d2' }}>Permanent Address</Typography>
+      <form>
+        <Grid container spacing={2}>
+          {/* Province Field */}
+          {/* <Grid item xs={12} sm={4}>
+            <FormControl fullWidth>
+              <InputLabel>Province</InputLabel>
+              <Select
+                label="Province"
+                name="province"
+                value={formData.province}
+                onChange={handleInputChange}
+                required
+              >
+                <MenuItem value="">
+                  <em>Select Province</em>
+                </MenuItem>
+                {provinces.map((province) => (
+                  <MenuItem key={province.id} value={province.id}>
+                    {province.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid> */}
+
+          {/* District Field */}
+            {/* <Grid item xs={12} sm={4}>
+          <FormControl fullWidth disabled={!formData.province}>
+              <InputLabel>District</InputLabel>
+              <Select
+                label="District"
+                name="district"
+                value={formData.district}
+                onChange={handleInputChange}
+                required
+              >
+                <MenuItem value="">
+                  <em>Select District</em>
+                </MenuItem>
+                {filteredDistricts.length > 0 ? (
+                  filteredDistricts.map((district) => (
+                    <MenuItem key={district.id} value={district.id}>
+                      {district.name}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem value="">No districts available</MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          </Grid> */}
+
+          {/* Municipality Field */}
+          {/* <Grid item xs={12} sm={4}>
+            <FormControl fullWidth disabled={!formData.district}>
+              <InputLabel>Municipality</InputLabel>
+              <Select
+                label="Municipality"
+                name="municipality"
+                value={formData.municipality}
+                onChange={handleInputChange}
+                required
+              >
+                <MenuItem value="">
+                  <em>Select Municipality</em>
+                </MenuItem>
+                {filteredMunicipalities.length > 0 ? (
+                  filteredMunicipalities.map((municipality) => (
+                    <MenuItem key={municipality.id} value={municipality.id}>
+                      {municipality.name}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem value="">No municipalities available</MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          </Grid> */}
+
+          {/* Street Address */}
+          {/* <Grid item xs={12} sm={4}>
+            <TextField
+              label="Street Address"
+              name="street_address"
+              value={formData.street_address}
+              onChange={handleInputChange}
+              fullWidth
+              required
+            />
+          </Grid> */}
+
+          {/* Additional Address */}
+          {/* <Grid item xs={12} sm={4}>
+            <TextField
+              label="Additional Address"
+              name="sec_address"
+              value={formData.sec_address}
+              onChange={handleInputChange}
+              fullWidth
+              required
+            />
+          </Grid>
+        </Grid> 
+
+      <Box sx={{ mt: 3, textAlign: "right" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => alert("Next Step")} // Replace with actual next step function
+          >
+            Next
+          </Button>
+        </Box>
+      </form>
+    </Box> 
+    </TabPane> */}
+
           <TabPane tabId="3">
             <div className="card">
               <div className="card-body">
                   <form onSubmit={handleSubmit}>
-                    <div className="row">
-                        {/* organization name */}
-                        <div className="col-md-4">
-                            <div className="form-group">
-                              <label htmlFor="name">Organization name :</label>
-                              <input
-                                type="text"
-                                id="organization_name"
-                                name="organization_name"
-                                value={formData.organization_name}
-                                // onChange={handleInputChange}
-                                onChange={(e) =>
-                                  setFormData({
-                                    ...formData,
-                                    organization_name: e.target.value,
-                                  })
-                                }
-                                className="form-control"
-                                required
-                              />
-                            </div>
-                        </div>
+                              <div className="row">
+                                  {/* organization name */}
+                                        <div className="col-md-4">
+                                            <div className="form-group">
+                                              <label htmlFor="name">Organization name :</label>
+                                              <input
+                                                type="text"
+                                                id="organization_name"
+                                                name="organization_name"
+                                                value={formData.organization_name}
+                                                // onChange={handleInputChange}
+                                                onChange={(e) =>
+                                                  setFormData({
+                                                    ...formData,
+                                                    organization_name: e.target.value,
+                                                  })
+                                                }
+                                                className="form-control"
+                                                required
+                                              />
+                                            </div>
+                                        </div>
 
-                      {/* category */}
-                            <div className="col-md-4">
-                                      <div className="form-group">
-                                        <label htmlFor="category">categories </label>
-                                        <select
-                                          id="category"
-                                          name="category"
-                                          value={formData.category}
-                                          onChange={handleInputChange}
-                                          className="form-control"
-                                          required
-                                        >
-                                          <option value="">Select categories</option>
-                                          {categories.length > 0 ? (
-                                            categories.map((category) => (
-                                              <option key={category.id} value={category.id}>
-                                                {category.category_name}
-                                              </option>
-                                            ))
-                                          ) : (
-                                            <option value="">No categories available</option>
-                                          )}
-                                        </select>
+                                {/* category */}
+                                      <div className="col-md-4">
+                                                <div className="form-group">
+                                                  <label htmlFor="category">categories </label>
+                                                  <select
+                                                    id="category"
+                                                    name="category"
+                                                    value={formData.category}
+                                                    onChange={handleInputChange}
+                                                    className="form-control"
+                                                    required
+                                                  >
+                                                    <option value="">Select categories</option>
+                                                    {categories.length > 0 ? (
+                                                      categories.map((category) => (
+                                                        <option key={category.id} value={category.id}>
+                                                          {category.category_name}
+                                                        </option>
+                                                      ))
+                                                    ) : (
+                                                      <option value="">No categories available</option>
+                                                    )}
+                                                  </select>
+                                                </div>
                                       </div>
-                            </div>
-                              <div className="col-md-4">
-                                  <div className="form-group">
-                                    <label htmlFor="department">Departments:</label>
-                                    <select
-                                      id="department"
-                                      name="department"
-                                      value={formData.department}
-                                      // onChange={handleInputChange}
-                                      onChange={(e) =>
-                                        setFormData({
-                                          ...formData,
-                                          department: e.target.value,
-                                        })
-                                      }
-                                      className="form-control"
-                                      required
-                                    >
-                                      <option value="">Select department</option>
-                                      {departments.length > 0 ? (
-                                        departments.map((department) => (
-                                          <option key={department.id} value={department.id}>
-                                            {department.name}
-                                          </option>
-                                        ))
-                                      ) : (
-                                        <option value="">no departments available</option>
-                                      )}
-                                    </select>
-                                  </div>
+
+                                        <div className="col-md-4">
+                                            <div className="form-group">
+                                              <label htmlFor="department">Departments:</label>
+                                              <select
+                                                id="department"
+                                                name="department"
+                                                value={formData.department}
+                                                // onChange={handleInputChange}
+                                                onChange={(e) =>
+                                                  setFormData({
+                                                    ...formData,
+                                                    department: e.target.value,
+                                                  })
+                                                }
+                                                className="form-control"
+                                                required
+                                              >
+                                                <option value="">Select department</option>
+                                                {departments.length > 0 ? (
+                                                  departments.map((department) => (
+                                                    <option key={department.id} value={department.id}>
+                                                      {department.name}
+                                                    </option>
+                                                  ))
+                                                ) : (
+                                                  <option value="">no departments available</option>
+                                                )}
+                                              </select>
+                                            </div>
+                                        </div>
+
+                                      {/* designation  */}
+                                        <div className="col-md-4">
+                                          <div className="form-group">
+                                            <label htmlFor="designation">Designations:</label>
+                                            <select
+                                              id="designation"
+                                              name="designation"
+                                              value={formData.designation}
+                                              // onChange={handleInputChange}
+                                              onChange={(e) =>
+                                                setFormData({
+                                                  ...formData,
+                                                  designation: e.target.value,
+                                                })
+                                              }
+                                              className="form-control"
+                                              required
+                                            >
+                                              <option value="">Select designation</option>
+                                              {designations && designations.length > 0 ? (
+                                                designations.map((designation) => (
+                                                  <option
+                                                    key={designation.id}
+                                                    value={designation.id}
+                                                  >
+                                                    {designation.name}
+                                                  </option>
+                                                ))
+                                              ) : (
+                                                <option value="">No designations available</option>
+                                              )}
+                                            </select>
+                                          </div>
+                                        </div>
+                                        <div className="col-md-4">
+                                          <div className="form-group">
+                                            <label htmlFor="estimated_budget">estimated_budget:</label>
+                                            <input
+                                              type="number"
+                                              id="estimated_budget"
+                                              name="estimated_budget"
+                                              value={formData.estimated_budget}
+                                              onChange={handleInputChange}
+                                              className="form-control"
+                                              required
+                                            />
+                                          </div>
+                                        </div>
+
+                                        {/* work status */}
+
+                                        <div className="col-md-4">
+                                          <div className="form-group">
+                                            <label htmlFor="joining_date">Joining Date:</label>
+                                            <input
+                                              type="date"
+                                              id="joining_date"
+                                              name="joining_date"
+                                              value={formData.joining_date}
+                                              onChange={handleInputChange}
+                                              className="form-control"
+                                              required
+                                            />
+                                          </div>
+                                        </div>
+                                        <div className="col-md-4">
+                                          <div className="form-group">
+                                            <label htmlFor="work_status">Status</label>
+                                            <select
+                                              id="work_status"
+                                              name="work_status"
+                                              value={formData.work_status}
+                                              onChange={handleInputChange}
+                                              className="form-control"
+                                              required
+                                            >
+                                              <option value="">Select status</option>
+                                              <option value="new">new</option>
+                                              <option value="pending">pending</option>
+                                              <option value="completed">completed</option>
+                                              <option value="active">active</option>
+                                              <option value="issue">Issue</option>
+                                              <option value="terminated ">terminated by force</option>
+                                              <option value="inactive">inactive</option>
+                                            </select>
+                                          </div>
+                                        </div>
+
+
+
+                                      {/* history */}
+
+                                        <div className="col-md-4">
+                                          <div className="form-group">
+                                            <label htmlFor="history">
+                                            history:
+                                            </label>
+                                            <textarea
+                                              type="text"
+                                              id="history"
+                                              name="history"
+                                              value={formData.history}
+                                              onChange={handleInputChange}
+                                              className="form-control"
+                                              required
+                                            />
+                                          </div>
+                                        </div>
+
                               </div>
-
-                      {/* designation  */}
-                      <div className="col-md-4">
-                        <div className="form-group">
-                          <label htmlFor="designation">Designations:</label>
-                          <select
-                            id="designation"
-                            name="designation"
-                            value={formData.designation}
-                            // onChange={handleInputChange}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                designation: e.target.value,
-                              })
-                            }
-                            className="form-control"
-                            required
-                          >
-                            <option value="">Select designation</option>
-                            {designations && designations.length > 0 ? (
-                              designations.map((designation) => (
-                                <option
-                                  key={designation.id}
-                                  value={designation.id}
-                                >
-                                  {designation.name}
-                                </option>
-                              ))
-                            ) : (
-                              <option value="">No designations available</option>
-                            )}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="col-md-4">
-                        <div className="form-group">
-                          <label htmlFor="estimated_budget">estimated_budget:</label>
-                          <input
-                            type="number"
-                            id="estimated_budget"
-                            name="estimated_budget"
-                            value={formData.estimated_budget}
-                            onChange={handleInputChange}
-                            className="form-control"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      {/* work status */}
-
-                      <div className="col-md-4">
-                        <div className="form-group">
-                          <label htmlFor="joining_date">Joining Date:</label>
-                          <input
-                            type="date"
-                            id="joining_date"
-                            name="joining_date"
-                            value={formData.joining_date}
-                            onChange={handleInputChange}
-                            className="form-control"
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md-4">
-                        <div className="form-group">
-                          <label htmlFor="work_status">Status</label>
-                          <select
-                            id="work_status"
-                            name="work_status"
-                            value={formData.work_status}
-                            onChange={handleInputChange}
-                            className="form-control"
-                            required
-                          >
-                            <option value="">Select status</option>
-                            <option value="new">new</option>
-                            <option value="pending">pending</option>
-                            <option value="completed">completed</option>
-                            <option value="active">active</option>
-                            <option value="issue">Issue</option>
-                            <option value="terminated ">terminated by force</option>
-                            <option value="inactive">inactive</option>
-                          </select>
-                        </div>
-                      </div>
-
-
-
-                      {/* history */}
-
-                      <div className="col-md-4">
-                        <div className="form-group">
-                          <label htmlFor="history">
-                          history:
-                          </label>
-                          <textarea
-                            type="text"
-                            id="history"
-                            name="history"
-                            value={formData.history}
-                            onChange={handleInputChange}
-                            className="form-control"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      </div>
-                    <div className="form-group">
-                      <button type="submit" className="btn btn-primary">
-                        Add customer
-                      </button>
-                    </div>
+                            <div className="form-group">
+                              <button type="submit" className="btn btn-primary">
+                                Add customer
+                              </button>
+                            </div>
+                
 
                   </form>
               </div>
@@ -791,63 +1004,88 @@ const validateSecPhoneNumber = (value) => {
 };
 
 export default CustomerForm;
-//#########
 
-  // const createStatus = useSelector((state) => state.customers.createStatus);
-  // const updateStatus = useSelector((state) => state.customers.updateStatus);
-  // const createError = useSelector((state) => state.customers.createError);
-  // const updateError = useSelector((state) => state.customers.updateError);
-// const formData = useSelector((state) => state.customers.currentcustomer);
-  // added select district by province name
-  // const handleProvinceChange = (provinceId) => {
-  //   setFormData((prev) => ({ ...prev, province: provinceId, district: "" }));
-  // };
+// import React, { useEffect, useState } from "react";
+// import { Typography, Box, Grid, Paper, FormControl, InputLabel, Select, MenuItem, TextField, Button } from "@mui/material";
+// import { useParams } from "react-router-dom";
+// import PhoneInput from "react-phone-number-input";
+// import { useDispatch, useSelector } from "react-redux";
+// import { fetchCustomers, updateCustomer } from "../../redux/slice/customer/customerSlice";
+// import { toast } from "react-toastify";
 
-  // const handleDistrictChange = (districtId) => {
-  //   setFormData((prev) => ({ ...prev, district: districtId }));
-  // };
-  // Toggle function for switching tabs
+// const CustomerForm = () => {
+//   const { id } = useParams();
+//   const dispatch = useDispatch();
 
-  // Retrieve data from the store
-//#####
-// export default connect(null, { addEmployee })(EmployeeForm);
-
-// // added mapstatetoprops  for redux api
-// const mapStateToProps = (state) => ({
-//   employeeState: state.employee,
-// });
-// export default connect(mapStateToProps, { addEmployee })(EmployeeForm);
-
-// import React, { useState } from "react";
-
-// export default function CustomerForm() {
-//   const [step, setStep] = useState(1);
 //   const [formData, setFormData] = useState({
-//     joining_date: "",
+//     customer_name: "",
 //     customer_type: "",
-//     name: "",
-//     sec_address: "",
 //     pri_phone: "",
 //     sec_phone: "",
 //     email: "",
 //     gender: "",
-//     // address
 //     province: "",
-//     zone: "",
 //     district: "",
 //     municipality: "",
 //     street_address: "",
-//     //temprary address
-//     temp_province: "",
-//     temp_zone: "",
-//     temp_district: "",
-//     temp_municipality: "",
-//     temp_street_address: "",
-//     // organization
+//     sec_address: "",
 //     organization_name: "",
+//     category: "",
 //     department: "",
 //     designation: "",
+//     estimated_budget: "",
+//     joining_date: "",
+//     work_status: "",
+//     history: ""
 //   });
+
+//   const [provinces, setProvinces] = useState([]);
+//   const [districts, setDistricts] = useState([]);
+//   const [municipalities, setMunicipalities] = useState([]);
+//   const [categories, setCategories] = useState([]);
+//   const [departments, setDepartments] = useState([]);
+//   const [designations, setDesignations] = useState([]);
+//   const [phoneValid, setPhoneValid] = useState(true);
+
+//   useEffect(() => {
+//     if (id) {
+//       dispatch(fetchCustomers(id))
+//         .unwrap()
+//         .then((data) => setFormData(data))
+//         .catch((error) => toast.error(`Failed to fetch customer details: ${error.message}`));
+//     }
+
+//     // Simulating fetching data (replace with actual API calls)
+//     setProvinces([
+//       { id: 1, name: "Province 1" },
+//       { id: 2, name: "Province 2" }
+//     ]);
+
+//     setDistricts([
+//       { id: 1, name: "District 1", provinceId: 1 },
+//       { id: 2, name: "District 2", provinceId: 2 }
+//     ]);
+
+//     setMunicipalities([
+//       { id: 1, name: "Municipality 1", districtId: 1 },
+//       { id: 2, name: "Municipality 2", districtId: 2 }
+//     ]);
+
+//     setCategories([
+//       { id: 1, category_name: "Category 1" },
+//       { id: 2, category_name: "Category 2" }
+//     ]);
+
+//     setDepartments([
+//       { id: 1, name: "Department 1" },
+//       { id: 2, name: "Department 2" }
+//     ]);
+
+//     setDesignations([
+//       { id: 1, name: "Designation 1" },
+//       { id: 2, name: "Designation 2" }
+//     ]);
+//   }, [id, dispatch]);
 
 //   const handleInputChange = (e) => {
 //     const { name, value } = e.target;
@@ -857,406 +1095,189 @@ export default CustomerForm;
 //     });
 //   };
 
-//   const nextStep = () => {
-//     setStep(step + 1);
-//   };
-
-//   const prevStep = () => {
-//     setStep(step - 1);
-//   };
-
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
-//     // Handle form submission
-//     alert("Customer created successfully!");
+//     if (!phoneValid) return;
+//     dispatch(updateCustomer(formData))
+//       .then(() => toast.success("Customer details updated successfully"))
+//       .catch((error) => toast.error(`Failed to update customer details: ${error.message}`));
 //   };
 
-//   const renderStep = () => {
-//     switch (step) {
-//       case 1:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="name">Name:</label>
-//             <input
-//               type="text"
-//               id="name"
-//               name="name"
-//               value={formData.name}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       case 2:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="employee_type">Customer Type:</label>
-//             <input
-//               type="text"
-//               id="employee_type"
-//               name="employee_type"
-//               value={formData.employee_type}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // case3
-//       case 3:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="joining_date">Joining_date:</label>
-//             <input
-//               type="date"
-//               id="date"
-//               name="joining_date"
-//               value={formData.joining_date}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // case4
-//       case 4:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="employee_type">Name:</label>
-//             <input
-//               type="text"
-//               id="name"
-//               name="name"
-//               value={formData.name}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // case5
-//       case 5:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="employee_type">sec_address:</label>
-//             <input
-//               type="text"
-//               id="sec_address"
-//               name="sec_address"
-//               value={formData.sec_address}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // case6
-//       case 6:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="employee_type">Primary Phone:</label>
-//             <input
-//               type="text"
-//               id="pri_phone"
-//               name="pri_phone"
-//               value={formData.pri_phone}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // case7
-//       case 7:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="sec_phone">Contact no:</label>
-//             <input
-//               type="text"
-//               id="sec_phone"
-//               name="sec_phone"
-//               value={formData.sec_phone}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-
-//       // case 8
-//       case 8:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="email">Email :</label>
-//             <input
-//               type="text"
-//               id="email"
-//               name="email"
-//               value={formData.email}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // case9
-//       case 9:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="gender">Gender</label>
-//             <select
-//               id="gender"
-//               name="gender"
-//               value={formData.gender}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             >
-//               <option value="">Select Gender</option>
-//               <option value="IT">Male</option>
-//               <option value="Finance">Female</option>
-//             </select>
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-
-//       // case10
-//       case 10:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="province">Province</label>
-//             <input
-//               type="text"
-//               id="province"
-//               name="province"
-//               value={formData.province}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // case11
-//       case 11:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="zone">Zone:</label>
-//             <input
-//               type="text"
-//               id="zone"
-//               name="zone"
-//               value={formData.zone}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // case12
-//       case 12:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="district">District:</label>
-//             <input
-//               type="text"
-//               id="district"
-//               name="district"
-//               value={formData.district}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // minicipality
-//       case 13:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="district">Municipality:</label>
-//             <input
-//               type="text"
-//               id="municipality"
-//               name="municipality"
-//               value={formData.municipality}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // street_address
-//       case 14:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="district">Ward No:</label>
-//             <input
-//               type="text"
-//               id="street_address"
-//               name="street_address"
-//               value={formData.street_address}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // case15
-//       case 15:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="organization_name">organization_name:</label>
-//             <input
-//               type="text"
-//               id="organization_name"
-//               name="organization_name"
-//               value={formData.organization_name}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // case16
-//       case 16:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="department">Department:</label>
-//             <input
-//               type="text"
-//               id="department"
-//               name="department"
-//               value={formData.department}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-//       // case17
-//       case 17:
-//         return (
-//           <div className="form-group">
-//             <label htmlFor="organization_name">designation:</label>
-//             <input
-//               type="text"
-//               id="designation"
-//               name="designation"
-//               value={formData.designation}
-//               onChange={handleInputChange}
-//               className="form-control"
-//               required
-//             />
-//             <button onClick={prevStep} className="btn btn-secondary mt-2 mr-2">
-//               Previous
-//             </button>
-//             <button onClick={nextStep} className="btn btn-primary mt-2">
-//               Next
-//             </button>
-//           </div>
-//         );
-
-//       default:
-//         return null;
-//     }
-//   };
+//   const filteredDistricts = districts.filter(district => district.provinceId === parseInt(formData.province));
+//   const filteredMunicipalities = municipalities.filter(municipality => municipality.districtId === parseInt(formData.district));
 
 //   return (
-//     <div className="container">
-//       <h2>Create Customer</h2>
-//       <form onSubmit={handleSubmit}>{renderStep()}</form>
-//     </div>
+//     <Box sx={{ padding: 3 }}>
+//       <Typography variant="h4" gutterBottom>
+//         Edit Customer Details
+//       </Typography>
+
+//       <form onSubmit={handleSubmit}>
+//         <Paper sx={{ padding: 3, marginBottom: 2 }}>
+//           <Grid container spacing={3}>
+//             {/* Customer Name */}
+//             <Grid item xs={12} sm={4}>
+//               <TextField
+//                 label="Customer Name"
+//                 name="customer_name"
+//                 value={formData.customer_name}
+//                 onChange={handleInputChange}
+//                 fullWidth
+//                 required
+//               />
+//             </Grid>
+
+//             {/* Organization Name */}
+//             <Grid item xs={12} sm={4}>
+//               <TextField
+//                 label="Organization Name"
+//                 name="organization_name"
+//                 value={formData.organization_name}
+//                 onChange={handleInputChange}
+//                 fullWidth
+//                 required
+//               />
+//             </Grid>
+
+//             {/* Category */}
+//             <Grid item xs={12} sm={4}>
+//               <FormControl fullWidth>
+//                 <InputLabel>Category</InputLabel>
+//                 <Select
+//                   name="category"
+//                   value={formData.category}
+//                   onChange={handleInputChange}
+//                   required
+//                 >
+//                   <MenuItem value="">
+//                     <em>Select Category</em>
+//                   </MenuItem>
+//                   {categories.map((category) => (
+//                     <MenuItem key={category.id} value={category.id}>
+//                       {category.category_name}
+//                     </MenuItem>
+//                   ))}
+//                 </Select>
+//               </FormControl>
+//             </Grid>
+
+//             {/* Department */}
+//             <Grid item xs={12} sm={4}>
+//               <FormControl fullWidth>
+//                 <InputLabel>Department</InputLabel>
+//                 <Select
+//                   name="department"
+//                   value={formData.department}
+//                   onChange={handleInputChange}
+//                   required
+//                 >
+//                   <MenuItem value="">
+//                     <em>Select Department</em>
+//                   </MenuItem>
+//                   {departments.map((department) => (
+//                     <MenuItem key={department.id} value={department.id}>
+//                       {department.name}
+//                     </MenuItem>
+//                   ))}
+//                 </Select>
+//               </FormControl>
+//             </Grid>
+
+//             {/* Designation */}
+//             <Grid item xs={12} sm={4}>
+//               <FormControl fullWidth>
+//                 <InputLabel>Designation</InputLabel>
+//                 <Select
+//                   name="designation"
+//                   value={formData.designation}
+//                   onChange={handleInputChange}
+//                   required
+//                 >
+//                   <MenuItem value="">
+//                     <em>Select Designation</em>
+//                   </MenuItem>
+//                   {designations.map((designation) => (
+//                     <MenuItem key={designation.id} value={designation.id}>
+//                       {designation.name}
+//                     </MenuItem>
+//                   ))}
+//                 </Select>
+//               </FormControl>
+//             </Grid>
+
+//             {/* Estimated Budget */}
+//             <Grid item xs={12} sm={4}>
+//               <TextField
+//                 label="Estimated Budget"
+//                 type="number"
+//                 name="estimated_budget"
+//                 value={formData.estimated_budget}
+//                 onChange={handleInputChange}
+//                 fullWidth
+//                 required
+//               />
+//             </Grid>
+
+//             {/* Joining Date */}
+//             <Grid item xs={12} sm={4}>
+//               <TextField
+//                 label="Joining Date"
+//                 type="date"
+//                 name="joining_date"
+//                 value={formData.joining_date}
+//                 onChange={handleInputChange}
+//                 fullWidth
+//                 required
+//               />
+//             </Grid>
+
+//             {/* Work Status */}
+//             <Grid item xs={12} sm={4}>
+//               <FormControl fullWidth>
+//                 <InputLabel>Status</InputLabel>
+//                 <Select
+//                   name="work_status"
+//                   value={formData.work_status}
+//                   onChange={handleInputChange}
+//                   required
+//                 >
+//                   <MenuItem value="">
+//                     <em>Select Status</em>
+//                   </MenuItem>
+//                   <MenuItem value="new">New</MenuItem>
+//                   <MenuItem value="pending">Pending</MenuItem>
+//                   <MenuItem value="completed">Completed</MenuItem>
+//                   <MenuItem value="active">Active</MenuItem>
+//                   <MenuItem value="issue">Issue</MenuItem>
+//                   <MenuItem value="terminated">Terminated by Force</MenuItem>
+//                   <MenuItem value="inactive">Inactive</MenuItem>
+//                 </Select>
+//               </FormControl>
+//             </Grid>
+
+//             {/* History */}
+//             <Grid item xs={12} sm={4}>
+//               <TextField
+//                 label="History"
+//                 name="history"
+//                 value={formData.history}
+//                 onChange={handleInputChange}
+//                 multiline
+//                 rows={4}
+//                 fullWidth
+//                 required
+//               />
+//             </Grid>
+//           </Grid>
+//         </Paper>
+
+//         {/* Submit Button */}
+//         <Button type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>
+//           Save Changes
+//         </Button>
+//       </form>
+//     </Box>
 //   );
-// }
+// };
+
+// export default CustomerForm;

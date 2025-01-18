@@ -1,6 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-// fetch municipality bydistrict
+
+
+// Async thunk to fetch districts based on province ID
+export const fetchDistrictsByProvince = createAsyncThunk(
+  'districts/fetchByProvince',
+  async (provinceId) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/setup/district/${provinceId}/`);
+      return response.data;  // Return an array of districts [{id, name}, ...]
+    } catch (error) {
+      throw error;
+    }
+  }
+);
 
 export const fetchMunicipalityByDistrict = createAsyncThunk(
   "districts/fetchMunicipalityByDistrict",
@@ -129,11 +142,35 @@ const districtSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    // .addCase(fetchDistrictsByProvince.pending, (state) => {
+    //   state.status = 'loading';
+    // })
+    // .addCase(fetchDistrictsByProvince.fulfilled, (state, action) => {
+    //   state.status = 'succeeded';
+    //   state.list = action.payload; // Assign fetched districts
+    // })
+    // .addCase(fetchDistrictsByProvince.rejected, (state, action) => {
+    //   state.status = 'failed';
+    //   state.error = action.error.message;
+    // })
       .addCase(updateDistrict.fulfilled, (state, action) => {
         state.updateStatus = "succeeded";
         state.list = state.list.map((district) =>
           district.id === action.payload.id ? action.payload : district
         );
+      })
+
+      .addCase(fetchDistrictsByProvince.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchDistrictsByProvince.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.list = action.payload;  // Populate districts list with the fetched data
+      })
+      .addCase(fetchDistrictsByProvince.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
       })
       // .addCase(updateDistrict.fulfilled, (state, action) => {
       //   const updatedDistrict = action.payload;

@@ -1,6 +1,228 @@
+// import React from "react";
+// import { BrowserRouter } from "react-router-dom"; // Import BrowserRouter
+// import { useSelector } from "react-redux";
+// import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+// import AdminDashboard from "./admin/AdminDashboard";
+// import AdminRoute from "./admin/routes/AdminRoute";
+// import CrmDashboard from "./admin/layouts/CrmDashboard";
+// import CrmRoute from "./admin/routes/CrmRoute";
+// import Login from "./admin/accounts/Login"; // Assuming you have a Login component
+// import Logout from "./admin/accounts/Logout";
+
+// const App = () => {
+//   const adminToken = useSelector((state) => state.user.adminToken); // Accessing admin token
+//   const memberToken = useSelector((state) => state.user.teachersToken); // Accessing teachers token
+
+//   return (
+//     <Routes>
+//       {/* Admin Route */}
+//       {adminToken ? (
+//         <Route
+//           path="dashboard/*"
+//           element={
+//             <AdminDashboard>
+//               <AdminRoute />
+//             </AdminDashboard>
+//           }
+//         />
+//       ) : memberToken ? (
+//         // CRM Route
+//         <Route
+//           path="crm/*"
+//           element={
+//             <CrmDashboard>
+//               <CrmRoute />
+//             </CrmDashboard>
+//           }
+//         />
+//       ) : (
+//         // Login Route
+//         <Route path="/" element={<Outlet />}>
+//           <Route path="login" element={<Login />} />
+//         </Route>
+//       )}
+
+//       {/* Logout Route */}
+//       <Route path="logout" element={<Logout />} />
+
+//       {/* Redirect based on token */}
+//       <Route
+//         path="*"
+//         element={
+//           adminToken ? (
+//             <Navigate to="/dashboard" replace />
+//           ) : memberToken ? (
+//             <Navigate to="/crm" replace />
+//           ) : (
+//             <Navigate to="/login" replace />
+//           )
+//         }
+//       />
+//     </Routes>
+//   );
+// };
+
+// const Root = () => (
+//   <BrowserRouter> {/* Wrap your App component with BrowserRouter */}
+//     <App />
+//   </BrowserRouter>
+// );
+
+// export default Root;
 
 
-// old working route.
+
+// //.... new change rout-> modified ........................
+// import { useSelector } from "react-redux";
+// import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+// // import WelcomePage from "./component/WelcomePage";
+// // import AdminRoute from "./component/routes/AdminRoute";
+// // import TeacherRoute from "./component/routes/TeacherRoute";
+// // import AdminDashboard from "./component/theme/AdminDashboard";
+// // import ForgotPassword from "./component/user/ForgotPassword";
+// // import ResetPassword from "./component/user/ResetPassword";
+// // import UserLogin from "./component/user/UserLogin";
+// import { Login } from "@mui/icons-material";
+// // import { Login } from "@mui/icons-material";
+// import { Logout } from "@mui/icons-material";
+// // import UserLogout from "./component/user/UserLogout";
+// // import { RootState } from "./store/store";
+// import CrmDashboard from "./admin/layouts/CrmDashboard";
+// // import FeedbackForm from "./feedback/FeedBackForm";
+// import AdminRoute from "./admin/routes/AdminRoute";
+// import AdminDashboard from "./admin/AdminDashboard"
+// import CrmRoute from "./admin/routes/CrmRoute";
+
+// const App = () => {
+//   const adminToken = useSelector((store: RootState) => store.user.adminToken);
+//   const memberToken = useSelector(
+//     (store: RootState) => store.user.teachersToken
+//   );
+
+//   return (
+//     <Routes>
+//       {adminToken ? (
+//         <Route
+//           path="admin/*"
+//           element={
+//             <AdminDashboard>
+//               <AdminRoute />
+//             </AdminDashboard>
+//           }
+//         />
+//       ) : memberToken ? (
+//         <Route
+//           path="crm/*"
+//           element={
+//             <CrmDashboard>
+//               <CrmRoute />
+//             </CrmDashboard>
+//           }
+//         />
+//       ) : (
+//         <Route path="/" element={<Outlet />}>
+//           {/* <Route index element={<WelcomePage />} /> */}
+//           {/* <Route path="login" element={<UserLogin />} /> */}
+//           <Route path="login" element={<Login />} />
+//           {/* <Route path="forgot-password" element={<ForgotPassword />} />
+//           <Route path="reset-password" element={<ResetPassword />} /> */}
+//         </Route>
+//       )}
+
+//       {/* <Route path="feedback-form" element={<FeedbackForm />} /> */}
+//       <Route path="logout" element={<Logout />} />
+
+//       {/* Catch-all route */}
+//       <Route
+//         path="*"
+//         element={
+//           adminToken ? (
+//             <Navigate to="/admin" replace />
+//           ) : memberToken ? (
+//             <Navigate to="/crm" replace />
+//           ) : (
+//             <Navigate to="/login" replace />
+//           )
+//         }
+//       />
+//     </Routes>
+//   );
+// };
+
+// export default App;
+
+//..................... new changes route ......................
+// import { useSelector } from "react-redux";
+// import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+// import WelcomePage from "./component/WelcomePage";
+// import AdminRoute from "./component/routes/AdminRoute";
+// import TeacherRoute from "./component/routes/TeacherRoute";
+// import AdminDashboard from "./component/theme/AdminDashboard";
+// import ForgotPassword from "./component/user/ForgotPassword";
+// import ResetPassword from "./component/user/ResetPassword";
+// import UserLogin from "./component/user/UserLogin";
+// import UserLogout from "./component/user/UserLogout";
+// import { RootState } from "./store/store";
+// import FeedbackForm from "./feedback/FeedBackForm";
+
+// const App = () => {
+//   const adminToken = useSelector((store: RootState) => store.user.adminToken);
+//   const memberToken = useSelector(
+//     (store: RootState) => store.user.teachersToken
+//   );
+
+//   return (
+//     <Routes>
+//       {adminToken ? (
+//         <Route
+//           path="admin/*"
+//           element={
+//             <AdminDashboard>
+//               <AdminRoute />
+//             </AdminDashboard>
+//           }
+//         />
+//       ) : memberToken ? (
+//         <Route
+//           path="teachers/*"
+//           element={
+//             <AdminDashboard>
+//               <TeacherRoute />
+//             </AdminDashboard>
+//           }
+//         />
+//       ) : (
+//         <Route path="/" element={<Outlet />}>
+//           {/* <Route index element={<WelcomePage />} /> */}
+//           <Route path="login" element={<UserLogin />} />
+//           <Route path="forgot-password" element={<ForgotPassword />} />
+//           <Route path="reset-password" element={<ResetPassword />} />
+//         </Route>
+//       )}
+
+//       <Route path="feedback-form" element={<FeedbackForm />} />
+//       <Route path="logout" element={<UserLogout />} />
+
+//       {/* Catch-all route */}
+//       <Route
+//         path="*"
+//         element={
+//           adminToken ? (
+//             <Navigate to="/admin" replace />
+//           ) : memberToken ? (
+//             <Navigate to="/teachers" replace />
+//           ) : (
+//             <Navigate to="/login" replace />
+//           )
+//         }
+//       />
+//     </Routes>
+//   );
+// };
+
+// export default App;
+
+// ..............     old working route .......................................................
 import "./App.css";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import AdminDashboard from "./admin/AdminDashboard";
@@ -29,7 +251,7 @@ import DistrictForm from "./admin/base/district/Form";
 import UpdateProvince from "./admin/base/province/UpdateProvince";
 // import DeleteProvince from "./admin/base/province/DeleteProvince";
 import MunicipalityList from "./admin/base/municipality/List";
-import DeleteMunicipality from "./admin/base/municipality/Delete";
+import DeleteMunicipality from "./admin/base/municipality/DeleteMunicipality";
 import UpdateMunicipality from "./admin/base/municipality/Update";
 import MunicipalityForm from "./admin/base/municipality/Form";
 import UpdateDistrict from "./admin/base/district/UpdateDistrict";
@@ -72,9 +294,16 @@ import FollowDetail from "./admin/crm/followup/FollowDetail";
 import ClientDashboard from "./admin/layouts/ClientDashboard";
 import HrmDashboard from "./admin/layouts/HrmDashboard";
 import CustomerDetail from "./admin/client/customer/CustomerDetail";
-import Logout from "./admin/accounts/Logout";
-import { Login } from "@mui/icons-material";
+
 import PrivateRoute from "./admin/accounts/PrivateRoute";  // Adjust the path if needed
+import MeetingUpdateTable from "./admin/crm/meetingupdate/MeetingUpdateTable";
+import MeetingUpdateForm from "./admin/crm/meetingupdate/MeetingUpdateForm";
+import LostEnquiryTable from "./admin/crm/enquiry/LostEnquiryTable";
+import LoginForm from "./admin/accounts/LoginForm";
+import QuotationForm from "./admin/crm/quotation/QuotationForm";
+import QuotationTable from "./admin/crm/quotation/QuotationTable"
+import ServiceQuotationForm from "./admin/crm/quotation/ServiceQuotationForm";
+import ProductQuotationForm from "./admin/crm/quotation/ProductQuotationForm";
 
 function App() {
   const isAuthenticated = localStorage.getItem("access_token") !== null;
@@ -83,10 +312,10 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Public Route */}
-          {/* <Route path="/login" element={<Login />} /> */}
-          
+          <Route path="/login" element={<LoginForm />} />
+
           {/* Protected Routes */}
-          {/* <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}> */}
+          <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
             <Route path="/dashboard">
               {/* localhost/dashboard */}
               <Route index element={<AdminDashboard />} />
@@ -103,6 +332,10 @@ function App() {
                 <Route path="enquiry/delete/" element={<EnquiryDelete />} />
                 <Route path="enquiry/detail/:id/" element={<EnquiryDetail />} />
                 <Route path="enquiry/update/:id/" element={<EnquiryForm />} />
+                <Route path="enquiry/lost-enquiry/" element={<LostEnquiryTable />} />
+                {/* meetingupdate */}
+                <Route path="meetingupdate/:id" element={<MeetingUpdateTable />} />
+                <Route path="meetingupdate/create" element={<MeetingUpdateForm />} />
 
                 {/* localhost/dashboard/crm/project */}
                 <Route path="project" element={<ProjectTable />} />
@@ -127,6 +360,14 @@ function App() {
                 <Route path="follow/update/:id/" element={<FollowForm />} />
                 <Route path="/dashboard/crm/follow/delete/:id/" element={<FollowDelete />} />
                 <Route path="/dashboard/crm/follow/detail/:id/" element={<FollowDetail />} />
+                <Route path="/dashboard/crm/follow/detail/:id/" element={<FollowDetail />} />
+                {/* .......quotation ........... */}
+                <Route path="quotation" element={<QuotationTable/>} />
+                <Route path="quotation/create" element={<QuotationForm />} />
+                <Route path="quotation/product/create" element={<ProductQuotationForm/>} />
+                <Route path="quotation/service/create" element={<ServiceQuotationForm/>} />
+
+
               </Route>
 
               {/* Customer Routes */}
@@ -139,14 +380,27 @@ function App() {
 
               {/* HRM Routes */}
               <Route path="hrm" element={<HrmDashboard />}>
-                <Route path="employee" element={<EmployeeList />} />
+                <Route path="employee/employee-list" element={<EmployeeList />} />
                 <Route path="employee/create" element={<EmployeeForm />} />
+
                 <Route path="leave" element={<LeaveDashboard />}>
-                  <Route path="list" element={<LeaveList />} />
+                <Route index element={<LeaveList />} />
+                {/* // Default leave page */}
+                  {/* <Route path="list" element={<LeaveList />} /> */}
                   <Route path="create" element={<LeaveForm />} />
                   <Route path="category/list" element={<LeaveCategoryList />} />
                   <Route path="category/create" element={<LeaveCategoryForm />} />
                 </Route>
+                {/* hrm/asset */}
+                <Route path="asset">
+                  <Route path="list" element={<AssetsList />} />
+                  <Route path="create" element={<AssetsForm />} />
+
+                  <Route path="assign-asset/list" element={<AssetsList />} />
+                  <Route path="assign-asset/create" element={<AssetsForm />} />
+
+                </Route>
+
                 <Route path="attendance">
                   <Route path="list" element={<AssetsList />} />
                   <Route path="create" element={<AssetsForm />} />
@@ -177,10 +431,13 @@ function App() {
                 <Route path="day/delete/:id" element={<DayDelete />} />
               </Route>
             </Route>
-          {/* </Route> */}
+
+
+
+          </Route>
 
           {/* Logout Route */}
-          <Route path="/logout" element={<Logout />} />
+          {/* <Route path="/logout" element={<Logout />} /> */}
 
           {/* Catch-all Redirect */}
           <Route path="*" element={<Navigate to="/login" />} />
@@ -521,7 +778,7 @@ export default App;
 // function App() {
 //   // const isAuthenticated = false; // Replace with actual authentication check    // Check if the user is authenticated (using localStorage here as an example)
 //     const isAuthenticated = localStorage.getItem("access_token") !== null;
-  
+
 //   return (
 //     <div className="App">
 //       <BrowserRouter>
@@ -536,7 +793,7 @@ export default App;
 //               isAuthenticated ? <AdminDashboard /> : <Navigate to="/login" />
 //             }
 //           > */}
-    
+
 //           {/* <Route path="/" element={<ProtectedRoute />}> */}
 //           {/* Admin Dashboard Route */}
 //           <Route path="/dashboard" element={<AdminDashboard />}>

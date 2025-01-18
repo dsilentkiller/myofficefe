@@ -1,10 +1,23 @@
-import React from "react";
+
 import { Link } from "react-router-dom";
-// import AssetDashboard from "../../layouts/AssetDashboard";
-// import AssetDashboard from "../../layouts/AssetDashboard";
+import GeneralTable from "../GeneralTable"; // Import the reusable table
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchLeave, deleteLeave } from "../../redux/slice/hrm/leaveSlice";
+import { Edit, Delete, Visibility } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import AssetDelete from "./AssetDelete"; // Import your delete confirmation modal
+
+
 const AssetsList = ({ assets = [] }) => {
+  const dispatch = useDispatch();
+  const leaves = useSelector((state) => state.leaves.list || []);
+  const navigate = useNavigate();
+  const [leaveToDelete, setLeaveToDelete] = useState(null); // Store the leave id to delete
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Modal open state
   return (
-    <>
+    <div>
       <div className="content-wrapper">
         <div className="row justify-content-center">
           <div className="col-lg-10">
@@ -14,7 +27,7 @@ const AssetsList = ({ assets = [] }) => {
                 <div className="container-fluid">
                   <h5 className="navbar-brand">Assets List</h5>
                   <div className="navbar-nav ml-auto">
-                    <Link to="create/" className="nav-link btn btn-info">
+                    <Link to="/dashboard/hrm/asset/create" className="nav-link btn btn-info">
                       <h5>Add Assets</h5>
                     </Link>
                     <form
@@ -118,7 +131,7 @@ const AssetsList = ({ assets = [] }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -17,9 +17,9 @@ function LeaveDashboard() {
         <div className="flex min-h-screen bg-light">
           <Sidebar />
           <div className="flex flex-col flex-grow bg-light relative">
-            <div className="flex flex-col bg-light">
+            {/* <div className="flex flex-col bg-light">
               <DefaultHeader />
-            </div>
+            </div> */}
             <div className="flex flex-col bg-light fixed-position">
               <LeaveHeader />
             </div>

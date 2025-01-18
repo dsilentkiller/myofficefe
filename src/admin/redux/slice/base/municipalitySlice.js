@@ -55,9 +55,48 @@ export const fetchMunicipalityById = createAsyncThunk(
 );
 
 // Update municipality
+// In your Redux slice
+// export const updateMunicipality = createAsyncThunk(
+//   "municipalities/updateMunicipality",
+//   async (id,municipalityData, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.put(
+//         `http://127.0.0.1:8000/api/setup/municipality/update/${id}/`, // Ensure trailing slash
+//         {
+//           name: municipalityData.name,
+//           districtId: municipalityData.districtId,  // Make sure this is being sent
+//         }
+//       );
+//       return response.data; // Return updated municipality
+//     } catch (error) {
+//       console.error("Error during update request:", error);
+//       return rejectWithValue(error.response?.data || error.message);
+//     }
+//   }
+// );
+// export const updateMunicipality = createAsyncThunk(
+//   "municipalities/updateMunicipality",
+//   async ({ id, name, districtId }, thunkAPI) => {
+//     try {
+//       const response = await axios.put(
+//         `http://127.0.0.1:8000/api/setup/municipality/update/${id}/`,
+//         { name, district: districtId }
+//       );
+//       console.log("API Response:", response);
+//       return response.data.result.data; // Make sure this is the correct structure
+//     } catch (error) {
+//       const message =
+//         error.response?.data?.message || error.message || "An error occurred";
+//       return thunkAPI.rejectWithValue(message);
+//     }
+//   }
+// );
+
+
+
 export const updateMunicipality = createAsyncThunk(
   "municipalities/updateMunicipality",
-  async ({ id, name, districtId }, thunkAPI) => {
+  async ({ id, name, districtId, }, thunkAPI) => {
     try {
       const response = await axios.put(
         `http://127.0.0.1:8000/api/setup/municipality/update/${id}/`,
@@ -94,6 +133,16 @@ export const deleteMunicipality = createAsyncThunk(
     }
   }
 );
+// Define an async thunk to fetch municipalities
+export const fetchMunicipalitiesByDistrict = createAsyncThunk(
+  'municipalities/fetchByDistrict',
+  async (districtId) => {
+    const response = await fetch(`http://127.0.0.1:8000/api/setup/municipalities/${districtId}/`);
+    const data = await response.json();
+    return data; // Returning the list of municipalities
+  }
+);
+
 
 const municipalitySlice = createSlice({
   name: "municipalities",
@@ -112,6 +161,17 @@ const municipalitySlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+    .addCase(fetchMunicipalitiesByDistrict.pending, (state) => {
+      state.status = 'loading';
+    })
+    .addCase(fetchMunicipalitiesByDistrict.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      state.list = action.payload; // Assign fetched municipalities
+    })
+    .addCase(fetchMunicipalitiesByDistrict.rejected, (state, action) => {
+      state.status = 'failed';
+      state.error = action.error.message;
+    })
       // Fetch all municipalities
       .addCase(fetchMunicipalities.pending, (state) => {
         state.isLoading = true;
@@ -165,8 +225,9 @@ const municipalitySlice = createSlice({
         state.updateStatus = "loading";
       })
       .addCase(updateMunicipality.fulfilled, (state, action) => {
-        // Ensure the response matches the expected format
-        const updatedMunicipality = action.payload; // Make sure action.payload has the correct data structure
+        state.isLoading = false;
+        // Update the municipality in the list
+        const updatedMunicipality = action.payload;
         const index = state.list.findIndex(
           (municipality) => municipality.id === updatedMunicipality.id
         );

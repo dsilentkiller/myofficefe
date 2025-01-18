@@ -1,114 +1,110 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-// search
+
+// API base URL
+const BASE_URL = "http://127.0.0.1:8000/api/meeting-update";
+
+// Async thunk for searching meeting updates
 export const searchMeetingUpdate = createAsyncThunk(
-  "department/searchMeetingUpdate",
-  async (searchTerm) => {
-    const response = await axios.get(
-      `http://127.0.0.1:8000/api/crm/meeting-update/?search=${searchTerm}`
-    );
-    return response.data.result.data;
-  }
-);
-// Fetch all"departments action
-export const fetchMeetingUpdate = createAsyncThunk(
-  "departments/fetchMeetingUpdate",
-  async (_, thunkAPI) => {
+  "meetingupdate/searchMeetingUpdate",
+  async (searchTerm, thunkAPI) => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/crm/meeting-update/"
-      );
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      const response = await axios.get(`${BASE_URL}/?search=${searchTerm}`);
+      return response.data.result.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response?.data?.message || "Search failed");
     }
   }
 );
-// export const createMeeitngUpdate = createAsyncThunk(
-//   "departments/createMeeitngUpdate",
-//   async (departmentData, thunkAPI) => {
+
+// Async thunk for fetching all meeting updates
+export const fetchMeetingUpdate = createAsyncThunk(
+  "meetingupdates/fetchMeetingUpdate",
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/meeting-update/list/`);
+      return response.data.result.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || "Fetch failed");
+    }
+  }
+);
+
+// Async thunk for creating a meeting update
+// export const createMeetingUpdate = createAsyncThunk(
+//   "meetingupdate/createMeetingUpdate",
+//   async (meetingupdate, thunkAPI) => {
 //     try {
 //       const response = await axios.post(
-//         "http://127.0.0.1:8000/api/crm/meetingupdate/create/",
-//         departmentData
+//         "http://127.0.0.1:8000/api/meeting-update/create/",
+//         meetingupdate
 //       );
-//       return response.data.result.data; // Adjust this based on your actual API response structure
+//       // console.log("API Response:", response.data.result); // Log the full response
+//       // const data = response.data?.result?.data;
+//       // if (!data) {
+//       //   console.error("Invalid API response structure:", response.data);
+//       //   throw new Error("Failed to fetch valid meetingupdate.");
+//       // }
+//       // return data;
 //     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response.result.data);
+//       console.error("API Error:", error.response || error);
+//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
 //     }
 //   }
 // );
-
+// Async thunk for creating a meeting update
 export const createMeetingUpdate = createAsyncThunk(
-  "departments/createMeetingUpdate",
-  async (departmentData, thunkAPI) => {
+  "meetingupdate/createMeetingUpdate",
+  async (meetingUpdateData, thunkAPI) => {
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/crm/meetingupdate/create/",
-        departmentData
-      );
-      if (response.status === 201) {
-        // Ensure it's a successful creation response
-        return response.data.result.data;
-      } else {
-        return thunkAPI.rejectWithValue("Failed to create department.");
+      const response = await axios.post(`${BASE_URL}/create/`, meetingUpdateData);
+      const data = response.data?.result?.data;
+      if (!data) {
+        throw new Error("Invalid API response");
       }
+      return data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || error.message);
+      return thunkAPI.rejectWithValue(error.response?.data?.message || "Create failed");
     }
   }
 );
-// Fetch a single Department by ID action
+
+
+// Async thunk for fetching a single meeting update by ID
 export const fetchMeetingUpdateById = createAsyncThunk(
-  "departments/fetchMeetingUpdateById",
+  "meetingupdate/fetchMeetingUpdateById",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/crm/meetingupdate/${id}/`
-      );
-      return response.data.result.data; // Adjust this based on your actual API response structure
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-// // Update Department
-export const updateMeetingUpdate = createAsyncThunk(
-  "department/updateMeetingUpdate",
-  async ({ id, name }, thunkAPI) => {
-    try {
-      const response = await axios.put(
-        `http://127.0.0.1:8000/api/crm/meetingupdate/update/${id}/`,
-        { name }
-      );
+      const response = await axios.get(`${BASE_URL}/${id}/`);
       return response.data.result.data;
     } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || "An error occurred";
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(error.response?.data?.message || "Fetch by ID failed");
     }
   }
 );
 
+// Async thunk for updating a meeting update
+export const updateMeetingUpdate = createAsyncThunk(
+  "meetingupdate/updateMeetingUpdate",
+  async ({ id, data }, thunkAPI) => {
+    try {
+      const response = await axios.put(`${BASE_URL}/update/${id}/`, data);
+      return response.data.result.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || "Update failed");
+    }
+  }
+);
+
+// Async thunk for deleting a meeting update
 export const deleteMeetingUpdate = createAsyncThunk(
-  "departments/deleteMeetingUpdate",
+  "meetingupdate/deleteMeetingUpdate",
   async (id, thunkAPI) => {
     try {
-      // Make sure this URL is correct
-      await axios.delete(
-        `http://127.0.0.1:8000/api/crm/meeting-update/delete/${id}/`
-      );
-      return id; // Return the ID of the deleted Department
+      await axios.delete(`${BASE_URL}/delete/${id}/`);
+      return id;
     } catch (error) {
-      // Log the entire error to understand its structure
-      console.error("Delete request failed:", error);
-
-      // Return a more descriptive error message
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          error.message ||
-          "An unknown error occurred"
-      );
+      return thunkAPI.rejectWithValue(error.response?.data?.message || "Delete failed");
     }
   }
 );
@@ -123,14 +119,14 @@ const meetingUpdateSlice = createSlice({
     updateStatus: null,
     deleteStatus: null,
     currentMeetingUpdate: null,
-    createError: null,
-    updateError: null,
-    deleteError: null,
   },
-  reducers: {},
+  reducers: {
+    addMeetingUpdate(state, action) {
+      state.list.push(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
-      // Fetch all"departments
       .addCase(fetchMeetingUpdate.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -141,85 +137,231 @@ const meetingUpdateSlice = createSlice({
       })
       .addCase(fetchMeetingUpdate.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message;
-      })
-      // Fetch Department by ID
-      .addCase(fetchMeetingUpdateById.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(fetchMeetingUpdateById.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.currentMeetingUpdate = action.payload;
-        // Update or add the Department in the list
-        const index = state.list.findIndex(
-          (meetingupdate) => meetingupdate.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.list[index] = action.payload;
-        } else {
-          state.list.push(action.payload);
-        }
-      })
-      .addCase(fetchMeetingUpdateById.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message;
-      })
-      // Create Department
-      .addCase(createMeetingUpdate.pending, (state) => {
-        state.createStatus = "loading";
-        state.createError = null;
+        state.error = action.payload;
       })
       .addCase(createMeetingUpdate.fulfilled, (state, action) => {
         state.list.push(action.payload);
-        state.createStatus = "succeeded";
+        // state.createStatus = "succeeded";
       })
       .addCase(createMeetingUpdate.rejected, (state, action) => {
-        state.createStatus = "failed";
-        state.createError = action.error.message;
-      })
-      // Update Department
-      .addCase(updateMeetingUpdate.pending, (state) => {
-        state.updateStatus = "loading";
+        // state.createStatus = "failed";
+        state.error = action.payload;
       })
       .addCase(updateMeetingUpdate.fulfilled, (state, action) => {
-        state.updateStatus = "succeeded";
-        const index = state.list.findIndex((p) => p.id === action.payload.id);
-        if (index !== -1) {
+        const index = state.list.findIndex((item) => item.id === action.payload.id);
+        if (index >= 0) {
           state.list[index] = action.payload;
         }
+        state.updateStatus = "succeeded";
       })
       .addCase(updateMeetingUpdate.rejected, (state, action) => {
         state.updateStatus = "failed";
-        state.updateError = action.payload;
-      })
-      // Delete Department
-      .addCase(deleteMeetingUpdate.pending, (state) => {
-        state.deleteStatus = "loading";
-        state.deleteError = null;
+        state.error = action.payload;
       })
       .addCase(deleteMeetingUpdate.fulfilled, (state, action) => {
+        state.list = state.list.filter((item) => item.id !== action.payload);
         state.deleteStatus = "succeeded";
-        state.list = state.list.filter(
-          (meetingupdate) => meetingupdate.id !== action.payload
-        );
       })
       .addCase(deleteMeetingUpdate.rejected, (state, action) => {
         state.deleteStatus = "failed";
-        state.deleteError = action.payload || "Failed to delete Department";
-      })
-      // search MusearchmeetingUpdatename
-      .addCase(searchMeetingUpdate.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(searchMeetingUpdate.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.list = action.payload;
-      })
-      .addCase(searchMeetingUpdate.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message;
+        state.error = action.payload;
       });
   },
 });
+
+export const { addMeetingUpdate } = meetingUpdateSlice.actions;
 export default meetingUpdateSlice.reducer;
+
+
+// import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+// import axios from "axios";
+// // search
+// export const searchMeetingUpdate = createAsyncThunk(
+//   "meetingupdate/searchMeetingUpdate",
+//   async (searchTerm) => {
+//     const response = await axios.get(
+//       `http://127.0.0.1:8000/api/meeting-update/?search=${searchTerm}`
+//     );
+//     return response.data.result.data;
+//   }
+// );
+// // Fetch all"meetingupdatedatas action
+// export const fetchMeetingUpdate = createAsyncThunk(
+//   "meetingupdate/fetchMeetingUpdate",
+//   async (_, thunkAPI) => {
+//     try {
+//       const response = await axios.get(
+//         "http://127.0.0.1:8000/api/meeting-update/list/"
+//       );
+//       return response.data.result.data; // Adjust this based on your actual API response structure
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
+// export const createMeetingUpdate = createAsyncThunk(
+//   "meetingupdate/createMeetingUpdate",
+//   async (meetingupdate, thunkAPI) => {
+//     try {
+//       const response = await axios.post(
+//         "http://127.0.0.1:8000/api/meeting-update/create/",
+//         meetingupdate
+//       );
+//       const data = response.data?.result?.data;
+//       if (!data) {
+//         console.error("Invalid API response:", response.data);
+//         throw new Error("Failed to fetch valid meetingupdate.");
+//       }
+//       return data;
+//     } catch (error) {
+//       console.error("API Error:", error.response || error);
+//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
+//     }
+//   }
+// );
+
+
+// // Fetch a single meetingupdate by ID action
+// export const fetchMeetingUpdateById = createAsyncThunk(
+//   "meetingupdatedata/fetchMeetingUpdateById",
+//   async (id, thunkAPI) => {
+//     try {
+//       const response = await axios.get(
+//         `http://127.0.0.1:8000/api/meeting-update/${id}/`
+//       );
+//       return response.data.result.data; // Adjust this based on your actual API response structure
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+// // // Update meetingupdatedata
+// export const updateMeetingUpdate = createAsyncThunk(
+//   "meetingupdatedata/updateMeetingUpdate",
+//   async ({ id, name }, thunkAPI) => {
+//     try {
+//       const response = await axios.put(
+//         `http://127.0.0.1:8000/api/meeting-update/update/${id}/`,
+//         { name }
+//       );
+//       return response.data.result.data;
+//     } catch (error) {
+//       const message =
+//         error.response?.data?.message || error.message || "An error occurred";
+//       return thunkAPI.rejectWithValue(message);
+//     }
+//   }
+// );
+
+// export const deleteMeetingUpdate = createAsyncThunk(
+//   "meetingupdatedata/deleteMeetingUpdate",
+//   async (id, thunkAPI) => {
+//     try {
+//       // Make sure this URL is correct
+//       await axios.delete(
+//         `http://127.0.0.1:8000/api/meeting-update/delete/${id}/`
+//       );
+//       return id; // Return the ID of the deleted meetingupdatedata
+//     } catch (error) {
+//       // Log the entire error to understand its structure
+//       console.error("Delete request failed:", error);
+
+//       // Return a more descriptive error message
+//       return thunkAPI.rejectWithValue(
+//         error.response?.data?.message ||
+//           error.message ||
+//           "An unknown error occurred"
+//       );
+//     }
+//   }
+// );
+
+// const meetingUpdateSlice = createSlice({
+//   name: "meetingupdates",
+//   initialState: {
+//     list: [],
+//     isLoading: false,
+//     error: null,
+//     createStatus: null,
+//     updateStatus: null,
+//     deleteStatus: null,
+//     currentMeetingUpdate: null,
+//     createError: null,
+//     updateError: null,
+//     deleteError: null,
+//   },
+//   reducers: {
+//     addMeetingUpdate(state, action) {
+//       state.list.push(action.payload); // Correctly push to the `list` array
+//     },
+//   },
+//   extraReducers: (builder) => {
+//     builder
+//       .addCase(fetchMeetingUpdate.pending, (state) => {
+//         state.isLoading = true;
+//         state.error = null;
+//       })
+//       .addCase(fetchMeetingUpdate.fulfilled, (state, action) => {
+//         state.isLoading = false;
+//         state.list = action.payload;
+//       })
+//       .addCase(fetchMeetingUpdate.rejected, (state, action) => {
+//         state.isLoading = false;
+//         state.error = action.error.message;
+//       })
+//       .addCase(fetchMeetingUpdateById.fulfilled, (state, action) => {
+//         state.isLoading = false;
+//         state.currentMeetingUpdate = action.payload;
+
+//         if (!state.list) state.list = []; // Ensure list is initialized
+
+//         const index = state.list.findIndex(
+//           (meetingupdate) => meetingupdate.id === action.payload.id
+//         );
+//         if (index !== -1) {
+//           state.list[index] = action.payload;
+//         } else {
+//           state.list.push(action.payload);
+//         }
+//       })
+//       .addCase(createMeetingUpdate.fulfilled, (state, action) => {
+//         if (!state.list) state.list = []; // Fallback initialization
+//         state.list.push(action.payload);
+//         state.createStatus = "succeeded";
+//       })
+
+//       .addCase(updateMeetingUpdate.rejected, (state, action) => {
+//         state.updateStatus = "failed";
+//         state.updateError = action.payload;
+//       })
+//       // Delete meetingupdatedata
+//       .addCase(deleteMeetingUpdate.pending, (state) => {
+//         state.deleteStatus = "loading";
+//         state.deleteError = null;
+//       })
+//       .addCase(deleteMeetingUpdate.fulfilled, (state, action) => {
+//         state.deleteStatus = "succeeded";
+//         state.list = state.list.filter(
+//           (meetingupdate) => meetingupdate.id !== action.payload
+//         );
+//       })
+//       .addCase(deleteMeetingUpdate.rejected, (state, action) => {
+//         state.deleteStatus = "failed";
+//         state.deleteError = action.payload || "Failed to delete meetingupdatedata";
+//       })
+//       // search MusearchmeetingUpdatename
+//       .addCase(searchMeetingUpdate.pending, (state) => {
+//         state.isLoading = true;
+//       })
+//       .addCase(searchMeetingUpdate.fulfilled, (state, action) => {
+//         state.isLoading = false;
+//         state.list = action.payload;
+//       })
+//       .addCase(searchMeetingUpdate.rejected, (state, action) => {
+//         state.isLoading = false;
+//         state.error = action.error.message;
+//       });
+//   },
+// });
+// export default meetingUpdateSlice.reducer;

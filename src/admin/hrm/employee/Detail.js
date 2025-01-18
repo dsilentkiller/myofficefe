@@ -1,42 +1,54 @@
-import React from "react";
+// src/components/EmployeeDetail.js
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEmployeeById, updateEmployee, selectSelectedEmployee, selectEmployeeLoading, selectEmployeeError } from '../slices/employeeSlice';
 
-const EmployeeViewForm = ({ employee }) => {
+const EmployeeDetail = ({ employeeId }) => {
+  const dispatch = useDispatch();
+  const selectedEmployee = useSelector(selectSelectedEmployee);
+  const loading = useSelector(selectEmployeeLoading);
+  const error = useSelector(selectEmployeeError);
+
+  const [employeeData, setEmployeeData] = useState(selectedEmployee);
+
+  useEffect(() => {
+    if (!selectedEmployee) {
+      dispatch(fetchEmployeeById(employeeId));
+    }
+  }, [dispatch, employeeId, selectedEmployee]);
+
+  useEffect(() => {
+    if (selectedEmployee) {
+      setEmployeeData(selectedEmployee);
+    }
+  }, [selectedEmployee]);
+
+  const handleUpdate = () => {
+    dispatch(updateEmployee({ employeeId, updatedData: employeeData }));
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
-    <div className="employee-view-form">
-      <h2>Employee Details</h2>
-      <div className="row">
-        <div className="col-md-4">
-          <label>Name:</label>
-          <p>{employee.name}</p>
+    <div>
+      <h2>Employee Detail</h2>
+      {selectedEmployee && (
+        <div>
+          <div>
+            <label>Name</label>
+            <input
+              type="text"
+              value={employeeData.name}
+              onChange={(e) => setEmployeeData({ ...employeeData, name: e.target.value })}
+            />
+          </div>
+          <button onClick={handleUpdate}>Update</button>
         </div>
-        <div className="col-md-4">
-          <label>Employee Type:</label>
-          <p>{employee.employee_type}</p>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-md-4">
-          <label>Role:</label>
-          <p>{employee.role}</p>
-        </div>
-        <div className="col-md-4">
-          <label>Date Issued:</label>
-          <p>{employee.date_issued}</p>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-md-4">
-          <label>Province:</label>
-          <p>{employee.province}</p>
-        </div>
-        <div className="col-md-4">
-          <label>Zone:</label>
-          <p>{employee.zone}</p>
-        </div>
-      </div>
-      {/* Add more fields similarly */}
+      )}
     </div>
   );
 };
 
-export default EmployeeViewForm;
+export default EmployeeDetail;
+

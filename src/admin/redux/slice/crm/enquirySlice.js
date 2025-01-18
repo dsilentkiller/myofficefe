@@ -72,6 +72,7 @@ export const fetchEnquiryByIdUpdate = createAsyncThunk(
 );
 
 // Fetch enquiry by ID
+// Fetch enquiry by ID
 export const fetchEnquiryById = createAsyncThunk(
   "enquiries/fetchEnquiryById",
   async (id, thunkAPI) => {
@@ -79,7 +80,8 @@ export const fetchEnquiryById = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/enquiry/detail/${id}/`
       );
-      return response.data.result; // Ensure this is correct
+      console.log("API Response:", response.data); // Log to check the structure of the response
+      return response.data; // Ensure this is the correct path
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
@@ -124,10 +126,22 @@ export const fetchCategories = createAsyncThunk(
     return response.data.result;
   }
 );
+// Fetch Lost Enquiries
+export const fetchLostEnquiries = createAsyncThunk(
+  "enquiries/fetchLostEnquiries",
+  async () => {
+    const response = await axios.get(
+      "http://127.0.0.1:8000/api/enquiry/lost/"
+    );
+    return response.data.result;
+  }
+);
+
 const enquirySlice = createSlice({
   name: "enquiries",
   initialState: {
     list: [], // Initialize list as an empty array
+    lostEnquiries: [], // Lost inquiries
     loading: false,
     error: null,
     selectedEnquiry: null,
@@ -183,27 +197,39 @@ const enquirySlice = createSlice({
 
       // Fetch enquiry by ID
       .addCase(fetchEnquiryById.pending, (state) => {
-        state.status = "loading";
+        state.loading = true;
+        state.error = null;
       })
       .addCase(fetchEnquiryById.fulfilled, (state, action) => {
-        state.currentEnquiry = action.payload;
+
+        console.log("Fetched Enquiry:", action.payload); // Log to confirm if the data is coming through
         state.loading = false;
-        state.selectedEnquiry = action.payload;
+        state.selectedEnquiry = action.payload || {}; // Store the enquiry details
       })
-      .addCase(updateEnquiryStatus.fulfilled, (state, action) => {
-        const updatedEnquiry = action.payload;
-        state.list = state.list.map((enquiry) =>
-          enquiry.id === updatedEnquiry.id ? updatedEnquiry : enquiry
-        );
-        if (state.currentEnquiry.id === updatedEnquiry.id) {
-          state.currentEnquiry = updatedEnquiry;
-        }
-      })
-      .addCase(updateEnquiryStatus.rejected, (state, action) => {
+      .addCase(fetchEnquiryById.rejected, (state, action) => {
         state.loading = false;
-        state.updateStatus = "failed";
-        state.updateError = action.payload || action.error.message;
+        state.error = action.payload;
       })
+      // lost enquiry status
+      // Inside your extraReducers (reducers for async thunks) in the slice:
+          .addCase(updateEnquiryStatus.fulfilled, (state, action) => {
+            const updatedEnquiry = action.payload;
+
+            // Update the main list with the updated enquiry
+            state.list = state.list.filter((enquiry) =>
+              enquiry.id === updatedEnquiry.id ? updatedEnquiry : enquiry
+            );
+
+            // If the enquiry is marked as "lost", add it to the lost enquiries list
+            if (updatedEnquiry.status === "lost") {
+              state.lostEnquiries.push(updatedEnquiry); // Add it to lost enquiries
+            }
+
+            // // Optionally, if the current enquiry matches the updated enquiry, update it too
+            // if (state.currentEnquiry?.id === updatedEnquiry.id) {
+            //   state.currentEnquiry = updatedEnquiry;
+            // }
+          })
 
       // Create Enquiry
       .addCase(createEnquiry.pending, (state) => {
@@ -262,6 +288,18 @@ const enquirySlice = createSlice({
         state.list = action.payload || []; // Ensure the list is an array
       })
       .addCase(searchEnquiry.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message;
+      })
+       // Fetch Lost Enquiries
+       .addCase(fetchLostEnquiries.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchLostEnquiries.fulfilled, (state, action) => {
+        state.loading = false;
+        state.lostEnquiries = action.payload || [];  // Store lost enquiries
+      })
+      .addCase(fetchLostEnquiries.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
       });

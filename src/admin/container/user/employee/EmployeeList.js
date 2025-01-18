@@ -1,33 +1,266 @@
-import React from "react";
+// import React, { useEffect,useState } from 'react';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { fetchEmployees } from '../../../redux/slice/hrm/employeeSlice'; // Ensure this path is correct
+// import GeneralTable from './GeneralTable'; // Assuming GeneralTable is a custom table component
+// import { toast } from 'react-toastify';
+// import axios from 'axios';
+// import { useNavigate } from 'react-router-dom';
+// import { Edit, Delete, Visibility } from "@mui/icons-material";
+
+// const EmployeeList = () => {
+  // const dispatch = useDispatch();
+  // const navigate = useNavigate();
+  // const [employeeToDelete, setEmployeeToDelete] = useState(null); // Store the project id to delete
+  // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Modal open state
+
+//   // Accessing employees from Redux store
+//   // const { list: employees = [] } = useSelector((state) => state.employees || { list: [] });
+//   const employees = useSelector((state) => state.employees.list || []);
+//   console.log.response('list employee',employees)
+
+//   const formattedEmployees = employees.map((employee, index) => ({
+//     ...employee,
+//     index: index + 1, // Add the index dynamically
+//   }));
+  
+//   const handleRowAction = (actionKey, rowData) => {
+//     if (actionKey === "edit") {
+//       navigate(`/employees/edit/${rowData.id}`);
+//     } else if (actionKey === "delete") {
+//       setEmployeeToDelete(rowData.id); // Set the project to delete
+//       setIsDeleteModalOpen(true); // Open the delete confirmation modal
+//     } else if (actionKey === "view") {
+//       navigate(`/employees/detail/${rowData.id}`);
+//     }
+//   };
+
+//   useEffect(() => {
+//     dispatch(fetchEmployees());  // Fetch employees on component mount
+//   }, [dispatch]);
+
+//   const handleAdd = () => {
+//     navigate('http://127.0.0.1:8000/api/employee/create');
+//   };
+
+//   const handleEdit = (employee) => {
+//     navigate(`http://127.0.0.1:8000/api/employee/update/${employee.id}`);
+//   };
+
+//   const handleDelete = async (employee) => {
+//     try {
+//       await axios.delete(`http://127.0.0.1:8000/api/employee/delete/${employee.id}/`);
+//       toast.success('Employee deleted successfully.');
+//       dispatch(fetchEmployees());  // Refresh the list after deletion
+//     } catch (error) {
+//       toast.error('Failed to delete employee.');
+//     }
+//   };
+
+ 
+//   // Handle loading and error states
+//   // if (loading) return <div>Loading...</div>;
+//   // if (error) return <div>Error: {error}</div>;
+
+//   // Make sure employees is always an array
+//   if (!employees || employees.length === 0) {
+//     return <div>No employees found.</div>;
+//   }
+
+//   return (
+//     <GeneralTable
+//       title="Employee List"
+//       data={formattedEmployees} // Passing employees to the GeneralTable component
+//       columns = {[
+//         { field: 'name', label: 'Name' },
+//         { field: 'email', label: 'Email' },
+//         { field: 'department', label: 'Department' },
+//         { field: 'designation', label: 'Designation' },
+//         { field: 'joining_date', label: 'Joining Date' },
+//       ]}
+//      actions={[
+//               { label: "Edit", icon: <Edit />, key: "edit" },
+//               { label: "Delete", icon: <Delete />, key: "delete" },
+//               { label: "View", icon: <Visibility />, key: "view" },
+//             ]}
+//             onRowAction={(actionKey, rowData) => handleRowAction(actionKey, rowData)}
+    
+      
+//       onAdd={handleAdd}
+//       onEdit={handleEdit}
+//       onDelete={handleDelete}
+//     />
+//   );
+// };
+
+// export default EmployeeList;
+
+
+
+
+// import React, { useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import axios from "axios";
+// import GeneralTable from "./GeneralTable";
+// import { toast } from "react-toastify";
+// import { useSelector, useDispatch } from "react-redux";
+// import { fetchEmployees } from "../../../redux/slice/hrm/employeeSlice";
+
+// const EmployeeList = () => {
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+//   const [loading, setLoading] = useState(true);
+
+//   // Use fallback for employees if undefined
+//   const employees = useSelector((state) => state.employees?.list || []);
+
+//   useEffect(() => {
+//     dispatch(fetchEmployees()); // Dispatch fetchEmployees to get data
+//   }, [dispatch]);
+
+//   const handleAdd = () => {
+//     navigate("http://127.0.0.1:8000/api/employee/create");
+//   };
+
+//   const handleEdit = (employee) => {
+//     navigate(`http://127.0.0.1:8000/api/employee/update/${employee.id}`);
+//   };
+
+//   const handleDelete = async (employee) => {
+//     try {
+//       await axios.delete(`http://127.0.0.1:8000/api/employee/delete/${employee.id}/`);
+//       toast.success("Employee deleted successfully.");
+//       dispatch(fetchEmployees()); // Refresh the list after deletion
+//     } catch (error) {
+//       toast.error("Failed to delete employee.");
+//     }
+//   };
+
+//   const columns = [
+//     { field: "name", label: "Name" },
+//     { field: "email", label: "Email" },
+//     { field: "department", label: "Department" },
+//     { field: "designation", label: "Designation" },
+//     { field: "joining_date", label: "Joining Date" },
+//   ];
+
+//   if (loading) return <div>Loading...</div>;
+
+//   return (
+//     <GeneralTable
+//       title="Employee List"
+//       columns={columns}
+//       data={employees || []}  // Ensure `employees` is always an ar
+//       onAdd={handleAdd}
+//       onEdit={handleEdit}
+//       onDelete={handleDelete}
+//     />
+//   );
+// };
+
+// export default EmployeeList;
+
+
+
+// import React, { useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import axios from "axios";
+// import GeneralTable from "./GeneralTable";
+// import { toast } from "react-toastify";
+// import { useSelector, useDispatch} from "react-redux";
+// import {fetchEmployees} from "../../../redux/slice/hrm/employeeSlice"
+
+// const EmployeeList = () => {
+//   const dispatch = useDispatch();
+//   const [loading, setLoading] = useState(true);
+//   const navigate = useNavigate();
+
+//     // Use fallback for employees if undefined
+//     const employees = useSelector((state) => state.employees?.list || []); 
+
+
+//   useEffect(() => {
+//     dispatch(fetchEmployees());
+//   }, [dispatch]);
+
+
+
+//   const handleAdd = () => {
+//     navigate("http://127.0.0.1:8000/api/employee/create");
+//   };
+
+//   const handleEdit = (employee) => {
+//     navigate(`http://127.0.0.1:8000/api/employee/update/${employee.id}`);
+//   };
+
+//   const handleDelete = async (employee) => {
+//     try {
+//       await axios.delete(`http://127.0.0.1:8000/api/employee/delete/${employee.id}/`);
+//       toast.success("Employee deleted successfully.");
+//       fetchEmployees(); // Refresh the list
+//     } catch (error) {
+//       toast.error("Failed to delete employee.");
+//     }
+//   };
+
+
+//   const columns = [
+//     { field: "name", label: "Name" },
+//     { field: "email", label: "Email" },
+//     { field: "department", label: "Department" },
+//     { field: "designation", label: "Designation" },
+//     { field: "joining_date", label: "Joining Date" },
+//   ];
+
+//   if (loading) return <div>Loading...</div>;
+
+//   return (
+//     <GeneralTable
+//       title="Employee List"
+//       columns={columns}
+//       data={employees}
+//       onAdd={handleAdd}
+//       onEdit={handleEdit}
+//       onDelete={handleDelete}
+//     />
+//   );
+// };
+
+// export default EmployeeList;
+
+
+
+//old suitable table
+
 import { Link } from "react-router-dom";
-import axios from "axios";
-import { useState, useEffect } from "react";
+import React, { useEffect,useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEmployees } from '../../../redux/slice/hrm/employeeSlice'; // Ensure this path is correct
+import GeneralTable from './GeneralTable'; // Assuming GeneralTable is a custom table component
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Edit, Delete, Visibility } from "@mui/icons-material";
 
 const EmployeeList = () => {
-  const [employees, setEmployees] = useState([]);
+  // const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [employeeToDelete, setEmployeeToDelete] = useState(null); // Store the project id to delete
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Modal open state
 
+  // const employees = useSelector((state) => state.employees?.list || []);
+  const employees = useSelector((state) => state.employees?.list || []);
+  const isLoading = useSelector((state) => state.employees?.isLoading);
+  const error = useSelector((state) => state.employees?.error);
+  console.log.response('employee',employees)
   useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/employee/list/"
-        );
-        setEmployees(response.data.result || []); // Ensure the data is from 'result'
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching employees:", error); // Log the error for debugging
-        setError(error);
-        setLoading(false);
-      }
-    };
-
     fetchEmployees();
-  }, [currentPage, itemsPerPage]);
+  }, [dispatch]);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -104,7 +337,6 @@ const EmployeeList = () => {
                   <thead>
                     <tr>
                       <th>#</th>
-
                       <th>Employee Name</th>
                       <th>Phone</th>
                       <th>Email</th>
@@ -134,7 +366,7 @@ const EmployeeList = () => {
                   <tbody>
                     {employees.length > 0 ? (
                       employees.map((employee, index) => (
-                        <tr key={employee.id}>
+                        <td key={employee.id}>
                           <td>
                             {(currentPage - 1) * itemsPerPage + index + 1}
                           </td>
@@ -175,7 +407,7 @@ const EmployeeList = () => {
                               Delete
                             </Link>
                           </td>
-                        </tr>
+                        </td>
                       ))
                     ) : (
                       <tr>

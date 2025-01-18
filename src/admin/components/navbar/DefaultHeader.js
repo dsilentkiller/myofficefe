@@ -42,7 +42,7 @@ const DefaultHeader = () => {
     setOpenDialog(false);
     setTimeout(() => {
       navigate("/login");
-    }, 1500); // 1.5 second delay to allow toast to appear
+    }); // 1.5 second delay to allow toast to appear
   };
 
   // Function to close the toast message
@@ -95,7 +95,7 @@ const DefaultHeader = () => {
             {/* Right section - Logout Button */}
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Button
-                startIcon={<LogoutIcon />}
+                // startIcon={<LogoutIcon />}
                 onClick={handleClickOpenDialog} // Open the confirmation dialog
                 color="primary"
                 variant="text"

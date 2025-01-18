@@ -11,7 +11,9 @@ import "../../../admin/css/Table.css"; // Make sure this includes necessary styl
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-
+import { Box, Button, TextField, InputAdornment, Typography, IconButton } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 const ProvinceList = () => {
   const [newProvinceName, setNewProvinceName] = useState("");
   const [editId, setEditId] = useState(null);
@@ -125,39 +127,59 @@ const ProvinceList = () => {
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="card">
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-              <div className="container-fluid">
-                <h5 className="navbar-brand">Province List</h5>
-                <div className="navbar-nav ml-auto">
-                  <Link
-                    to="create"
-                    className="nav-link btn btn-primary"
-                    // onClick={handleAddprovince}
-                  >
-                    <h5>Add Province</h5>
-                  </Link>
-                  <form className="form-inline ml-3">
-                    <div className="input-group">
-                      <input
-                        type="search"
-                        id="default-search"
-                        name="search_term"
-                        className="form-control"
-                        placeholder="Search..."
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        required
-                      />
-                      <div className="input-group-append">
-                        <button type="submit" className="btn btn-info">
-                          Search
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </nav>
+          {/* <nav className="main-header navbar navbar-expand navbar-white navbar-light"> */}
+          {/* <!-- Left navbar links --> */}
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      sx={{ padding: 2, backgroundColor: "primary.main", color: "white", borderRadius: 1 }}
+    >
+      {/* Title */}
+      <Typography variant="h5" component="div" sx={{ fontWeight: "bold" }}>
+        Province List
+      </Typography>
+
+
+      {/* Add Province Button */}
+      <Link to="create" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+        <Button
+          variant="contained"
+          startIcon={<AddCircleOutlineIcon />}
+          color="secondary"
+          sx={{ fontWeight: "bold" }}
+        >
+          Add Province
+        </Button>
+      </Link>
+
+      {/* Search Bar */}
+      <Box>
+        <TextField
+          id="default-search"
+          name="search_term"
+          placeholder="Search..."
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton type="submit">
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            backgroundColor: "white",
+            borderRadius: 1,
+          }}
+        />
+      </Box>
+    </Box>
+            {/* </nav> */}
             <div className="card-body">
               <div className="table-container">
                 <table className="table table-bordered">

@@ -45,17 +45,19 @@ const CustomerTable = () => {
     const [filteredCustomers, setFilteredCustomers] = useState([]);
     const [customerToDelete, setCustomerToDelete] = useState(null);
     const maxHistoryLength = 100; // Maximum characters to show for history
-
+   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
     const [order, setOrder] = useState("asc");
     const [orderBy, setOrderBy] = useState("name");
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [enquiries, setEnquiries] = useState([]);
 
-
-    // const maxEnquiryPurposeLength = 100;
+    const maxEnquiryPurposeLength = 100;
+    // const maxcustomerPurposeLength = 100;
     //fetching customers data and save into customers
   const customers = useSelector((state) => state.customers?.list || []);
+  
 
 
   //fetching customers data into table
@@ -104,17 +106,17 @@ useEffect(() => {
     // };
 
     // Helper function to check if the next follow-up date is tomorrow
-    // const isTomorrow = (dateString) => {
-    //   const now = new Date();
-    //   const tomorrow = new Date(now.setDate(now.getDate() + 1));
-    //   const nextFollowUp = new Date(dateString);
+    const isTomorrow = (dateString) => {
+      const now = new Date();
+      const tomorrow = new Date(now.setDate(now.getDate() + 1));
+      const nextFollowUp = new Date(dateString);
 
-    //   // Set time to midnight for comparison
-    //   tomorrow.setHours(0, 0, 0, 0);
-    //   nextFollowUp.setHours(0, 0, 0, 0);
+      // Set time to midnight for comparison
+      tomorrow.setHours(0, 0, 0, 0);
+      nextFollowUp.setHours(0, 0, 0, 0);
 
-    //   return tomorrow.getTime() === nextFollowUp.getTime();
-    // };
+      return tomorrow.getTime() === nextFollowUp.getTime();
+    };
 
     // handle in page number
     const handlePageChange = (pageNumber) => {
@@ -139,20 +141,20 @@ useEffect(() => {
       }
       return history;
     };
-    //enquiry purpose
-    // const truncateEnquiryPurpose = (enquiry_purpose) => {
-    //   if (enquiry_purpose && enquiry_purpose.length > maxEnquiryPurposeLength) {
-    //     return enquiry_purpose.substring(0, maxEnquiryPurposeLength) + "..."; // Add ellipsis
-    //   }
-    //   return enquiry_purpose;
-    // };
-    // if (loading) {
-    //   return <div>Loading...</div>;
-    // }
+// ### handle sort
+const handleSort = (key) => {
+  const direction =
+    sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
 
-    // if (error) {
-    //   return <div>Error loading enquiries: {error.message}</div>;
-    // }
+  const sortedRows = [...enquiries].sort((a, b) => {
+    if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
+    if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  setSortConfig({ key, direction });
+  setEnquiries(sortedRows);
+};
     //--- handle searchitem in a table ----
     const handleSearchChange = (e) => {
       setSearchTerm(e.target.value);
@@ -180,7 +182,30 @@ useEffect(() => {
       setRowsPerPage(parseInt(event.target.value, 10));
       setPage(0);
     };
+    const truncateEnquiryPurpose = (enquiry_purpose) => {
+      if (enquiry_purpose && enquiry_purpose.length > maxEnquiryPurposeLength) {
+        return enquiry_purpose.substring(0, maxEnquiryPurposeLength) + "..."; // Add ellipsis
+      }
+      return enquiry_purpose;
+    };
 
+    
+  //########### Helper function to format date as a readable string ###############
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "";
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    };
+    return new Intl.DateTimeFormat("en-US", options).format(
+      new Date(dateString)
+    );
+  };
 
   return (
     <div className="content-wrapper">
@@ -203,7 +228,7 @@ useEffect(() => {
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                   <TextField
                     variant="outlined"
-                    placeholder="Search Customers..."
+                    label="Search Customers..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     size="small"
@@ -226,11 +251,8 @@ useEffect(() => {
             </nav>
             {/* heading end */}
             <div className="card-body">
-              <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                  <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                    <div className="overflow-x-auto overflow-y-auto max-h-[400px]">
-                      <div className="overflow-x-auto">
+            <div className="table-container">
+             
                         <table className="table table-bordered">
                                 <TableHead>
                                     <TableRow>
@@ -251,13 +273,31 @@ useEffect(() => {
                                                   direction={order}
                                                   onClick={() => handleSortRequest("name")}
                                                 >
-                                                  Name
+                                                 Customer  Name
                                                 </TableSortLabel>
+                              
+
                                               </TableCell>
+                                                <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>customer Date</TableCell>
+                                                                    {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Next Follow Up Date 
+                                                                    <TableSortLabel
+                                                                              active={sortConfig.key === "due_date"}
+                                                                              direction={sortConfig.direction}
+                                                                              onClick={() => handleSort("due_date")}>
+                                                                   </TableSortLabel>
+                                                                   </TableCell>*/}
+                                                                    <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Category</TableCell>
+                                                                                                                 <TableCell>Organization</TableCell>
+
+                                                                    <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Department</TableCell>
+                                                                    <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Designation</TableCell>
                                               <TableCell>Phone</TableCell>
                                               <TableCell>Email</TableCell>
-                                              <TableCell>Organization</TableCell>
-                                              <TableCell>Joining Date</TableCell>
+                                              <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Street Address</TableCell>
+                                               {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Budget</TableCell> */}
+                                              {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>customer Purpose</TableCell> */}
+                                              
+                                              {/* <TableCell>Joining Date</TableCell> */}
                                               <TableCell> History</TableCell>
                                               <TableCell>Actions</TableCell>
                                     </TableRow>
@@ -265,17 +305,41 @@ useEffect(() => {
 
                                 <TableBody>
                                   {filteredCustomers.length > 0 ? (
-                                    filteredCustomers.map((customer,index) => (
+                                    filteredCustomers.map((customer,index) => {
+                                    const isRedMark = isTomorrow(customer.next_follow_up_date);
+                                    return(
                                       <TableRow key={customer.id} hover>
                                             <TableCell padding="checkbox">
                                               <Checkbox />
                                                 </TableCell>
                                         <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                                         <td>{formatName(customer.customer_name)}</td>
+                                        <td>{formatDateTime(customer.created)}</td>
+                                        {/* <td
+                                        style={{
+                                          backgroundColor: isRedMark
+                                            ? "red"
+                                            : "transparent",
+                                          color: isRedMark ? "white" : "black",
+                                        }}
+                                      > 
+                                        {formatDateTime(customer.next_follow_up_date)}
+                                      </td>*/}
+                                      <td>{customer.category_name}</td>
+                                      <td>{formatName(customer.organization_name)}</td>
+                                      <td>{formatName(customer.department_name)}</td>
+                                      <td>{formatName(customer.designation_name)}</td>
+
                                         <td>{customer.pri_phone}</td>
                                         <td>{customer.email}</td>
-                                        <td>{formatName(customer.organization_name)}</td>
-                                        <td>{customer.joining_date}</td>
+                                        <td>{customer.street_address}</td>
+                                    {/* <td>{formatName(customer.tole_name)}</td> */}
+                                    {/* <td>{customer.estimated_amount}</td> */}
+                                    {/* <td>
+                                      {truncateEnquiryPurpose(customer.enquiry_purpose)}
+                                    </td> */}
+                                                
+                                        {/* <td>{customer.joining_date}</td> */}
                                         <td>
                                   {/* Display truncated history */}
                                   <p>{truncateHistory(customer.history)}</p>
@@ -298,7 +362,8 @@ useEffect(() => {
                                               </Link>
                                         </td>
                                       </TableRow>
-                                    ))
+                                    );
+                                    })
                                   ) : (
                                     <tr>
                                       <td colSpan="8">No customers found</td>
@@ -306,11 +371,8 @@ useEffect(() => {
                                   )}
                                 </TableBody>
                         </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                      
+            </div>
             </div>
 
             <TablePagination
