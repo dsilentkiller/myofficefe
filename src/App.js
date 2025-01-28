@@ -304,9 +304,12 @@ import QuotationForm from "./admin/crm/quotation/QuotationForm";
 import QuotationTable from "./admin/crm/quotation/QuotationTable"
 import ServiceQuotationForm from "./admin/crm/quotation/ServiceQuotationForm";
 import ProductQuotationForm from "./admin/crm/quotation/ProductQuotationForm";
+import Letterhead from "./admin/base/letterhead/Letterhead";
+import OrganizationForm from "./admin/base/organization/Form";
 
 function App() {
   const isAuthenticated = localStorage.getItem("access_token") !== null;
+  const userRole = localStorage.getItem("user_role"); // Assuming role is stored in localStorage
   return (
     <div className="App">
       <BrowserRouter>
@@ -316,6 +319,8 @@ function App() {
 
           {/* Protected Routes */}
           <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
+            {/* Admin Routes */}
+            {/* {userRole === "admin" && ( */}
             <Route path="/dashboard">
               {/* localhost/dashboard */}
               <Route index element={<AdminDashboard />} />
@@ -429,8 +434,26 @@ function App() {
                 <Route path="day" element={<DayTable />} />
                 <Route path="day/create" element={<DayForm />} />
                 <Route path="day/delete/:id" element={<DayDelete />} />
+                <Route path="letterhead/create" element={<Letterhead/>} />
+                <Route path="organization/create" element={<OrganizationForm/>} />
               </Route>
             </Route>
+            {/* )} */}
+            {/* Add more protected routes for other roles if necessary */}
+            {/* Example: */}
+            {/* {userRole === "user" && ( */}
+            {/*   <Route path="/user/dashboard" element={<UserDashboard />} /> */}
+            {/* )} */}
+             {/* Vendor Routes */}
+             {/* {userRole === "vendor" && (
+              <Route path="/dashboard/vendor" element={<VendorDashboard />}>
+                <Route index element={<VendorDashboard />} />
+                <Route path="products" element={<VendorProductList />} />
+                <Route path="orders" element={<VendorOrders />} />
+                {/* Add other vendor-specific routes here */}
+              {/* </Route>
+            )}  */}
+          {/* </Route> */}
 
 
 
@@ -440,7 +463,9 @@ function App() {
           {/* <Route path="/logout" element={<Logout />} /> */}
 
           {/* Catch-all Redirect */}
-          <Route path="*" element={<Navigate to="/login" />} />
+          {/* <Route path="*" element={<Navigate to="/login" />} /> */}
+           {/* Fallback route */}
+    {/* <Route path="*" element={<Navigate to={userRole === "admin" ? "/dashboard" : "/login"} />} /> */}
         </Routes>
       </BrowserRouter>
     </div>

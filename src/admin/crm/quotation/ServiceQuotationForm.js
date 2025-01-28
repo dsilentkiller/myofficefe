@@ -18,14 +18,9 @@ const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, i
     setServices([...services, { service_name: "", service_description: "", service_price: 0, quantity: 1 }]);
   };
 
-  // const updateService = (index, field, value) => {
-  //   const updatedServices = [...services];
-  //   updatedServices[index][field] = field === "service_price" || field === "quantity" ? parseFloat(value) || 0 : value;
-  //   setServices(updatedServices);
-  // };
   const updateService = (index, key, value) => {
     const updatedServices = [...services];
-    updatedServices[index][key] = value;
+    updatedServices[index][key] = key === 'service_price' || key === 'quantity' ? parseFloat(value) || 0 : value;
     setServices(updatedServices);
   };
 
@@ -64,7 +59,7 @@ const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, i
                     fullWidth
                     value={service.service_name}
                     onChange={(e) => updateService(index, "service_name", e.target.value)}
-                    placeholder="Enter service/feature name"
+                    placeholder="Enter the name of the service"
                   />
                 </TableCell>
                 <TableCell>
@@ -72,7 +67,7 @@ const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, i
                     fullWidth
                     value={service.service_description}
                     onChange={(e) => updateService(index, "service_description", e.target.value)}
-                    placeholder="Description"
+                    placeholder="Provide a brief description of the service"
                   />
                 </TableCell>
                 <TableCell>
@@ -81,7 +76,7 @@ const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, i
                     type="number"
                     value={service.quantity}
                     onChange={(e) => updateService(index, "quantity", e.target.value)}
-                    placeholder="Quantity"
+                    placeholder="Enter the quantity"
                   />
                 </TableCell>
                 <TableCell>
@@ -90,7 +85,7 @@ const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, i
                     type="number"
                     value={service.service_price}
                     onChange={(e) => updateService(index, "service_price", e.target.value)}
-                    placeholder="Price"
+                    placeholder="Enter the price per service"
                   />
                 </TableCell>
                 <TableCell>
@@ -108,18 +103,144 @@ const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, i
           </TableBody>
         </Table>
       </TableContainer>
+
       {/* Display Total Calculation */}
-      {/* <Box mt={4}>
+      <Box mt={4}>
         <Typography variant="h6">Subtotal: ${calculateSubtotalService().toFixed(2)}</Typography>
         {includeTax && <Typography variant="h6">Tax: ${(calculateSubtotalService() * (tax_percentage / 100)).toFixed(2)}</Typography>}
         {includeDiscount && <Typography variant="h6">Discount: ${(calculateSubtotalService() * (discount_percentage / 100)).toFixed(2)}</Typography>}
         <Typography variant="h5">Total: ${calculateTotalService().toFixed(2)}</Typography>
-      </Box> */}
+      </Box>
     </Box>
   );
 };
 
 export default ServiceQuotation;
+
+
+
+// import React from "react";
+// import {
+//   Box,
+//   Typography,
+//   Button,
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableContainer,
+//   TableHead,
+//   TableRow,
+//   TextField,
+//   Paper,
+// } from "@mui/material";
+
+// const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, includeDiscount, discount_percentage }) => {
+//   const addServiceRow = () => {
+//     setServices([...services, { service_name: "", service_description: "", service_price: 0, quantity: 1 }]);
+//   };
+
+//   // const updateService = (index, field, value) => {
+//   //   const updatedServices = [...services];
+//   //   updatedServices[index][field] = field === "service_price" || field === "quantity" ? parseFloat(value) || 0 : value;
+//   //   setServices(updatedServices);
+//   // };
+//   const updateService = (index, key, value) => {
+//     const updatedServices = [...services];
+//     updatedServices[index][key] = value;
+//     setServices(updatedServices);
+//   };
+
+//   const calculateSubtotalService = () => {
+//     return services.reduce((acc, service) => acc + service.service_price * service.quantity, 0);
+//   };
+
+//   const calculateTotalService = () => {
+//     let subtotal = calculateSubtotalService();
+//     let tax = includeTax ? (subtotal * tax_percentage) / 100 : 0;
+//     let discount = includeDiscount ? (subtotal * discount_percentage) / 100 : 0;
+//     return subtotal + tax - discount;
+//   };
+
+//   return (
+//     <Box mt={4}>
+//       <Typography variant="h5" gutterBottom>
+//         Service Details
+//       </Typography>
+//       <TableContainer component={Paper}>
+//         <Table>
+//           <TableHead>
+//             <TableRow>
+//               <TableCell><strong>Name</strong></TableCell>
+//               <TableCell><strong>Description</strong></TableCell>
+//               <TableCell><strong>Quantity</strong></TableCell>
+//               <TableCell><strong>Cost (USD)</strong></TableCell>
+//               <TableCell><strong>Total (USD)</strong></TableCell>
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {services.map((service, index) => (
+//               <TableRow key={index}>
+//                 <TableCell>
+//                   <TextField
+//                     fullWidth
+//                     value={service.service_name}
+//                     onChange={(e) => updateService(index, "service_name", e.target.value)}
+//                     placeholder="Enter service/feature name"
+//                   />
+//                 </TableCell>
+//                 <TableCell>
+//                   <TextField
+//                     fullWidth
+//                     value={service.service_description}
+//                     onChange={(e) => updateService(index, "service_description", e.target.value)}
+//                     placeholder="Description"
+//                   />
+//                 </TableCell>
+//                 <TableCell>
+//                   <TextField
+//                     fullWidth
+//                     type="number"
+//                     value={service.quantity}
+//                     onChange={(e) => updateService(index, "quantity", e.target.value)}
+//                     placeholder="Quantity"
+//                   />
+//                 </TableCell>
+//                 <TableCell>
+//                   <TextField
+//                     fullWidth
+//                     type="number"
+//                     value={service.service_price}
+//                     onChange={(e) => updateService(index, "service_price", e.target.value)}
+//                     placeholder="Price"
+//                   />
+//                 </TableCell>
+//                 <TableCell>
+//                   ${(service.quantity * service.service_price).toFixed(2)}
+//                 </TableCell>
+//               </TableRow>
+//             ))}
+//             <TableRow>
+//               <TableCell colSpan={5} align="center">
+//                 <Button variant="outlined" onClick={addServiceRow}>
+//                   Add Service
+//                 </Button>
+//               </TableCell>
+//             </TableRow>
+//           </TableBody>
+//         </Table>
+//       </TableContainer>
+//       {/* Display Total Calculation */}
+//       {/* <Box mt={4}>
+//         <Typography variant="h6">Subtotal: ${calculateSubtotalService().toFixed(2)}</Typography>
+//         {includeTax && <Typography variant="h6">Tax: ${(calculateSubtotalService() * (tax_percentage / 100)).toFixed(2)}</Typography>}
+//         {includeDiscount && <Typography variant="h6">Discount: ${(calculateSubtotalService() * (discount_percentage / 100)).toFixed(2)}</Typography>}
+//         <Typography variant="h5">Total: ${calculateTotalService().toFixed(2)}</Typography>
+//       </Box> */}
+//     </Box>
+//   );
+// };
+
+// export default ServiceQuotation;
 
 
 

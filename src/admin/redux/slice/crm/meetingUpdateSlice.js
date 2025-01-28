@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // API base URL
-const BASE_URL = "http://127.0.0.1:8000/api/meeting-update";
+const BASE_URL = "http://127.0.0.1:8000/api/meeting-update/";
 
 // Async thunk for searching meeting updates
 export const searchMeetingUpdate = createAsyncThunk(
@@ -53,22 +53,42 @@ export const fetchMeetingUpdate = createAsyncThunk(
 //   }
 // );
 // Async thunk for creating a meeting update
+// export const createMeetingUpdate = createAsyncThunk(
+//   "meetingupdate/createMeetingUpdate",
+//   async (formData, thunkAPI) => {
+//     try {
+//       const response = await axios.post(`http://127.0.0.1:8000/api/meeting-update/create/`, formData);
+//       const data = response.data?.result?.data;
+//       if (!data) {
+//         throw new Error("Invalid API response");
+//       }
+//       return data;
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response?.data?.message || "Create failed");
+//     }
+//   }
+// );
 export const createMeetingUpdate = createAsyncThunk(
-  "meetingupdate/createMeetingUpdate",
-  async (meetingUpdateData, thunkAPI) => {
+  'meetingUpdate/createMeetingUpdate',
+  async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/create/`, meetingUpdateData);
-      const data = response.data?.result?.data;
-      if (!data) {
-        throw new Error("Invalid API response");
-      }
-      return data;
+      const response = await axios.post('http://127.0.0.1:8000/api/meeting-update/create/', formData);
+      return response.data; // Return the data from the API response
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || "Create failed");
+      // Handle errors and return a meaningful error message
+      if (error.response) {
+        // Server responded with an error
+        return rejectWithValue(error.response.data);
+      } else if (error.request) {
+        // No response from the server
+        return rejectWithValue('No response from the server.');
+      } else {
+        // Some other error occurred
+        return rejectWithValue(error.message);
+      }
     }
   }
 );
-
 
 // Async thunk for fetching a single meeting update by ID
 export const fetchMeetingUpdateById = createAsyncThunk(
@@ -185,7 +205,7 @@ export default meetingUpdateSlice.reducer;
 //     return response.data.result.data;
 //   }
 // );
-// // Fetch all"meetingupdatedatas action
+// // Fetch all"formDatas action
 // export const fetchMeetingUpdate = createAsyncThunk(
 //   "meetingupdate/fetchMeetingUpdate",
 //   async (_, thunkAPI) => {
@@ -224,7 +244,7 @@ export default meetingUpdateSlice.reducer;
 
 // // Fetch a single meetingupdate by ID action
 // export const fetchMeetingUpdateById = createAsyncThunk(
-//   "meetingupdatedata/fetchMeetingUpdateById",
+//   "formData/fetchMeetingUpdateById",
 //   async (id, thunkAPI) => {
 //     try {
 //       const response = await axios.get(
@@ -236,9 +256,9 @@ export default meetingUpdateSlice.reducer;
 //     }
 //   }
 // );
-// // // Update meetingupdatedata
+// // // Update formData
 // export const updateMeetingUpdate = createAsyncThunk(
-//   "meetingupdatedata/updateMeetingUpdate",
+//   "formData/updateMeetingUpdate",
 //   async ({ id, name }, thunkAPI) => {
 //     try {
 //       const response = await axios.put(
@@ -255,14 +275,14 @@ export default meetingUpdateSlice.reducer;
 // );
 
 // export const deleteMeetingUpdate = createAsyncThunk(
-//   "meetingupdatedata/deleteMeetingUpdate",
+//   "formData/deleteMeetingUpdate",
 //   async (id, thunkAPI) => {
 //     try {
 //       // Make sure this URL is correct
 //       await axios.delete(
 //         `http://127.0.0.1:8000/api/meeting-update/delete/${id}/`
 //       );
-//       return id; // Return the ID of the deleted meetingupdatedata
+//       return id; // Return the ID of the deleted formData
 //     } catch (error) {
 //       // Log the entire error to understand its structure
 //       console.error("Delete request failed:", error);
@@ -335,7 +355,7 @@ export default meetingUpdateSlice.reducer;
 //         state.updateStatus = "failed";
 //         state.updateError = action.payload;
 //       })
-//       // Delete meetingupdatedata
+//       // Delete formData
 //       .addCase(deleteMeetingUpdate.pending, (state) => {
 //         state.deleteStatus = "loading";
 //         state.deleteError = null;
@@ -348,7 +368,7 @@ export default meetingUpdateSlice.reducer;
 //       })
 //       .addCase(deleteMeetingUpdate.rejected, (state, action) => {
 //         state.deleteStatus = "failed";
-//         state.deleteError = action.payload || "Failed to delete meetingupdatedata";
+//         state.deleteError = action.payload || "Failed to delete formData";
 //       })
 //       // search MusearchmeetingUpdatename
 //       .addCase(searchMeetingUpdate.pending, (state) => {

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEnquiryById} from "../../redux/slice/crm/enquirySlice";
+import { fetchEnquiryById,convertToCustomer} from "../../redux/slice/crm/enquirySlice";
+import {removeEnquiryFromList} from "../../redux/slice/crm/enquirySlice"
 // import { fetchFollowById } from "../../redux/slice/crm/followSlice";
 import { fetchCustomers, createCustomer} from "../../redux/slice/customer/customerSlice";
 
@@ -32,6 +33,10 @@ const EnquiryDetail = () => {
 
   const { selectedEnquiry, loading, error } = useSelector((state) => state.enquiries);
   const{conversionStatus,conversionError,message} =useSelector((state)=>state.customers)
+  // dispatch(convertToCustomer(selectedEnquiry.id)).then((customer) => {
+  //   console.log('Converted to customer:', customer);  // Log this
+  //   dispatch(removeEnquiryFromList({ id: selectedEnquiry.id }));
+  // });
 
 
   console.log("Selected Enquiry from Redux:", selectedEnquiry);
@@ -50,8 +55,9 @@ const EnquiryDetail = () => {
     return <div>{`Error: ${error}`}</div>;
   }
 
+
   if (!selectedEnquiry) {
-    return <div>No enquiry found.</div>;
+    return <div>No enquiry found. Please try again.</div>;
   }
 
   // Helper function to format date as readable string
@@ -66,20 +72,8 @@ const EnquiryDetail = () => {
       second: "2-digit",
     }).format(new Date(dateString));
   };
-//mark as lost client
-// const handleMarkAsLost = () => {
-//   if (selectedEnquiry && selectedEnquiry.id) {
-//     dispatch(updateEnquiryStatus({ id: selectedEnquiry.id, status: "lost" }))
-//       .then(() => {
-//         // Navigate to the Lost Enquiry table after marking as lost
-//         toast.success("Enquiry marked as lost!");
-//         navigate("/dashboard/crm/enquiry/lost-enquiry/");  // Navigate to Lost Enquiries page
-//       })
-//       .catch((error) => {
-//         toast.error("Failed to mark the enquiry as lost. Please try again.");
-//       });
-//   }
-// };
+
+
 const handleMarkAsLost = () => {
   if (selectedEnquiry && selectedEnquiry.id) {
     dispatch(updateEnquiryStatus({ id: selectedEnquiry.id, status: "lost" }))
@@ -99,7 +93,7 @@ const handleMarkAsLost = () => {
 //   const updatedEnquiries = enquiries.map((enquiry) =>
 //     enquiry.id === enquiryId ? { ...enquiry, status: "Lost" } : enquiry
 //   );
-  
+
 //   // Update enquiries state
 //   setEnquiries(updatedEnquiries);
 
@@ -124,31 +118,27 @@ const handleMarkAsLost = () => {
   //       });
   //   }
   // };
-  // Handle Convert to Client
   const handleConvertToClient = () => {
     if (selectedEnquiry && selectedEnquiry.id) {
-      // Update the enquiry status to "client"
+      // First, update the enquiry status to 'client'
       dispatch(updateEnquiryStatus({ id: selectedEnquiry.id, status: "client" }))
         .then(() => {
-          // Create customer from the enquiry
-          dispatch(createCustomer({ customer: selectedEnquiry }))
+          // Then convert the enquiry to customer
+          dispatch(convertToCustomer(selectedEnquiry.id))
             .then(() => {
-              // Refetch customers and display success toast
-              dispatch(fetchCustomers());
+              // Show success toast and navigate to customer list
               toast.success("Customer successfully converted!", {
-                autoClose: 2000,  // Close the toast after 2 seconds
+                autoClose: 2000,
               });
-              navigate("/dashboard/customer/customer-list"); // Navigate to customer list
+              navigate("/dashboard/customer/customer-list");
             })
             .catch((error) => {
-              // Display error toast if customer creation fails
-              toast.error("Error creating customer. Please try again.", {
+              toast.error("Error converting enquiry to customer. Please try again.", {
                 autoClose: 2000,
               });
             });
         })
         .catch((error) => {
-          // Display error toast if enquiry status update fails
           toast.error("Error updating enquiry status. Please try again.", {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 3000,
@@ -156,6 +146,79 @@ const handleMarkAsLost = () => {
         });
     }
   };
+
+
+  // const handleConvertToClient = () => {
+  //   if (selectedEnquiry && selectedEnquiry.id) {
+  //     // First, update the enquiry status to 'client'
+  //     dispatch(updateEnquiryStatus({ id: selectedEnquiry.id, status: "client" }))
+  //       .then(() => {
+  //         // Next, create a customer using the selected enquiry
+  //         dispatch(createCustomer({ customer: selectedEnquiry }))
+  //           .then(() => {
+  //             // After creating the customer, remove it from the enquiries list
+  //             dispatch(fetchCustomers());  // Refetch the customers list
+
+  //             // Optionally, remove the converted enquiry from the enquiries list
+  //             dispatch(removeEnquiryFromList({ id: selectedEnquiry.id }));
+
+  //             // Show success toast and navigate to customer list
+  //             toast.success("Customer successfully converted!", {
+  //               autoClose: 2000,  // Toast auto-close after 2 seconds
+  //             });
+
+  //             navigate("/dashboard/customer/customer-list");  // Navigate to Customer List page
+  //           })
+  //           .catch((error) => {
+  //             // Handle error when creating the customer
+  //             toast.error("Error creating customer. Please try again.", {
+  //               autoClose: 2000,
+  //             });
+  //           });
+  //       })
+  //       .catch((error) => {
+  //         // Handle error when updating enquiry status
+  //         toast.error("Error updating enquiry status. Please try again.", {
+  //           position: toast.POSITION.TOP_RIGHT,
+  //           autoClose: 3000,
+  //         });
+  //       });
+  //   }
+  // };
+
+
+  // Handle Convert to Client
+  // const handleConvertToClient = () => {
+  //   if (selectedEnquiry && selectedEnquiry.id) {
+  //     // Update the enquiry status to "client"
+  //     dispatch(updateEnquiryStatus({ id: selectedEnquiry.id, status: "client" }))
+  //       .then(() => {
+  //         // Create customer from the enquiry
+  //         dispatch(createCustomer({ customer: selectedEnquiry }))
+  //           .then(() => {
+  //             // Refetch customers and display success toast
+  //             dispatch(fetchCustomers());
+  //             toast.success("Customer successfully converted!", {
+  //               autoClose: 2000,  // Close the toast after 2 seconds
+  //             });
+  //             navigate("/dashboard/customer/customer-list"); // Navigate to customer list
+  //           })
+  //           .catch((error) => {
+  //             // Display error toast if customer creation fails
+  //             toast.error("Error creating customer. Please try again.", {
+  //               autoClose: 2000,
+  //             });
+  //           });
+  //       })
+  //       .catch((error) => {
+  //         // Display error toast if enquiry status update fails
+  //         toast.error("Error updating enquiry status. Please try again.", {
+  //           position: toast.POSITION.TOP_RIGHT,
+  //           autoClose: 3000,
+  //         });
+  //       });
+  //   }
+  // };
   return (
     <div className="content-wrapper">
       <div className="container-fluid">
@@ -183,7 +246,7 @@ const handleMarkAsLost = () => {
 
 
 
-            <Button variant="contained" color="primary" fullWidth component={Link} to={`/dashboard/crm/client`} onClick={handleConvertToClient}
+            <Button variant="contained" color="primary" fullWidth component={Link} to={`/dashboard/customer/customer-list`} onClick={handleConvertToClient}
                 disabled={conversionStatus === "loading"}
                  >
                 {conversionStatus === "loading" ? "Converting..." : "Convert to Client"}
@@ -242,15 +305,15 @@ const handleMarkAsLost = () => {
 
 
       </div>
-      <div className="container-fluid">
+      {/* <div className="container-fluid"> */}
         {/* Enquiry details and actions here */}
 
         {/* Mark as Lost and Convert to Client buttons here */}
 
         {/* Render Meeting Update Table below */}
-        <MeetingUpdateTable />
+        {/* <MeetingUpdateTable />
         <p>meeting table</p>
-      </div>
+       </div> */}
     </div>
   );
 };

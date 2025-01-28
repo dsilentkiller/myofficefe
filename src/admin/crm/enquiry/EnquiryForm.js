@@ -1,4 +1,7 @@
-//this work fine best code ever
+
+
+
+        //this work fine best code ever
 import React, { useState, useEffect } from "react";
 import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { Link } from "react-router-dom";
@@ -53,6 +56,7 @@ const EnquiryForm = () => {
     created: "",
     next_follow_up_date: "",
     history: "",
+    status:""
   });
   // const createStatus = useSelector((state) => state.enquiries.createStatus);
   // const updateStatus = useSelector((state) => state.enquiries.updateStatus);
@@ -61,6 +65,9 @@ const EnquiryForm = () => {
 
   const enquiries = useSelector((state) => state.enquiries.list || []);
   const enquiryData = useSelector((state) => state.enquiries.currentEnquiry);
+    const isLoading = useSelector((state) => state.enquiries.isLoading);
+    const error = useSelector((state) => state.enquiries.error);
+
   // Toggle function for switching tabs
   const toggle = (tab) => {
     if (activeTab !== tab) {
@@ -120,6 +127,9 @@ const EnquiryForm = () => {
   };
   // curent enquiry
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
   useEffect(() => {
     if (enquiryToUpdate && id) {
       setFormData({
@@ -144,6 +154,7 @@ const EnquiryForm = () => {
         created: enquiryToUpdate.created || "",
         next_follow_up_date: enquiryToUpdate.next_follow_up_date || "",
         history: enquiryToUpdate.history || "",
+        status:enquiryToUpdate.status||"",
       });
     } else if (!enquiryToUpdate && id) {
       toast.error("Failed to load enquiry details for update.");
@@ -314,7 +325,7 @@ const EnquiryForm = () => {
 
                   <div className="row">
                     {/* customer name */}
-                    <div className="col-md-4">
+                    {/* <div className="col-md-4">
                       <div className="form-group">
                         <label htmlFor="name">Customer Name:</label>
                         <input
@@ -334,9 +345,38 @@ const EnquiryForm = () => {
                           required
                         />
                       </div>
+                    </div> */}
+                     <div className="col-md-4">
+                    <div className="form-group">
+                      <label htmlFor="enquiry">customer name:</label>
+                      <select
+                        id="enquiry"
+                        name="enquiry_id"
+                        value={formData.enquiry_id}
+                        onChange={handleChange}
+                        className="form-control"
+                        required
+                      >
+                        <option value="">Select enquiry</option>
+                        {isLoading ? (
+                          <option>Loading...</option>
+                        ) : error ? (
+                          <option>Error loading enquiries</option>
+                        ) : enquiries.length > 0 ? (
+                          enquiries.map((enquiry) => (
+                            <option key={enquiry.id} value={enquiry.id}>
+                              {enquiry.customer_name}
+                            </option>
+                          ))
+                        ) : (
+                          <option>No enquiries available</option>
+                        )}
+                      </select>
                     </div>
+                  </div>
 
-                    {/* enquory type */}
+
+                    {/* categories */}
 
                     <div className="col-md-4">
                       <div className="form-group">
@@ -825,6 +865,7 @@ const EnquiryForm = () => {
                         </select>
                       </div>
                     </div>
+                    
 
                     <div className="col-md-4">
                       <div className="form-group">

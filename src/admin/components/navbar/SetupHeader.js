@@ -12,6 +12,8 @@ import {
   AttachMoney as TaxIcon,
   Search as SearchIcon,
 } from "@mui/icons-material";
+import {AccountBox} from '@mui/icons-material';
+
 import { Link } from "react-router-dom";
 
 const SetupHeader = () => {
@@ -27,6 +29,7 @@ const SetupHeader = () => {
     { name: "working", title: "Working", icon: <WorkingIcon /> },
     { name: "day", title: "Day", icon: <DayIcon /> },
     { name: "tax", title: "Tax", icon: <TaxIcon /> },
+    { name: "organization/create", title: "Organization", icon: <AccountBox /> },
   ];
 
   return (

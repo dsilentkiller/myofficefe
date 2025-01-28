@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { createSelector } from "reselect";
+
+
 // New async thunk to convert an enquiry to a customer
 export const convertEnquiryToCustomer = createAsyncThunk(
   "customers/convertEnquiryToCustomer",
@@ -223,8 +225,20 @@ const customerSlice = createSlice({
       })
       .addCase(convertEnquiryToCustomer.fulfilled, (state, action) => {
         state.conversionStatus = "succeeded";
-        state.message = action.payload.message; // Save the success message
+        state.message = action.payload.message;  // This is fine if you are getting a success message
+        // state.customers.push(convertedCustomer); // Add the customer to the customers list
+// Add the converted enquiry to the customers list
+const convertedCustomer = action.payload; // Assuming action.payload contains the new customer data
+state.customers.push(convertedCustomer); // Add the customer t
+        // If the API returns the newly created customer data
+        if (action.payload.newCustomer) {
+          state.list.push(action.payload.newCustomer); // Add the new customer to the list
+        }
+
+        // Alternatively, you can dispatch `fetchCustomers` to refresh the list:
+        // dispatch(fetchCustomers());
       })
+
       .addCase(convertEnquiryToCustomer.rejected, (state, action) => {
         state.conversionStatus = "failed";
         state.conversionError = action.payload || action.error.message;
@@ -295,6 +309,10 @@ const customerSlice = createSlice({
       .addCase(createCustomer.fulfilled, (state, action) => {
         state.createStatus = "succeeded";
         state.list.push(action.payload);
+        state.list = action.payload.updatedCustomers; // Assuming your API returns updated customer list
+        state.list.push(action.payload.newCustomer); // Add the new customer to the list
+
+
       })
       .addCase(createCustomer.rejected, (state, action) => {
         state.createStatus = "failed";

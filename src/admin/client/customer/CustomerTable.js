@@ -10,6 +10,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 // import { saveAs } from "file-saver";
 import { Add as AddIcon, Search as SearchIcon } from "@mui/icons-material";
+import { convertEnquiryToCustomer } from "../../redux/slice/customer/customerSlice";
 import * as XLSX from "xlsx";
 import {
   Table,
@@ -57,7 +58,17 @@ const CustomerTable = () => {
     // const maxcustomerPurposeLength = 100;
     //fetching customers data and save into customers
   const customers = useSelector((state) => state.customers?.list || []);
-  
+
+  const handleConvertEnquiry = (enquiryId) => {
+    dispatch(convertEnquiryToCustomer(enquiryId))
+      .then(() => {
+        // After conversion, fetch the updated customer list
+        dispatch(fetchCustomers());
+      })
+      .catch((error) => {
+        console.error("Conversion failed:", error);
+      });
+  };
 
 
   //fetching customers data into table
@@ -69,6 +80,10 @@ const CustomerTable = () => {
   useEffect(() => {
     console.log("Fetched customers:", customers);
   }, [customers]);
+  useEffect(() => {
+    console.log("Current Customer List after conversion:", customers);
+  }, [customers]);
+
 //filter data fetch in table for searching function
 useEffect(() => {
   const timer = setTimeout(() => {
@@ -189,7 +204,7 @@ const handleSort = (key) => {
       return enquiry_purpose;
     };
 
-    
+
   //########### Helper function to format date as a readable string ###############
   const formatDateTime = (dateString) => {
     if (!dateString) return "";
@@ -252,7 +267,7 @@ const handleSort = (key) => {
             {/* heading end */}
             <div className="card-body">
             <div className="table-container">
-             
+
                         <table className="table table-bordered">
                                 <TableHead>
                                     <TableRow>
@@ -275,11 +290,11 @@ const handleSort = (key) => {
                                                 >
                                                  Customer  Name
                                                 </TableSortLabel>
-                              
+
 
                                               </TableCell>
                                                 <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>customer Date</TableCell>
-                                                                    {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Next Follow Up Date 
+                                                                    {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Next Follow Up Date
                                                                     <TableSortLabel
                                                                               active={sortConfig.key === "due_date"}
                                                                               direction={sortConfig.direction}
@@ -296,7 +311,7 @@ const handleSort = (key) => {
                                               <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Street Address</TableCell>
                                                {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Budget</TableCell> */}
                                               {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>customer Purpose</TableCell> */}
-                                              
+
                                               {/* <TableCell>Joining Date</TableCell> */}
                                               <TableCell> History</TableCell>
                                               <TableCell>Actions</TableCell>
@@ -322,7 +337,7 @@ const handleSort = (key) => {
                                             : "transparent",
                                           color: isRedMark ? "white" : "black",
                                         }}
-                                      > 
+                                      >
                                         {formatDateTime(customer.next_follow_up_date)}
                                       </td>*/}
                                       <td>{customer.category_name}</td>
@@ -338,7 +353,7 @@ const handleSort = (key) => {
                                     {/* <td>
                                       {truncateEnquiryPurpose(customer.enquiry_purpose)}
                                     </td> */}
-                                                
+
                                         {/* <td>{customer.joining_date}</td> */}
                                         <td>
                                   {/* Display truncated history */}
@@ -371,7 +386,7 @@ const handleSort = (key) => {
                                   )}
                                 </TableBody>
                         </table>
-                      
+
             </div>
             </div>
 

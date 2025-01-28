@@ -1,5 +1,844 @@
+import React, { useEffect, useState } from "react";
+import { Button, Modal, TextField, Grid, Box, Typography, Paper ,Card,CardContent} from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { updateEventStatus, fetchEventById, fetchEventByIdUpdate, deleteEvent } from "../../redux/slice/crm/eventSlice";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import MeetingUpdateTable from "../meetingupdate/MeetingUpdateTable";
+import moment from "moment";
 
-// //reschdule and cancel
+const EventDetail = () => {
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const selectedEvent = useSelector((state) => state.events.selectedEvent);
+  const navigate = useNavigate();
+
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [newStartTime, setNewStartTime] = useState(selectedEvent?.start || "");
+  const [newEndTime, setNewEndTime] = useState(selectedEvent?.end || "");
+
+  useEffect(() => {
+    dispatch(fetchEventById(id));
+  }, [dispatch, id]);
+
+  const handleRescheduleEvent = () => {
+    if (newStartTime && newEndTime) {
+      const updatedEvent = {
+        ...selectedEvent,
+        start: newStartTime,
+        end: newEndTime,
+      };
+
+      dispatch(fetchEventByIdUpdate({ id: selectedEvent.id, eventToSave: updatedEvent }))
+        .then(() => {
+           // After successful update, fetch the updated event details
+          dispatch(fetchEventById(id));
+          sendEmailNotification(updatedEvent);
+          toast.success("Event rescheduled successfully!");
+          setShowRescheduleModal(false);
+        })
+        .catch(() => {
+          toast.error("Failed to reschedule the event.");
+        });
+    } else {
+      toast.error("Please provide both start and end times.");
+    }
+  };
+
+  const sendEmailNotification = (event) => {
+    const emailData = {
+      subject: `Meeting Rescheduled: ${event.title}`,
+      body: `The meeting "${event.title}" has been rescheduled. Here is the new meeting link: <Meeting Link>`,
+      to: event.attendees.map((attendee) => attendee.email),
+    };
+    console.log("Sending email notifications:", emailData);
+  };
+
+  const handleBackToList = () => {
+    navigate("/dashboard/crm/event");
+  };
+
+  const handleCancelEvent = () => {
+    dispatch(updateEventStatus({id, status: "canceled"}))
+      .then(() => {
+        dispatch(fetchEventById(id)); // Fetch the updated event
+        toast.success("Event cancelled successfully!");
+      })
+      .catch(() => {
+        toast.error("Failed to cancel the event.");
+      });
+  };
+
+  const handleDeleteEvent = () => {
+    dispatch(deleteEvent(id))
+      .then(() => {
+        toast.success("Event deleted successfully!");
+        navigate("/dashboard/crm/events");
+      })
+      .catch(() => {
+        toast.error("Failed to delete the event.");
+      });
+  };
+
+  if (!selectedEvent) {
+    return <div>Loading event details...</div>;
+  }
+
+  return (
+    <div className="content-wrapper">
+      <Box sx={{ padding: 3 }}>
+        {/* Header with title and action buttons */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>{selectedEvent.title}</Typography>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button variant="outlined" color="primary" onClick={handleBackToList}>
+              Back to event
+            </Button>
+            <Button variant="contained" color="primary" onClick={() => setShowRescheduleModal(true)}>
+              Reschedule Event
+            </Button>
+            {!selectedEvent.is_canceled && (
+              <Button variant="contained" color="secondary" onClick={handleCancelEvent}>
+                Cancel Event
+              </Button>
+            )}
+            <Button variant="contained" color="error" onClick={handleDeleteEvent}>
+              Delete Event
+            </Button>
+          </Box>
+        </Box>
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Grid container spacing={3}>
+
+                      {/* Row 1 */}
+                      <Grid item xs={12} sm={4}>
+                        {/* Event Details - Horizontal layout with fields */}
+                          {/* <Grid container spacing={3}> */}
+                              {/* Show cancellation status */}
+                                {selectedEvent.is_canceled ? (
+                                  <Typography variant="h6" sx={{ color: 'red' }}>Status: Cancelled</Typography>
+                                ) : (
+                                  <Typography variant="h6" sx={{ color: 'green' }}>Status: Scheduled</Typography>
+                              )}
+
+                          {/* </Grid> */}
+                        </Grid>
+                      <Grid item xs={12} sm={4}>
+                        <Typography variant="h6">Start:</Typography>
+                        <Typography variant="body1">{moment(selectedEvent.start).format("YYYY-MM-DD HH:mm")}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={4}>
+                        <Typography variant="h6">End:</Typography>
+                        <Typography variant="body1">{moment(selectedEvent.end).format("YYYY-MM-DD HH:mm")}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={4}>
+                        <Typography variant="h6">Attendees:</Typography>
+                        {selectedEvent.attendees && selectedEvent.attendees.length > 0 ? (
+                          <ul>
+                            {selectedEvent.attendees.map((attendee, index) => (
+                              <li key={index}>{attendee.name} ({attendee.email}) {attendee.pri_phone}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <Typography variant="body1">No attendees for this event.</Typography>
+                        )}
+                      </Grid>
+
+                      {/* Row 2 */}
+                      <Grid item xs={12} sm={4}>
+                        <Typography variant="h6">Organization:</Typography>
+                        <Typography variant="body1">{selectedEvent.organization_name}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={4}>
+                        <Typography variant="h6">Address:</Typography>
+                        <Typography variant="body1">{selectedEvent.organization_address}</Typography>
+                      </Grid>
+                      <Grid item xs={12} sm={4}>
+                        <Typography variant="h6">Description:</Typography>
+                        <Typography variant="body1">{selectedEvent.description}</Typography>
+                      </Grid>
+            </Grid>
+
+        </CardContent>
+        </Card>
+      </Box>
+
+      {/* Reschedule Modal */}
+      <Modal open={showRescheduleModal} onClose={() => setShowRescheduleModal(false)}>
+        <Box sx={{
+          width: 400,
+          padding: 2,
+          backgroundColor: "white",
+          borderRadius: 2,
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          boxShadow: 3
+        }}>
+          <Typography variant="h6" gutterBottom>Reschedule Event</Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Start Time"
+                type="datetime-local"
+                value={newStartTime}
+                onChange={(e) => setNewStartTime(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="End Time"
+                type="datetime-local"
+                value={newEndTime}
+                onChange={(e) => setNewEndTime(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                variant="outlined"
+              />
+            </Grid>
+          </Grid>
+          <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 2 }}>
+            <Button variant="outlined" color="secondary" onClick={() => setShowRescheduleModal(false)}>
+              Close
+            </Button>
+            <Button variant="contained" color="primary" onClick={handleRescheduleEvent}>
+              Reschedule Event
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+
+      {/* Toast Notifications */}
+      <ToastContainer />
+       <div className="container-fluid">
+              {/* Enquiry details and actions here */}
+
+              {/* Mark as Lost and Convert to Client buttons here */}
+
+              {/* Render Meeting Update Table below */}
+              <MeetingUpdateTable />
+              <p>meeting table</p>
+      </div>
+    </div>
+  );
+};
+
+export default EventDetail;
+
+
+
+//all is work, except design
+// import React, { useEffect, useState } from "react";
+// import { Button, Modal, TextField, Grid, Box, Typography, Paper } from "@mui/material";  // Material UI Components
+// import { useParams, useNavigate } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux";
+// import { updateEventStatus,fetchEventById, fetchEventByIdUpdate, deleteEvent } from "../../redux/slice/crm/eventSlice";
+// import { toast, ToastContainer } from "react-toastify"; // Import toast for notifications
+// import "react-toastify/dist/ReactToastify.css"; // Import CSS for toast
+// import moment from "moment"; // For time manipulation
+
+// const EventDetail = () => {
+//   const { id } = useParams(); // Get the event ID from the URL
+//   const dispatch = useDispatch();
+//   const selectedEvent = useSelector((state) => state.events.selectedEvent);
+//   const navigate = useNavigate();
+
+//   const [showRescheduleModal, setShowRescheduleModal] = useState(false); // State for reschedule modal
+//   const [newStartTime, setNewStartTime] = useState(selectedEvent?.start || ""); // New start time for reschedule
+//   const [newEndTime, setNewEndTime] = useState(selectedEvent?.end || ""); // New end time for reschedule
+
+//   useEffect(() => {
+//     dispatch(fetchEventById(id)); // Fetch event by ID when component mounts
+//   }, [dispatch, id]);
+
+//   const handleRescheduleEvent = () => {
+//     if (newStartTime && newEndTime) {
+//       const updatedEvent = {
+//         ...selectedEvent,
+//         start: newStartTime,
+//         end: newEndTime,
+//       };
+
+//       // Update event and send email notification
+//       dispatch(fetchEventByIdUpdate({ id: selectedEvent.id, eventToSave: updatedEvent }))
+//         .then(() => {
+//           sendEmailNotification(updatedEvent);
+//           toast.success("Event rescheduled successfully!");
+//           setShowRescheduleModal(false); // Close modal after successful update
+//         })
+//         .catch(() => {
+//           toast.error("Failed to reschedule the event.");
+//         });
+//     } else {
+//       toast.error("Please provide both start and end times.");
+//     }
+//   };
+
+//   const sendEmailNotification = (event) => {
+//     const emailData = {
+//       subject: `Meeting Rescheduled: ${event.title}`,
+//       body: `The meeting "${event.title}" has been rescheduled. Here is the new meeting link: <Meeting Link>`,
+//       to: event.attendees.map((attendee) => attendee.email),
+//     };
+//     console.log("Sending email notifications:", emailData);
+//   };
+
+//   // Navigate back to the event list page
+//   const handleBackToList = () => {
+//     navigate("/dashboard/crm/event"); // Adjust the route to match your event list page
+//   };
+
+//   // Cancel event
+
+//   const handleCancelEvent = () => {
+//     // Dispatch action to update the event's cancellation status to true
+//     dispatch(updateEventStatus(id))
+//       .then(() => {
+//         toast.success("Event cancelled successfully!");
+//       })
+//       .catch((error) => {
+//         toast.error("Failed to cancel the event.");
+//       });
+//   };
+//   // Delete event
+//   const handleDeleteEvent = () => {
+//     dispatch(deleteEvent(id))
+//       .then(() => {
+//         toast.success("Event deleted successfully!");  // Show delete toast message
+//         navigate("/dashboard/crm/events"); // Redirect to event list after deletion
+//       })
+//       .catch(() => {
+//         toast.error("Failed to delete the event.");
+//       });
+//   };
+
+//   if (!selectedEvent) {
+//     return <div>Loading event details...</div>;  // Show loading until event is loaded
+//   }
+
+//   return (
+//     <div className="content-wrapper">
+//       {/* Event Detail */}
+//       <Box sx={{ padding: 3 }}>
+//         {/* Header with title and action buttons */}
+//         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+//           <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>{selectedEvent.title}</Typography>
+//           <Box sx={{ display: 'flex', gap: 2 }}>
+//             <Button variant="outlined" color="primary" onClick={handleBackToList}>
+//               Back to List
+//             </Button>
+//             <Button variant="contained" color="primary" onClick={() => setShowRescheduleModal(true)}>
+//               Reschedule Event
+//             </Button>
+//             {!selectedEvent.is_canceled && (
+//             <Button variant="contained" color="secondary" onClick={handleCancelEvent}>
+//               Cancel Event
+//             </Button>
+//           )}
+
+//             <Button variant="contained" color="error" onClick={handleDeleteEvent}>
+//               Delete Event
+//             </Button>
+//           </Box>
+//         </Box>
+//   <Paper>
+//         {/* Event Details */}
+
+//             {/* Row 1 */}
+//           {/* <div className="col-md-4"> */}
+              // <Grid item xs={12} sm={4}>
+              // {/* Event Details - Horizontal layout with fields */}
+
+              //   <Grid container spacing={3}>
+              //       {/* Show cancellation status */}
+              //         {selectedEvent.is_canceled ? (
+              //           <Typography variant="h6" sx={{ color: 'red' }}>Status: Cancelled</Typography>
+              //         ) : (
+              //           <Typography variant="h6" sx={{ color: 'green' }}>Status: Scheduled</Typography>
+              //        )}
+
+              //   </Grid>
+
+              //  <Grid>
+//           {/* </div> */}
+//               <Typography variant="h6">Start:</Typography>
+//               <Typography variant="body1">{moment(selectedEvent.start).format("YYYY-MM-DD HH:mm")}</Typography>
+//             </Grid>
+//             <Grid item xs={12} sm={4}>
+//               <Typography variant="h6">End:</Typography>
+//               <Typography variant="body1">{moment(selectedEvent.end).format("YYYY-MM-DD HH:mm")}</Typography>
+//             </Grid>
+//             <Grid item xs={12} sm={4}>
+//                 {/* Attendees Section */}
+//         {/* <Paper> */}
+//           <Typography variant="h6">Attendees</Typography>
+//           {selectedEvent.attendees && selectedEvent.attendees.length > 0 ? (
+//             <ul>
+//               {selectedEvent.attendees.map((attendee, index) => (
+//                 <li key={index}>
+//                   {attendee.name} ({attendee.email})
+//                 </li>
+//               ))}
+//             </ul>
+//           ) : (
+//             <Typography variant="body1">No attendees for this event.</Typography>
+//           )}
+//         {/* </Paper> */}
+//             </Grid>
+
+//             {/* Row 2 */}
+//             <Grid item xs={12} sm={4}>
+//               <Typography variant="h6">Organization:</Typography>
+//               <Typography variant="body1">{selectedEvent.organization_name}</Typography>
+//             </Grid>
+//             <Grid item xs={12} sm={4}>
+//               <Typography variant="h6">Address:</Typography>
+//               <Typography variant="body1">{selectedEvent.organization_address}</Typography>
+//             </Grid>
+//             <Grid item xs={12} sm={4}>
+//               <Typography variant="h6">Description:</Typography>
+//               <Typography variant="body1">{selectedEvent.description}</Typography>
+//             </Grid>
+//           </Grid>
+//         </Paper>
+//       </Box>
+//       {/* Reschedule Modal */}
+//       <Modal open={showRescheduleModal} onClose={() => setShowRescheduleModal(false)}>
+//         <Box sx={{
+//           width: 400,
+//           padding: 2,
+//           backgroundColor: "white",
+//           borderRadius: 2,
+//           position: 'absolute',
+//           top: '50%',
+//           left: '50%',
+//           transform: 'translate(-50%, -50%)',
+//           boxShadow: 3
+//         }}>
+//           <Typography variant="h6" gutterBottom>Reschedule Event</Typography>
+//           <Grid container spacing={2}>
+//             <Grid item xs={12}>
+//               <TextField
+//                 fullWidth
+//                 label="Start Time"
+//                 type="datetime-local"
+//                 value={newStartTime}
+//                 onChange={(e) => setNewStartTime(e.target.value)}
+//                 InputLabelProps={{ shrink: true }}
+//                 variant="outlined"
+//               />
+//             </Grid>
+//             <Grid item xs={12}>
+//               <TextField
+//                 fullWidth
+//                 label="End Time"
+//                 type="datetime-local"
+//                 value={newEndTime}
+//                 onChange={(e) => setNewEndTime(e.target.value)}
+//                 InputLabelProps={{ shrink: true }}
+//                 variant="outlined"
+//               />
+//             </Grid>
+//           </Grid>
+//           <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 2 }}>
+//             <Button variant="outlined" color="secondary" onClick={() => setShowRescheduleModal(false)}>
+//               Close
+//             </Button>
+//             <Button variant="contained" color="primary" onClick={handleRescheduleEvent}>
+//               Reschedule Event
+//             </Button>
+//           </Box>
+//         </Box>
+//       </Modal>
+
+//       {/* Toast Notifications */}
+//       <ToastContainer />
+//     </div>
+//   );
+
+// };
+
+// export default EventDetail;
+//button at bottom horizonatal arrangement
+// import React, { useEffect, useState } from "react";
+// import { Button, Modal, TextField, Grid, Box, Typography } from "@mui/material";  // Material UI Components
+// import { useParams, useNavigate } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux";
+// import { fetchEventById, fetchEventByIdUpdate, deleteEvent } from "../../redux/slice/crm/eventSlice";
+// import { toast, ToastContainer } from "react-toastify"; // Import toast for notifications
+// import "react-toastify/dist/ReactToastify.css"; // Import CSS for toast
+// import moment from "moment"; // For time manipulation
+
+// const EventDetail = () => {
+//   const { id } = useParams(); // Get the event ID from the URL
+//   const dispatch = useDispatch();
+//   const selectedEvent = useSelector((state) => state.events.selectedEvent);
+//   const navigate = useNavigate();
+
+//   const [showRescheduleModal, setShowRescheduleModal] = useState(false); // State for reschedule modal
+//   const [newStartTime, setNewStartTime] = useState(selectedEvent?.start || ""); // New start time for reschedule
+//   const [newEndTime, setNewEndTime] = useState(selectedEvent?.end || ""); // New end time for reschedule
+
+//   useEffect(() => {
+//     dispatch(fetchEventById(id)); // Fetch event by ID when component mounts
+//   }, [dispatch, id]);
+
+//   const handleRescheduleEvent = () => {
+//     if (newStartTime && newEndTime) {
+//       const updatedEvent = {
+//         ...selectedEvent,
+//         start: newStartTime,
+//         end: newEndTime,
+//       };
+
+//       // Update event and send email notification
+//       dispatch(fetchEventByIdUpdate({ id: selectedEvent.id, eventToSave: updatedEvent }))
+//         .then(() => {
+//           // Send email notification for rescheduling (simulated here, replace with real service)
+//           sendEmailNotification(updatedEvent);
+//           toast.success("Event rescheduled successfully!");
+//           setShowRescheduleModal(false); // Close modal after successful update
+//         })
+//         .catch(() => {
+//           toast.error("Failed to reschedule the event.");
+//         });
+//     } else {
+//       toast.error("Please provide both start and end times.");
+//     }
+//   };
+
+//   const sendEmailNotification = (event) => {
+//     // Send email logic for rescheduling or new event (using API or external service like SendGrid)
+//     const emailData = {
+//       subject: `Meeting Rescheduled: ${event.title}`,
+//       body: `The meeting "${event.title}" has been rescheduled. Here is the new meeting link: <Meeting Link>`,
+//       to: event.attendees.map((attendee) => attendee.email),
+//     };
+//     // Use your email API service here
+//     console.log("Sending email notifications:", emailData);
+//   };
+
+//   // Navigate back to the event list page
+//   const handleBackToList = () => {
+//     navigate("/dashboard/crm/event"); // Adjust the route to match your event list page
+//   };
+
+//   // Cancel event
+//   const handleCancelEvent = () => {
+//     dispatch(deleteEvent(id))
+//       .then(() => {
+//         toast.success("Event canceled successfully!");  // Show cancel toast message
+//         navigate("/dashboard/crm/events"); // Redirect to event list after cancellation
+//       })
+//       .catch(() => {
+//         toast.error("Failed to cancel the event.");
+//       });
+//   };
+
+//   // Delete event
+//   const handleDeleteEvent = () => {
+//     dispatch(deleteEvent(id))
+//       .then(() => {
+//         toast.success("Event deleted successfully!");  // Show delete toast message
+//         navigate("/dashboard/crm/events"); // Redirect to event list after deletion
+//       })
+//       .catch(() => {
+//         toast.error("Failed to delete the event.");
+//       });
+//   };
+
+//   if (!selectedEvent) {
+//     return <div>Loading event details...</div>;  // Show loading until event is loaded
+//   }
+
+//   return (
+//     <div className="content-wrapper">
+//     {/* Event Detail */}
+//     <Box sx={{ padding: 2 }}>
+//       <Typography variant="h4" component="h1">{selectedEvent.title}</Typography>
+
+//       {/* Event Details Grid */}
+//       <Grid container spacing={2} sx={{ mt: 2 }}>
+//         <Grid item xs={12} sm={6}>
+//           <Typography variant="h6">Start: {moment(selectedEvent.start).format("YYYY-MM-DD HH:mm")}</Typography>
+//         </Grid>
+//         <Grid item xs={12} sm={6}>
+//           <Typography variant="h6">End: {moment(selectedEvent.end).format("YYYY-MM-DD HH:mm")}</Typography>
+//         </Grid>
+//         <Grid item xs={12} sm={6}>
+//           <Typography variant="h6">Description:</Typography>
+//           <Typography variant="body1">{selectedEvent.description}</Typography>
+//         </Grid>
+//         <Grid item xs={12} sm={6}>
+//           <Typography variant="h6">Organization: {selectedEvent.organization_name}</Typography>
+//           <Typography variant="h6">Organization Address: {selectedEvent.organization_address}</Typography>
+//         </Grid>
+//       </Grid>
+
+//       {/* Attendees Section */}
+//       <Typography variant="h5" sx={{ mt: 2 }}>Attendees</Typography>
+//       {selectedEvent.attendees && selectedEvent.attendees.length > 0 ? (
+//         <ul>
+//           {selectedEvent.attendees.map((attendee, index) => (
+//             <li key={index}>
+//               {attendee.name} ({attendee.email})
+//             </li>
+//           ))}
+//         </ul>
+//       ) : (
+//         <p>No attendees for this event.</p>
+//       )}
+
+//       {/* Buttons Section */}
+//       <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-start", mt: 2 }}>
+//         <Button variant="outlined" color="primary" onClick={handleBackToList}>
+//           Back to List
+//         </Button>
+//         <Button variant="contained" color="primary" onClick={() => setShowRescheduleModal(true)}>
+//           Reschedule Event
+//         </Button>
+//         <Button variant="contained" color="secondary" onClick={handleCancelEvent}>
+//           Cancel Event
+//         </Button>
+//         <Button variant="contained" color="error" onClick={handleDeleteEvent}>
+//           Delete Event
+//         </Button>
+//       </Box>
+//     </Box>
+
+//     {/* Reschedule Modal */}
+//     <Modal open={showRescheduleModal} onClose={() => setShowRescheduleModal(false)}>
+//       <Box sx={{
+//         width: 400,
+//         padding: 2,
+//         backgroundColor: "white",
+//         borderRadius: 1,
+//         position: 'absolute',
+//         top: '50%',
+//         left: '50%',
+//         transform: 'translate(-50%, -50%)'
+//       }}>
+//         <Typography variant="h6" gutterBottom>Reschedule Event</Typography>
+//         <Grid container spacing={2}>
+//           <Grid item xs={12}>
+//             <TextField
+//               fullWidth
+//               label="Start Time"
+//               type="datetime-local"
+//               value={newStartTime}
+//               onChange={(e) => setNewStartTime(e.target.value)}
+//               InputLabelProps={{ shrink: true }}
+//               variant="outlined"
+//             />
+//           </Grid>
+//           <Grid item xs={12}>
+//             <TextField
+//               fullWidth
+//               label="End Time"
+//               type="datetime-local"
+//               value={newEndTime}
+//               onChange={(e) => setNewEndTime(e.target.value)}
+//               InputLabelProps={{ shrink: true }}
+//               variant="outlined"
+//             />
+//           </Grid>
+//         </Grid>
+//         <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 2 }}>
+//           <Button variant="outlined" color="secondary" onClick={() => setShowRescheduleModal(false)}>
+//             Close
+//           </Button>
+//           <Button variant="contained" color="primary" onClick={handleRescheduleEvent}>
+//             Reschedule Event
+//           </Button>
+//         </Box>
+//       </Box>
+//     </Modal>
+
+//     {/* Toast Notifications */}
+//     <ToastContainer />
+//   </div>
+// );
+// };
+
+
+
+// export default EventDetail;
+
+
+
+//first new design vertical arrangement , button at bottom line
+// import React, { useEffect, useState } from "react";
+// import { Button, Modal, TextField, Grid, Box, Typography } from "@mui/material";  // Material UI Components
+// import { useParams, useNavigate } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux";
+// import { fetchEventById, fetchEventByIdUpdate, deleteEvent } from "../../redux/slice/crm/eventSlice";
+// import { toast, ToastContainer } from "react-toastify"; // Import toast for notifications
+// import "react-toastify/dist/ReactToastify.css"; // Import CSS for toast
+// import moment from "moment"; // For time manipulation
+
+// const EventDetail = () => {
+//   const { id } = useParams(); // Get the event ID from the URL
+//   const dispatch = useDispatch();
+//   const selectedEvent = useSelector((state) => state.events.selectedEvent);
+//   const navigate = useNavigate();
+
+//   const [showRescheduleModal, setShowRescheduleModal] = useState(false); // State for reschedule modal
+//   const [newStartTime, setNewStartTime] = useState(selectedEvent?.start || ""); // New start time for reschedule
+//   const [newEndTime, setNewEndTime] = useState(selectedEvent?.end || ""); // New end time for reschedule
+
+//   useEffect(() => {
+//     dispatch(fetchEventById(id)); // Fetch event by ID when component mounts
+//   }, [dispatch, id]);
+
+//   const handleRescheduleEvent = () => {
+//     if (newStartTime && newEndTime) {
+//       const updatedEvent = {
+//         ...selectedEvent,
+//         start: newStartTime,
+//         end: newEndTime,
+//       };
+
+//       // Update event and send email notification
+//       dispatch(fetchEventByIdUpdate({ id: selectedEvent.id, eventToSave: updatedEvent }))
+//         .then(() => {
+//           // Send email notification for rescheduling (simulated here, replace with real service)
+//           sendEmailNotification(updatedEvent);
+//           toast.success("Event rescheduled successfully!");
+//           setShowRescheduleModal(false); // Close modal after successful update
+//         })
+//         .catch(() => {
+//           toast.error("Failed to reschedule the event.");
+//         });
+//     } else {
+//       toast.error("Please provide both start and end times.");
+//     }
+//   };
+
+//   const sendEmailNotification = (event) => {
+//     // Send email logic for rescheduling or new event (using API or external service like SendGrid)
+//     const emailData = {
+//       subject: `Meeting Rescheduled: ${event.title}`,
+//       body: `The meeting "${event.title}" has been rescheduled. Here is the new meeting link: <Meeting Link>`,
+//       to: event.attendees.map((attendee) => attendee.email),
+//     };
+//     // Use your email API service here
+//     console.log("Sending email notifications:", emailData);
+//   };
+
+//   // Navigate back to the event list page
+//   const handleBackToList = () => {
+//     navigate("/dashboard/crm/event"); // Adjust the route to match your event list page
+//   };
+
+//   // Cancel event
+//   const handleCancelEvent = () => {
+//     dispatch(deleteEvent(id))
+//       .then(() => {
+//         toast.success("Event deleted successfully!");
+//         navigate("/dashboard/crm/events"); // Redirect to event list after deletion
+//       })
+//       .catch(() => {
+//         toast.error("Failed to delete the event.");
+//       });
+//   };
+
+//   if (!selectedEvent) {
+//     return <div>Loading event details...</div>;  // Show loading until event is loaded
+//   }
+
+//   return (
+//     <div className="content-wrapper">
+//       {/* Event Detail */}
+//       <Box sx={{ padding: 2 }}>
+//         <Typography variant="h4" component="h1">{selectedEvent.title}</Typography>
+//         <Typography variant="h6">Start: {moment(selectedEvent.start).format("YYYY-MM-DD HH:mm")}</Typography>
+//         <Typography variant="h6">End: {moment(selectedEvent.end).format("YYYY-MM-DD HH:mm")}</Typography>
+//         <Typography variant="h6">Description: {selectedEvent.description}</Typography>
+
+//         <Typography variant="h5" sx={{ mt: 2 }}>Attendees</Typography>
+//         {selectedEvent.attendees && selectedEvent.attendees.length > 0 ? (
+//           <ul>
+//             {selectedEvent.attendees.map((attendee, index) => (
+//               <li key={index}>
+//                 {attendee.name} ({attendee.email})
+//               </li>
+//             ))}
+//           </ul>
+//         ) : (
+//           <p>No attendees for this event.</p>
+//         )}
+
+//         {/* Buttons Section */}
+//         <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-start", mt: 2 }}>
+//           <Button variant="outlined" color="primary" onClick={handleBackToList}>
+//             Back to List
+//           </Button>
+//           <Button variant="contained" color="primary" onClick={() => setShowRescheduleModal(true)}>
+//             Reschedule Event
+//           </Button>
+//           <Button variant="contained" color="secondary" onClick={handleCancelEvent}>
+//             Cancel Event
+//           </Button>
+//           <Button variant="contained" color="error" onClick={() => handleCancelEvent()}>
+//             Delete Event
+//           </Button>
+//         </Box>
+//       </Box>
+
+//       {/* Reschedule Modal */}
+//       <Modal open={showRescheduleModal} onClose={() => setShowRescheduleModal(false)}>
+//         <Box sx={{ width: 400, padding: 2, backgroundColor: "white", borderRadius: 1 }}>
+//           <Typography variant="h6" gutterBottom>Reschedule Event</Typography>
+//           <Grid container spacing={2}>
+//             <Grid item xs={12}>
+//               <TextField
+//                 fullWidth
+//                 label="Start Time"
+//                 type="datetime-local"
+//                 value={newStartTime}
+//                 onChange={(e) => setNewStartTime(e.target.value)}
+//                 InputLabelProps={{ shrink: true }}
+//               />
+//             </Grid>
+//             <Grid item xs={12}>
+//               <TextField
+//                 fullWidth
+//                 label="End Time"
+//                 type="datetime-local"
+//                 value={newEndTime}
+//                 onChange={(e) => setNewEndTime(e.target.value)}
+//                 InputLabelProps={{ shrink: true }}
+//               />
+//             </Grid>
+//           </Grid>
+//           <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 2 }}>
+//             <Button variant="outlined" color="secondary" onClick={() => setShowRescheduleModal(false)}>
+//               Close
+//             </Button>
+//             <Button variant="contained" color="primary" onClick={handleRescheduleEvent}>
+//               Reschedule Event
+//             </Button>
+//           </Box>
+//         </Box>
+//       </Modal>
+
+//       {/* Toast Notifications */}
+//       <ToastContainer />
+//     </div>
+//   );
+// };
+
+// export default EventDetail;
+
+
+//reschdule and cancel old best working page
 // import React, { useEffect, useState } from "react";
 // import { Button, Modal, Form } from "react-bootstrap";  // Importing modal and form for rescheduling
 // import { useParams, useNavigate } from "react-router-dom";
@@ -45,7 +884,13 @@
 //       toast.error("Please provide both start and end times.");
 //     }
 //   };
+//     // Navigate back to the event list page
+//   const handleBackToList = () => {
+//     navigate.push("/dashboard/crm/event"); // Adjust the route to match your event list page
+//   };
 
+
+//   // cancel event
 //   const handleCancelEvent = () => {
 //     dispatch(deleteEvent(id))
 //       .then(() => {
@@ -88,6 +933,17 @@
 //           ) : (
 //             <p>No attendees available for this event.</p>
 //           )}
+//       <Button
+//         variant="primary"
+//         onClick={() => navigate(`/dashboard/crm/event/update/${selectedEvent.id}`)}
+//       >
+//         Update Event
+//       </Button>
+//           {/* back to list */}
+//           <button onClick={handleBackToList} className="back-to-list-button">
+//                 Back to Events List
+//           </button>
+
 
 //           {/* Reschedule Button */}
 //           <Button variant="primary" onClick={() => setShowRescheduleModal(true)}>
@@ -95,6 +951,14 @@
 //           </Button>
 
 //           {/* Cancel Event Button */}
+//           <Button
+//             variant="secondary"
+//             onClick={() => handleCancelEvent()}
+//             className="ms-2"
+//           >
+//             Cancel Event
+//           </Button>
+//           {/* delete */}
 //           <Button
 //             variant="danger"
 //             onClick={() => setEventToDelete(selectedEvent.id)}
@@ -157,120 +1021,6 @@
 // };
 
 // export default EventDetail;
-
-// event detail work great
-import React, { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
-import { useParams, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchEventById } from "../../redux/slice/crm/eventSlice";
-import EventDelete from "./EventDelete"; // Adjust the path as necessary
-import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
-import "react-toastify/dist/ReactToastify.css"; // Import CSS for toast
-
-const EventDetail = () => {
-  const { id } = useParams(); // Get the event ID from the URL
-  const dispatch = useDispatch();
-  const selectedEvent = useSelector((state) => state.events.selectedEvent);
-  // const loading = useSelector((state) => state.events.loading);
-  // const error = useSelector((state) => state.events.error);
-  const navigate = useNavigate();
-
-  const [eventToDelete, setEventToDelete] = useState(null);
-  // const { selectedEvent, loading, error } = useSelector((state) => ({
-  //   selectedEvent: state.events.selectedEvent,
-  //   loading: state.events.loading,
-  //   error: state.events.error,
-  // }));
-  useEffect(() => {
-    dispatch(fetchEventById(id)); // Fetch event by ID when component mounts
-  }, [dispatch, id]);
-  if (!selectedEvent) {
-    return <div>Loading event details...</div>;  // Show loading until event is loaded
-  }
-  // useEffect(() => {
-  //   console.log("Event:", event);
-  //   console.log("Loading:", loading);
-  //   console.log("Error:", error);
-  // }, [event, loading, error]);
-
-  // if (loading) {
-  //   return <p>Loading event details...</p>;
-  // }
-
-  // if (error) {
-  //   const errorMessage = error.detail || "An unknown error occurred.";
-  //   return <p>Error: {errorMessage}</p>;
-  // }
-
-  // if (!event) {
-  //   return <p>No event found!</p>;
-  // }
-
-  return (
-    <div>
-      {/* Only display event details if selectedEvent is available */}
-      {selectedEvent ? (
-        <>
-      <h2>{selectedEvent.title}</h2>
-      <p>
-        <strong>Start:</strong> {new Date(selectedEvent.start).toLocaleString()}
-      </p>
-      <p>
-        <strong>End:</strong> {new Date(selectedEvent.end).toLocaleString()}
-      </p>
-      <p>
-        <strong>description:</strong> {selectedEvent.description}
-      </p>
-      <h5>Attendees</h5>
-      {selectedEvent.attendees && selectedEvent.attendees.length > 0 ? (
-        <ul>
-          {selectedEvent.attendees.map((attendee) => (
-            <li key={attendee.id}>
-              {attendee.attendee_name} ({attendee.email})
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No attendees available for this selectedEvent.</p>
-      )}
-      <Button
-        variant="primary"
-        onClick={() => navigate(`/dashboard/crm/event/update/${selectedEvent.id}`)}
-      >
-        Update Event
-      </Button>
-      <Button
-        variant="danger"
-        onClick={() => setEventToDelete(selectedEvent.id)}
-        className="ms-2"
-      >
-        Delete Event
-      </Button>
-      {/* Delete Confirmation Modal */}
-      {eventToDelete !== null && (
-        <EventDelete
-          id={eventToDelete}
-          onClose={() => setEventToDelete(null)}
-          // Removed toast.success from here
-        />
-      )}
-
-        </>
-      ) : (
-        <p>No event found!</p>
-      )}
-      <ToastContainer /> {/* Ensure this is included for toast notifications */}
-    </div>
-  );
-};
-
-export default EventDetail;
-
-
-
-
-
 
 
 
@@ -696,226 +1446,66 @@ export default EventDetail;
 
 
 
-// ####last page
-// import React, { useEffect, useState } from "react";
-// import { Button, Col, Row, Container } from "react-bootstrap";
-// import { useParams, useNavigate } from "react-router-dom";
-// import { useDispatch, useSelector } from "react-redux";
-// import { fetchEventById } from "../../redux/slice/crm/eventSlice";
-// import EventDelete from "./EventDelete";
-// import { toast, ToastContainer } from "react-toastify";
 
-// const EventDetail = () => {
-//   const { id } = useParams();
-//   console.log(id);
-//   const dispatch = useDispatch();
-//   const event = useSelector((state) => state.events.events);
-//   const selectedEvent = useSelector((state) => state.events.selectedEvent);
-//   const loading = useSelector((state) => state.events.loading);
-//   const error = useSelector((state) => state.events.error);
-//   const navigate = useNavigate();
-//   const [eventToDelete, setEventToDelete] = useState(null);
 
-//   useEffect(() => {
-//     dispatch(fetchEventById(id))
-//       .unwrap() // Unwrap the thunk to handle the returned data or errors
-//       .then((data) => console.log("Event fetched:", data))
-//       .catch((error) => console.log("Error fetching event:", error));
-//   }, [dispatch, id]);
 
-//   // useEffect(() => {
-//   //   if (event) {
-//   //     console.log("Fetched event:", event);
-//   //   }
-//   // }, [event]);
 
-//   if (loading) {
-//     return <p>Loading event details...</p>;
-//   }
 
-//   if (error) {
-//     return <p>Error: {error.detail || "An unknown error occurred."}</p>;
-//   }
 
-//   // if (!event) {
-//   //   return <p>No event found!</p>;
-//   // }
-
-//   // return selectedEvent? (
-//   //   <Container className="content-wrapper">
-//   //     <h2 className="btn btn primary">{selectedEvent.title}</h2>
-//   //     <div className="row">
-//   //       <div className="col">
-//   //         <Col md={12}>
-//   //           <div className="col-md-8">
-//   //             <strong>Start:</strong> {new Date(selectedEvent.start).toLocaleString()}
-//   //           </div>
-//   //           <div className="col-md-8">
-//   //             <strong>End:</strong> {new Date(selectedEvent.end).toLocaleString()}
-//   //           </div>
-//   //           <Col md={8}>
-//   //             <h5>Attendees</h5>
-//   //             {selectedEvent.attendees && selectedEvent.attendees.length > 0 ? (
-//   //               <ul>
-//   //                 {selectedEvent.attendees.map((attendee) => (
-//   //                   <li key={attendee.id}>
-//   //                     {attendee.attendee_name} ({attendee.email})
-//   //                   </li>
-//   //                 ))}
-//   //               </ul>
-//   //             ) : (
-//   //               <p>No attendees available for this selectedEvent.</p>
-//   //             )}
-//   //           </Col>
-//   //           <div>
-//   //             <strong>description:</strong>{" "}
-//   //             {selectedEvent.description
-//   //               ? selectedEvent.description
-//   //               : "No description available."}
-//   //           </div>
-
-//   //           <Button
-//   //             variant="primary"
-//   //             onClick={() =>
-//   //               event?.id && navigate(`/dashboard/crm/event/update/${selectedEvent.id}`)
-//   //             }
-//   //           >
-//   //             Update Event
-//   //           </Button>
-
-//   //           <Button
-//   //             variant="danger"
-//   //             onClick={() => setEventToDelete(selectedEvent.id)}
-//   //             className="ms-2"
-//   //           >
-//   //             Delete Event
-//   //           </Button>
-//   //         </Col>
-//   //       </div>
-//   //     </div>
-
-//   //     {eventToDelete !== null && (
-//   //       <EventDelete
-//   //         id={eventToDelete}
-//   //         onClose={() => setEventToDelete(null)}
-//   //       />
-//   //     )}
-
-//   //     <ToastContainer />
-//   //   </Container>
-//   // );
-//   return selectedEvent ? (
-//     <Container className="content-wrapper">
-//       <h2 className="btn btn-primary">{selectedEvent.title}</h2>
-//       <div className="row">
-//         <div className="col">
-//           <Col md={12}>
-//             <div className="col-md-8">
-//               <strong>Start:</strong>{" "}
-//               {new Date(selectedEvent.start).toLocaleString()}
-//             </div>
-//             <div className="col-md-8">
-//               <strong>End:</strong>{" "}
-//               {new Date(selectedEvent.end).toLocaleString()}
-//             </div>
-//             <Col md={8}>
-//               <h5>Attendees</h5>
-//               {selectedEvent.attendees && selectedEvent.attendees.length > 0 ? (
-//                 <ul>
-//                   {selectedEvent.attendees.map((attendee) => (
-//                     <li key={attendee.id}>
-//                       {attendee.attendee_name} ({attendee.email})
-//                     </li>
-//                   ))}
-//                 </ul>
-//               ) : (
-//                 <p>No attendees available for this event.</p>
-//               )}
-//             </Col>
-//             <div>
-//               <strong>Description:</strong>{" "}
-//               {selectedEvent.description || "No description available."}
-//             </div>
-//             <Button
-//               variant="primary"
-//               onClick={() =>
-//                 selectedEvent?.id &&
-//                 navigate(`/dashboard/crm/event/update/${selectedEvent.id}`)
-//               }
-//             >
-//               Update Event
-//             </Button>
-//             <Button
-//               variant="danger"
-//               onClick={() => setEventToDelete(selectedEvent.id)}
-//               className="ms-2"
-//             >
-//               Delete Event
-//             </Button>
-//           </Col>
-//         </div>
-//       </div>
-//       {eventToDelete !== null && (
-//         <EventDelete
-//           id={eventToDelete}
-//           onClose={() => setEventToDelete(null)}
-//         />
-//       )}
-//       <ToastContainer />
-//     </Container>
-//   ) : (
-//     <p>No event details available!</p>
-//   );
-
-// };
-
-// export default EventDetail;
-// ######
-
+// // event detail work great
 // import React, { useEffect, useState } from "react";
 // import { Button } from "react-bootstrap";
 // import { useParams, useNavigate } from "react-router-dom";
 // import { useDispatch, useSelector } from "react-redux";
 // import { fetchEventById } from "../../redux/slice/crm/eventSlice";
-// import EventDelete from "./EventDelete";
-// import { toast, ToastContainer } from "react-toastify";
+// import EventDelete from "./EventDelete"; // Adjust the path as necessary
+// import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
+// import "react-toastify/dist/ReactToastify.css"; // Import CSS for toast
 
 // const EventDetail = () => {
 //   const { id } = useParams(); // Get the event ID from the URL
 //   const dispatch = useDispatch();
-//   const event = useSelector((state) => state.events.sselectedEvent);
-//   const loading = useSelector((state) => state.events.loading);
-//   const error = useSelector((state) => state.events.error);
+//   const selectedEvent = useSelector((state) => state.events.selectedEvent);
+//   // const loading = useSelector((state) => state.events.loading);
+//   // const error = useSelector((state) => state.events.error);
 //   const navigate = useNavigate();
 
 //   const [eventToDelete, setEventToDelete] = useState(null);
-
-//   // Fetch event by ID when component mounts
+//   // const { selectedEvent, loading, error } = useSelector((state) => ({
+//   //   selectedEvent: state.events.selectedEvent,
+//   //   loading: state.events.loading,
+//   //   error: state.events.error,
+//   // }));
 //   useEffect(() => {
-//     dispatch(fetchEventById(id));
+//     dispatch(fetchEventById(id)); // Fetch event by ID when component mounts
 //   }, [dispatch, id]);
-
-//   // Log the fetched event data for debugging
-//   useEffect(() => {
-//     if (event) {
-//       console.log("Fetched event:", event);
-//     }
-//   }, [event]);
-
-//   if (loading) {
-//     return <p>Loading event details...</p>;
+//   if (!selectedEvent) {
+//     return <div>Loading event details...</div>;  // Show loading until event is loaded
 //   }
+//   // useEffect(() => {
+//   //   console.log("Event:", event);
+//   //   console.log("Loading:", loading);
+//   //   console.log("Error:", error);
+//   // }, [event, loading, error]);
 
-//   if (error) {
-//     return <p>Error: {error.detail || "An unknown error occurred."}</p>;
-//   }
+//   // if (loading) {
+//   //   return <p>Loading event details...</p>;
+//   // }
 
-//   if (!event) {
-//     return <p>No event found!</p>;
-//   }
+//   // if (error) {
+//   //   const errorMessage = error.detail || "An unknown error occurred.";
+//   //   return <p>Error: {errorMessage}</p>;
+//   // }
+
+//   // if (!event) {
+//   //   return <p>No event found!</p>;
+//   // }
 
 //   return (
-//     <div className="content-wrapper">
+//     <div>
+//       {/* Only display event details if selectedEvent is available */}
+//       {selectedEvent ? (
+//         <>
 //       <h2>{selectedEvent.title}</h2>
 //       <p>
 //         <strong>Start:</strong> {new Date(selectedEvent.start).toLocaleString()}
@@ -924,10 +1514,8 @@ export default EventDetail;
 //         <strong>End:</strong> {new Date(selectedEvent.end).toLocaleString()}
 //       </p>
 //       <p>
-//         <strong>description:</strong>{" "}
-//         {selectedEvent.description ? selectedEvent.description : "No description available."}
+//         <strong>description:</strong> {selectedEvent.description}
 //       </p>
-
 //       <h5>Attendees</h5>
 //       {selectedEvent.attendees && selectedEvent.attendees.length > 0 ? (
 //         <ul>
@@ -940,14 +1528,12 @@ export default EventDetail;
 //       ) : (
 //         <p>No attendees available for this selectedEvent.</p>
 //       )}
-
-//       <Button
-//         variant="primary"
-//         onClick={() => navigate(`/dashboard/crm/event/update/${selectedEvent.id}`)}
-//       >
-//         Update Event
-//       </Button>
-
+      // <Button
+      //   variant="primary"
+      //   onClick={() => navigate(`/dashboard/crm/event/update/${selectedEvent.id}`)}
+      // >
+      //   Update Event
+      // </Button>
 //       <Button
 //         variant="danger"
 //         onClick={() => setEventToDelete(selectedEvent.id)}
@@ -955,17 +1541,23 @@ export default EventDetail;
 //       >
 //         Delete Event
 //       </Button>
-
+//       {/* Delete Confirmation Modal */}
 //       {eventToDelete !== null && (
 //         <EventDelete
 //           id={eventToDelete}
 //           onClose={() => setEventToDelete(null)}
+//           // Removed toast.success from here
 //         />
 //       )}
 
-//       <ToastContainer />
+//         </>
+//       ) : (
+//         <p>No event found!</p>
+//       )}
+//       <ToastContainer /> {/* Ensure this is included for toast notifications */}
 //     </div>
 //   );
 // };
 
 // export default EventDetail;
+

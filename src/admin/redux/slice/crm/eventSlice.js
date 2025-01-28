@@ -12,21 +12,30 @@ export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
   return response.data.result;
 });
 
-// Async thunk for fetching an event by ID
+
+export const updateEventStatus = createAsyncThunk(
+  'events/updateStatus',
+  async ({id,status},{rejectWithValue}) => {
+    try{
+    const response = await axios.patch(`http://127.0.0.1:8000/api/event/cancel/${id}/`,{is_canceled:true});  // Patch request to cancel the event
+    return response.data;
+  }catch(error){
+    return rejectWithValue(error.response.data);
+  }
+}
+);
+// Async action to fetch event details by ID
 export const fetchEventById = createAsyncThunk(
-  "events/fetchEventById",
-  async (id, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/event/detail/${id}/`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch event");
-      }
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue(error.message);
+  'events/fetchEventById',
+  async (id) => {
+    const response = await fetch(`http://127.0.0.1:8000/api/event/detail/${id}/`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch event');
     }
+    return await response.json(); // Assuming the API returns the event data
   }
 );
+
 
 
 // Fetch all Events action
@@ -100,10 +109,27 @@ const eventSlice = createSlice({
   },
   reducers: {
     setCurrentEvent(state, action) {
-      state.currentEvent = action.payload;
+      state.currentEvent = action.payload
+    },
+    eventDeleted: (state, action) => {
+      // Remove the deleted event from the state
+      state.events = state.events.filter((event) => event.id !== action.payload.id);
     },
   },
   extraReducers: (builder) => {
+    builder
+    .addCase(updateEventStatus.fulfilled, (state, action) => {
+      const updatedEvent = action.payload;
+      state.selectedEvent = updatedEvent;
+      // Update the selected event status in Redux store
+      if (state.selectedEvent.id === action.payload.id) {
+        state.selectedEvent.is_canceled = true;  // Update status to cancelled
+      }
+    })
+    .addCase(updateEventStatus.rejected, (state, action) => {
+      state.error = action.error.message;
+    });
+
     // Fetch events
     builder
       .addCase(fetchEvents.pending, (state) => {
@@ -119,16 +145,21 @@ const eventSlice = createSlice({
       })
       //single event
       .addCase(fetchEventById.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.status = "loading";
+        // state.loading = true;
+        // state.error = null;
       })
       .addCase(fetchEventById.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.event = action.payload;
         state.loading = false;
         state.currentEvent = action.payload; // Correct case
         state.selectedEvent = action.payload;
       })
       .addCase(fetchEventById.rejected, (state, action) => {
         state.loading = false;
+        state.status = "failed";
+        state.error = action.error.message;
 
         state.currentEvent = null;
         state.error = action.payload || "Failed to fetch event";

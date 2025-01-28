@@ -26,27 +26,33 @@ const MeetingUpdateForm = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  
-  const  handleSubmit = async (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    if (formData.title.trim() === "") {
-      toast.error("Title is required.");
-      return;
-    }
-  
+
+    // if (formData.title.trim() === "") {
+    //   toast.error("Title is required.");
+    //   return;
+    // }
+ // Make sure formData is not undefined and contains the required fields
+ if (!formData.title || !formData.conclusion || !formData.followup_by || !formData.status) {
+  toast.error("Please fill out all required fields.");
+  return;
+}
     const existingMeetingUpdate = meetingupdates.some(
-      (dept) =>
-        dept.title && dept.title.toLowerCase() === formData.title.toLowerCase()
+      (dept) => dept.title && dept.title.toLowerCase() === formData.title.toLowerCase()
     );
-  
+
     if (existingMeetingUpdate) {
       toast.error("Meeting update with this title already exists.");
       return;
     }
-  
+
     try {
-      await dispatch(createMeetingUpdate(formData)).unwrap();
+      console.log("Form data being submitted:", formData);
+
+      const result = await dispatch(createMeetingUpdate(formData)).unwrap();
+      console.log("Meeting Update Created:", result);
       toast.success("Meeting update created successfully!");
       setFormData({
         title: "",
@@ -54,48 +60,29 @@ const MeetingUpdateForm = () => {
         followup_by: "",
         followup_due_date: "",
         remark: "",
+        status: "", // Reset status as well
       });
     } catch (error) {
-      console.error("Error occurred:", error);
-      toast.error("Failed to create meeting update.");
+      // Improved error handling
+      console.error("Error occurred during meeting update creation:", error);
+
+      // Check if error has a response from the server
+      if (error?.response) {
+        console.error("Server Error:", error.response);
+        toast.error(`Failed to create meeting update: ${error.response.data.message || error.response.data}`);
+      } else if (error?.request) {
+        // The request was made but no response was received
+        console.error("No response from server:", error.request);
+        toast.error("Failed to create meeting update: No response from the server.");
+      } else {
+        // Something else went wrong
+        console.error("Unknown Error:", error.message);
+        toast.error(`Failed to create meeting update: ${error.message}`);
+      }
     }
   };
-  
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
 
-  //   if (formData.title.trim() === "") {
-  //     toast.error("Title is required.");
-  //     return;
-  //   }
 
-  //   const existingMeetingUpdate = meetingupdates.some(
-  //     (dept) =>
-  //       dept.title && dept.title.toLowerCase() === formData.title.toLowerCase()
-  //   );
-
-  //   if (existingMeetingUpdate) {
-  //     toast.error("Meeting update with this title already exists.");
-  //     return;
-  //   }
-
-  //   dispatch(createMeetingUpdate(formData))
-  //     .unwrap()
-  //     .then(() => {
-  //       toast.success("Meeting update created successfully!");
-  //       setFormData({
-  //         title: "",
-  //         conclusion: "",
-  //         followup_by: "",
-  //         followup_due_date: "",
-  //         remark: "",
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       console.error("Create Error:", error);
-  //       toast.error("Failed to create meeting update.");
-  //     });
-  // };
 
   return (
     <div className="content-wrapper">
@@ -181,6 +168,24 @@ const MeetingUpdateForm = () => {
                     required
                   />
                 </div>
+                {/* status */}
+                <div className="form-group">
+                    <label htmlFor="status">Status:</label>
+                    <select
+                      id="status"
+                      name="status"
+                      value={formData.status}
+                      onChange={handleChange}
+                      className="form-control"
+                      required
+                    >
+                      <option value="">Select Status</option>
+                      <option value="completed">Completed</option>
+                      <option value="pending">Pending</option>
+                      <option value="in-progress">In Progress</option>
+                    </select>
+                  </div>
+
                 <div className="d-flex justify-content-between mt-4">
                   <button type="submit" className="btn btn-primary">
                     Save

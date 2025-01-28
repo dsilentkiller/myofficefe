@@ -1135,14 +1135,14 @@
 // //   };
 
 // //   // When selecting an event to edit
-// //   const handleSelectEvent = (event) => {
-// //     setSelectedEvent(event);
-// //     setNewEvent({
-// //       ...event,
-// //       attendees: event.attendees.map((a) => ({ value: a, label: a })),
-// //     });
-// //     setModalOpen(true);
-// //   };
+  // const handleSelectEvent = (event) => {
+  //   setSelectedEvent(event);
+  //   setNewEvent({
+  //     ...event,
+  //     attendees: event.attendees.map((a) => ({ value: a, label: a })),
+  //   });
+  //   setModalOpen(true);
+  // };
 
 // //   // Modal close handler
 // //   const closeModal = () => {

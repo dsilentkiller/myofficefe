@@ -9,7 +9,10 @@ import { toast } from "react-toastify";
 
 const QuotationTable = () => {
   const dispatch = useDispatch();
-  const Quotations = useSelector((state) => state.quotations?.list || []); // Safely access 'list'
+  // const Quotations = useSelector((state) => state.quotations?.list || []); // Safely access 'list'
+
+const Quotations = useSelector((state) => state.quotations?.list || []);
+console.log(Quotations); // Check if it's updating correctly
   const navigate = useNavigate();
   const [quotationToDelete, setQuotationToDelete] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -18,6 +21,7 @@ const QuotationTable = () => {
     dispatch(fetchProductQuotations());
     dispatch(fetchServiceQuotations());
   }, [dispatch]);
+
 
   const productQuotations = useSelector((state) => state.quotations?.productQuotations || []);
   const serviceQuotations = useSelector((state) => state.quotations?.serviceQuotations || []);
@@ -73,6 +77,7 @@ const QuotationTable = () => {
         data={formattedQuotations}
         columns={[
           { label: "#", field: "index" },
+          { label: "quotation type", field: "quotation_type" },
           { label: "product name", field: "product_name", sortable: true },
           { label: "Product quantity", field: "quantity" },
           { label: "product price", field: "price" },

@@ -9,6 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 import EnquiryDelete from "./EnquiryDelete";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { fetchCustomers } from "../../redux/slice/customer/customerSlice";
 // import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import { AppBar, Toolbar, Typography, TextField, IconButton, Button } from "@mui/material";
@@ -39,6 +40,9 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { toast } from "react-toastify";
+import {convertToCustomer } from "../../redux/slice/crm/enquirySlice"
+
+
 
 const EnquiryTable = () => {
   const [enquiries, setEnquiries] = useState([]);
@@ -48,6 +52,8 @@ const EnquiryTable = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredEnquiries, setFilteredEnquiries] = useState([]);
+  // Define the filteredCustomers state
+const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [enquiryToDelete, setEnquiryToDelete] = useState(null);
   const maxHistoryLength = 100; // Maximum characters to show for history
   const maxEnquiryPurposeLength = 100;
@@ -64,35 +70,106 @@ const EnquiryTable = () => {
   const [customers, setCustomers] = useState([]);  // State for customer list
 
 
-  // Simulate the conversion logic (you can replace this with an actual API call)
-  const handleConvertToCustomer = (enquiryId) => {
-    // Find the enquiry by ID
-    const enquiry = filteredEnquiries.find(e => e.id === enquiryId);
-
-    if (!enquiry) {
-      setMessage('Enquiry not found!');
+  const handleConvertToCustomer = async (enquiryId) => {
+    const resultAction = await dispatch(convertToCustomer(enquiryId));
+    if (convertToCustomer.fulfilled.match(resultAction)) {
+      setMessage("Enquiry successfully converted to customer!");
       setOpenSnackbar(true);
-      return;
+    } else {
+      setMessage(resultAction.payload || "Error converting enquiry to customer.");
+      setOpenSnackbar(true);
     }
-
-    // Simulate adding the enquiry to the customers list
-    const newCustomer = {
-      ...enquiry,
-      status: 'Customer',  // Assuming you have a status field
-      customer_since: new Date().toISOString(),  // Add customer-related info if needed
-    };
-    // After successful conversion, remove the enquiry from the list
-  setFilteredEnquiries(prevEnquiries =>
-    prevEnquiries.filter(enquiry => enquiry.id !== enquiryId)
-  );
-    // Update the customers state
-    setCustomers((prevCustomers) => [...prevCustomers, newCustomer]);
-    // Remove the enquiry from the filtered enquiries list
-    setFilteredEnquiries((prevEnquiries) => prevEnquiries.filter(e => e.id !== enquiryId));
-    // Show success message
-    setMessage('Enquiry converted to customer successfully!');
-    setOpenSnackbar(true);
   };
+  // const handleConvertToCustomer = async (enquiryId) => {
+  //   // Find the enquiry data by ID
+  //   const enquiry = filteredEnquiries.find((item) => item.id === enquiryId);
+
+  //   if (enquiry) {
+  //     // Prepare the customer data from the enquiry data
+  //     const customerData = {
+  //       customer_name: enquiry.customer_name,
+  //       phone: enquiry.pri_phone,
+  //       email: enquiry.email,
+  //       street_address: enquiry.street_address,
+  //       budget: enquiry.estimated_amount,
+  //       enquiry_purpose: enquiry.enquiry_purpose,
+  //       organization_name: enquiry.organization_name,
+  //       department_name: enquiry.department_name,
+  //       designation_name: enquiry.designation_name,
+  //       history: enquiry.history,
+  //       // Add any other fields you need from the enquiry
+  //     };
+
+  //     try {
+  //       // Send the data to the backend using Axios (adjust the endpoint as needed)
+  //       const response = await axios.post(
+  //         "http://127.0.0.1:8000/api/customer/customer-list/",
+  //         customerData,
+  //         {
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //         }
+  //       );
+
+  //       if (response.status === 201) {
+  //         // Handle success (e.g., show success notification or update UI)
+  //         setMessage("Customer successfully created from enquiry!");
+  //         setOpenSnackbar(true);
+
+  //         // Optionally, after the customer is created, update the state to reflect the new customer
+  //         const newCustomer = response.data; // Assuming your API returns the created customer
+  //         setFilteredCustomers((prev) => [...prev, newCustomer]); // Add the new customer to the filteredCustomers list
+
+  //         // Optionally, remove the enquiry from the list of filtered enquiries
+  //         const updatedEnquiries = filteredEnquiries.filter(
+  //           (item) => item.id !== enquiryId
+  //         );
+  //         setFilteredEnquiries(updatedEnquiries); // Update the enquiries list (if needed)
+
+  //       } else {
+  //         // Handle error (e.g., show error notification)
+  //         setMessage("Failed to convert enquiry to customer.");
+  //         setOpenSnackbar(true);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error converting enquiry to customer:", error);
+  //       setMessage("Error converting enquiry to customer.");
+  //       setOpenSnackbar(true);
+  //     }
+  //   }
+  // };
+
+
+  // Simulate the conversion logic (you can replace this with an actual API call)
+  // const handleConvertToCustomer = (enquiryId) => {
+  //   // Find the enquiry by ID
+  //   const enquiry = filteredEnquiries.find(e => e.id === enquiryId);
+
+  //   if (!enquiry) {
+  //     setMessage('Enquiry not found!');
+  //     setOpenSnackbar(true);
+  //     return;
+  //   }
+
+  //   // Simulate adding the enquiry to the customers list
+  //   const newCustomer = {
+  //     ...enquiry,
+  //     status: 'Customer',  // Assuming you have a status field
+  //     customer_since: new Date().toISOString(),  // Add customer-related info if needed
+  //   };
+  //   // After successful conversion, remove the enquiry from the list
+  // setFilteredEnquiries(prevEnquiries =>
+  //   prevEnquiries.filter(enquiry => enquiry.id !== enquiryId)
+  // );
+  //   // Update the customers state
+  //   setCustomers((prevCustomers) => [...prevCustomers, newCustomer]);
+  //   // Remove the enquiry from the filtered enquiries list
+  //   setFilteredEnquiries((prevEnquiries) => prevEnquiries.filter(e => e.id !== enquiryId));
+  //   // Show success message
+  //   setMessage('Enquiry converted to customer successfully!');
+  //   setOpenSnackbar(true);
+  // };
 
   // Handle snackbar close
   const handleCloseSnackbar = () => {

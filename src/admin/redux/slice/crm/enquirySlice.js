@@ -1,6 +1,39 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+
+// Add this action to your enquiry slice to remove the enquiry from the list
+// export const removeEnquiryFromList = (state, action) => {
+//   state.enquiries = state.enquiries.filter(enquiry => enquiry.id !== action.payload.id);
+// };
+// Async thunk to convert enquiry to customer
+export const convertToCustomer = createAsyncThunk(
+  "enquiry/convertToCustomer",
+  async (enquiryId, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `http://127.0.0.1:8000/api/enquiry/convert_enquiry_to_customer/${enquiryId}/`,
+        {},
+        // {
+        //   headers: {
+        //     // Authorization: `Bearer ${yourAuthToken}`
+        //   }
+        // }
+        )
+
+      if (response.status === 201) {
+        return response.data; // Return success data
+      } else {
+        return rejectWithValue("Failed to convert enquiry to customer.");
+      }
+    } catch (error) {
+      return rejectWithValue("Error converting enquiry to customer.");
+    }
+  }
+);
+
+
+
 // Search Enquiries
 export const searchEnquiry = createAsyncThunk(
   "enquiry/searchEnquiry",
@@ -154,6 +187,7 @@ const enquirySlice = createSlice({
     deleteError: null,
   },
   reducers: {
+    // removeEnquiryFromList,
     setCurrentEnquiry(state, action) {
       state.currentEnquiry = action.payload;
     },
@@ -163,6 +197,39 @@ const enquirySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    .addCase(convertToCustomer.pending, (state) => {
+      state.status = "loading";
+    })
+  //   .addCase(convertToCustomer.fulfilled, (state, action) => {
+  //     state.status = "succeeded";
+  //     // Assuming you store customers in the state, add the new customer
+  //     state.customers.push(action.payload); // Add the customer to the customers list
+  //      // Assuming the API returns a `customerId` and `enquiryId`:
+  // if (action.payload.enquiryId) {
+  //   state.list = state.list.filter((enquiry) => enquiry.id !== action.payload.enquiryId); // Remove the converted enquiry
+  // }
+  //   })
+  .addCase(convertToCustomer.fulfilled, (state, action) => {
+    state.status = "succeeded";
+    // If conversion is successful, add customer and remove enquiry from list
+    if (action.payload.enquiry_id) {
+      // Remove the converted enquiry from the list
+      state.list = state.list.filter((enquiry) => enquiry.id !== action.payload.enquiry_id);
+      // Add customer to the customer list
+      state.customers.push({
+        id: action.payload.customer_id,
+        ...action.payload.customer_data, // Assuming customer data is part of the payload
+      });
+
+      // Show a success toast message
+      state.toastMessage = `Enquiry ${action.payload.enquiry_id} successfully converted to Customer.`;
+    }
+  })
+
+    .addCase(convertToCustomer.rejected, (state, action) => {
+      state.status = "failed";
+      state.error = action.payload;
+    })
       // Fetch all enquiries
       .addCase(fetchEnquiries.pending, (state) => {
         state.loading = true;
@@ -306,7 +373,14 @@ const enquirySlice = createSlice({
   },
 });
 export const { setCurrentEnquiry, setEnquiry, setLoading, setError } = enquirySlice.actions;
+
 export default enquirySlice.reducer;
+
+
+
+
+
+
 // const enquirySlice = createSlice({
 //   name: "enquiries",
 //   initialState: {
