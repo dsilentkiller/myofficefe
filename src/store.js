@@ -20,6 +20,7 @@ import assetReducer from "./admin/redux/slice/hrm/assetSlice";
 import leaveReducer from "./admin/redux/slice/hrm/leaveSlice";
 import userReducer from "./admin/redux/slice/user/UserSlice"
 import quotationReducer from "./admin/redux/slice/crm/quotationSlice"
+import meetingReducer from "./admin/redux/slice/crm/meetingSlice";
 const store = configureStore({
   reducer: {
     districts: districtReducer,
@@ -39,7 +40,9 @@ const store = configureStore({
     employees:employeeReducer,
     assets:assetReducer,
     leaves:leaveReducer,
-    meetingupdates: meetingUpdateReducer, // Ensure this matches your slice name
+    // meetingupdates: meetingUpdateReducer, // Ensure this matches your slice name
+    // meetingupdates: meetingUpdateReducer,
+    meetings: meetingReducer,  // Make sure 'meetings' is the correct key here
     user: userReducer, // Add the user slice here
     quotations: quotationReducer, // Make sure this is properly mapped
   },

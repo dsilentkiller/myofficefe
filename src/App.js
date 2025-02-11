@@ -221,7 +221,6 @@
 // };
 
 // export default App;
-
 // ..............     old working route .......................................................
 import "./App.css";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
@@ -301,11 +300,14 @@ import MeetingUpdateForm from "./admin/crm/meetingupdate/MeetingUpdateForm";
 import LostEnquiryTable from "./admin/crm/enquiry/LostEnquiryTable";
 import LoginForm from "./admin/accounts/LoginForm";
 import QuotationForm from "./admin/crm/quotation/QuotationForm";
-import QuotationTable from "./admin/crm/quotation/QuotationTable"
+
 import ServiceQuotationForm from "./admin/crm/quotation/ServiceQuotationForm";
 import ProductQuotationForm from "./admin/crm/quotation/ProductQuotationForm";
 import Letterhead from "./admin/base/letterhead/Letterhead";
+import QuotationTable from "./admin/crm/quotation/QuotationTable";
 import OrganizationForm from "./admin/base/organization/Form";
+import ServiceQuotationDetail from "./admin/crm/quotation/ServiceQuotationDetail";
+// import ProductQuotationDetail from "./admin/crm/quotation/ProductQuotationDetail1"
 
 function App() {
   const isAuthenticated = localStorage.getItem("access_token") !== null;
@@ -338,9 +340,6 @@ function App() {
                 <Route path="enquiry/detail/:id/" element={<EnquiryDetail />} />
                 <Route path="enquiry/update/:id/" element={<EnquiryForm />} />
                 <Route path="enquiry/lost-enquiry/" element={<LostEnquiryTable />} />
-                {/* meetingupdate */}
-                <Route path="meetingupdate/:id" element={<MeetingUpdateTable />} />
-                <Route path="meetingupdate/create" element={<MeetingUpdateForm />} />
 
                 {/* localhost/dashboard/crm/project */}
                 <Route path="project" element={<ProjectTable />} />
@@ -354,6 +353,13 @@ function App() {
                 <Route path="event/create" element={<EventSystem />} />
                 <Route path="event/update/:id/" element={<EventUpdate />} />
                 <Route path="event/detail/:id/" element={<EventDetail />} />
+                {/* meetingupdate */}
+                <Route path="meetings/" element={<MeetingUpdateTable />} />
+                <Route path="meeting/create" element={<MeetingUpdateForm />} />
+                {/* <Route path="meetingupdate/:eventId" component={MeetingUpdateForm} /> */}
+
+                {/* <Route path="meetingupdate/create/:eventId" element={<MeetingUpdateForm/>} /> */}
+
 
                 {/* dashboard/crm/attendees */}
                 <Route path="attendee/update/:id/" element={<AttendeeForm />} />
@@ -367,10 +373,13 @@ function App() {
                 <Route path="/dashboard/crm/follow/detail/:id/" element={<FollowDetail />} />
                 <Route path="/dashboard/crm/follow/detail/:id/" element={<FollowDetail />} />
                 {/* .......quotation ........... */}
-                <Route path="quotation" element={<QuotationTable/>} />
+                <Route path="quotations" element={<QuotationTable/>} />
                 <Route path="quotation/create" element={<QuotationForm />} />
+                <Route path="quotation/update/:id" element={<QuotationForm />} />
                 <Route path="quotation/product/create" element={<ProductQuotationForm/>} />
                 <Route path="quotation/service/create" element={<ServiceQuotationForm/>} />
+                {/* <Route path="quotation/product/detail" element={<ProductQuotationDetail/>} /> */}
+                <Route path="quotation/service-quotation/detail/:id/" element={<ServiceQuotationDetail/>} />
 
 
               </Route>

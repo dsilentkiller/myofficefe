@@ -1,179 +1,78 @@
-// import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-// import axios from 'axios';
 
-// // Base URLs for API
-// const API_BASE_URL = 'http://localhost:8000/api/quotation/';
-
-// // Async thunks for Product Quotation
-// export const fetchProductQuotations = createAsyncThunk(
-//   'quotation/fetchProductQuotations',
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.get(`${API_BASE_URL}/product-quotations/`);
-//       return response.data.result;
-//     } catch (error) {
-//       return rejectWithValue(error.response.data.result);
-//     }
-//   }
-// );
-
-// export const createProductQuotation = createAsyncThunk(
-//   'quotation/createProductQuotation',
-//   async (data, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.post(`http://localhost:8000/api/quotation/product-quotations/create/
-// `, data);
-//       return response.data.result;
-//     } catch (error) {
-//       return rejectWithValue(error.response.data);
-//     }
-//   }
-// );
-// export const fetchProductQuotationById = createAsyncThunk(
-//   "productquotations/fetchProductQuotationById",
-//   async (id, thunkAPI) => {
-//     try {
-//       const response = await axios.get(
-//         `http://127.0.0.1:8000/api/product-quotation/detail/${id}/`
-//       );
-//       return response.data.result; // Make sure the API returns the correct structure
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
-
-// export const updateProductionQuotation = createAsyncThunk(
-//   "productquotations/updateProductionQuotation",
-//   async ({ id, ...data }, thunkAPI) => {
-//     try {
-//       const response = await axios.put(
-//         `http://127.0.0.1:8000/api/product-quotation/update/${id}/`,
-//         data
-//       );
-//       return response.data.result; // Ensure this returns the updated project data
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
-
-// export const deleteProductQuotation = createAsyncThunk(
-//   'quotation/deleteProductQuotation',
-//   async (id, { rejectWithValue }) => {
-//     try {
-//       await axios.delete(`${API_BASE_URL}/product-quotations/delete/${id}/`);
-//       return id;
-//     } catch (error) {
-//       return rejectWithValue(error.response.data);
-//     }
-//   }
-// );
-
-// // Async thunks for Service Quotation
-// export const fetchServiceQuotations = createAsyncThunk(
-//   'quotation/fetchServiceQuotations',
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.get(`${API_BASE_URL}/service-quotations/`);
-//       return response.data;
-//     } catch (error) {
-//       return rejectWithValue(error.response.data);
-//     }
-//   }
-// );
-
-// // Search project action
-// export const searchQuotation = createAsyncThunk(
-//   "quotations/searchQuotation",
-//   async (searchTerm, thunkAPI) => {
-//     try {
-//       const response = await axios.get(
-//         `http://127.0.0.1:8000/api/quotation/?search=${searchTerm}`
-//       );
-//       return response.data.result.data;
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
-
-
-// export const createServiceQuotation = createAsyncThunk(
-//   'quotation/createServiceQuotation',
-//   async (data, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.post(`${API_BASE_URL}/service-quotations/create`, data);
-//       return response.data;
-//     } catch (error) {
-//       return rejectWithValue(error.response.data);
-//     }
-//   }
-// );
-// export const fetchServiceQuotationById = createAsyncThunk(
-//   "servicequotations/fetchServiceQuotationById",
-//   async (id, thunkAPI) => {
-//     try {
-//       const response = await axios.get(
-//         `http://127.0.0.1:8000/api/service-quotation/detail/${id}/`
-//       );
-//       return response.data.result; // Make sure the API returns the correct structure
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
-
-// export const updateServiceQuotation = createAsyncThunk(
-//   "servicequotations/updateServiceQuotation",
-//   async ({ id, ...data }, thunkAPI) => {
-//     try {
-//       const response = await axios.put(
-//         `http://127.0.0.1:8000/api/service-quotation/update/${id}/`,
-//         data
-//       );
-//       return response.data.result; // Ensure this returns the updated project data
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
-
-// export const deleteServiceQuotation = createAsyncThunk(
-//   'quotation/deleteServiceQuotation',
-//   async (id, { rejectWithValue }) => {
-//     try {
-//       await axios.delete(`${API_BASE_URL}/service-quotations/delete/${id}/`);
-//       return id;
-//     } catch (error) {
-//       return rejectWithValue(error.response.data);
-//     }
-//   }
-// );
+// //late final list
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-
+import { createSelector } from "@reduxjs/toolkit";
 // Base URLs for API
 const API_BASE_URL = 'http://localhost:8000/api/quotation';
+// / Selector to get service quotations from state
+export const selectQuotations = createSelector(
+  (state) => state.quotations.services,  // Ensure 'services' matches state structure
+  (services) => services || []  // Return an empty array if services is undefined
+);
 
-// Async thunks for Product Quotation
 export const fetchProductQuotations = createAsyncThunk(
-  'quotation/fetchProductQuotations',
-  async (_, { rejectWithValue }) => {
+  "quotation/fetchProductQuotations",
+  async (_, thunkAPI) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/product-quotation/`);
-      return response.data.result;
+      const response = await axios.get("http://127.0.0.1:8000/api/quotation/product-quotations/");
+      // console.log("Product Quotations Data:", response.data.result); // ✅ Log API response
+      // return response.data.result; // ✅ Ensure correct return value
+      const data = response.data; // Assuming `data` contains the quotations
+      console.log("Service Quotations Data:", data); // Log to verify data format
+      return data; // Ensure that this returns the correct data structure
     } catch (error) {
-      return rejectWithValue(error.response.data.result);
+      console.error("Error fetching quotations:", error.response?.data || error.message);
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
   }
 );
+
+// Fetch Product Quotations
+// export const fetchProductQuotationss = createAsyncThunk(
+//   'quotation/fetchProductQuotationss',
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.get('http://127.0.0.1:8000/api/quotation/product-quotations/');
+//       if (response.status === 200) {
+//         console.log('Product Quotations:', response.data);  // Log the results
+//         return response.data;  // Ensure you're returning 'results'
+//       }
+//       throw new Error('Failed to fetch product quotations');
+//     } catch (error) {
+//       console.error('Error fetching product quotations:', error);
+//       return rejectWithValue(error.response?.data || error.message);
+//     }
+//   }
+// );
+
+
+
+// Fetch Service Quotations with axios (consistency)
+export const fetchServiceQuotations = createAsyncThunk(
+  'quotation/fetchServiceQuotations',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/quotation/service-quotations/`);
+      if (response.status !== 200) {
+        throw new Error("Failed to fetch service quotations");
+      }
+      const data = response.data.results; // Assuming `data` contains the quotations
+      console.log("Service Quotations Data:", data); // Log to verify data format
+      return data; // Ensure that this returns the correct data structure
+    } catch (error) {
+      console.error("Error fetching service quotations:", error);
+      return rejectWithValue(error.response?.data || error.message); // Reject with error message
+    }
+  }
+);
+
 
 export const createProductQuotation = createAsyncThunk(
   'quotation/createProductQuotation',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/product-quotation/create`, formData);
+      const response = await axios.post(`${API_BASE_URL}/product-quotation/create/`, formData);
       return response.data.result;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -181,8 +80,8 @@ export const createProductQuotation = createAsyncThunk(
   }
 );
 
-export const fetchProductQuotationById = createAsyncThunk(
-  'productquotations/fetchProductQuotationById',
+export const fetchProductQuotationsById = createAsyncThunk(
+  'productquotations/fetchProductQuotationsById',
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/product-quotations/detail/${id}/`);
@@ -197,7 +96,7 @@ export const updateProductQuotation = createAsyncThunk(
   'productquotations/updateProductQuotation',
   async ({ id, ...formData }, thunkAPI) => {
     try {
-      const response = await axios.put(`${API_BASE_URL}/product-quotation/update/${id}/`, formData);
+      const response = await axios.put(`${API_BASE_URL}/product-quotations/update/${id}/`, formData);
       return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
@@ -218,26 +117,32 @@ export const deleteProductQuotation = createAsyncThunk(
 );
 
 // Async thunks for Service Quotation
-export const fetchServiceQuotations = createAsyncThunk(
-  'quotation/fetchServiceQuotations',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/service-quotation`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
+// export const fetchServiceQuotations = createAsyncThunk(
+//   'quotation/fetchServiceQuotations',
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.get(`${API_BASE_URL}/service-quotations/`);
+//       if (!response.ok) {
+//         throw new Error("Failed to fetch product quotations");
+//       }
+//       const data = await response.json();
+//       console.log("Product Quotations Data:", data); // Log the data
+//       return data;
+//     } catch (error) {
+//       console.error("Error fetching product quotations:", error);
+//       throw error; // Re-throw the error to trigger rejected state
+//     }
+//   }
+// );
 export const createServiceQuotation = createAsyncThunk(
   'quotation/createServiceQuotation',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/service-quotation/create`, formData);
-      return response.data;
+      const response = await axios.post(`${API_BASE_URL}/service-quotation/create/`, formData);
+      return response.data.result;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      console.error("Error creating service quotation:", error.response?.data || error.message);
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -246,7 +151,7 @@ export const fetchServiceQuotationById = createAsyncThunk(
   'servicequotations/fetchServiceQuotationById',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/service-quotation/detail/${id}/`);
+      const response = await axios.get(`${API_BASE_URL}/service-quotations/detail/${id}/`);
       return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
@@ -258,7 +163,7 @@ export const updateServiceQuotation = createAsyncThunk(
   'servicequotations/updateServiceQuotation',
   async ({ id, ...formData }, thunkAPI) => {
     try {
-      const response = await axios.put(`${API_BASE_URL}/service-quotation/update/${id}/`, formData);
+      const response = await axios.put(`${API_BASE_URL}/service-quotations/update/${id}/`, formData);
       return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
@@ -270,7 +175,7 @@ export const deleteServiceQuotation = createAsyncThunk(
   'quotation/deleteServiceQuotation',
   async (id, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_BASE_URL}/service-quotation/delete/${id}/`);
+      await axios.delete(`${API_BASE_URL}/service-quotations/delete/${id}/`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -281,45 +186,73 @@ export const deleteServiceQuotation = createAsyncThunk(
 
 // Initial state
 const initialState = {
-  list: [],
-  productQuotations: [],
-  serviceQuotations: [],
+
+  products: [],
+  services: [],
   loading: false,
   error: null,
+  isLoading: false,
+  createStatus: null,
+  updateStatus: null,
+  deleteStatus: null,
+  currentProject: null,
+  createError: null,
+  updateError: null,
+  deleteError: null,
 };
 
 // Slice
 const quotationSlice = createSlice({
-  name: 'quotation',
+  name: 'quotations',
   initialState,
   reducers: {
-    setQuotations: (state, action) => {
-      state.list = action.payload;
-    },
+    // setQuotations: (state, action) => {
+    //   state.list = action.payload;
+    // },
     // Add reducers for fetching, deleting, etc.
     setProductQuotations: (state, action) => {
-      state.productQuotations = action.payload;
+      state.products = action.payload;
+      state.loading = false; // Stop loading when data is fetched
     },
     setServiceQuotations: (state, action) => {
-      state.serviceQuotations = action.payload;
+      state.services = action.payload;
+      state.loading = false; // Stop loading when data is fetched
+    },
+     setError(state, action) {
+      state.error = action.payload;
+      state.loading = false;
     },
   },
   extraReducers: (builder) => {
     // Product Quotation Reducers
     builder
-    //fetch production quotation
+    .addCase(fetchProductQuotations.fulfilled, (state, action) => {
+      state.loading = false;
+      console.log("Updating state with:", action.payload); // ✅ Debugging
+      state.products = action.payload.products|| [];  // ✅ Update products
+      state.products = action.payload.result || [];
+      // state.products = action.payload.result || []; // ✅ Ensure products array is updated
+    })
+
       .addCase(fetchProductQuotations.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchProductQuotations.fulfilled, (state, action) => {
-        state.loading = false;
-        state.productQuotations = action.payload;
-      })
-      .addCase(fetchProductQuotations.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
+
+  // .addCase(fetchProductQuotationss.fulfilled, (state, action) => {
+  //   state.products = Array.isArray(action.payload) ? action.payload : [];
+  // })
+  // .addCase(fetchServiceQuotations.fulfilled, (state, action) => {
+  //   state.services = Array.isArray(action.payload) ? action.payload : [];
+  // })
+
+  .addCase(fetchProductQuotations.rejected, (state, action) => {
+    state.loading = false;
+    console.error("Error fetching quotations:", action.payload);
+    // Optionally, set an error message in the state to display to users
+    state.error = action.payload;
+  })
+
       //create product quotation
       .addCase(createProductQuotation.pending, (state) => {
         console.log("Create product quotation request started.");
@@ -328,8 +261,8 @@ const quotationSlice = createSlice({
       })
       .addCase(createProductQuotation.fulfilled, (state, action) => {
         console.log("Create product quotation succeeded:", action.payload);
-        state.loading = false;
-        state.productQuotations.push(action.payload);
+        // state.loading = false;
+        state.products.push(action.payload);
       })
       .addCase(createProductQuotation.rejected, (state, action) => {
         console.error("Create product quotation failed:", action.payload);
@@ -339,13 +272,13 @@ const quotationSlice = createSlice({
 
       //delete product quotation
       .addCase(deleteProductQuotation.fulfilled, (state, action) => {
-        state.productQuotations = state.productQuotations.filter(
+        state.products = state.products.filter(
           (quotation) => quotation.id !== action.payload
         );
       })
 
     // Service Quotation Reducers
-    builder
+
     //fetch service quotations
       .addCase(fetchServiceQuotations.pending, (state) => {
         state.loading = true;
@@ -353,23 +286,22 @@ const quotationSlice = createSlice({
       })
       .addCase(fetchServiceQuotations.fulfilled, (state, action) => {
         state.loading = false;
-        state.serviceQuotations = action.payload;
+        state.services = action.payload || [];  // Store results array
       })
+
       .addCase(fetchServiceQuotations.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      //create quotations
-      // .addCase(createServiceQuotation.fulfilled, (state, action) => {
-      //   state.serviceQuotations.push(action.payload);
-      // })
+
+      //create service quotation
       .addCase(createServiceQuotation.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(createServiceQuotation.fulfilled, (state, action) => {
         state.loading = false;
-        state.serviceQuotations.push(action.payload);
+        state.services.push(action.payload);
       })
       .addCase(createServiceQuotation.rejected, (state, action) => {
         state.loading = false;
@@ -377,7 +309,7 @@ const quotationSlice = createSlice({
       })
       //delete quotation
       .addCase(deleteServiceQuotation.fulfilled, (state, action) => {
-        state.serviceQuotations = state.serviceQuotations.filter(
+        state.services = state.services.filter(
           (quotation) => quotation.id !== action.payload
         );
       });

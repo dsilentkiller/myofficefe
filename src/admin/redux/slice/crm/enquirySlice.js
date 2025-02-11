@@ -67,7 +67,7 @@ export const createEnquiry = createAsyncThunk(
         "http://127.0.0.1:8000/api/enquiry/create/",
         formData
       );
-      return response.data.result.data || [];
+      return response.data.result || [];
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || error.message
@@ -292,10 +292,7 @@ const enquirySlice = createSlice({
               state.lostEnquiries.push(updatedEnquiry); // Add it to lost enquiries
             }
 
-            // // Optionally, if the current enquiry matches the updated enquiry, update it too
-            // if (state.currentEnquiry?.id === updatedEnquiry.id) {
-            //   state.currentEnquiry = updatedEnquiry;
-            // }
+
           })
 
       // Create Enquiry

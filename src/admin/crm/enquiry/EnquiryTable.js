@@ -57,6 +57,7 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [enquiryToDelete, setEnquiryToDelete] = useState(null);
   const maxHistoryLength = 100; // Maximum characters to show for history
   const maxEnquiryPurposeLength = 100;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [order, setOrder] = useState("asc");
@@ -87,7 +88,7 @@ const [filteredCustomers, setFilteredCustomers] = useState([]);
   //   if (enquiry) {
   //     // Prepare the customer data from the enquiry data
   //     const customerData = {
-  //       customer_name: enquiry.customer_name,
+  //       customer_name: enquiry.enquiry_name,
   //       phone: enquiry.pri_phone,
   //       email: enquiry.email,
   //       street_address: enquiry.street_address,
@@ -241,7 +242,7 @@ const handleFileChange = (event) => {
     if (searchTerm) {
       setFilteredEnquiries(
         enquiries.filter((enquiry) =>
-          enquiry.customer_name.toLowerCase().includes(searchTerm.toLowerCase())
+          enquiry.enquiry_name.toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
     } else {
@@ -372,7 +373,7 @@ const isHighlighted = (dueDate) => {
     const worksheet = XLSX.utils.json_to_sheet(
       enquiries.map((enquiry) => ({
         ID: enquiry.id,
-        Name: enquiry.customer_name,
+        Name: enquiry.enquiry_name,
 
         category: enquiry.category_name,
         organization_name: enquiry.organization_name,
@@ -409,7 +410,7 @@ const isHighlighted = (dueDate) => {
     const tableColumn = ["ID", "Name"];
     const tableRows = enquiries.map((enquiry) => [
       enquiry.id,
-      enquiry.customer_name,
+      enquiry.enquiry_name,
       enquiry.category,
       enquiry.organization_name,
       enquiry.department,
@@ -589,7 +590,7 @@ const isHighlighted = (dueDate) => {
                           <td>
                             {(currentPage - 1) * itemsPerPage + index + 1}
                           </td>
-                          <td>{formatName(enquiry.customer_name)}</td>
+                          <td>{formatName(enquiry.enquiry_name)}</td>
 
                           <td>{formatDateTime(enquiry.created)}</td>
                           <td
@@ -858,7 +859,7 @@ export default EnquiryTable;
 //     if (searchTerm) {
 //       setFilteredEnquiries(
 //         enquiries.filter((enquiry) =>
-//           enquiry.customer_name.toLowerCase().includes(searchTerm.toLowerCase())
+//           enquiry.enquiry_name.toLowerCase().includes(searchTerm.toLowerCase())
 //         )
 //       );
 //     } else {
@@ -989,7 +990,7 @@ export default EnquiryTable;
 //     const worksheet = XLSX.utils.json_to_sheet(
 //       enquiries.map((enquiry) => ({
 //         ID: enquiry.id,
-//         Name: enquiry.customer_name,
+//         Name: enquiry.enquiry_name,
 
 //         category: enquiry.category_name,
 //         organization_name: enquiry.organization_name,
@@ -1026,7 +1027,7 @@ export default EnquiryTable;
 //     const tableColumn = ["ID", "Name"];
 //     const tableRows = enquiries.map((enquiry) => [
 //       enquiry.id,
-//       enquiry.customer_name,
+//       enquiry.enquiry_name,
 
 //       enquiry.category,
 //       enquiry.organization_name,
@@ -1234,7 +1235,7 @@ export default EnquiryTable;
 //                           <td>
 //                             {(currentPage - 1) * itemsPerPage + index + 1}
 //                           </td>
-//                           <td>{formatName(enquiry.customer_name)}</td>
+//                           <td>{formatName(enquiry.enquiry_name)}</td>
 //                           {/* <TableSortLabel
 //                                                   active={orderBy === "customer_name"}
 //                                                   direction={order}

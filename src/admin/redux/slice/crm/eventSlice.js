@@ -68,20 +68,35 @@ export const createEvent = createAsyncThunk(
 );
 
 // Async thunk for updating an event
+// export const fetchEventByIdUpdate = createAsyncThunk(
+//   "events/fetchEventByIdUpdate",
+//   async ({ id, eventData }, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.put(
+//         `http://127.0.0.1:8000/api/event/update/${id}/`,
+//         eventData
+//       );
+//       return response.data.result;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
 export const fetchEventByIdUpdate = createAsyncThunk(
-  "events/fetchEventByIdUpdate",
-  async ({ id, eventData }, { rejectWithValue }) => {
+  'events/updateEvent',
+  async ({ id, eventToSave }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
+      const response = await axios.patch(
         `http://127.0.0.1:8000/api/event/update/${id}/`,
-        eventData
+        eventToSave
       );
-      return response.data.result;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
   }
 );
+
 
 // Async thunk for deleting an event
 export const deleteEvent = createAsyncThunk(

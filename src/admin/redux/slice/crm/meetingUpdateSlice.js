@@ -17,86 +17,78 @@ export const searchMeetingUpdate = createAsyncThunk(
   }
 );
 
-// Async thunk for fetching all meeting updates
+
 export const fetchMeetingUpdate = createAsyncThunk(
   "meetingupdates/fetchMeetingUpdate",
-  async (_, thunkAPI) => {
+  async (eventId, thunkAPI) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/meeting-update/list/`);
-      return response.data.result.data;
+      const response = await axios.get(`http://127.0.0.1:8000/api/meeting-update/list/${eventId}/`);
+      // , {
+        // params: { event_id: eventId }, // Pass event_id as a filter
+      // });
+
+      console.log("API Response:", response.data); // Debugging
+
+      return response.data?.result || []; // Ensure it always returns an array
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Fetch failed");
     }
   }
 );
 
-// Async thunk for creating a meeting update
-// export const createMeetingUpdate = createAsyncThunk(
-//   "meetingupdate/createMeetingUpdate",
-//   async (meetingupdate, thunkAPI) => {
-//     try {
-//       const response = await axios.post(
-//         "http://127.0.0.1:8000/api/meeting-update/create/",
-//         meetingupdate
-//       );
-//       // console.log("API Response:", response.data.result); // Log the full response
-//       // const data = response.data?.result?.data;
-//       // if (!data) {
-//       //   console.error("Invalid API response structure:", response.data);
-//       //   throw new Error("Failed to fetch valid meetingupdate.");
-//       // }
-//       // return data;
-//     } catch (error) {
-//       console.error("API Error:", error.response || error);
-//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
-// Async thunk for creating a meeting update
-// export const createMeetingUpdate = createAsyncThunk(
-//   "meetingupdate/createMeetingUpdate",
-//   async (formData, thunkAPI) => {
-//     try {
-//       const response = await axios.post(`http://127.0.0.1:8000/api/meeting-update/create/`, formData);
-//       const data = response.data?.result?.data;
-//       if (!data) {
-//         throw new Error("Invalid API response");
-//       }
-//       return data;
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response?.data?.message || "Create failed");
-//     }
-//   }
-// );
+
+
+
+
 export const createMeetingUpdate = createAsyncThunk(
   'meetingUpdate/createMeetingUpdate',
-  async (formData, { rejectWithValue }) => {
+  async ({ eventId, formData }, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/meeting-update/create/', formData);
-      return response.data; // Return the data from the API response
+      if (!eventId) {
+        throw new Error('eventId is required and cannot be undefined.');
+      }
+
+      const response = await axios.post(
+        `http://127.0.0.1:8000/api/meeting-update/create/${eventId}/`,
+        formData
+      );
+
+      return response.data;
     } catch (error) {
-      // Handle errors and return a meaningful error message
       if (error.response) {
-        // Server responded with an error
         return rejectWithValue(error.response.data);
       } else if (error.request) {
-        // No response from the server
         return rejectWithValue('No response from the server.');
       } else {
-        // Some other error occurred
         return rejectWithValue(error.message);
       }
     }
   }
 );
 
+
+// // Add a New Meeting Update
+// export const createMeetingUpdate = createAsyncThunk(
+//   "meetingUpdate/createMeetingUpdate",
+//   async ({ eventId, updateText }, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.post(
+//         `http://127.0.0.1:8000/api/meeting-update/${eventId}/`,
+//         { update_text: updateText }
+//       );
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response?.data || "Server error");
+//     }
+//   }
+// );
 // Async thunk for fetching a single meeting update by ID
 export const fetchMeetingUpdateById = createAsyncThunk(
   "meetingupdate/fetchMeetingUpdateById",
   async (id, thunkAPI) => {
     try {
       const response = await axios.get(`${BASE_URL}/${id}/`);
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Fetch by ID failed");
     }
@@ -109,7 +101,7 @@ export const updateMeetingUpdate = createAsyncThunk(
   async ({ id, data }, thunkAPI) => {
     try {
       const response = await axios.put(`${BASE_URL}/update/${id}/`, data);
-      return response.data.result.data;
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || "Update failed");
     }
@@ -141,7 +133,7 @@ const meetingUpdateSlice = createSlice({
     currentMeetingUpdate: null,
   },
   reducers: {
-    addMeetingUpdate(state, action) {
+    createMeetingUpdate(state, action) {
       state.list.push(action.payload);
     },
   },
@@ -151,18 +143,50 @@ const meetingUpdateSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
+      // .addCase(fetchMeetingUpdate.fulfilled, (state, action) => {
+      //   state.isLoading = false;
+      //   if (Array.isArray(action.payload)) {
+      //     state.list = action.payload; // Ensure action.payload is an array
+      //   } else {
+      //     console.error("Fetched data is not an array:", action.payload);
+      //     state.list = []; // Reset to an empty array if the data is invalid
+      //   }
+      // // })
+      // .addCase(fetchMeetingUpdate.fulfilled, (state, action) => {
+      //   console.log('Fetched meeting updates:', action.payload); // Log for debugging
+      //   state.isLoading = false;
+      //   state.list = Array.isArray(action.payload) ? action.payload : []; // Ensure it's an array
+      // })
+
       .addCase(fetchMeetingUpdate.fulfilled, (state, action) => {
+        console.log('Fetched meeting updates:', action.payload); // Log for debugging
         state.isLoading = false;
-        state.list = action.payload;
+        state.list = Array.isArray(action.payload) ? action.payload : []; // Ensure it's an array
       })
+
       .addCase(fetchMeetingUpdate.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })
       .addCase(createMeetingUpdate.fulfilled, (state, action) => {
-        state.list.push(action.payload);
-        // state.createStatus = "succeeded";
+        console.log("action.payload", action.payload); // Log to inspect payload
+        if (Array.isArray(state.list)) {
+          state.list.push(action.payload); // Ensure you're pushing to an array
+        } else {
+          console.error("State list is not an array!");
+          state.list = [action.payload]; // Reinitialize state.list if needed
+        }
+        state.createStatus = 'succeeded';
       })
+      // .addCase(createMeetingUpdate.fulfilled, (state, action) => {
+      //   console.log("action.payload", action.payload); // Log the payload to make sure it's valid
+      //   if (Array.isArray(state.list)) {
+      //     state.list.push(action.payload); // Ensure you're pushing to an array
+      //   } else {
+      //     console.error("State list is not an array!");
+      //   }
+      //   state.createStatus = 'succeeded';
+      // })
       .addCase(createMeetingUpdate.rejected, (state, action) => {
         // state.createStatus = "failed";
         state.error = action.payload;
@@ -172,7 +196,7 @@ const meetingUpdateSlice = createSlice({
         if (index >= 0) {
           state.list[index] = action.payload;
         }
-        state.updateStatus = "succeeded";
+        state.updateStatus = 'succeeded';
       })
       .addCase(updateMeetingUpdate.rejected, (state, action) => {
         state.updateStatus = "failed";
@@ -189,7 +213,7 @@ const meetingUpdateSlice = createSlice({
   },
 });
 
-export const { addMeetingUpdate } = meetingUpdateSlice.actions;
+// export const { createMeetingUpdate } = meetingUpdateSlice.actions;
 export default meetingUpdateSlice.reducer;
 
 

@@ -11,7 +11,7 @@ import FollowTheSignsIcon from "@mui/icons-material/FollowTheSigns"; // Icon for
 const CrmHeader = () => {
   return (
     <div>
-      <AppBar position="static" color="primary">
+      <AppBar position="static" color="primary" sx={{ position: 'sticky', top: 0}}>
         <Toolbar>
           {/* Mobile Menu Icon (optional) */}
           <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
@@ -59,8 +59,16 @@ const CrmHeader = () => {
               </IconButton>
               Event
             </Link>
+             {/* quotation */}
+             {/* <Link to="/dashboard/crm/meetingupdates" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+              <IconButton color="inherit">
+                <AssignmentIcon />
+              </IconButton>
+              meeting update
+            </Link> */}
+
             {/* quotation */}
-            <Link to="/dashboard/crm/quotation" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+            <Link to="/dashboard/crm/quotations" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
               <IconButton color="inherit">
                 <AssignmentIcon />
               </IconButton>

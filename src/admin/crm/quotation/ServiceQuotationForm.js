@@ -12,6 +12,7 @@ import {
   TextField,
   Paper,
 } from "@mui/material";
+const currentDate = new Date().toISOString().split('T')[0]; // Formats date as 'YYYY-MM-DD'
 
 const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, includeDiscount, discount_percentage }) => {
   const addServiceRow = () => {
@@ -105,12 +106,12 @@ const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, i
       </TableContainer>
 
       {/* Display Total Calculation */}
-      <Box mt={4}>
+      {/* <Box mt={4}>
         <Typography variant="h6">Subtotal: ${calculateSubtotalService().toFixed(2)}</Typography>
         {includeTax && <Typography variant="h6">Tax: ${(calculateSubtotalService() * (tax_percentage / 100)).toFixed(2)}</Typography>}
         {includeDiscount && <Typography variant="h6">Discount: ${(calculateSubtotalService() * (discount_percentage / 100)).toFixed(2)}</Typography>}
         <Typography variant="h5">Total: ${calculateTotalService().toFixed(2)}</Typography>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

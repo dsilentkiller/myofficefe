@@ -1,6 +1,7 @@
 
 // //new
 import React, { useState } from "react";
+
 import {
   Box,
   Typography,
@@ -15,13 +16,31 @@ import {
   Paper,
 } from "@mui/material";
 
+import { toast } from "react-toastify";
+
+
+
+
 const ProductQuotation = ({ products, setProducts, includeTax, tax_percentage, includeDiscount, discount_percentage }) => {
   const addProductRow = () => {
     setProducts([...products, { product_name: "", quantity: 1, price: 0 }]);
   };
 
+  // const updateProduct = (index, field, value) => {
+  //   const updatedProducts = [...products];
+  //   updatedProducts[index][field] = value;
+  //   setProducts(updatedProducts);
+  // };
   const updateProduct = (index, field, value) => {
     const updatedProducts = [...products];
+    if (field === "quantity" && value <= 0) {
+      toast.error("Quantity must be greater than 0.");
+      return;
+    }
+    if (field === "price" && value <= 0) {
+      toast.error("Price must be greater than 0.");
+      return;
+    }
     updatedProducts[index][field] = value;
     setProducts(updatedProducts);
   };
@@ -97,7 +116,15 @@ const ProductQuotation = ({ products, setProducts, includeTax, tax_percentage, i
         </Table>
       </TableContainer>
 
-      {/* Total Calculation for Product */}
+    
+    </Box>
+  );
+};
+
+export default ProductQuotation;
+
+
+  {/* Total Calculation for Product */}
       {/* <Box mt={4}>
         <Typography variant="h6">
           Subtotal: ${calculateSubtotalProduct().toFixed(2)}
@@ -106,14 +133,6 @@ const ProductQuotation = ({ products, setProducts, includeTax, tax_percentage, i
         {includeDiscount && <Typography variant="h6">Discount: ${(calculateSubtotalProduct() * (discount_percentage / 100)).toFixed(2)}</Typography>}
         <Typography variant="h5">Total: ${calculateTotalProduct().toFixed(2)}</Typography>
       </Box> */}
-    </Box>
-  );
-};
-
-export default ProductQuotation;
-
-
-
 // import React, { useState } from "react";
 // import {
 //   Box,

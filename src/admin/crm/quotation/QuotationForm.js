@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -23,31 +22,38 @@ import { fetchCustomers } from "../../redux/slice/customer/customerSlice";
 import { fetchCategories } from "../../redux/slice/crm/categorySlice";
 import { fetchDepartments } from "../../redux/slice/base/departmentSlice";
 import { fetchDesignations } from "../../redux/slice/base/designationSlice";
+import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
 
-const QuotationForm = () => {
+const QuotationForm = ({ existingQuotation }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [quotationType, setQuotationType] = useState("service");
-  const [includeTax, setIncludeTax] = useState(false);
-  const [taxPercentage, setTaxPercentage] = useState(0);
-  const [includeDiscount, setIncludeDiscount] = useState(false);
-  const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [quotationType, setQuotationType] = useState(existingQuotation?.quotation_type || "service");
+  const [includeTax, setIncludeTax] = useState(existingQuotation?.include_tax || false);
+  const [taxPercentage, setTaxPercentage] = useState(existingQuotation?.tax_percentage || 0);
+  const [includeDiscount, setIncludeDiscount] = useState(existingQuotation?.include_discount || false);
+  const [discountPercentage, setDiscountPercentage] = useState(existingQuotation?.discount_percentage || 0);
 
-  const [products, setProducts] = useState([{ product_name: "", quantity: 1, price: 0 }]);
-  const [services, setServices] = useState([{ service_name: "", service_description: "", service_price: 0.0, quantity: 1 }]);
+  const [products, setProducts] = useState(existingQuotation?.products || [{ product_name: "", quantity: 1, price: 0 }]);
+  const [services, setServices] = useState(existingQuotation?.services || [{ service_name: "", service_description: "", service_price: 0.0, quantity: 1 }]);
+  const [selectionType, setSelectionType] = useState("customer");
+  const [selectedCustomerOrEnquiry, setSelectedCustomerOrEnquiry] = useState(existingQuotation?.customer_or_enquiry_id || "");
+  const currentDate = new Date().toISOString().split('T')[0];
 
   const { list: customers } = useSelector((state) => state.customers);
   const { list: departments } = useSelector((state) => state.departments);
   const { list: designations } = useSelector((state) => state.designations);
   const { list: categories } = useSelector((state) => state.categories);
+  const { list: enquiries } = useSelector((state) => state.enquiries);
+
   const isLoading = useSelector((state) => state.enquiries.isLoading);
   const error = useSelector((state) => state.enquiries.error);
 
   useEffect(() => {
+    dispatch(fetchEnquiries());
     dispatch(fetchCategories());
     dispatch(fetchCustomers());
     dispatch(fetchDesignations());
@@ -97,9 +103,8 @@ const QuotationForm = () => {
     }
 
     const totals = calculateTotal();
-
     const formData = {
-      quotation_date: "",
+      quotation_date: currentDate,
       tax_percentage: taxPercentage,
       discount_percentage: discountPercentage,
       subtotal: totals.subtotal,
@@ -109,6 +114,20 @@ const QuotationForm = () => {
       products: quotationType === "product" ? products : [],
       services: quotationType === "service" ? services : [],
     };
+
+    formData.services.forEach((service, index) => {
+      if (!service.service_name || !service.service_price || !service.quantity) {
+        toast.error(`Service at index ${index} is missing required fields.`);
+        return;
+      }
+    });
+
+    formData.products.forEach((product, index) => {
+      if (!product.product_name || !product.price || !product.quantity) {
+        toast.error(`Product at index ${index} is missing required fields.`);
+        return;
+      }
+    });
 
     if (!formData.subtotal || formData.subtotal <= 0) {
       toast.error("Subtotal must be greater than 0.");
@@ -125,7 +144,7 @@ const QuotationForm = () => {
         toast.success(`${quotationType.charAt(0).toUpperCase() + quotationType.slice(1)} quotation created successfully!`);
         dispatch(fetchProductQuotations());
         dispatch(fetchServiceQuotations());
-        navigate(`/dashboard/crm/quotation/${quotationType}-quotation`);
+        navigate(`/dashboard/crm/quotations`);
       })
       .catch((error) => {
         toast.error(`Create Error: ${error.message || "Unknown error"}`);
@@ -142,8 +161,47 @@ const QuotationForm = () => {
             Quotation Form
           </Typography>
 
-          {/* Quotation Type Selector */}
           <FormControl fullWidth>
+            <InputLabel id="selection-type-label">Select From</InputLabel>
+            <Select
+              labelId="selection-type-label"
+              value={selectionType}
+              onChange={(e) => setSelectionType(e.target.value)}
+              label="Select From"
+            >
+              <MenuItem value="customer">Customer</MenuItem>
+              <MenuItem value="enquiry">Enquiry</MenuItem>
+            </Select>
+          </FormControl>
+
+          <Select
+            id="customer-or-enquiry"
+            value={selectedCustomerOrEnquiry}
+            onChange={(e) => setSelectedCustomerOrEnquiry(e.target.value)}
+            fullWidth
+            required
+            sx={{ mt: 2 }}
+          >
+            <MenuItem value="">Select {selectionType === "customer" ? "Customer" : "Enquiry"}</MenuItem>
+            {selectionType === "customer" && Array.isArray(customers) && customers.length > 0 ? (
+              customers.map((customer) => (
+                <MenuItem key={customer.id} value={customer.id}>
+                  {customer.customer_name}
+                </MenuItem>
+              ))
+            ) : selectionType === "enquiry" && Array.isArray(enquiries) && enquiries.length > 0 ? (
+              enquiries.map((enquiry) => (
+                <MenuItem key={enquiry.id} value={enquiry.id}>
+                  {enquiry.enquiry_name || "No Enquiry Name"}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem>No {selectionType === "customer" ? "customers" : "enquiries"} available</MenuItem>
+            )}
+          </Select>
+
+          {/* Quotation Type Selector */}
+          <FormControl fullWidth sx={{ mt: 2 }}>
             <InputLabel id="quotation-type-label">Quotation Type</InputLabel>
             <Select
               labelId="quotation-type-label"
@@ -211,6 +269,354 @@ const QuotationForm = () => {
 };
 
 export default QuotationForm;
+
+
+
+//old quotation form work well
+// import React, { useState, useEffect } from "react";
+// import {
+//   Box,
+//   Grid,
+//   Typography,
+//   Paper,
+//   FormControl,
+//   InputLabel,
+//   Select,
+//   MenuItem,
+//   Button,
+//   Switch,
+//   FormControlLabel,
+//   TextField,
+//   CircularProgress,
+//   FormHelperText,
+// } from "@mui/material";
+// import ProductQuotation from "./ProductQuotationForm";
+// import ServiceQuotation from "./ServiceQuotationForm";
+// import { createProductQuotation, createServiceQuotation, fetchProductQuotations, fetchServiceQuotations } from "../../redux/slice/crm/quotationSlice";
+// import { fetchCustomers } from "../../redux/slice/customer/customerSlice";
+// import { fetchCategories } from "../../redux/slice/crm/categorySlice";
+// import { fetchDepartments } from "../../redux/slice/base/departmentSlice";
+// import { fetchDesignations } from "../../redux/slice/base/designationSlice";
+// import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
+// import { useNavigate } from "react-router-dom";
+// import { toast } from "react-toastify";
+// import { useSelector, useDispatch } from "react-redux";
+
+// const QuotationForm = () => {
+//   const navigate = useNavigate();
+//   const dispatch = useDispatch();
+
+//   const [quotationType, setQuotationType] = useState("service");
+//   const [includeTax, setIncludeTax] = useState(false);
+//   const [taxPercentage, setTaxPercentage] = useState(0);
+//   const [includeDiscount, setIncludeDiscount] = useState(false);
+//   const [discountPercentage, setDiscountPercentage] = useState(0);
+
+//   const [products, setProducts] = useState([{ product_name: "", quantity: 1, price: 0 }]);
+//   const [services, setServices] = useState([{ service_name: "", service_description: "", service_price: 0.0, quantity: 1 }]);
+//   const [selectionType, setSelectionType] = useState("customer"); // "enquiry" or "customer"
+//   const [selectedCustomerOrEnquiry, setSelectedCustomerOrEnquiry] = useState("");
+//   const currentDate = new Date().toISOString().split('T')[0]; // Get today's date
+
+
+//   const { list: customers } = useSelector((state) => state.customers);
+//   const { list: departments } = useSelector((state) => state.departments);
+//   const { list: designations } = useSelector((state) => state.designations);
+//   const { list: categories } = useSelector((state) => state.categories);
+//   const { list: enquiries } = useSelector((state) => state.enquiries);
+
+
+//   const isLoading = useSelector((state) => state.enquiries.isLoading);
+//   const error = useSelector((state) => state.enquiries.error);
+
+//   useEffect(() => {
+//     dispatch(fetchEnquiries());
+//     dispatch(fetchCategories());
+//     dispatch(fetchCustomers());
+//     dispatch(fetchDesignations());
+//     dispatch(fetchDepartments());
+//   }, [dispatch]);
+//   console.log(customers); // Check what structure customers have
+//   console.log(enquiries); // Check what structure enquiries have
+
+//   const calculateTotal = () => {
+//     let subtotal = 0;
+
+//     if (quotationType === "product") {
+//       subtotal = products.reduce(
+//         (sum, product) => sum + product.quantity * product.price, 0
+//       );
+//     } else if (quotationType === "service") {
+//       subtotal = services.reduce(
+//         (sum, service) => sum + (parseFloat(service.quantity) || 1) * (parseFloat(service.service_price) || 0),
+//         0
+//       );
+//     }
+
+
+//     const taxAmount = includeTax ? (subtotal * taxPercentage) / 100 : 0;
+//     const discountAmount = includeDiscount ? (subtotal * discountPercentage) / 100 : 0;
+//     const total = subtotal + taxAmount - discountAmount;
+
+//     return { subtotal, taxAmount, discountAmount, total };
+//   };
+
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+
+//     if (quotationType === "product") {
+//       for (let product of products) {
+//         if (!product.product_name || !product.price || !product.quantity) {
+//           toast.error("Product name, price, and quantity are required for each product.");
+//           return;
+//         }
+//       }
+//     }
+
+//     if (quotationType === "service") {
+//       for (let service of services) {
+//         if (!service.service_name || !service.service_price) {
+//           toast.error("Service name and price are required for each service.");
+//           return;
+//         }
+//       }
+//     }
+
+//     const totals = calculateTotal();
+
+
+// // added
+// const currentDate = new Date().toISOString().split('T')[0]; // Get today's date
+
+//   // const updatedQuotation = {
+//   //   quotation_date: currentDate,  // Or get from input
+//   //   tax_percentage: taxPercentage,
+//   //   discount_percentage: discountPercentage,
+//   //   subtotal: totals.subtotal,
+//   //   tax_amount: totals.taxAmount,
+//   //   discount_amount: totals.discountAmount,
+//   //   total_amount: totals.total,
+//   //   products: quotationType === "product" ? products : [],
+//   //   services: quotationType === "service" ? services : [],
+//   // };
+
+//   // Send the updatedQuotation to the backend
+//   // console.log(updatedQuotation); // For testing purposes
+//     const formData = {
+//       quotation_date: currentDate,  // Or get from input
+//       tax_percentage: taxPercentage,
+//       discount_percentage: discountPercentage,
+//       subtotal: totals.subtotal,
+//       tax_amount: totals.taxAmount,
+//       discount_amount: totals.discountAmount,
+//       total_amount: totals.total,
+//       products: quotationType === "product" ? products : [],
+//       services: quotationType === "service" ? services : [],
+//     };
+//     if (!formData.quotation_date ) {
+//       toast.error("Some required fields are missing.");
+//       return;
+//     }
+//     //|| !formData.tax_percentage || !formData.discount_percentage
+//     formData.services.forEach((service, index) => {
+//       if (!service.service_name || !service.service_price || !service.quantity) {
+//         toast.error(`Service at index ${index} is missing required fields.`);
+//         return;
+//       }
+//     });
+
+//     formData.products.forEach((product, index) => {
+//       if (!product.product_name || !product.price || !product.quantity) {
+//         toast.error(`Product at index ${index} is missing required fields.`);
+//         return;
+//       }
+//     });
+
+//     if (!formData.subtotal || formData.subtotal <= 0) {
+//       toast.error("Subtotal must be greater than 0.");
+//       return;
+//     }
+
+//     const createQuotation = quotationType === "product"
+//       ? dispatch(createProductQuotation(formData))
+//       : dispatch(createServiceQuotation(formData));
+
+//     createQuotation
+//       .unwrap()
+//       .then((response) => {
+//         toast.success(`${quotationType.charAt(0).toUpperCase() + quotationType.slice(1)} quotation quotation_date successfully!`);
+//         dispatch(fetchProductQuotations());
+//         dispatch(fetchServiceQuotations());
+//         navigate(`/dashboard/crm/quotations`);
+//       })
+//       // .then((response) => {
+//       //   toast.success(`${quotationType.charAt(0).toUpperCase() + quotationType.slice(1)} quotation quotation_date successfully!`);
+//       //   dispatch(fetchProductQuotations());
+//       //   dispatch(fetchServiceQuotations());
+//       //   navigate(`/dashboard/crm/quotations/${quotationType}-quotation`);
+//       // })
+//       .catch((error) => {
+//         toast.error(`Create Error: ${error.message || "Unknown error"}`);
+//       });
+
+//   };
+
+//   const totals = calculateTotal();
+//   // console.log(formData);  // Log the formData to check if `service_name` and `service_price` are included
+//   const validateForm = () => {
+//     // Check if all product fields are filled
+//     if (quotationType === "product") {
+//       for (let product of products) {
+//         if (!product.product_name || !product.price || !product.quantity) {
+//           toast.error("Product name, price, and quantity are required for each product.");
+//           return false;
+//         }
+//       }
+//     }
+
+//     // Check if all service fields are filled
+//     if (quotationType === "service") {
+//       for (let service of services) {
+//         if (!service.service_name || !service.service_price || !service.quantity) {
+//           toast.error("Service name, price, and quantity are required for each service.");
+//           return false;
+//         }
+//       }
+//     }
+
+//     return true;
+//   };
+
+//   return (
+//     <Box p={4} maxWidth="900px" mx="auto">
+//       <Paper elevation={3}>
+//         <Box p={3}>
+//           <Typography variant="h4" align="center" gutterBottom>
+//             Quotation Form
+//           </Typography>
+
+//           <div className="form-group">
+
+
+//           <FormControl fullWidth>
+//   <InputLabel id="selection-type-label">Select From</InputLabel>
+//   <Select
+//     labelId="selection-type-label"
+//     value={selectionType}
+//     onChange={(e) => setSelectionType(e.target.value)}
+//     label="Select From"
+//   >
+//     <MenuItem value="customer">Customer</MenuItem>
+//     <MenuItem value="enquiry">Enquiry</MenuItem>
+//   </Select>
+// </FormControl>
+// <Select
+//   id="customer-or-enquiry"
+//   value={selectedCustomerOrEnquiry}
+//   onChange={(e) => setSelectedCustomerOrEnquiry(e.target.value)}
+//   fullWidth
+//   required
+// >
+//   <MenuItem value="">Select {selectionType === "customer" ? "Customer" : "Enquiry"}</MenuItem>
+//   {selectionType === "customer" && Array.isArray(customers) && customers.length > 0 ? (
+//     customers.map((customer) => (
+//       <MenuItem key={customer.id} value={customer.id}>
+//         {customer.customer_name} {/* Ensure 'name' property exists */}
+//       </MenuItem>
+//     ))
+//   ) : selectionType === "enquiry" && Array.isArray(enquiries) && enquiries.length > 0 ? (
+//     enquiries.map((enquiry) => (
+//       <MenuItem key={enquiry.id} value={enquiry.id}>
+//         {/* {enquiry.enquiry_name} Ensure 'customer_name' property exists */}
+//         {enquiry.enquiry_name ? enquiry.enquiry_name : "No Enquiry Name"}
+//       </MenuItem>
+//     ))
+//   ) : (
+//     <MenuItem>No {selectionType === "customer" ? "customers" : "enquiries"} available</MenuItem>
+//   )}
+// </Select>
+
+//           </div>
+//           {/* Quotation Type Selector */}
+//           <FormControl fullWidth>
+//             <InputLabel id="quotation-type-label">Quotation Type</InputLabel>
+//             <Select
+//               labelId="quotation-type-label"
+//               value={quotationType}
+//               onChange={(e) => setQuotationType(e.target.value)}
+//               label="Quotation Type"
+//             >
+//               <MenuItem value="service">Service</MenuItem>
+//               <MenuItem value="product">Product</MenuItem>
+//             </Select>
+//           </FormControl>
+
+//           {/* Tax and Discount Section */}
+//           <Box mt={4} display="flex" justifyContent="space-between" alignItems="center" gap={2}>
+//             <FormControlLabel
+//               control={<Switch checked={includeTax} onChange={(e) => setIncludeTax(e.target.checked)} />}
+//               label="Include Tax"
+//             />
+//             {includeTax && (
+//               <TextField
+//                 type="number"
+//                 label="Tax Percentage (%)"
+//                 value={taxPercentage}
+//                 onChange={(e) => setTaxPercentage(e.target.value ? +e.target.value : 0)}
+//               />
+//             )}
+//             <FormControlLabel
+//               control={<Switch checked={includeDiscount} onChange={(e) => setIncludeDiscount(e.target.checked)} />}
+//               label="Include Discount"
+//             />
+//             {includeDiscount && (
+//               <TextField
+//                 type="number"
+//                 label="Discount Percentage (%)"
+//                 value={discountPercentage}
+//                 onChange={(e) => setDiscountPercentage(e.target.value ? +e.target.value : 0)}
+//               />
+//             )}
+//           </Box>
+
+//           {/* Render either ProductQuotation or ServiceQuotation */}
+//           {quotationType === "product" ? (
+//             <ProductQuotation products={products} setProducts={setProducts} />
+//           ) : (
+//             <ServiceQuotation services={services} setServices={setServices} />
+//           )}
+
+//           {/* Display Totals */}
+//           <Box mt={4} textAlign="center">
+//             <Typography variant="h6">Subtotal: {totals.subtotal.toFixed(2)}</Typography>
+//             <Typography variant="h6">Tax: {totals.taxAmount.toFixed(2)}</Typography>
+//             <Typography variant="h6">Discount: {totals.discountAmount.toFixed(2)}</Typography>
+//             <Typography variant="h5" color="primary">Total: {totals.total.toFixed(2)}</Typography>
+//           </Box>
+
+//           <Box textAlign="center" mt={4}>
+//             <Button variant="contained" color="primary" onClick={handleSubmit}>
+//               Send Quotation
+//             </Button>
+//           </Box>
+//         </Box>
+//       </Paper>
+//     </Box>
+//   );
+// };
+
+// export default QuotationForm;
+
+
+
+
+
+
+
+
+
+
+
 
 //changes made in submit form
 // import React, { useState,useEffect} from "react";
@@ -391,7 +797,7 @@ export default QuotationForm;
 //     createQuotation
 //       .unwrap() // .unwrap() works only for createAsyncThunk actions
 //       .then((response) => {
-//         toast.success(`${quotationType.charAt(0).toUpperCase() + quotationType.slice(1)} quotation created successfully!`);
+//         toast.success(`${quotationType.charAt(0).toUpperCase() + quotationType.slice(1)} quotation quotation_date successfully!`);
 //         // Fetch the updated list of quotations
 //         dispatch(fetchProductQuotations());
 //         dispatch(fetchServiceQuotations());
@@ -449,11 +855,11 @@ export default QuotationForm;
 //   //       .unwrap()
 //   //       .then((response) => {
 //   //         console.log('Product Quotation Created:', response.data); // Debugging
-//   //         toast.success("Product quotation created successfully!");
+//   //         toast.success("Product quotation quotation_date successfully!");
 //   //         navigate("/dashboard/crm/quotation/product-quotation");
 //   //       })
 //   //       .catch((error) => {
-//   //         console.error("Error:", error);  // Log error details
+//   //         console.error("Error:", error);  // Log error products
 //   //         toast.error(`Create Error: ${error.message}`);
 //   //       });
 //   //   } else if (quotationType === "service") {
@@ -461,11 +867,11 @@ export default QuotationForm;
 //   //       .unwrap()
 //   //       .then((response) => {
 //   //         console.log('service Quotation Created:', response); // Debugging
-//   //         toast.success("Service quotation created successfully!");
+//   //         toast.success("Service quotation quotation_date successfully!");
 //   //         navigate("/dashboard/crm/quotation/service-quotation");
 //   //       })
 //   //       .catch((error) => {
-//   //         console.error("Error:", error);  // Log error details
+//   //         console.error("Error:", error);  // Log error products
 //   //         toast.error(`Create Error: ${error.message}`);
 //   //       });
 //   //   }
@@ -558,7 +964,7 @@ export default QuotationForm;
 //           ) : selectionType === "enquiry" && enquiries.length > 0 ? (
 //             enquiries.map((enquiry) => (
 //               <MenuItem key={enquiry.id} value={enquiry.id}>
-//                 {enquiry.customer_name} {/* Assuming enquiry has a 'customer_name' field
+//                 {enquiry.enquiry_name} {/* Assuming enquiry has a 'customer_name' field
 //               </MenuItem>
 //             ))
 //           ) : (
@@ -859,11 +1265,11 @@ export default QuotationForm;
 //         .unwrap()
 //         .then((response) => {
 //           console.log('Product Quotation Created:', response); // Debugging
-//           toast.success("Product quotation created successfully!");
+//           toast.success("Product quotation quotation_date successfully!");
 //           navigate("/dashboard/crm/quotation/product-quotation");
 //         })
 //         .catch((error) => {
-//           console.error("Error:", error);  // Log error details
+//           console.error("Error:", error);  // Log error products
 //           toast.error(`Create Error: ${error.message}`);
 //         });
 //     } else if (quotationType === "service") {
@@ -871,11 +1277,11 @@ export default QuotationForm;
 //         .unwrap()
 //         .then((response) => {
 //           console.log('service Quotation Created:', response); // Debugging
-//           toast.success("Service quotation created successfully!");
+//           toast.success("Service quotation quotation_date successfully!");
 //           navigate("/dashboard/crm/quotation/service-quotation");
 //         })
 //         .catch((error) => {
-//           console.error("Error:", error);  // Log error details
+//           console.error("Error:", error);  // Log error products
 //           toast.error(`Create Error: ${error.message}`);
 //         });
 //     }
@@ -895,7 +1301,7 @@ export default QuotationForm;
 //           </Typography>
 //           {/* card1 */}
 
-//           {/* customer details  */}
+//           {/* customer products  */}
 //           {/* <div className="col-md-4">
 //                       <div className="form-group">
 //                         <label htmlFor="customer">customer:</label>
@@ -1094,7 +1500,7 @@ export default QuotationForm;
 //           ) : selectionType === "enquiry" && enquiries.length > 0 ? (
 //             enquiries.map((enquiry) => (
 //               <MenuItem key={enquiry.id} value={enquiry.id}>
-//                 {enquiry.customer_name} {/* Assuming enquiry has a 'customer_name' field */}
+//                 {enquiry.enquiry_name} {/* Assuming enquiry has a 'customer_name' field */}
 //               </MenuItem>
 //             ))
 //           ) : (
@@ -1430,7 +1836,7 @@ export default QuotationForm;
 //       dispatch(createProductQuotation(formDataWithTotals))
 //         .unwrap()
 //         .then((response) => {
-//           toast.success("Product quotation created successfully!");
+//           toast.success("Product quotation quotation_date successfully!");
 //           navigate("/dashboard/crm/quotation/product-quotation");
 //         })
 //         .catch((error) => {
@@ -1440,7 +1846,7 @@ export default QuotationForm;
 //       dispatch(createServiceQuotation(formDataWithTotals))
 //         .unwrap()
 //         .then((response) => {
-//           toast.success("Service quotation created successfully!");
+//           toast.success("Service quotation quotation_date successfully!");
 //           navigate("/dashboard/crm/quotation/service-quotation");
 //         })
 //         .catch((error) => {
@@ -1516,7 +1922,7 @@ export default QuotationForm;
         //     ) : enquiries.length > 0 ? (
         //       enquiries.map((enquiry) => (
         //         <MenuItem key={enquiry.id} value={enquiry.id}>
-        //           {enquiry.customer_name}
+        //           {enquiry.enquiry_name}
         //         </MenuItem>
         //       ))
         //     ) : (
@@ -1756,7 +2162,7 @@ export default QuotationForm;
 //       dispatch(createProductQuotation(formData))
 //         .unwrap()
 //         .then((response) => {
-//           toast.success("Product quotation created successfully!");
+//           toast.success("Product quotation quotation_date successfully!");
 //           navigate("/dashboard/crm/quotation/product-quotation");
 //         })
 //         .catch((error) => {
@@ -1766,7 +2172,7 @@ export default QuotationForm;
 //       dispatch(createServiceQuotation(formData))
 //         .unwrap()
 //         .then((response) => {
-//           toast.success("Service quotation created successfully!");
+//           toast.success("Service quotation quotation_date successfully!");
 //           navigate("/dashboard/crm/quotation/service-quotation");
 //         })
 //         .catch((error) => {
@@ -1982,7 +2388,7 @@ export default QuotationForm;
 //       dispatch(createProductQuotation(formDataWithTotals))
 //         .unwrap()
 //         .then((response) => {
-//           toast.success("Product quotation created successfully!");
+//           toast.success("Product quotation quotation_date successfully!");
 //           navigate("/dashboard/crm/quotation/product-quotation");
 //         })
 //         .catch((error) => {
@@ -1992,7 +2398,7 @@ export default QuotationForm;
 //       dispatch(createServiceQuotation(formDataWithTotals))
 //         .unwrap()
 //         .then((response) => {
-//           toast.success("Service quotation created successfully!");
+//           toast.success("Service quotation quotation_date successfully!");
 //           navigate("/dashboard/crm/quotation/service-quotation");
 //         })
 //         .catch((error) => {
@@ -2177,7 +2583,7 @@ export default QuotationForm;
 
 // export default QuotationForm;
 
-//adding customer  details
+//adding customer  products
 
 
 
@@ -2258,7 +2664,7 @@ export default QuotationForm;
 //       dispatch(createProductQuotation(formData))
 //         .unwrap()
 //         .then(() => {
-//           toast.success("Product quotation created successfully!");
+//           toast.success("Product quotation quotation_date successfully!");
 //           navigate("/dashboard/crm/product-quotation");
 //         })
 //         .catch((error) => toast.error(`Create Error: ${error.message}`));
@@ -2266,7 +2672,7 @@ export default QuotationForm;
 //       dispatch(createServiceQuotation(formData))
 //         .unwrap()
 //         .then(() => {
-//           toast.success("Service quotation created successfully!");
+//           toast.success("Service quotation quotation_date successfully!");
 //           navigate("/dashboard/crm/service-quotation");
 //         })
 //         .catch((error) => toast.error(`Create Error: ${error.message}`));
@@ -2456,7 +2862,7 @@ export default QuotationForm;
 //       dispatch(createProductQuotation(formData))
 //         .unwrap()
 //         .then(() => {
-//           toast.success("Product quotation created successfully!");
+//           toast.success("Product quotation quotation_date successfully!");
 //           setFormData({
 //             customer_name: "",
 //             client_email: "",
@@ -2478,7 +2884,7 @@ export default QuotationForm;
 //       dispatch(createServiceQuotation(formData))
 //         .unwrap()
 //         .then(() => {
-//           toast.success("Service quotation created successfully!");
+//           toast.success("Service quotation quotation_date successfully!");
 //           setFormData({
 //             customer_name: "",
 //             client_email: "",
@@ -2708,7 +3114,7 @@ export default QuotationForm;
 //       dispatch(createProductQuotation(formData))
 //         .unwrap()
 //         .then(() => {
-//           toast.success("Product quotation created successfully!");
+//           toast.success("Product quotation quotation_date successfully!");
 //           setFormData({
 //             customer_name: "",
 //             client_email: "",
@@ -2733,7 +3139,7 @@ export default QuotationForm;
 //       dispatch(createServiceQuotation(formData))
 //         .unwrap()
 //         .then(() => {
-//           toast.success("Service quotation created successfully!");
+//           toast.success("Service quotation quotation_date successfully!");
 //           setFormData({
 //             customer_name: "",
 //             client_email: "",
@@ -2953,7 +3359,7 @@ export default QuotationForm;
 //             dispatch(createProductQuotation(formData))
 //               .unwrap()
 //               .then(() => {
-//                 toast.success("product quotation created successfully!");
+//                 toast.success("product quotation quotation_date successfully!");
 //                 setFormData({
 //                     quotation_date:"",
 //                     tax_percentage:"",
@@ -3103,7 +3509,7 @@ export default QuotationForm;
 //   const [products, setProducts] = useState([
 //     { name: "", quantity: 1, price: 0 },
 //   ]);
-//   // State for "From" details
+//   // State for "From" products
 //   const [fromDetails, setFromDetails] = useState({
 //     name: "Paaru Rawal",
 //     title: "Software Engineer | AI Enthusiast",
@@ -3112,7 +3518,7 @@ export default QuotationForm;
 //     location: "AB Dev Factory, Lalitpur Nakhu",
 //   });
 
-//   // State for "Acceptance" details
+//   // State for "Acceptance" products
 //   const [acceptanceDetails, setAcceptanceDetails] = useState({
 //     customer_name: "",
 //     signature: "",
@@ -3156,7 +3562,7 @@ export default QuotationForm;
 //     setProducts([...products, { name: "", quantity: 1, price: 0 }]);
 //   };
 
-//   // Update product details
+//   // Update product products
 //   const updateProduct = (index, field, value) => {
 //     const updatedProducts = [...products];
 //     updatedProducts[index][field] = value;
@@ -3168,7 +3574,7 @@ export default QuotationForm;
 //     setServices([...services, { name: "", description: 1, price: 0 }]);
 //   };
 
-//   // Update product details
+//   // Update product products
 
 //   const updateService = (index, field, value) => {
 //     const updatedServices = [...services];
@@ -3312,7 +3718,7 @@ export default QuotationForm;
 //             </Typography>
 //             {quotationType === "service" ? (
 //                 <>
-//               <Typography variant="body1">Include your service details here.</Typography>
+//               <Typography variant="body1">Include your service products here.</Typography>
 
 //                         <Divider />
 
@@ -3411,7 +3817,7 @@ export default QuotationForm;
 //               Acceptance
 //             </Typography>
 //             <Typography variant="body1" gutterBottom>
-//               If you agree to the terms and service quotation, please fill in the details below.
+//               If you agree to the terms and service quotation, please fill in the products below.
 //             </Typography>
 //             <Grid container spacing={2} mt={2}>
 //               <Grid item xs={12}>

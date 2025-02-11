@@ -477,7 +477,7 @@ export default function EnquiryForm() {
 
   return (
     <div className="container">
-      <h2>Create Customer</h2>
+      <h2>Create Enquiry customer</h2>
       <form onSubmit={handleSubmit}>{renderStep()}</form>
     </div>
   );

@@ -88,6 +88,35 @@ export const searchFollow = createAsyncThunk(
   }
 );
 
+
+// export const fetchFollowupByEnquiryId = (id) => async (dispatch) => {
+//   dispatch(setLoading(true)); // Start loading
+//   try {
+//     const response = await axios.get(`/api/followup/${id}`);
+//     dispatch(setFollows(response.data)); // Dispatch action with the data
+//   } catch (error) {
+//     dispatch(setError(error.message)); // Handle error
+//   } finally {
+//     dispatch(setLoading(false)); // End loading
+//   }
+// };
+
+// Adjust the API call and remove trailing slash
+// Define the asynchronous thunk action
+export const FollowupByEnquiryId = createAsyncThunk(
+  'followup/fetchByEnquiryId',
+  async (enquiryId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/followup/followup-by-enquiry-id/?enquiryId=${enquiryId}/`
+      );
+      return response.data.result; // Return the follow-ups directly
+    } catch (error) {
+      console.error('Error fetching follow-ups:', error);
+      return rejectWithValue(error.message || 'Unknown error');
+    }
+  }
+);
 // Redux slice
 const followSlice = createSlice({
   name: "follows",
@@ -104,9 +133,14 @@ const followSlice = createSlice({
     deleteError: null,
   },
   reducers: {
-    setFollows(state, action) {
-      state.list = action.payload;
+    setFollows: (state, action) => {
+      state.followups = action.payload; // Store the follow-up data
+      state.loading = false;
+      state.error = null;
     },
+    // setFollows(state, action) {
+    //   state.list = action.payload;
+    // },
     setLoading(state, action) {
       state.isLoading = action.payload;
     },
@@ -119,31 +153,21 @@ const followSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      //fetch follow by id
-      // .addCase(fetchFollowByEnquiryId.pending, (state) => {
-      //   state.isLoading = true;
-      // })
-      // .addCase(fetchFollowByEnquiryId.fulfilled, (state, action) => {
-      //   state.isLoading = false;
-      //   state.list = action.payload;
-      // })
-      // .addCase(fetchFollowByEnquiryId.rejected, (state, action) => {
-      //   state.isLoading = false;
-      //   state.fetchError = action.payload;
-      // })
-      // Fetch follows
-      .addCase(fetchFollows.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(fetchFollows.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.list = action.payload;
-      })
-      .addCase(fetchFollows.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload;
-      })
+    // Fetch follows
+    .addCase(fetchFollows.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    })
+    .addCase(fetchFollows.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.list = action.payload;
+    })
+    .addCase(fetchFollows.rejected, (state, action) => {
+      state.isLoading = false;
+      state.fetchError = action.payload;
+    })
+
+
       // Fetch follow by ID
       .addCase(fetchFollowById.pending, (state) => {
         state.isLoading = true;
@@ -215,6 +239,19 @@ const followSlice = createSlice({
       .addCase(searchFollow.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      })
+      //followbyenquiryid
+      .addCase(FollowupByEnquiryId.pending, (state) => {
+        state.loading = true;
+        state.error = null; // Reset error on new request
+      })
+      .addCase(FollowupByEnquiryId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.follows = action.payload; // Set the follow-ups
+      })
+      .addCase(FollowupByEnquiryId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload; // Set the error message
       });
   },
 });
@@ -222,13 +259,14 @@ const followSlice = createSlice({
 export const { setFollows, setLoading, setError, setCurrentFollow } =
   followSlice.actions;
 
+  // export default followSlice.reducer;
 export default followSlice.reducer;
 
 // import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import axios from "axios";
 
 // // Fetch all follows action
-// export const fetchFollowss = createAsyncThunk(
+// export const fetchFollows = createAsyncThunk(
 //   "follows/fetchFollows",
 //   async (_, thunkAPI) => {
 //     try {
@@ -369,19 +407,19 @@ export default followSlice.reducer;
 
 //   extraReducers: (builder) => {
 //     builder
-//       // Fetch follows
-//       .addCase(fetchFollowss.pending, (state) => {
-//         state.isLoading = true;
-//         state.error = null;
-//       })
-//       .addCase(fetchFollowss.fulfilled, (state, action) => {
-//         state.isLoading = false;
-//         state.list = action.payload;
-//       })
-//       .addCase(fetchFollowss.rejected, (state, action) => {
-//         state.isLoading = false;
-//         state.fetchError = action.payload;
-//       })
+      // // Fetch follows
+      // .addCase(fetchFollows.pending, (state) => {
+      //   state.isLoading = true;
+      //   state.error = null;
+      // })
+      // .addCase(fetchFollows.fulfilled, (state, action) => {
+      //   state.isLoading = false;
+      //   state.list = action.payload;
+      // })
+      // .addCase(fetchFollows.rejected, (state, action) => {
+      //   state.isLoading = false;
+      //   state.fetchError = action.payload;
+      // })
 //       // Fetch follow by ID
 //       .addCase(fetchFollowsById.pending, (state) => {
 //         state.isLoading = true;

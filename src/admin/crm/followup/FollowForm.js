@@ -172,7 +172,7 @@ const FollowForm = (enquiryId) => {
                         ) : enquiries.length > 0 ? (
                           enquiries.map((enquiry) => (
                             <option key={enquiry.id} value={enquiry.id}>
-                              {enquiry.customer_name}
+                              {enquiry.enquiry_name}
                             </option>
                           ))
                         ) : (

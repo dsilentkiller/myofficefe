@@ -200,14 +200,14 @@ const EnquiryForm = () => {
     e.preventDefault();
 
     // Validate required fields
-    if (!formData.customer_name || !formData.category || !formData.pri_phone) {
-      toast.error("Please fill in all required fields.");
-      return;
-    }
-    if (!phoneValid) {
-      toast.error("Please enter a valid phone number.");
-      return;
-    }
+    // if (!formData.customer_name || !formData.category || !formData.pri_phone) {
+    //   toast.error("Please fill in all required fields.");
+    //   return;
+    // }
+    // if (!phoneValid) {
+    //   toast.error("Please enter a valid phone number.");
+    //   return;
+    // }
 
     console.log("Form data before submission:", formDataToSubmit); // Debug log
 
@@ -365,7 +365,7 @@ const EnquiryForm = () => {
                         ) : enquiries.length > 0 ? (
                           enquiries.map((enquiry) => (
                             <option key={enquiry.id} value={enquiry.id}>
-                              {enquiry.customer_name}
+                              {enquiry.enquiry_name}
                             </option>
                           ))
                         ) : (
@@ -865,7 +865,7 @@ const EnquiryForm = () => {
                         </select>
                       </div>
                     </div>
-                    
+
 
                     <div className="col-md-4">
                       <div className="form-group">
