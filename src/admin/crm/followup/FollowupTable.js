@@ -47,8 +47,8 @@
 
 //   // Sorting logic for the customer name
 //   const sortedFollows = [...filteredFollows].sort((a, b) => {
-//     const nameA = a.enquiry_name.toLowerCase();
-//     const nameB = b.enquiry_name.toLowerCase();
+//     const nameA = a.customer_name.toLowerCase();
+//     const nameB = b.customer_name.toLowerCase();
 //     if (nameA < nameB) return sortOrder === "asc" ? -1 : 1;
 //     if (nameA > nameB) return sortOrder === "asc" ? 1 : -1;
 //     return 0;
@@ -94,24 +94,24 @@
 //             <TableBody>
 //               {sortedFollows.length > 0 ? (
 //                 sortedFollows.map((follow, index) => {
-//                   const isExpanded = expandedRows[follow.enquiry_name];
+//                   const isExpanded = expandedRows[follow.customer_name];
 //                   return (
 //                     <React.Fragment key={follow.id}>
 //                       {/* Toggle Row */}
-//                       {index === 0 || sortedFollows[index - 1].enquiry_name !== follow.enquiry_name ? (
+//                       {index === 0 || sortedFollows[index - 1].customer_name !== follow.customer_name ? (
 //                         <>
-//                           <TableRow onClick={() => handleExpandRow(follow.enquiry_name)} style={{ cursor: "pointer" }}>
+//                           <TableRow onClick={() => handleExpandRow(follow.customer_name)} style={{ cursor: "pointer" }}>
 //                             <TableCell colSpan={8} sx={{ fontWeight: "bold" }}>
-//                               {follow.enquiry_name} {isExpanded ? "▲" : "▼"}
+//                               {follow.customer_name} {isExpanded ? "▲" : "▼"}
 //                             </TableCell>
 //                           </TableRow>
 //                           {isExpanded &&
 //                             sortedFollows
-//                               .filter((f) => f.enquiry_name === follow.enquiry_name)
+//                               .filter((f) => f.customer_name === follow.customer_name)
 //                               .map((followItem, subIndex) => (
 //                                 <TableRow key={followItem.id}>
 //                                   <TableCell>{subIndex + 1}</TableCell>
-//                                   <TableCell>{followItem.enquiry_name}</TableCell>
+//                                   <TableCell>{followItem.customer_name}</TableCell>
 //                                   <TableCell>{followItem.follow_by}</TableCell>
 //                                   <TableCell>{followItem.due_date}</TableCell>
 //                                   <TableCell>{followItem.created}</TableCell>
@@ -218,7 +218,7 @@ console.log('checkeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
     if (searchTerm) {
       setFilteredFollows(
         follows.filter((follow) =>
-          follow.enquiry_name.toLowerCase().includes(searchTerm.toLowerCase())
+          follow.customer_name.toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
     } else {
@@ -285,8 +285,8 @@ console.log('checkeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
 
   // Sorting logic for the customer name
   const sortedFollows = [...filteredFollows].sort((a, b) => {
-    const nameA = (a?.enquiry_name || '').toLowerCase();  // Safe fallback to empty string if undefined or null
-    const nameB = (b?.enquiry_name || '').toLowerCase();  // Same here
+    const nameA = (a?.customer_name || '').toLowerCase();  // Safe fallback to empty string if undefined or null
+    const nameB = (b?.customer_name || '').toLowerCase();  // Same here
     if (nameA < nameB) return sortOrder === "asc" ? -1 : 1;
     if (nameA > nameB) return sortOrder === "asc" ? 1 : -1;
     return 0;
@@ -370,24 +370,24 @@ console.log('checkeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
               <TableBody>
                 {sortedFollows.length > 0 ? (
                   sortedFollows.map((follow, index) => {
-                    const isExpanded = expandedRows[follow.enquiry_name];
+                    const isExpanded = expandedRows[follow.customer_name];
                     return (
                       <React.Fragment key={follow.id}>
                         {/* Toggle Row */}
-                        {index === 0 || sortedFollows[index - 1].enquiry_name !== follow.enquiry_name ? (
+                        {index === 0 || sortedFollows[index - 1].customer_name !== follow.customer_name ? (
                           <>
-                            <TableRow onClick={() => handleExpandRow(follow.enquiry_name)} style={{ cursor: "pointer" }}>
+                            <TableRow onClick={() => handleExpandRow(follow.customer_name)} style={{ cursor: "pointer" }}>
                               <TableCell colSpan={8} sx={{ fontWeight: "bold" }}>
-                                {follow.enquiry_name} {isExpanded ? "▲" : "▼"}
+                                {follow.customer_name} {isExpanded ? "▲" : "▼"}
                               </TableCell>
                             </TableRow>
                             {isExpanded &&
                               sortedFollows
-                                .filter((f) => f.enquiry_name === follow.enquiry_name)
+                                .filter((f) => f.customer_name === follow.customer_name)
                                 .map((followItem, subIndex) => (
                                   <TableRow key={followItem.id}>
                                     <TableCell>{subIndex + 1}</TableCell>
-                                    <TableCell>{followItem.enquiry_name}</TableCell>
+                                    <TableCell>{followItem.customer_name}</TableCell>
                                     <TableCell>{formatName(followItem.follow_by)}</TableCell>
                                     <TableCell className={getDueDateClass(followItem.due_date)}>
                                       {formatDateTime(followItem.due_date)}
@@ -538,7 +538,7 @@ export default FollowTable;
 //     if (searchTerm) {
 //       setFilteredFollows(
 //         follows.filter((follow) =>
-//           follow.enquiry_name.toLowerCase().includes(searchTerm.toLowerCase())
+//           follow.customer_name.toLowerCase().includes(searchTerm.toLowerCase())
 //         )
 //       );
 //     } else {
@@ -550,8 +550,8 @@ export default FollowTable;
 
 //   const sortFollows = () => {
 //     const sortedFollows = [...filteredFollows].sort((a, b) => {
-//       const nameA = a.enquiry_name.toLowerCase();
-//       const nameB = b.enquiry_name.toLowerCase();
+//       const nameA = a.customer_name.toLowerCase();
+//       const nameB = b.customer_name.toLowerCase();
 //       if (nameA < nameB) return sortOrder === "asc" ? -1 : 1;
 //       if (nameA > nameB) return sortOrder === "asc" ? 1 : -1;
 //       return 0;
@@ -656,7 +656,7 @@ export default FollowTable;
 //                       filteredFollows.map((follow, index) => (
 //                         <TableRow key={follow.id}>
 //                           <TableCell>{index + 1}</TableCell>
-//                           <TableCell>{follow.enquiry_name}</TableCell>
+//                           <TableCell>{follow.customer_name}</TableCell>
 //                           <TableCell>{formatName(follow.follow_by)}</TableCell>
 //                           <TableCell
 //                             className={getDueDateClass(follow.due_date)}
@@ -889,7 +889,7 @@ export default FollowTable;
 //                       filteredFollows.map((follow, index) => (
 //                         <tr key={follow.id}>
 //                           <td>{index + 1}</td>
-//                           <td>{follow.enquiry_name}</td>
+//                           <td>{follow.customer_name}</td>
 //                           <td>{formatName(follow.follow_by)}</td>
 //                           <td className={getDueDateClass(follow.due_date)}>
 //                             {formatDateTime(follow.due_date)}

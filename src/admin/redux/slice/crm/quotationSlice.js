@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { createSelector } from "@reduxjs/toolkit";
 // Base URLs for API
-const API_BASE_URL = 'http://localhost:8000/api/quotation';
+const API_BASE_URL = 'http://127.0.0.1:8000/api/quotation';
 // / Selector to get service quotations from state
 export const selectQuotations = createSelector(
   (state) => state.quotations.services,  // Ensure 'services' matches state structure
@@ -19,7 +19,7 @@ export const fetchProductQuotations = createAsyncThunk(
       // console.log("Product Quotations Data:", response.data.result); // ✅ Log API response
       // return response.data.result; // ✅ Ensure correct return value
       const data = response.data; // Assuming `data` contains the quotations
-      console.log("Service Quotations Data:", data); // Log to verify data format
+      console.log("product Quotations Data:", data); // Log to verify data format
       return data; // Ensure that this returns the correct data structure
     } catch (error) {
       console.error("Error fetching quotations:", error.response?.data || error.message);
@@ -72,7 +72,7 @@ export const createProductQuotation = createAsyncThunk(
   'quotation/createProductQuotation',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/product-quotation/create/`, formData);
+      const response = await axios.post(`${API_BASE_URL}/product-quotations/create/`, formData);
       return response.data.result;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -84,7 +84,7 @@ export const fetchProductQuotationsById = createAsyncThunk(
   'productquotations/fetchProductQuotationsById',
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/product-quotations/detail/${id}/`);
+      const response = await axios.get(`http://127.0.0.1:8000/api/quotation/product-quotations/detail/${id}/`);
       return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
@@ -108,7 +108,7 @@ export const deleteProductQuotation = createAsyncThunk(
   'quotation/deleteProductQuotation',
   async (id, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_BASE_URL}/product-quotation/delete/${id}/`);
+      await axios.delete(`${API_BASE_URL}/product-quotations/delete/${id}/`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -138,7 +138,7 @@ export const createServiceQuotation = createAsyncThunk(
   'quotation/createServiceQuotation',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/service-quotation/create/`, formData);
+      const response = await axios.post(`${API_BASE_URL}/service-quotations/create/`, formData);
       return response.data.result;
     } catch (error) {
       console.error("Error creating service quotation:", error.response?.data || error.message);

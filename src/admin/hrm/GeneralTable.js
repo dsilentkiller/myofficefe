@@ -1,4 +1,4 @@
-  
+
 import {
   Table,
   TableHead,
@@ -155,7 +155,7 @@ const GeneralTable = ({
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
               <Typography left variant="h6" sx={{ textAlign: 'left', fontWeight: 'bold', color: '#333', flexGrow: 1 }}>{title}</Typography>
               <div className="navbar-nav ml-auto">
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Box sx={{ display: "flex",position:"static", alignItems: "center", gap: 2 }}>
                   <InputBase
                     placeholder="Search..."
                     value={search}

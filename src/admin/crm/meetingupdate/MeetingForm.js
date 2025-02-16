@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createMeetingUpdate, fetchMeetingUpdate } from "../../redux/slice/crm/meetingUpdateSlice";
 import { TextField } from "@mui/material";
 
-const MeetingUpdateForm = () => {
+const MeetingForm = () => {
   const { eventId } = useParams(); // Fetch eventId from URL params
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -205,7 +205,7 @@ const MeetingUpdateForm = () => {
   );
 };
 
-export default MeetingUpdateForm;
+export default MeetingForm;
 
 
 
@@ -220,7 +220,7 @@ export default MeetingUpdateForm;
 // import { createMeetingUpdate, fetchMeetingUpdate } from "../../redux/slice/crm/meetingUpdateSlice";
 // import { TextField } from "@mui/material";
 
-// const MeetingUpdateForm = () => {
+// const MeetingForm = () => {
 //   const { eventId } = useParams(); // Fetch eventId from URL params
 //   const dispatch = useDispatch();
 //   const navigate = useNavigate();
@@ -299,7 +299,7 @@ export default MeetingUpdateForm;
 // import { createMeetingUpdate, fetchMeetingUpdate } from "../../redux/slice/crm/meetingUpdateSlice";
 // import { TextField } from "@mui/material";
 
-// const MeetingUpdateForm = () => {
+// const MeetingForm = () => {
 //   const { eventId } = useParams(); // Fetch eventId from URL params
 //   const dispatch = useDispatch();
 //   const navigate = useNavigate();
@@ -501,7 +501,7 @@ export default MeetingUpdateForm;
 //   );
 // };
 
-// export default MeetingUpdateForm;
+// export default MeetingForm;
 
 
 //form isnot submitted to db
@@ -512,7 +512,7 @@ export default MeetingUpdateForm;
 // import { createMeetingUpdate, fetchMeetingUpdate } from "../../redux/slice/crm/meetingUpdateSlice";
 // import { TextField } from "@mui/material";
 // import { useNavigate, useParams } from "react-router-dom";
-// const MeetingUpdateForm = () => {
+// const MeetingForm = () => {
 //   const [formData, setFormData] = useState({
 //     title: "",
 //     conclusion: "",
@@ -720,7 +720,7 @@ export default MeetingUpdateForm;
 //   );
 // };
 
-// export default MeetingUpdateForm;
+// export default MeetingForm;
 
 // ###first form old form
 // import React, { useState, useEffect } from "react";
@@ -733,7 +733,7 @@ export default MeetingUpdateForm;
 // } from "../../redux/slice/crm//meetingUpdateSlice";
 // import { TextField } from "@mui/material";
 
-// const MeetingUpdateForm = () => {
+// const MeetingForm = () => {
 //   const [formData, setFormData] = useState({
 //     title: "",
 //     conclusion: "",
@@ -901,4 +901,4 @@ export default MeetingUpdateForm;
 //   );
 // };
 
-// export default MeetingUpdateForm;
+// export default MeetingForm;

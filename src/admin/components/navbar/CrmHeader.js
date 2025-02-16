@@ -11,7 +11,7 @@ import FollowTheSignsIcon from "@mui/icons-material/FollowTheSigns"; // Icon for
 const CrmHeader = () => {
   return (
     <div>
-      <AppBar position="static" color="primary" sx={{ position: 'sticky', top: 0}}>
+      <AppBar position="static" color="primary">
         <Toolbar>
           {/* Mobile Menu Icon (optional) */}
           <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
@@ -46,33 +46,40 @@ const CrmHeader = () => {
               Followup
             </Link>
 
-            <Link to="/dashboard/crm/project" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+            <Link to="/dashboard/crm/project/" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
               <IconButton color="inherit">
                 <AssignmentIcon />
               </IconButton>
               Project
             </Link>
 
-            <Link to="/dashboard/crm/event" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+            <Link to="/dashboard/crm/event/" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
               <IconButton color="inherit">
                 <EventIcon />
               </IconButton>
               Event
             </Link>
              {/* quotation */}
-             {/* <Link to="/dashboard/crm/meetingupdates" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+             {/* <Link to="/dashboard/crm/meetings/" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
               <IconButton color="inherit">
                 <AssignmentIcon />
               </IconButton>
-              meeting update
+              meeting
             </Link> */}
 
             {/* quotation */}
-            <Link to="/dashboard/crm/quotations" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+            <Link to="/dashboard/crm/quotations/" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
               <IconButton color="inherit">
                 <AssignmentIcon />
               </IconButton>
               Quotation
+            </Link>
+              {/* quotation */}
+              <Link to="/dashboard/crm/proposals" style={{ color: 'inherit', textDecoration: 'none', marginRight: '20px' }}>
+              <IconButton color="inherit">
+                <AssignmentIcon />
+              </IconButton>
+             Proposal
             </Link>
 
           </Box>

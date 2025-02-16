@@ -1,25 +1,25 @@
-
+// export default ProposalDelete;
 
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "../../css/delete.css";
-import { deleteMeetingUpdate } from "../../redux/slice/crm/meetingUpdateSlice";
+import { deleteProposal } from "../../redux/slice/crm/proposalSlice";
 
-const MeetingUpdateDelete = ({ id, onClose }) => {
+const ProposalDelete = ({ id, onClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleDelete = () => {
-    dispatch(deleteMeetingUpdate(id))
+    dispatch(deleteProposal(id))
       .unwrap()
       .then(() => {
-        toast.success("meeting update  deleted successfully!");
-        navigate("/dashboard/crm/meetingupdate/"); // Adjust this route as needed
+        toast.success("proposal  deleted successfully!");
+        navigate("/dashboard/crm/proposals/"); // Adjust this route as needed
       })
       .catch((error) => {
-        toast.error(`Failed to delete meeting update: ${error.message}`);
+        toast.error(`Failed to delete proposal: ${error.message}`);
       })
       .finally(() => {
         onClose(); // Close the modal after deletion
@@ -53,7 +53,7 @@ const MeetingUpdateDelete = ({ id, onClose }) => {
             </button>
           </div>
           <div className="modal-body">
-            Are you sure you want to delete this meeting update?
+            Are you sure you want to delete this proposal?
           </div>
           <div className="modal-footer">
             <button
@@ -78,4 +78,4 @@ const MeetingUpdateDelete = ({ id, onClose }) => {
   );
 };
 
-export default MeetingUpdateDelete;
+export default ProposalDelete;

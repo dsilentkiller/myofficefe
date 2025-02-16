@@ -221,7 +221,7 @@ const projectSlice = createSlice({
         // state.deleteStatus = "failed";
         state.deleteError = action.payload ;
       })
-   
+
       // Search project
       .addCase(searchProject.pending, (state) => {
         state.isLoading = true;

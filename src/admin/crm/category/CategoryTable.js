@@ -219,7 +219,7 @@ const CategoryTable = () => {
                           ) : (
                             formatName(category.category_name || "") // Default to empty string if name is null
                           )}
-                          
+
                                   </td>
                                   <td>
                                 {/* Edit or Save Button */}

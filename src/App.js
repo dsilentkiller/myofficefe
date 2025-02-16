@@ -296,7 +296,7 @@ import CustomerDetail from "./admin/client/customer/CustomerDetail";
 
 import PrivateRoute from "./admin/accounts/PrivateRoute";  // Adjust the path if needed
 import MeetingUpdateTable from "./admin/crm/meetingupdate/MeetingUpdateTable";
-import MeetingUpdateForm from "./admin/crm/meetingupdate/MeetingUpdateForm";
+import MeetingUpdateForm from "./admin/crm/meetingupdate/MeetingForm";
 import LostEnquiryTable from "./admin/crm/enquiry/LostEnquiryTable";
 import LoginForm from "./admin/accounts/LoginForm";
 import QuotationForm from "./admin/crm/quotation/QuotationForm";
@@ -307,7 +307,10 @@ import Letterhead from "./admin/base/letterhead/Letterhead";
 import QuotationTable from "./admin/crm/quotation/QuotationTable";
 import OrganizationForm from "./admin/base/organization/Form";
 import ServiceQuotationDetail from "./admin/crm/quotation/ServiceQuotationDetail";
-// import ProductQuotationDetail from "./admin/crm/quotation/ProductQuotationDetail1"
+import ProductQuotationDetail from "./admin/crm/quotation/ProductQuotationDetail1"
+import ProposalForm from "./admin/crm/proposal/ProposalForm";
+import ProposalTable from "./admin/crm/proposal/ProposalTable";
+import ProposalDetail from "./admin/crm/proposal/ProposalDetail";
 
 function App() {
   const isAuthenticated = localStorage.getItem("access_token") !== null;
@@ -378,8 +381,15 @@ function App() {
                 <Route path="quotation/update/:id" element={<QuotationForm />} />
                 <Route path="quotation/product/create" element={<ProductQuotationForm/>} />
                 <Route path="quotation/service/create" element={<ServiceQuotationForm/>} />
-                {/* <Route path="quotation/product/detail" element={<ProductQuotationDetail/>} /> */}
+                <Route path="quotation/product/detail/:id/" element={<ProductQuotationDetail/>} />
+                <Route path="quotation/service/detail/:id/" element={<ServiceQuotationDetail />} />
+
                 <Route path="quotation/service-quotation/detail/:id/" element={<ServiceQuotationDetail/>} />
+                {/* proposal  */}
+                <Route path="proposal/create" element={<ProposalForm />} />
+                <Route path="proposals/" element={<ProposalTable />} />
+                <Route path="proposal/update/:id/" element={<ProposalForm />} />
+                <Route path="proposal/detail/:id/" element={<ProposalDetail />} />
 
 
               </Route>

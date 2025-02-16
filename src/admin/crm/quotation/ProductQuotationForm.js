@@ -116,7 +116,7 @@ const ProductQuotation = ({ products, setProducts, includeTax, tax_percentage, i
         </Table>
       </TableContainer>
 
-    
+
     </Box>
   );
 };

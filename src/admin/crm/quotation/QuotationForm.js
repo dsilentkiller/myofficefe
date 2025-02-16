@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -80,64 +81,78 @@ const QuotationForm = ({ existingQuotation }) => {
 
     return { subtotal, taxAmount, discountAmount, total };
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (quotationType === "product") {
-      for (let product of products) {
-        if (!product.product_name || !product.price || !product.quantity) {
-          toast.error("Product name, price, and quantity are required for each product.");
-          return;
-        }
-      }
+  
+    // Ensure either customer or enquiry is selected
+    if (!selectedCustomerOrEnquiry) {
+      toast.error(`Please select a ${selectionType === "customer" ? "customer" : "enquiry"}`);
+      return;
     }
-
-    if (quotationType === "service") {
-      for (let service of services) {
-        if (!service.service_name || !service.service_price) {
-          toast.error("Service name and price are required for each service.");
-          return;
-        }
-      }
-    }
-
-    const totals = calculateTotal();
+  
+    const total = calculateTotal();
+  
+    // Construct the form data
     const formData = {
       quotation_date: currentDate,
       tax_percentage: taxPercentage,
       discount_percentage: discountPercentage,
-      subtotal: totals.subtotal,
-      tax_amount: totals.taxAmount,
-      discount_amount: totals.discountAmount,
-      total_amount: totals.total,
+      subtotal: total.subtotal,
+      tax_amount: total.taxAmount,
+      discount_amount: total.discountAmount,
+      total_amount: total.total,
       products: quotationType === "product" ? products : [],
       services: quotationType === "service" ? services : [],
+      selection_type: selectionType,
     };
-
+  
+    // Get selected customer or enquiry by ID
+    const selectedItem = selectionType === "customer"
+      ? customers.find(customer => customer.id === selectedCustomerOrEnquiry)
+      
+      : enquiries.find(enquiry => enquiry.id === selectedCustomerOrEnquiry);
+  
+    if (!selectedItem) {
+      toast.error(`Selected ${selectionType} not found`);
+      return;
+    }
+  
+    // Add customer_id or enquiry_id to formData
+    if (selectionType === "customer") {
+      formData.customer_name = selectedItem.id; // Store customer_id
+    } else if (selectionType === "enquiry") {
+      formData.enquiry_name = selectedItem.id; // Store enquiry_id
+    }
+  
+    // Log the form data for debugging
+    console.log("Form Data: ", formData);
+  
+    // Validate required fields for services and products
     formData.services.forEach((service, index) => {
       if (!service.service_name || !service.service_price || !service.quantity) {
         toast.error(`Service at index ${index} is missing required fields.`);
         return;
       }
     });
-
+  
     formData.products.forEach((product, index) => {
       if (!product.product_name || !product.price || !product.quantity) {
         toast.error(`Product at index ${index} is missing required fields.`);
         return;
       }
     });
-
+  
+    // Ensure subtotal is valid
     if (!formData.subtotal || formData.subtotal <= 0) {
       toast.error("Subtotal must be greater than 0.");
       return;
     }
-
+  
+    // Make API request to create the quotation
     const createQuotation = quotationType === "product"
       ? dispatch(createProductQuotation(formData))
       : dispatch(createServiceQuotation(formData));
-
+  
     createQuotation
       .unwrap()
       .then((response) => {
@@ -147,11 +162,27 @@ const QuotationForm = ({ existingQuotation }) => {
         navigate(`/dashboard/crm/quotations`);
       })
       .catch((error) => {
-        toast.error(`Create Error: ${error.message || "Unknown error"}`);
+        console.log("Create Error:", error);
+  
+        if (error.errors) {
+          Object.entries(error.errors).forEach(([field, messages]) => {
+            messages.forEach((msg) => toast.error(`${field}: ${msg}`));
+          });
+        } else {
+          toast.error(`Create Error: ${error.message || "Unknown error"}`);
+        }
       });
   };
+  
+          // useEffect(() => {
+          //   calculateTotal(); // Recalculate totals when data changes
+          // }, [products, services, taxPercentage, discountPercentage, includeTax, includeDiscount]);
+          
 
-  const totals = calculateTotal();
+
+          const totals = calculateTotal();
+          
+
 
   return (
     <Box p={4} maxWidth="900px" mx="auto">
@@ -192,7 +223,7 @@ const QuotationForm = ({ existingQuotation }) => {
             ) : selectionType === "enquiry" && Array.isArray(enquiries) && enquiries.length > 0 ? (
               enquiries.map((enquiry) => (
                 <MenuItem key={enquiry.id} value={enquiry.id}>
-                  {enquiry.enquiry_name || "No Enquiry Name"}
+                  {enquiry.customer_name || "No Enquiry Name"}
                 </MenuItem>
               ))
             ) : (
@@ -269,7 +300,6 @@ const QuotationForm = ({ existingQuotation }) => {
 };
 
 export default QuotationForm;
-
 
 
 //old quotation form work well
@@ -382,7 +412,7 @@ export default QuotationForm;
 //       }
 //     }
 
-//     const totals = calculateTotal();
+//     const total = calculateTotal();
 
 
 // // added
@@ -392,10 +422,10 @@ export default QuotationForm;
 //   //   quotation_date: currentDate,  // Or get from input
 //   //   tax_percentage: taxPercentage,
 //   //   discount_percentage: discountPercentage,
-//   //   subtotal: totals.subtotal,
-//   //   tax_amount: totals.taxAmount,
-//   //   discount_amount: totals.discountAmount,
-//   //   total_amount: totals.total,
+//   //   subtotal: total.subtotal,
+//   //   tax_amount: total.taxAmount,
+//   //   discount_amount: total.discountAmount,
+//   //   total_amount: total.total,
 //   //   products: quotationType === "product" ? products : [],
 //   //   services: quotationType === "service" ? services : [],
 //   // };
@@ -406,10 +436,10 @@ export default QuotationForm;
 //       quotation_date: currentDate,  // Or get from input
 //       tax_percentage: taxPercentage,
 //       discount_percentage: discountPercentage,
-//       subtotal: totals.subtotal,
-//       tax_amount: totals.taxAmount,
-//       discount_amount: totals.discountAmount,
-//       total_amount: totals.total,
+//       subtotal: total.subtotal,
+//       tax_amount: total.taxAmount,
+//       discount_amount: total.discountAmount,
+//       total_amount: total.total,
 //       products: quotationType === "product" ? products : [],
 //       services: quotationType === "service" ? services : [],
 //     };
@@ -461,7 +491,7 @@ export default QuotationForm;
 
 //   };
 
-//   const totals = calculateTotal();
+//   const total = calculateTotal();
 //   // console.log(formData);  // Log the formData to check if `service_name` and `service_price` are included
 //   const validateForm = () => {
 //     // Check if all product fields are filled
@@ -588,10 +618,10 @@ export default QuotationForm;
 
 //           {/* Display Totals */}
 //           <Box mt={4} textAlign="center">
-//             <Typography variant="h6">Subtotal: {totals.subtotal.toFixed(2)}</Typography>
-//             <Typography variant="h6">Tax: {totals.taxAmount.toFixed(2)}</Typography>
-//             <Typography variant="h6">Discount: {totals.discountAmount.toFixed(2)}</Typography>
-//             <Typography variant="h5" color="primary">Total: {totals.total.toFixed(2)}</Typography>
+//             <Typography variant="h6">Subtotal: {total.subtotal.toFixed(2)}</Typography>
+//             <Typography variant="h6">Tax: {total.taxAmount.toFixed(2)}</Typography>
+//             <Typography variant="h6">Discount: {total.discountAmount.toFixed(2)}</Typography>
+//             <Typography variant="h5" color="primary">Total: {total.total.toFixed(2)}</Typography>
 //           </Box>
 
 //           <Box textAlign="center" mt={4}>
@@ -766,17 +796,17 @@ export default QuotationForm;
 //     //   }
 //     }
 
-//     const totals = calculateTotal();
+//     const total = calculateTotal();
 
 //     // Construct the form data
 //     const formData = {
 //       quotation_date: "",
 //       tax_percentage: taxPercentage,
 //       discount_percentage: discountPercentage,
-//       subtotal: totals.subtotal,
-//       tax_amount: totals.taxAmount,
-//       discount_amount: totals.discountAmount,
-//       total_amount: totals.total,
+//       subtotal: total.subtotal,
+//       tax_amount: total.taxAmount,
+//       discount_amount: total.discountAmount,
+//       total_amount: total.total,
 //       products: quotationType === "product" ? products : [],
 //       services: quotationType === "service" ? services : [],
 //     };
@@ -812,7 +842,7 @@ export default QuotationForm;
 //   // const handleSubmit = (e) => {
 //   //   e.preventDefault();
 
-//   //   const totals = calculateTotal();
+//   //   const total = calculateTotal();
 
 //   //   // Construct the form data
 //   //   const formData = {
@@ -822,10 +852,10 @@ export default QuotationForm;
 //   //     quotation_date: "",
 //   //     tax_percentage: taxPercentage,
 //   //     discount_percentage: discountPercentage,
-//   //     subtotal: totals.subtotal,
-//   //     tax_amount: totals.taxAmount,
-//   //     discount_amount: totals.discountAmount,
-//   //     total_amount: totals.total,
+//   //     subtotal: total.subtotal,
+//   //     tax_amount: total.taxAmount,
+//   //     discount_amount: total.discountAmount,
+//   //     total_amount: total.total,
 //   //     products: quotationType === "product" ? products : [],
 //   //     services: quotationType === "service" ? services : [],
 //   //   };
@@ -877,7 +907,7 @@ export default QuotationForm;
 //   //   }
 //   // };
 
-//   const totals = calculateTotal();
+//   const total = calculateTotal();
 //   return (
 //     <Box p={4} maxWidth="900px" mx="auto">
 //       <Paper elevation={3}>
@@ -1084,10 +1114,10 @@ export default QuotationForm;
 
 //           {/* Display Totals */}
 //           <Box mt={4} textAlign="center">
-//             <Typography variant="h6">Subtotal: {totals.subtotal.toFixed(2)}</Typography>
-//             <Typography variant="h6">Tax: {totals.taxAmount.toFixed(2)}</Typography>
-//             <Typography variant="h6">Discount: {totals.discountAmount.toFixed(2)}</Typography>
-//             <Typography variant="h5" color="primary">Total: {totals.total.toFixed(2)}</Typography>
+//             <Typography variant="h6">Subtotal: {total.subtotal.toFixed(2)}</Typography>
+//             <Typography variant="h6">Tax: {total.taxAmount.toFixed(2)}</Typography>
+//             <Typography variant="h6">Discount: {total.discountAmount.toFixed(2)}</Typography>
+//             <Typography variant="h5" color="primary">Total: {total.total.toFixed(2)}</Typography>
 //           </Box>
 
 
@@ -1222,7 +1252,7 @@ export default QuotationForm;
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
 
-//     const totals = calculateTotal();
+//     const total = calculateTotal();
 
 //     // Construct the form data
 //     const formData = {
@@ -1232,10 +1262,10 @@ export default QuotationForm;
 //       quotation_date: "",
 //       tax_percentage: taxPercentage,
 //       discount_percentage: discountPercentage,
-//       subtotal: totals.subtotal,
-//       tax_amount: totals.taxAmount,
-//       discount_amount: totals.discountAmount,
-//       total_amount: totals.total,
+//       subtotal: total.subtotal,
+//       tax_amount: total.taxAmount,
+//       discount_amount: total.discountAmount,
+//       total_amount: total.total,
 //       products: quotationType === "product" ? products : [],
 //       services: quotationType === "service" ? services : [],
 //     };
@@ -1289,7 +1319,7 @@ export default QuotationForm;
 
 
 
-//   const totals = calculateTotal();
+//   const total = calculateTotal();
 
 
 //   return (
@@ -1687,10 +1717,10 @@ export default QuotationForm;
 
 //           {/* Display Totals */}
 //           <Box mt={4} textAlign="center">
-//             <Typography variant="h6">Subtotal: {totals.subtotal.toFixed(2)}</Typography>
-//             <Typography variant="h6">Tax: {totals.taxAmount.toFixed(2)}</Typography>
-//             <Typography variant="h6">Discount: {totals.discountAmount.toFixed(2)}</Typography>
-//             <Typography variant="h5" color="primary">Total: {totals.total.toFixed(2)}</Typography>
+//             <Typography variant="h6">Subtotal: {total.subtotal.toFixed(2)}</Typography>
+//             <Typography variant="h6">Tax: {total.taxAmount.toFixed(2)}</Typography>
+//             <Typography variant="h6">Discount: {total.discountAmount.toFixed(2)}</Typography>
+//             <Typography variant="h5" color="primary">Total: {total.total.toFixed(2)}</Typography>
 //           </Box>
 
 
@@ -1792,10 +1822,10 @@ export default QuotationForm;
 
 //     return { subtotal, taxAmount, discountAmount, total };
 //   };
-//   const totals = calculateTotal();
-//   // const [totals, setTotals] = useState(calculateTotal());
+//   const total = calculateTotal();
+//   // const [total, setTotals] = useState(calculateTotal());
 
-//   // Recalculate totals whenever relevant data changes
+//   // Recalculate total whenever relevant data changes
 //   // useEffect(() => {
 //   //   setTotals(calculateTotal());
 //   // }, [products, services, taxPercentage, discountPercentage, includeTax, includeDiscount, quotationType]);
@@ -1803,15 +1833,15 @@ export default QuotationForm;
 
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
-//     const totals = calculateTotal();
+//     const total = calculateTotal();
 //     const formDataWithTotals = {
 //       ...formData,
 //       tax_percentage: taxPercentage,
 //       discount_percentage: discountPercentage,
-//       subtotal: totals.subtotal,
-//       tax_amount: totals.taxAmount,
-//       discount_amount: totals.discountAmount,
-//       total_amount: totals.total,
+//       subtotal: total.subtotal,
+//       tax_amount: total.taxAmount,
+//       discount_amount: total.discountAmount,
+//       total_amount: total.total,
 //       products: quotationType === "product" ? products : [],
 //       services: quotationType === "service" ? products : [],
 //     };
@@ -2042,10 +2072,10 @@ export default QuotationForm;
 
 //           {/* Display Totals */}
 //           <Box mt={4} textAlign="center">
-//             <Typography variant="h6">Subtotal: {totals.subtotal.toFixed(2)}</Typography>
-//             <Typography variant="h6">Tax: {totals.taxAmount.toFixed(2)}</Typography>
-//             <Typography variant="h6">Discount: {totals.discountAmount.toFixed(2)}</Typography>
-//             <Typography variant="h5" color="primary">Total: {totals.total.toFixed(2)}</Typography>
+//             <Typography variant="h6">Subtotal: {total.subtotal.toFixed(2)}</Typography>
+//             <Typography variant="h6">Tax: {total.taxAmount.toFixed(2)}</Typography>
+//             <Typography variant="h6">Discount: {total.discountAmount.toFixed(2)}</Typography>
+//             <Typography variant="h5" color="primary">Total: {total.total.toFixed(2)}</Typography>
 //           </Box>
 
 //           <Box textAlign="center" mt={4}>
@@ -2122,7 +2152,7 @@ export default QuotationForm;
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
 
-//     const totals = calculateTotal();
+//     const total = calculateTotal();
 
 //     // Construct the form data
 //     const formData = {
@@ -2132,10 +2162,10 @@ export default QuotationForm;
 //       quotation_date: "",
 //       tax_percentage: taxPercentage,
 //       discount_percentage: discountPercentage,
-//       subtotal: totals.subtotal,
-//       tax_amount: totals.taxAmount,
-//       discount_amount: totals.discountAmount,
-//       total_amount: totals.total,
+//       subtotal: total.subtotal,
+//       tax_amount: total.taxAmount,
+//       discount_amount: total.discountAmount,
+//       total_amount: total.total,
 //       products: quotationType === "product" ? products : [],
 //       services: quotationType === "service" ? services : [],
 //     };
@@ -2181,7 +2211,7 @@ export default QuotationForm;
 //     }
 //   };
 
-//   const totals = calculateTotal();
+//   const total = calculateTotal();
 
 //   return (
 //     <Box p={4} maxWidth="900px" mx="auto">
@@ -2256,10 +2286,10 @@ export default QuotationForm;
 
 //           {/* Display Totals */}
 //           <Box mt={4} textAlign="center">
-//             <Typography variant="h6">Subtotal: {totals.subtotal.toFixed(2)}</Typography>
-//             <Typography variant="h6">Tax: {totals.taxAmount.toFixed(2)}</Typography>
-//             <Typography variant="h6">Discount: {totals.discountAmount.toFixed(2)}</Typography>
-//             <Typography variant="h5" color="primary">Total: {totals.total.toFixed(2)}</Typography>
+//             <Typography variant="h6">Subtotal: {total.subtotal.toFixed(2)}</Typography>
+//             <Typography variant="h6">Tax: {total.taxAmount.toFixed(2)}</Typography>
+//             <Typography variant="h6">Discount: {total.discountAmount.toFixed(2)}</Typography>
+//             <Typography variant="h5" color="primary">Total: {total.total.toFixed(2)}</Typography>
 //           </Box>
 
 //           <Box textAlign="center" mt={4}>
@@ -2355,15 +2385,15 @@ export default QuotationForm;
 
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
-//     const totals = calculateTotal();
+//     const total = calculateTotal();
 //     const formDataWithTotals = {
 //       ...formData,
 //       tax_percentage: taxPercentage,
 //       discount_percentage: discountPercentage,
-//       subtotal: totals.subtotal,
-//       tax_amount: totals.taxAmount,
-//       discount_amount: totals.discountAmount,
-//       total_amount: totals.total,
+//       subtotal: total.subtotal,
+//       tax_amount: total.taxAmount,
+//       discount_amount: total.discountAmount,
+//       total_amount: total.total,
 //       products: quotationType === "product" ? products : [],
 //       services: quotationType === "service" ? products : [],
 //     };
@@ -2407,7 +2437,7 @@ export default QuotationForm;
 //     }
 //   };
 
-//   const totals = calculateTotal();
+//   const total = calculateTotal();
 
 //   return (
 //     <Box p={4} maxWidth="900px" mx="auto">
@@ -2564,10 +2594,10 @@ export default QuotationForm;
 
 //           {/* Display Totals */}
 //           <Box mt={4} textAlign="center">
-//             <Typography variant="h6">Subtotal: {totals.subtotal.toFixed(2)}</Typography>
-//             <Typography variant="h6">Tax: {totals.taxAmount.toFixed(2)}</Typography>
-//             <Typography variant="h6">Discount: {totals.discountAmount.toFixed(2)}</Typography>
-//             <Typography variant="h5" color="primary">Total: {totals.total.toFixed(2)}</Typography>
+//             <Typography variant="h6">Subtotal: {total.subtotal.toFixed(2)}</Typography>
+//             <Typography variant="h6">Tax: {total.taxAmount.toFixed(2)}</Typography>
+//             <Typography variant="h6">Discount: {total.discountAmount.toFixed(2)}</Typography>
+//             <Typography variant="h5" color="primary">Total: {total.total.toFixed(2)}</Typography>
 //           </Box>
 
 //           <Box textAlign="center" mt={4}>
@@ -2644,7 +2674,7 @@ export default QuotationForm;
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
 
-//     const totals = calculateTotal();
+//     const total = calculateTotal();
 //     const formData = {
 //       customer_name: "",
 //       client_email: "",
@@ -2652,10 +2682,10 @@ export default QuotationForm;
 //       quotation_date: "",
 //       tax_percentage: taxPercentage,
 //       discount_percentage: discountPercentage,
-//       subtotal: totals.subtotal,
-//       tax_amount: totals.taxAmount,
-//       discount_amount: totals.discountAmount,
-//       total_amount: totals.total,
+//       subtotal: total.subtotal,
+//       tax_amount: total.taxAmount,
+//       discount_amount: total.discountAmount,
+//       total_amount: total.total,
 //       products: quotationType === "product" ? products : [],
 //       services: quotationType === "service" ? services : [],
 //     };
@@ -2679,7 +2709,7 @@ export default QuotationForm;
 //     }
 //   };
 
-//   const totals = calculateTotal();
+//   const total = calculateTotal();
 
 //   return (
 //     <Box p={4} maxWidth="900px" mx="auto">
@@ -2746,10 +2776,10 @@ export default QuotationForm;
 
 //           {/* Display Totals */}
 //           <Box mt={4} textAlign="center">
-//             <Typography variant="h6">Subtotal: {totals.subtotal.toFixed(2)}</Typography>
-//             <Typography variant="h6">Tax: {totals.taxAmount.toFixed(2)}</Typography>
-//             <Typography variant="h6">Discount: {totals.discountAmount.toFixed(2)}</Typography>
-//             <Typography variant="h5">Total: {totals.total.toFixed(2)}</Typography>
+//             <Typography variant="h6">Subtotal: {total.subtotal.toFixed(2)}</Typography>
+//             <Typography variant="h6">Tax: {total.taxAmount.toFixed(2)}</Typography>
+//             <Typography variant="h6">Discount: {total.discountAmount.toFixed(2)}</Typography>
+//             <Typography variant="h5">Total: {total.total.toFixed(2)}</Typography>
 //           </Box>
 
 //           <Box textAlign="center" mt={4}>

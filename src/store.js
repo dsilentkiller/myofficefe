@@ -21,6 +21,7 @@ import leaveReducer from "./admin/redux/slice/hrm/leaveSlice";
 import userReducer from "./admin/redux/slice/user/UserSlice"
 import quotationReducer from "./admin/redux/slice/crm/quotationSlice"
 import meetingReducer from "./admin/redux/slice/crm/meetingSlice";
+import proposalReducer from "./admin/redux/slice/crm/proposalSlice"
 const store = configureStore({
   reducer: {
     districts: districtReducer,
@@ -45,6 +46,7 @@ const store = configureStore({
     meetings: meetingReducer,  // Make sure 'meetings' is the correct key here
     user: userReducer, // Add the user slice here
     quotations: quotationReducer, // Make sure this is properly mapped
+    proposals: proposalReducer,  // Add the reducer here
   },
   //
 
