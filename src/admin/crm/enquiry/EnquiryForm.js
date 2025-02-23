@@ -349,7 +349,22 @@ const EnquiryForm = () => {
                      <div className="col-md-4">
                     <div className="form-group">
                       <label htmlFor="enquiry">customer name:</label>
-                      <select
+                      <input
+                          type="text"
+                          id="customer_name"
+                          name="customer_name"
+                          value={formData.customer_name}
+                          // onChange={handleInputChange}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              customer_name: e.target.value,
+                            })
+                          }
+                          className="form-control"
+                          required
+                        />
+                      {/* <select
                         id="enquiry"
                         name="enquiry_id"
                         value={formData.enquiry_id}
@@ -365,13 +380,13 @@ const EnquiryForm = () => {
                         ) : enquiries.length > 0 ? (
                           enquiries.map((enquiry) => (
                             <option key={enquiry.id} value={enquiry.id}>
-                              {enquiry.enquiry_name}
+                              {enquiry.customer_name}
                             </option>
                           ))
                         ) : (
                           <option>No enquiries available</option>
                         )}
-                      </select>
+                      </select> */}
                     </div>
                   </div>
 

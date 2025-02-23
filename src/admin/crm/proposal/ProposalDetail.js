@@ -1,207 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { useParams, useNavigate } from "react-router-dom";
-// import { useDispatch, useSelector } from "react-redux";
-// import { toast } from "react-toastify";
-// import {
-//   fetchProposalById,
-// } from "../../redux/slice/crm/proposalSlice";
-
-// import {
-//   Container,
-//   Typography,
-//   Grid,
-//   Box,
-//   Button,
-//   Paper,
-//   Divider,
-//   Tab,
-//   Tabs,
-//   Accordion,
-//   AccordionSummary,
-//   AccordionDetails,
-// } from "@mui/material";
-// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
-// const ProposalDetail = () => {
-//   const { id } = useParams();
-//   const navigate = useNavigate();
-//   const dispatch = useDispatch();
-//   const proposal = useSelector((state) => state.proposals.currentProposal);
-//   const [tabIndex, setTabIndex] = useState(0);
-//   const [status, setStatus] = useState("");
-
-//   useEffect(() => {
-//     if (id) {
-//       dispatch(fetchProposalById(id))
-//         .unwrap()
-//         .then((data) => {
-//           console.log("Proposal fetched:", data);
-//         })
-//         .catch((error) => {
-//           console.log("Error fetching proposal:", error);
-//         });
-//     }
-//   }, [dispatch, id]);
-
-//   useEffect(() => {
-//     if (proposal) {
-//       setStatus(proposal.status);
-//     }
-//   }, [proposal]);
-
-//   const handleTabChange = (event, newValue) => {
-//     setTabIndex(newValue);
-//   };
-
-//   const handleStatusUpdate = () => {
-//     if (status === proposal.status) {
-//       toast.info("No change in status.");
-//       return;
-//     }
-
-//     const updatedProposal = { ...proposal, status };
-//   };
-
-//   if (!proposal) {
-//     return <div>Loading proposal details...</div>;
-//   }
-
-//   return (
-//     <Container maxWidth="lg" sx={{ marginTop: 4 }}>
-//       <Paper sx={{ padding: 4 }}>
-//         {/* Header Section */}
-//         <Grid container spacing={3} alignItems="center">
-//           <Grid item md={4} sm={12}>
-//             <Box
-//               sx={{
-//                 display: "flex",
-//                 justifyContent: "center",
-//                 alignItems: "center",
-//                 maxWidth: "150px",
-//                 marginBottom: 2,
-//               }}
-//             >
-//               <img
-//                 src={proposal.logo}
-//                 alt={proposal.companyName}
-//                 style={{ maxWidth: "100%", borderRadius: "8px" }}
-//               />
-//             </Box>
-//           </Grid>
-//           <Grid item md={8} sm={12}>
-//             <Typography variant="h4" gutterBottom>
-//               {proposal.title}
-//             </Typography>
-//             <Typography variant="h6" color="textSecondary">
-//               {proposal.companyName}
-//             </Typography>
-//             <Typography variant="body2" color="textSecondary">
-//               <strong>Submission Date:</strong> {proposal.submissionDate || "N/A"}
-//             </Typography>
-//             <Typography variant="body2" color="textSecondary">
-//               <strong>Client Name:</strong> {proposal.clientName || "N/A"}
-//             </Typography>
-//           </Grid>
-//         </Grid>
-
-//         <Divider sx={{ my: 3 }} />
-
-//         {/* Tabs for sections */}
-//         <Tabs value={tabIndex} onChange={handleTabChange} centered>
-//           <Tab label="Overview" />
-//           <Tab label="Details" />
-//           <Tab label="Legal Terms" />
-//         </Tabs>
-
-//         {/* Tab Content */}
-//         {tabIndex === 0 && (
-//           <Box sx={{ mt: 3 }}>
-//             <Typography variant="h6" gutterBottom>
-//               Executive Summary
-//             </Typography>
-//             <Typography variant="body1">{proposal.summary || "N/A"}</Typography>
-
-//             <Typography variant="h6" sx={{ mt: 3 }}>
-//               Problem & Solution
-//             </Typography>
-//             <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-//               Problem:
-//             </Typography>
-//             <Typography variant="body1">{proposal.problem || "N/A"}</Typography>
-
-//             <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-//               Solution:
-//             </Typography>
-//             <Typography variant="body1">{proposal.solution || "N/A"}</Typography>
-//           </Box>
-//         )}
-
-//         {tabIndex === 1 && (
-//           <Box sx={{ mt: 3 }}>
-//             <Accordion>
-//               <AccordionSummary expandIcon={<ExpandMoreIcon />} id="services-description">
-//                 <Typography variant="h6">Services Description</Typography>
-//               </AccordionSummary>
-//               <AccordionDetails>
-//                 <Typography>{proposal.servicesDescription || "N/A"}</Typography>
-//               </AccordionDetails>
-//             </Accordion>
-
-//             <Accordion>
-//               <AccordionSummary expandIcon={<ExpandMoreIcon />} id="deliverables">
-//                 <Typography variant="h6">Deliverables</Typography>
-//               </AccordionSummary>
-//               <AccordionDetails>
-//                 <Typography>{proposal.deliverables || "N/A"}</Typography>
-//               </AccordionDetails>
-//             </Accordion>
-
-//             <Accordion>
-//               <AccordionSummary expandIcon={<ExpandMoreIcon />} id="milestones">
-//                 <Typography variant="h6">Milestones</Typography>
-//               </AccordionSummary>
-//               <AccordionDetails>
-//                 <Typography>{proposal.milestones || "N/A"}</Typography>
-//               </AccordionDetails>
-//             </Accordion>
-
-//             <Accordion>
-//               <AccordionSummary expandIcon={<ExpandMoreIcon />} id="cost-breakdown">
-//                 <Typography variant="h6">Cost Breakdown</Typography>
-//               </AccordionSummary>
-//               <AccordionDetails>
-//                 <Typography>{proposal.costBreakdown || "N/A"}</Typography>
-//               </AccordionDetails>
-//             </Accordion>
-//           </Box>
-//         )}
-
-//         {tabIndex === 2 && (
-//           <Box sx={{ mt: 3 }}>
-//             <Typography variant="h6" gutterBottom>
-//               Legal Terms
-//             </Typography>
-//             <Typography variant="body1">{proposal.legalTerms || "N/A"}</Typography>
-//           </Box>
-//         )}
-
-//         {/* Back Button */}
-//         <Box sx={{ mt: 4, textAlign: "center" }}>
-//           <Button
-//             variant="contained"
-//             color="primary"
-//             onClick={() => navigate("/dashboard/crm/proposals")}
-//             sx={{ textTransform: "none" }}
-//           >
-//             Back to Proposals List
-//           </Button>
-//         </Box>
-//       </Paper>
-//     </Container>
-//   );
-// };
-
-// export default ProposalDetail;
 
 
 import jsPDF from "jspdf";
@@ -537,6 +333,210 @@ export default ProposalDetail;
 
 
 
+// import React, { useEffect, useState } from "react";
+// import { useParams, useNavigate } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux";
+// import { toast } from "react-toastify";
+// import {
+//   fetchProposalById,
+// } from "../../redux/slice/crm/proposalSlice";
+
+// import {
+//   Container,
+//   Typography,
+//   Grid,
+//   Box,
+//   Button,
+//   Paper,
+//   Divider,
+//   Tab,
+//   Tabs,
+//   Accordion,
+//   AccordionSummary,
+//   AccordionDetails,
+// } from "@mui/material";
+// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
+// const ProposalDetail = () => {
+//   const { id } = useParams();
+//   const navigate = useNavigate();
+//   const dispatch = useDispatch();
+//   const proposal = useSelector((state) => state.proposals.currentProposal);
+//   const [tabIndex, setTabIndex] = useState(0);
+//   const [status, setStatus] = useState("");
+
+//   useEffect(() => {
+//     if (id) {
+//       dispatch(fetchProposalById(id))
+//         .unwrap()
+//         .then((data) => {
+//           console.log("Proposal fetched:", data);
+//         })
+//         .catch((error) => {
+//           console.log("Error fetching proposal:", error);
+//         });
+//     }
+//   }, [dispatch, id]);
+
+//   useEffect(() => {
+//     if (proposal) {
+//       setStatus(proposal.status);
+//     }
+//   }, [proposal]);
+
+//   const handleTabChange = (event, newValue) => {
+//     setTabIndex(newValue);
+//   };
+
+//   const handleStatusUpdate = () => {
+//     if (status === proposal.status) {
+//       toast.info("No change in status.");
+//       return;
+//     }
+
+//     const updatedProposal = { ...proposal, status };
+//   };
+
+//   if (!proposal) {
+//     return <div>Loading proposal details...</div>;
+//   }
+
+//   return (
+//     <Container maxWidth="lg" sx={{ marginTop: 4 }}>
+//       <Paper sx={{ padding: 4 }}>
+//         {/* Header Section */}
+//         <Grid container spacing={3} alignItems="center">
+//           <Grid item md={4} sm={12}>
+//             <Box
+//               sx={{
+//                 display: "flex",
+//                 justifyContent: "center",
+//                 alignItems: "center",
+//                 maxWidth: "150px",
+//                 marginBottom: 2,
+//               }}
+//             >
+//               <img
+//                 src={proposal.logo}
+//                 alt={proposal.companyName}
+//                 style={{ maxWidth: "100%", borderRadius: "8px" }}
+//               />
+//             </Box>
+//           </Grid>
+//           <Grid item md={8} sm={12}>
+//             <Typography variant="h4" gutterBottom>
+//               {proposal.title}
+//             </Typography>
+//             <Typography variant="h6" color="textSecondary">
+//               {proposal.companyName}
+//             </Typography>
+//             <Typography variant="body2" color="textSecondary">
+//               <strong>Submission Date:</strong> {proposal.submissionDate || "N/A"}
+//             </Typography>
+//             <Typography variant="body2" color="textSecondary">
+//               <strong>Client Name:</strong> {proposal.clientName || "N/A"}
+//             </Typography>
+//           </Grid>
+//         </Grid>
+
+//         <Divider sx={{ my: 3 }} />
+
+//         {/* Tabs for sections */}
+//         <Tabs value={tabIndex} onChange={handleTabChange} centered>
+//           <Tab label="Overview" />
+//           <Tab label="Details" />
+//           <Tab label="Legal Terms" />
+//         </Tabs>
+
+//         {/* Tab Content */}
+//         {tabIndex === 0 && (
+//           <Box sx={{ mt: 3 }}>
+//             <Typography variant="h6" gutterBottom>
+//               Executive Summary
+//             </Typography>
+//             <Typography variant="body1">{proposal.summary || "N/A"}</Typography>
+
+//             <Typography variant="h6" sx={{ mt: 3 }}>
+//               Problem & Solution
+//             </Typography>
+//             <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+//               Problem:
+//             </Typography>
+//             <Typography variant="body1">{proposal.problem || "N/A"}</Typography>
+
+//             <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+//               Solution:
+//             </Typography>
+//             <Typography variant="body1">{proposal.solution || "N/A"}</Typography>
+//           </Box>
+//         )}
+
+//         {tabIndex === 1 && (
+//           <Box sx={{ mt: 3 }}>
+//             <Accordion>
+//               <AccordionSummary expandIcon={<ExpandMoreIcon />} id="services-description">
+//                 <Typography variant="h6">Services Description</Typography>
+//               </AccordionSummary>
+//               <AccordionDetails>
+//                 <Typography>{proposal.servicesDescription || "N/A"}</Typography>
+//               </AccordionDetails>
+//             </Accordion>
+
+//             <Accordion>
+//               <AccordionSummary expandIcon={<ExpandMoreIcon />} id="deliverables">
+//                 <Typography variant="h6">Deliverables</Typography>
+//               </AccordionSummary>
+//               <AccordionDetails>
+//                 <Typography>{proposal.deliverables || "N/A"}</Typography>
+//               </AccordionDetails>
+//             </Accordion>
+
+//             <Accordion>
+//               <AccordionSummary expandIcon={<ExpandMoreIcon />} id="milestones">
+//                 <Typography variant="h6">Milestones</Typography>
+//               </AccordionSummary>
+//               <AccordionDetails>
+//                 <Typography>{proposal.milestones || "N/A"}</Typography>
+//               </AccordionDetails>
+//             </Accordion>
+
+//             <Accordion>
+//               <AccordionSummary expandIcon={<ExpandMoreIcon />} id="cost-breakdown">
+//                 <Typography variant="h6">Cost Breakdown</Typography>
+//               </AccordionSummary>
+//               <AccordionDetails>
+//                 <Typography>{proposal.costBreakdown || "N/A"}</Typography>
+//               </AccordionDetails>
+//             </Accordion>
+//           </Box>
+//         )}
+
+//         {tabIndex === 2 && (
+//           <Box sx={{ mt: 3 }}>
+//             <Typography variant="h6" gutterBottom>
+//               Legal Terms
+//             </Typography>
+//             <Typography variant="body1">{proposal.legalTerms || "N/A"}</Typography>
+//           </Box>
+//         )}
+
+//         {/* Back Button */}
+//         <Box sx={{ mt: 4, textAlign: "center" }}>
+//           <Button
+//             variant="contained"
+//             color="primary"
+//             onClick={() => navigate("/dashboard/crm/proposals")}
+//             sx={{ textTransform: "none" }}
+//           >
+//             Back to Proposals List
+//           </Button>
+//         </Box>
+//       </Paper>
+//     </Container>
+//   );
+// };
+
+// export default ProposalDetail;
 
 
 

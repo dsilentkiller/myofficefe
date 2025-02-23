@@ -83,17 +83,22 @@ const QuotationForm = ({ existingQuotation }) => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     // Ensure either customer or enquiry is selected
     if (!selectedCustomerOrEnquiry) {
       toast.error(`Please select a ${selectionType === "customer" ? "customer" : "enquiry"}`);
       return;
     }
-  
+
     const total = calculateTotal();
-  
+
     // Construct the form data
+    // Define the enquiryId based on selectionType
+// let enquiryId = null;
     const formData = {
+      enquiry: null, // Ensure this is populated with the correct ID
+      customer:null,
+
       quotation_date: currentDate,
       tax_percentage: taxPercentage,
       discount_percentage: discountPercentage,
@@ -105,66 +110,90 @@ const QuotationForm = ({ existingQuotation }) => {
       services: quotationType === "service" ? services : [],
       selection_type: selectionType,
     };
-  
+
     // Get selected customer or enquiry by ID
     const selectedItem = selectionType === "customer"
-      ? customers.find(customer => customer.id === selectedCustomerOrEnquiry)
-      
-      : enquiries.find(enquiry => enquiry.id === selectedCustomerOrEnquiry);
-  
-    if (!selectedItem) {
-      toast.error(`Selected ${selectionType} not found`);
-      return;
-    }
-  
-    // Add customer_id or enquiry_id to formData
-    if (selectionType === "customer") {
-      formData.customer_name = selectedItem.id; // Store customer_id
-    } else if (selectionType === "enquiry") {
-      formData.enquiry_name = selectedItem.id; // Store enquiry_id
-    }
-  
-    // Log the form data for debugging
-    console.log("Form Data: ", formData);
-  
+  ? customers.find((customer) => customer.id === selectedCustomerOrEnquiry)
+  : enquiries.find((enquiry) => enquiry.id === selectedCustomerOrEnquiry);
+  console.log('Selected Enquiry ID:', selectedCustomerOrEnquiry);
+  console.log('Selected Item:', selectedItem);
+
+if (!selectedItem) {
+  toast.error(`Selected ${selectionType} not found`);
+  return;
+}
+
+// Add customer_name or enquiry_name to formData
+if (selectionType === "customer") {
+  formData.customer = selectedItem.id;  // Ensure customer_id is set
+  formData.customer_name = selectedItem.customer_name; // Add customer_name to formData
+} else if (selectionType === "enquiry") {
+  formData.enquiry = selectedItem.id;  // Ensure enquiry_id is set
+  formData.enquiry_name = selectedItem.enquiry_name || selectedItem.customer_name;  // Add enquiry_name to formData
+}
+
+// Log formData to debug
+console.log("Form Data: ", formData);
+
+
+    // Log the form data for debugging (can remove later)
+    // console.log("Form Data: ", formData);
+
     // Validate required fields for services and products
-    formData.services.forEach((service, index) => {
+    const validateServiceFields = formData.services.every((service, index) => {
       if (!service.service_name || !service.service_price || !service.quantity) {
         toast.error(`Service at index ${index} is missing required fields.`);
-        return;
+        return false; // Invalid field, break validation
       }
+      return true; // Valid service
     });
-  
-    formData.products.forEach((product, index) => {
+
+    const validateProductFields = formData.products.every((product, index) => {
       if (!product.product_name || !product.price || !product.quantity) {
         toast.error(`Product at index ${index} is missing required fields.`);
-        return;
+        return false; // Invalid field, break validation
       }
+      return true; // Valid product
     });
-  
+
+    // If there are missing fields, stop form submission
+    if (!validateServiceFields || !validateProductFields) {
+      return; // Prevent API call
+    }
+
     // Ensure subtotal is valid
     if (!formData.subtotal || formData.subtotal <= 0) {
       toast.error("Subtotal must be greater than 0.");
       return;
     }
-  
+
+    // Ensure customer_name or enquiry_name is set
+    if (!formData.customer_name && !formData.enquiry_name) {
+      toast.error("Either customer_name or enquiry_name must be provided.");
+      return;
+    }
+
     // Make API request to create the quotation
-    const createQuotation = quotationType === "product"
-      ? dispatch(createProductQuotation(formData))
-      : dispatch(createServiceQuotation(formData));
-  
+    const createQuotation =
+      quotationType === "product"
+        ? dispatch(createProductQuotation(formData))
+        : dispatch(createServiceQuotation(formData));
+
     createQuotation
       .unwrap()
       .then((response) => {
-        toast.success(`${quotationType.charAt(0).toUpperCase() + quotationType.slice(1)} quotation created successfully!`);
+        toast.success(
+          `${quotationType.charAt(0).toUpperCase() + quotationType.slice(1)} quotation created successfully!`
+        );
         dispatch(fetchProductQuotations());
         dispatch(fetchServiceQuotations());
         navigate(`/dashboard/crm/quotations`);
       })
       .catch((error) => {
         console.log("Create Error:", error);
-  
+
         if (error.errors) {
+          // Log all errors for specific fields
           Object.entries(error.errors).forEach(([field, messages]) => {
             messages.forEach((msg) => toast.error(`${field}: ${msg}`));
           });
@@ -173,15 +202,12 @@ const QuotationForm = ({ existingQuotation }) => {
         }
       });
   };
-  
-          // useEffect(() => {
-          //   calculateTotal(); // Recalculate totals when data changes
-          // }, [products, services, taxPercentage, discountPercentage, includeTax, includeDiscount]);
-          
+
+
 
 
           const totals = calculateTotal();
-          
+
 
 
   return (
@@ -200,8 +226,8 @@ const QuotationForm = ({ existingQuotation }) => {
               onChange={(e) => setSelectionType(e.target.value)}
               label="Select From"
             >
-              <MenuItem value="customer">Customer</MenuItem>
-              <MenuItem value="enquiry">Enquiry</MenuItem>
+              <MenuItem value="customer">customer</MenuItem>
+              <MenuItem value="enquiry">enquiry</MenuItem>
             </Select>
           </FormControl>
 
@@ -227,7 +253,7 @@ const QuotationForm = ({ existingQuotation }) => {
                 </MenuItem>
               ))
             ) : (
-              <MenuItem>No {selectionType === "customer" ? "customers" : "enquiries"} available</MenuItem>
+              <MenuItem>No {selectionType === "customer" ? "customer" : "enquiry"} available</MenuItem>
             )}
           </Select>
 
@@ -240,8 +266,8 @@ const QuotationForm = ({ existingQuotation }) => {
               onChange={(e) => setQuotationType(e.target.value)}
               label="Quotation Type"
             >
-              <MenuItem value="service">Service</MenuItem>
-              <MenuItem value="product">Product</MenuItem>
+              <MenuItem value="service">service</MenuItem>
+              <MenuItem value="product">product</MenuItem>
             </Select>
           </FormControl>
 
@@ -637,6 +663,110 @@ export default QuotationForm;
 
 // export default QuotationForm;
 
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+
+  //   // Ensure either customer or enquiry is selected
+  //   if (!selectedCustomerOrEnquiry) {
+  //     toast.error(`Please select a ${selectionType === "customer" ? "customer" : "enquiry"}`);
+  //     return;
+  //   }
+
+  //   const total = calculateTotal();
+
+  //   // Construct the form data
+  //   const formData = {
+  //     quotation_date: currentDate,
+  //     tax_percentage: taxPercentage,
+  //     discount_percentage: discountPercentage,
+  //     subtotal: total.subtotal,
+  //     tax_amount: total.taxAmount,
+  //     discount_amount: total.discountAmount,
+  //     total_amount: total.total,
+  //     products: quotationType === "product" ? products : [],
+  //     services: quotationType === "service" ? services : [],
+  //     selection_type: selectionType,
+  //   };
+
+  //   // Get selected customer or enquiry by ID
+  //   const selectedItem = selectionType === "customer"
+  //     ? customers.find((customer) => customer.id === selectedCustomerOrEnquiry)
+  //     : enquiries.find((enquiry) => enquiry.id === selectedCustomerOrEnquiry);
+
+  //   // Check if selected item exists
+  //   if (!selectedItem) {
+  //     toast.error(`Selected ${selectionType} not found`);
+  //     return;
+  //   }
+
+  //   // Add customer_id or enquiry_id to formData
+  //   if (selectionType === "customer") {
+  //     formData.customer_name = selectedItem.id; // Store customer_id
+  //   } else if (selectionType === "enquiry") {
+  //     formData.enquiry_name = selectedItem.id; // Store enquiry_id
+  //   }
+
+  //   // Log the form data for debugging (can remove later)
+  //   console.log("Form Data: ", formData);
+
+  //   // Validate required fields for services and products
+  //   const validateServiceFields = formData.services.every((service, index) => {
+  //     if (!service.service_name || !service.service_price || !service.quantity) {
+  //       toast.error(`Service at index ${index} is missing required fields.`);
+  //       return false; // Invalid field, break validation
+  //     }
+  //     return true; // Valid service
+  //   });
+
+  //   const validateProductFields = formData.products.every((product, index) => {
+  //     if (!product.product_name || !product.price || !product.quantity) {
+  //       toast.error(`Product at index ${index} is missing required fields.`);
+  //       return false; // Invalid field, break validation
+  //     }
+  //     return true; // Valid product
+  //   });
+
+  //   // If there are missing fields, stop form submission
+  //   if (!validateServiceFields || !validateProductFields) {
+  //     return; // Prevent API call
+  //   }
+
+  //   // Ensure subtotal is valid
+  //   if (!formData.subtotal || formData.subtotal <= 0) {
+  //     toast.error("Subtotal must be greater than 0.");
+  //     return;
+  //   }
+
+  //   // Make API request to create the quotation
+  //   const createQuotation =
+  //     quotationType === "product"
+  //       ? dispatch(createProductQuotation(formData))
+  //       : dispatch(createServiceQuotation(formData));
+
+  //   createQuotation
+  //     .unwrap()
+  //     .then((response) => {
+  //       toast.success(
+  //         `${quotationType.charAt(0).toUpperCase() + quotationType.slice(1)} quotation created successfully!`
+  //       );
+  //       dispatch(fetchProductQuotations());
+  //       dispatch(fetchServiceQuotations());
+  //       navigate(`/dashboard/crm/quotations`);
+  //     })
+  //     .catch((error) => {
+  //       console.log("Create Error:", error);
+
+  //       if (error.errors) {
+  //         // Log all errors for specific fields
+  //         Object.entries(error.errors).forEach(([field, messages]) => {
+  //           messages.forEach((msg) => toast.error(`${field}: ${msg}`));
+  //         });
+  //       } else {
+  //         toast.error(`Create Error: ${error.message || "Unknown error"}`);
+  //       }
+  //     });
+  // };
 
 
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Divider, Typography } from "@mui/material";
 import {
@@ -11,6 +11,17 @@ import {
 } from "@mui/icons-material";
 
 const HrmSidebar = ({ activeSection }) => {
+  const [code, setCode] = useState('');
+
+  // useEffect(() => {
+  //   // Retrieve vendor name from localStorage
+  //   const name = localStorage.getItem(code);
+  //   if (name) {
+  //     setCode(name);  // Update state with the vendor's name
+  //   }
+  // }, []);
+  const vendorName = localStorage.getItem("organization_name");
+  const vendorCode = localStorage.getItem("code");
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
       <Drawer
@@ -47,7 +58,7 @@ const HrmSidebar = ({ activeSection }) => {
               }}
             >
               <PersonIcon sx={{ marginRight: 1, color: "#FFFFFF" }} /> {/* User Icon */}
-              Paaru Rawal
+              {vendorName ? vendorName : "Loading..."} {/* Display vendor name here */}
             </Typography>
           </Link>
         </div>
@@ -181,6 +192,192 @@ const HrmSidebar = ({ activeSection }) => {
 };
 
 export default HrmSidebar;
+
+
+
+// import React from "react";
+// import { Link } from "react-router-dom";
+// import { Drawer, List, ListItem, ListItemIcon, ListItemText, Divider, Typography } from "@mui/material";
+// import {
+//   Dashboard as DashboardIcon,
+//   Person as PersonIcon,
+//   Work as WorkIcon,
+//   Settings as SettingsIcon,
+//   Assignment as AssignmentIcon,
+//   Announcement as AnnouncementIcon,
+// } from "@mui/icons-material";
+
+// const HrmSidebar = ({ activeSection }) => {
+//   return (
+//     <aside className="main-sidebar sidebar-dark-primary elevation-4">
+//       <Drawer
+//         variant="permanent"
+//         sx={{
+//           width: 240,
+//           flexShrink: 0,
+//           "& .MuiDrawer-paper": {
+//             width: 240,
+//             boxSizing: "border-box",
+//             backgroundColor: "#2C3E50", // Dark background color
+//             color: "#ECF0F1", // Light text color
+//           },
+//         }}
+//       >
+//         <div style={{ padding: "16px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+//           <Link to="/dashboard" style={{ textDecoration: "none" }}>
+//             <Typography variant="h6" sx={{ fontWeight: 600, color: "#FFFFFF" }}>
+//               Myoffice
+//             </Typography>
+//           </Link>
+//         </div>
+
+//         {/* User Panel */}
+//         <div style={{ padding: "16px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+//           <Link to="/dashboard/profile" style={{ textDecoration: "none" }}>
+//             <Typography
+//               variant="h6"
+//               sx={{
+//                 fontWeight: 600,
+//                 color: "#FFFFFF",
+//                 display: "flex",
+//                 alignItems: "center",
+//               }}
+//             >
+//               <PersonIcon sx={{ marginRight: 1, color: "#FFFFFF" }} /> {/* User Icon */}
+//               Paaru Rawal
+//             </Typography>
+//           </Link>
+//         </div>
+//         <Divider sx={{ backgroundColor: "#34495E" }} />
+
+//         {/* Sidebar Navigation */}
+//         <List>
+//           {/* Dashboard */}
+//           <ListItem
+//             button
+//             component={Link}
+//             to="/dashboard"
+//             sx={{
+//               color: "#BDC3C7",
+//               fontSize: "16px",
+//               padding: "10px 16px",
+//               "&:hover": {
+//                 backgroundColor: "#1ABC9C",
+//                 color: "#FFFFFF",
+//               },
+//               backgroundColor: activeSection === "dashboard" ? "#1ABC9C" : "#34495E", // Active background color
+//               borderRadius: "8px",
+//               marginBottom: "10px",
+//             }}
+//           >
+//             <ListItemIcon sx={{ color: "#BDC3C7" }}>
+//               <DashboardIcon />
+//             </ListItemIcon>
+//             <ListItemText primary="Dashboard" sx={{ color: "#BDC3C7" }} />
+//           </ListItem>
+
+//           {/* HRM Section */}
+//           <ListItem
+//             button
+//             component={Link}
+//             to="/dashboard/hrm"
+//             sx={{
+//               color: "#BDC3C7",
+//               fontSize: "16px",
+//               padding: "10px 16px",
+//               "&:hover": {
+//                 backgroundColor: "#1ABC9C",
+//                 color: "#FFFFFF",
+//               },
+//               backgroundColor: activeSection === "hrm" ? "#1ABC9C" : "#34495E", // Active background color
+//               borderRadius: "8px",
+//               marginBottom: "10px",
+//             }}
+//           >
+//             <ListItemIcon sx={{ color: "#BDC3C7" }}>
+//               <PersonIcon />
+//             </ListItemIcon>
+//             <ListItemText primary="HRM" sx={{ color: "#BDC3C7" }} />
+//           </ListItem>
+
+//           {/* CRM Section */}
+//           <ListItem
+//             button
+//             component={Link}
+//             to="/dashboard/crm"
+//             sx={{
+//               color: "#BDC3C7",
+//               fontSize: "16px",
+//               padding: "10px 16px",
+//               "&:hover": {
+//                 backgroundColor: "#1ABC9C",
+//                 color: "#FFFFFF",
+//               },
+//               backgroundColor: "#34495E",
+//               borderRadius: "8px",
+//               marginBottom: "10px",
+//             }}
+//           >
+//             <ListItemIcon sx={{ color: "#BDC3C7" }}>
+//               <WorkIcon />
+//             </ListItemIcon>
+//             <ListItemText primary="CRM" sx={{ color: "#BDC3C7" }} />
+//           </ListItem>
+
+//           {/* Customer Section */}
+//           <ListItem
+//             button
+//             component={Link}
+//             to="/dashboard/customer"
+//             sx={{
+//               color: "#BDC3C7",
+//               fontSize: "16px",
+//               padding: "10px 16px",
+//               "&:hover": {
+//                 backgroundColor: "#1ABC9C",
+//                 color: "#FFFFFF",
+//               },
+//               backgroundColor: "#34495E",
+//               borderRadius: "8px",
+//               marginBottom: "10px",
+//             }}
+//           >
+//             <ListItemIcon sx={{ color: "#BDC3C7" }}>
+//               <PersonIcon />
+//             </ListItemIcon>
+//             <ListItemText primary="Customer" sx={{ color: "#BDC3C7" }} />
+//           </ListItem>
+
+//           {/* Settings Section */}
+//           <ListItem
+//             button
+//             component={Link}
+//             to="/dashboard/setup"
+//             sx={{
+//               color: "#BDC3C7",
+//               fontSize: "16px",
+//               padding: "10px 16px",
+//               "&:hover": {
+//                 backgroundColor: "#1ABC9C",
+//                 color: "#FFFFFF",
+//               },
+//               backgroundColor: "#34495E",
+//               borderRadius: "8px",
+//               marginBottom: "10px",
+//             }}
+//           >
+//             <ListItemIcon sx={{ color: "#BDC3C7" }}>
+//               <SettingsIcon />
+//             </ListItemIcon>
+//             <ListItemText primary="Settings" sx={{ color: "#BDC3C7" }} />
+//           </ListItem>
+//         </List>
+//       </Drawer>
+//     </aside>
+//   );
+// };
+
+// export default HrmSidebar;
 
 
 

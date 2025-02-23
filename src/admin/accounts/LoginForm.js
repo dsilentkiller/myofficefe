@@ -1,124 +1,444 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { TextField, Button, CircularProgress, Snackbar, Alert } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {
+  TextField,
+  Button,
+  CircularProgress,
+  Snackbar,
+  Alert,
+  Typography,
+  Paper,
+  Box,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [code, setCode] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
-    const [openToast, setOpenToast] = useState(false); // State to control the toast visibility
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [openToast, setOpenToast] = useState(false);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        if (localStorage.getItem('access_token')) {
-            navigate('/dashboard');
-        }
-    }, [navigate]);
+  useEffect(() => {
+    if (localStorage.getItem("access_token")) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setSuccessMessage('');
-        setLoading(true); // Show loading spinner during the login request
-        const payload = {
-          code: code,  // Ensure this value is correct
-          username: email,   // Ensure this value is correct
-          password: password,   // Ensure this value is correct
-        };
-        console.log('payload',payload)
-        if (!email || !password || !code) {
-            setError('Email, password, and vendor name are required.');
-            setLoading(false);
-            return;
-        }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccessMessage("");
+    setLoading(true);
 
-        try {
-            const response = await axios.post("http://localhost:8000/api/merchant/login/", {
-                email,
-                password,
-                code
-                });
-            if (response.status === 200) {
-                    // If login is successful, save the access and refresh tokens
-                    localStorage.setItem("access_token", response.data.access);
-                    localStorage.setItem("refresh_token", response.data.refresh);
+    if (!email || !password || !code) {
+        setError("Email, password, and vendor code are required.");
+        setLoading(false);
+        return;
+    }
 
+    const payload = { email, password, code };
 
-     // Redirect to dashboard after successful login
-            navigate("/dashboard");
+    try {
+        const response = await axios.post(
+            "http://localhost:8000/api/vendor/login/",
+            payload,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+            }
+        );
+
+        if (response.status === 200) {
+            localStorage.setItem("access_token", response.data.access);
+            localStorage.setItem("refresh_token", response.data.refresh);
+
             setSuccessMessage("Login successful!");
             setOpenToast(true);
-            // Clear the form fields after login
-            setEmail('');
-            setPassword('');
-            setLoading(false);}
-        } catch (err) {
-            setLoading(false);
 
-            // Handle different error cases
-            if (err.response && err.response.status === 400) {
-                setError('Invalid credentials. Please check your email, password, and vendor name.');
-            } else {
-                setError('An error occurred. Please try again later.');
-            }
+            // Wait for the toast message to be visible before navigating
+            setTimeout(() => {
+                navigate("/dashboard");
+            }, 2000); // 2-second delay to prevent re-renders
         }
-    };
+    } catch (err) {
+        setLoading(false);
+        if (err.response) {
+            setError(
+                err.response.data.message ||
+                "Invalid credentials. Please check your email, password, and vendor code."
+            );
+        } else {
+            setError("Cannot connect to the server. Please check your network.");
+        }
+    }
+};
 
-    return (
-        <div style={{ padding: '20px', maxWidth: '400px', margin: 'auto' }}>
-            <h2>Login</h2>
-            {error && <Alert severity="error">{error}</Alert>}
-            {successMessage && <Alert severity="success">{successMessage}</Alert>}
 
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    label="Email"
-                    fullWidth
-                    margin="normal"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <TextField
-                    label="Password"
-                    type="password"
-                    fullWidth
-                    margin="normal"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <TextField
-                    label="Vendor Name"
-                    fullWidth
-                    margin="normal"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                />
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    style={{ marginTop: '20px' }}
-                    disabled={loading}
-                >
-                    {loading ? <CircularProgress size={24} color="secondary" /> : "Login"}
-                </Button>
-            </form>
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        background: "linear-gradient(to right, #4A90E2, #142850)",
+      }}
+    >
+      <Paper
+        elevation={6}
+        sx={{
+          padding: 4,
+          width: 400,
+          textAlign: "center",
+          borderRadius: 3,
+        }}
+      >
+        <Typography variant="h4" fontWeight="bold" color="primary">
+          MyOffice
+        </Typography>
+        <Typography variant="subtitle1" color="textSecondary">
+          Manage your office seamlessly
+        </Typography>
 
-            <Snackbar open={openToast} autoHideDuration={3000} onClose={() => setOpenToast(false)}>
-                <Alert onClose={() => setOpenToast(false)} severity="success">
-                    Login Successful! Redirecting...
-                </Alert>
-            </Snackbar>
-        </div>
-    );
+        {error && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {error}
+          </Alert>
+        )}
+        {successMessage && (
+          <Alert severity="success" sx={{ mt: 2 }}>
+            {successMessage}
+          </Alert>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Email"
+            fullWidth
+            margin="normal"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            fullWidth
+            margin="normal"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <TextField
+            label="Vendor Code"
+            fullWidth
+            margin="normal"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2, bgcolor: "#4A90E2", "&:hover": { bgcolor: "#357ABD" } }}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+          </Button>
+        </form>
+
+        <Snackbar
+          open={openToast}
+          autoHideDuration={3000}
+          onClose={() => setOpenToast(false)}
+        >
+          <Alert onClose={() => setOpenToast(false)} severity="success">
+            Login Successful! Redirecting...
+          </Alert>
+        </Snackbar>
+      </Paper>
+    </Box>
+  );
 };
 
 export default LoginForm;
+
+
+// import React, { useState, useEffect } from 'react';
+// import axios from 'axios';
+// import { TextField, Button, CircularProgress, Snackbar, Alert } from '@mui/material';
+// import { useNavigate } from 'react-router-dom';
+
+// const LoginForm = () => {
+//     const [email, setEmail] = useState('');
+//     const [password, setPassword] = useState('');
+//     const [code, setCode] = useState('');
+//     const [loading, setLoading] = useState(false);
+//     const [error, setError] = useState('');
+//     const [successMessage, setSuccessMessage] = useState('');
+//     const [openToast, setOpenToast] = useState(false);
+//     const navigate = useNavigate();
+
+//     useEffect(() => {
+//         if (localStorage.getItem('access_token')) {
+//             navigate('/dashboard');
+//         }
+//     }, [navigate]);
+
+//     const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         setError('');
+//         setSuccessMessage('');
+//         setLoading(true);
+
+//         const payload = {
+//             username: email, // Ensure this matches API expectations
+//             password,
+//             code
+//         };
+
+//         if (!email || !password || !code) {
+//             setError('Email, password, and vendor name are required.');
+//             setLoading(false);
+//             return;
+//         }
+
+//         try {
+//             console.log("Sending payload:", payload);
+//             const response = await axios.post("http://localhost:8000/api/vendor/login/", payload, {
+//                 headers: {
+//                     "Content-Type": "application/json",
+//                     "Accept": "application/json"
+//                 }
+//             });
+
+//             console.log("API Response:", response.data);
+
+//             if (response.status === 200) {
+//                 localStorage.setItem("access_token", response.data.access);
+//                 localStorage.setItem("refresh_token", response.data.refresh);
+
+//                 setSuccessMessage("Login successful!");
+//                 setOpenToast(true);
+//                 navigate("/dashboard");
+
+//                 setEmail('');
+//                 setPassword('');
+//                 setCode('');
+//             }
+//         } catch (err) {
+//             setLoading(false);
+//             console.error("API Error:", err);
+
+//             if (err.response) {
+//                 if (err.response.status === 400) {
+//                     setError(err.response.data.message || "Invalid credentials. Please check your email, password, and vendor name.");
+//                 } else if (err.response.status === 401) {
+//                     setError("Unauthorized: Incorrect email, password, or vendor name.");
+//                 } else {
+//                     setError("An error occurred. Please try again later.");
+//                 }
+//             } else {
+//                 setError("Cannot connect to the server. Please check your network.");
+//             }
+//         }
+//     };
+
+//     return (
+//         <div style={{ padding: '20px', maxWidth: '400px', margin: 'auto' }}>
+//             <h2>Login</h2>
+//             {error && <Alert severity="error">{error}</Alert>}
+//             {successMessage && <Alert severity="success">{successMessage}</Alert>}
+
+//             <form onSubmit={handleSubmit}>
+//                 <TextField
+//                     label="Email"
+//                     fullWidth
+//                     margin="normal"
+//                     value={email}
+//                     onChange={(e) => setEmail(e.target.value)}
+//                 />
+//                 <TextField
+//                     label="Password"
+//                     type="password"
+//                     fullWidth
+//                     margin="normal"
+//                     value={password}
+//                     onChange={(e) => setPassword(e.target.value)}
+//                 />
+//                 <TextField
+//                     label="code"
+//                     fullWidth
+//                     margin="normal"
+//                     value={code}
+//                     onChange={(e) => setCode(e.target.value)}
+//                 />
+//                 <Button
+//                     type="submit"
+//                     variant="contained"
+//                     color="primary"
+//                     fullWidth
+//                     style={{ marginTop: '20px' }}
+//                     disabled={loading}
+//                 >
+//                     {loading ? <CircularProgress size={24} color="secondary" /> : "Login"}
+//                 </Button>
+//             </form>
+
+//             <Snackbar open={openToast} autoHideDuration={3000} onClose={() => setOpenToast(false)}>
+//                 <Alert onClose={() => setOpenToast(false)} severity="success">
+//                     Login Successful! Redirecting...
+//                 </Alert>
+//             </Snackbar>
+//         </div>
+//     );
+// };
+
+// export default LoginForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//lsastt
+// import React, { useState, useEffect } from 'react';
+// import axios from 'axios';
+// import { TextField, Button, CircularProgress, Snackbar, Alert } from '@mui/material';
+// import { useNavigate } from 'react-router-dom';
+
+// const LoginForm = () => {
+//     const [email, setEmail] = useState('');
+//     const [password, setPassword] = useState('');
+//     const [code, setCode] = useState('');
+//     const [loading, setLoading] = useState(false);
+//     const [error, setError] = useState('');
+//     const [successMessage, setSuccessMessage] = useState('');
+//     const [openToast, setOpenToast] = useState(false); // State to control the toast visibility
+//     const navigate = useNavigate();
+
+//     useEffect(() => {
+//         if (localStorage.getItem('access_token')) {
+//             navigate('/dashboard');
+//         }
+//     }, [navigate]);
+
+//     const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         setError('');
+//         setSuccessMessage('');
+//         setLoading(true); // Show loading spinner during the login request
+//         const payload = {
+//           code: code,  // Ensure this value is correct
+//           username: email,   // Ensure this value is correct
+//           password: password,   // Ensure this value is correct
+//         };
+//         console.log('payload',payload)
+//         if (!email || !password || !code) {
+//             setError('Email, password, and vendor name are required.');
+//             setLoading(false);
+//             return;
+//         }
+
+//         try {
+//             const response = await axios.post("http://localhost:8000/api/merchant/login/", {
+//                 email,
+//                 password,
+//                 code
+//                 });
+//             if (response.status === 200) {
+//                     // If login is successful, save the access and refresh tokens
+//                     localStorage.setItem("access_token", response.data.access);
+//                     localStorage.setItem("refresh_token", response.data.refresh);
+
+
+//      // Redirect to dashboard after successful login
+//             navigate("/dashboard");
+//             setSuccessMessage("Login successful!");
+//             setOpenToast(true);
+//             // Clear the form fields after login
+//             setEmail('');
+//             setPassword('');
+//             setLoading(false);}
+//         } catch (err) {
+//             setLoading(false);
+
+//             // Handle different error cases
+//             if (err.response && err.response.status === 400) {
+//                 setError('Invalid credentials. Please check your email, password, and vendor name.');
+//             } else {
+//                 setError('An error occurred. Please try again later.');
+//             }
+//         }
+//     };
+
+//     return (
+//         <div style={{ padding: '20px', maxWidth: '400px', margin: 'auto' }}>
+//             <h2>Login</h2>
+//             {error && <Alert severity="error">{error}</Alert>}
+//             {successMessage && <Alert severity="success">{successMessage}</Alert>}
+
+//             <form onSubmit={handleSubmit}>
+//                 <TextField
+//                     label="Email"
+//                     fullWidth
+//                     margin="normal"
+//                     value={email}
+//                     onChange={(e) => setEmail(e.target.value)}
+//                 />
+//                 <TextField
+//                     label="Password"
+//                     type="password"
+//                     fullWidth
+//                     margin="normal"
+//                     value={password}
+//                     onChange={(e) => setPassword(e.target.value)}
+//                 />
+//                 <TextField
+//                     label="Vendor Name"
+//                     fullWidth
+//                     margin="normal"
+//                     value={code}
+//                     onChange={(e) => setCode(e.target.value)}
+//                 />
+//                 <Button
+//                     type="submit"
+//                     variant="contained"
+//                     color="primary"
+//                     fullWidth
+//                     style={{ marginTop: '20px' }}
+//                     disabled={loading}
+//                 >
+//                     {loading ? <CircularProgress size={24} color="secondary" /> : "Login"}
+//                 </Button>
+//             </form>
+
+//             <Snackbar open={openToast} autoHideDuration={3000} onClose={() => setOpenToast(false)}>
+//                 <Alert onClose={() => setOpenToast(false)} severity="success">
+//                     Login Successful! Redirecting...
+//                 </Alert>
+//             </Snackbar>
+//         </div>
+//     );
+// };
+
+// export default LoginForm;
 
 // import React, { useState } from 'react';
 // import axios from 'axios';

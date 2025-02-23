@@ -49,12 +49,12 @@ useEffect(() => {
 
   const handleRowAction = (actionKey, rowData) => {
     if (actionKey === "edit") {
-      navigate(`/proposals/edit/${rowData.id}`);
+      navigate(`/proposals/edit/${rowData.rowData.id}`);
     } else if (actionKey === "delete") {
       setProposalToDelete(rowData.id); // Set the proposal to delete
       setIsDeleteModalOpen(true); // Open the delete confirmation modal
     } else if (actionKey === "view") {
-      navigate(`/proposals/detail/${rowData.id}`);
+      navigate(`/proposals/detail/${rowData.rowData.id}`);
     }
   };
 
