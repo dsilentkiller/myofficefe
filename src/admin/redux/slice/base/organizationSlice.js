@@ -45,20 +45,7 @@ export const createOrganization = createAsyncThunk(
   }
 );
 
-// export const createOrganization = createAsyncThunk(
-//   "organizations/createOrganization",
-//   async (formData, thunkAPI) => {
-//     try {
-//       const response = await axios.post(
-//         "http://127.0.0.1:8000/api/setup/organization/create/",
-//         formData
-//       );
-//       return response.data.result.data; // Adjust this based on your actual API response structure
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response.data.result.data);
-//     }
-//   }
-// );
+
 // Fetch a single organization by ID
 export const fetchOrganizationById = createAsyncThunk(
   "organizations/fetchOrganizationById",
@@ -73,7 +60,16 @@ export const fetchOrganizationById = createAsyncThunk(
     }
   }
 );
-
+export const updateOrganizationStatus = createAsyncThunk(
+  "organizations/updateStatus",
+  async ({ id, status }) => {
+    const response = await axios.put(
+      `http://127.0.0.1:8000/api/setup/organization/update/${id}/`,
+      { status }
+    );
+    return response.data.result;
+  }
+);
 // Update organization
 // Update organization
 export const updateOrganization = createAsyncThunk(
@@ -126,9 +122,19 @@ const organizationSlice = createSlice({
     updateError: null,
     deleteStatus: null,
     deleteError: null,
-    currentorganization: null, // Added this line
+    currentOrganization: null, // Added this line
+    createStatus: null,
+    updateStatus: null,
+    deleteStatus: null,
+
+
   },
-  reducers: {},
+  reducers: {
+    setCurrentOrganization(state, action) {
+      state.currentOrganization = action.payload;
+    },
+  },
+
   extraReducers: (builder) => {
     builder
       // Fetch organizations
@@ -160,19 +166,29 @@ const organizationSlice = createSlice({
       })
 
       // Fetch organization By ID
-      .addCase(fetchOrganizationById.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(fetchOrganizationById.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.currentorganization = action.payload;
-      })
-      .addCase(fetchOrganizationById.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload || action.error.message;
-      })
+     // Fetch organization By ID
+        .addCase(fetchOrganizationById.pending, (state) => {
+          state.isLoading = true;
+          state.error = null;
+        })
+        .addCase(fetchOrganizationById.fulfilled, (state, action) => {
+          state.isLoading = false;
+          state.currentOrganization = action.payload; // Fixed typo here
+        })
+        .addCase(fetchOrganizationById.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error = action.payload || action.error.message;
+        })
 
+        .addCase(updateOrganizationStatus.fulfilled, (state, action) => {
+          const updatedOrganization = action.payload;
+          state.list = state.list.map((organization) =>
+            organization.id === updatedOrganization.id ? updatedOrganization : organization
+          );
+          if (state.currentOrganization && state.currentOrganization.id === updatedOrganization.id) {
+            state.currentOrganization = updatedOrganization;
+          }
+        })
       // Update organization
       .addCase(updateOrganization.pending, (state) => {
         state.updateStatus = "loading";

@@ -271,8 +271,6 @@ import ProjectDetail from "./admin/crm/project/ProjectDetail";
 import EventSystem from "./admin/crm/event/EventSystem";
 import AttendeeForm from "./admin/crm/attendee/AttendeeForm";
 import AttendeeTable from "./admin/crm/attendee/AttendeeTable";
-// import MeetingUpdateTable from "./admin/crm/event/meetingupdate/MeetingUpdateTable";
-// import MeetingUpdateForm from "./admin/crm/event/meetingupdate/MeetingUpdateForm";
 import AttendeeDelete from "./admin/crm/attendee/AttendeeDelete";
 import AttendeeUpdate from "./admin/crm/attendee/AttendeeUpdate";
 import AttendeeDetail from "./admin/crm/attendee/AttendeeDetail";
@@ -311,6 +309,7 @@ import ProductQuotationDetail from "./admin/crm/quotation/ProductQuotationDetail
 import ProposalForm from "./admin/crm/proposal/ProposalForm";
 import ProposalTable from "./admin/crm/proposal/ProposalTable";
 import ProposalDetail from "./admin/crm/proposal/ProposalDetail";
+import OrganizationDetail from "./admin/base/organization/OrganizationDetail";
 
 function App() {
   const isAuthenticated = localStorage.getItem("access_token") !== null;
@@ -455,6 +454,7 @@ function App() {
                 <Route path="day/delete/:id" element={<DayDelete />} />
                 <Route path="letterhead/create" element={<Letterhead/>} />
                 <Route path="organization/create" element={<OrganizationForm/>} />
+                <Route path="organization/detail" element={<OrganizationDetail/>} />
               </Route>
             </Route>
             {/* )} */}
