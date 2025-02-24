@@ -161,7 +161,7 @@ const FollowForm = ({ enquiryId }) => {
                     <div className="form-group">
                       <label htmlFor="due_date">Next Follow up Date:</label>
                       <input
-                        type="date"
+                        type="datetime-local"
                         id="due_date"
                         name="due_date"
                         value={formData.due_date}
