@@ -1,8 +1,5 @@
 
 
-
-
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom"; // Use Link to route
 import Footer from "../admin/components/footer/Footer";
@@ -48,7 +45,7 @@ const AdminDashboard = () => {
                   </CardActionArea>
                 </Card>
               </Box>
- 
+
 
 
               {/* Clients Card */}

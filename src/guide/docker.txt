@@ -1,0 +1,35 @@
+1. Before running docker build, check that these files are present in myofficefe/:
+=====>   ls -l myofficefe/package.json myofficefe/package-lock.json
+2. If they don’t exist, create them using:
+
+                cd myofficefe
+                npm init -y
+                npm install
+
+3. Delete node_modules and package-lock.json, Then Reinstall
+Run these commands inside your myofficefe/ folder:
+
+
+                rm -rf node_modules package-lock.json
+                npm install
+
+4.Use --no-cache When Building the Image
+If caching is causing issues, build the image with:
+
+            docker build --no-cache -t myofficefe .
+
+5. Check Your Internet Connection
+If npm install fails due to network issues, try switching to a different registry:
+
+        npm config set registry https://registry.npmjs.org/
+        Or, inside Dockerfile, use:
+
+Dockerfile
+
+RUN npm install --registry=https://registry.npmjs.org/
+docker-compose up --build
+or
+
+docker build -t myofficefe .
+docker run -p 3000:3000 myofficefe
+docker images

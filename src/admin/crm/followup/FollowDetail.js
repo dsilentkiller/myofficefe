@@ -1,63 +1,159 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchFollowById } from "../../redux/slice/crm/followSlice";
-import { useParams } from "react-router-dom";
+import {
+  fetchFollowById,
+  deleteFollow,
+} from "../../redux/slice/crm/followSlice"; // Adjust paths as needed
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  CircularProgress,
+  Box,
+  Alert,
+  Grid,
+} from "@mui/material";
+import { Edit, Delete } from "@mui/icons-material";
 
 const FollowDetail = () => {
-  const { id } = useParams();
   const dispatch = useDispatch();
-  const { currentFollow, isLoading, error } = useSelector(
-    (state) => state.follows
-  );
+  const navigate = useNavigate();
+  const { id } = useParams();
+  console.log("Follow-up ID from URL:", id); // Log to confirm if `id` is correct
+  // Get the current follow-up from Redux state
+  const currentFollow = useSelector((state) => state.follows.currentFollow);
 
-  // useEffect(() => {
-  //   if (id) {
-  //     dispatch(fetchFollowById(id));
-  //   }
-  // }, [dispatch, id]);
+  const isLoading = useSelector((state) => state.follows.isLoading);
+  const error = useSelector((state) => state.follows.error);
 
-  useEffect(() => {
-    console.log("currentFollow data:", currentFollow);
-  }, [currentFollow]);
+  console.log("Current Follow Data:", currentFollow);
 
   useEffect(() => {
     if (id) {
-      console.log("Fetching follow by ID:", id);
-      dispatch(fetchFollowById(id))
-        .unwrap()
-        .then((data) => console.log("follow fetched:", data)) // This should log the data
-        .catch((error) => console.log("Error fetching follow:", error));
+      dispatch(fetchFollowById({ id }));
     }
   }, [dispatch, id]);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  const handleDelete = () => {
+    dispatch(deleteFollow(id))
+      .unwrap()
+      .then(() => {
+        navigate("/dashboard/crm/follow"); // Redirect after deletion
+      })
+      .catch((error) => {
+        console.error("Delete failed", error);
+      });
+  };
+
+  if (isLoading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress size={60} />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <Alert severity="error" sx={{ width: "100%" }}>
+          {error}
+        </Alert>
+      </Box>
+    );
+  }
 
   return (
-    <div>
-      <h2>Follow-Up Detail</h2>
+    <Box padding={3}>
+      <Typography variant="h4" align="center" gutterBottom>
+        Follow-up Details
+      </Typography>
+
       {currentFollow ? (
-        <div>
-          <p>
-            <strong>Enquiry:</strong> {currentFollow.enquiry}
-          </p>
-          <p>
-            <strong>Followed By:</strong> {currentFollow.follow_by}
-          </p>
-          <p>
-            <strong>Due Date:</strong> {currentFollow.due_date}
-          </p>
-          <p>
-            <strong>Remark:</strong> {currentFollow.remark}
-          </p>
-          <p>
-            <strong>Notes:</strong> {currentFollow.notes}
-          </p>
-        </div>
+        <Grid container spacing={3} justifyContent="center">
+          <Grid item xs={12} sm={8} md={6}>
+            <Card sx={{ boxShadow: 3 }}>
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Typography variant="h6" color="primary">
+                      Enquiry: {currentFollow.customer_name}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="body1" color="text.secondary">
+                      <strong>Followed By:</strong> {currentFollow.follow_by}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="body1" color="text.secondary">
+                      <strong>Due Date:</strong> {currentFollow.due_date}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="body1" color="text.secondary">
+                      <strong>Status:</strong> {currentFollow.status}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography variant="body1" color="text.secondary">
+                      <strong>Notes:</strong>
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {currentFollow.notes || "No notes available."}
+                    </Typography>
+                  </Grid>
+
+                  {/* Action Buttons */}
+                  {/* <Grid item xs={12} container spacing={2}>
+                    <Grid item xs={6}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<Edit />}
+                        fullWidth
+                        onClick={() =>
+                          navigate(`/dashboard/crm/follow/edit/${id}`)
+                        } // Navigate to edit page
+                      >
+                        Edit
+                      </Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        startIcon={<Delete />}
+                        fullWidth
+                        onClick={handleDelete}
+                      >
+                        Delete
+                      </Button>
+                    </Grid>
+                  </Grid> */}
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
       ) : (
-        <p>No follow-up data available.</p>
+        <Typography variant="body1" color="text.secondary" align="center">
+          Follow-up details not found.
+        </Typography>
       )}
-    </div>
+    </Box>
   );
 };
 

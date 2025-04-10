@@ -16,8 +16,6 @@ import { toast } from "react-toastify";
 import { Button, InputAdornment, TextField } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-// import UploadFileIcon from "@mui/icons-material";
-
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import FileUploadIcon from '@mui/icons-material/FileUpload';  // This might be more appropriate if you need a file upload icon
 import SearchIcon from "@mui/icons-material/Search";
@@ -61,6 +59,33 @@ const MunicipalityTable = () => {
     dispatch(fetchDistricts());
   }, [dispatch]);
 
+  const importExcel = (e) => {
+    const selectedFile = e.target.files[0];
+    if (!selectedFile) return;
+
+    if (selectedFile.name.endsWith(".xlsx")) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+
+        if (!worksheet) {
+          toast.error("The Excel file is empty or invalid.");
+          return;
+        }
+
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        console.log(jsonData); // Here you can process and add the data to Redux or state
+
+        toast.success("Excel Data Imported Successfully!");
+      };
+      reader.readAsArrayBuffer(selectedFile);
+    } else {
+      toast.error("Please upload a valid .xlsx file.");
+    }
+  };
 
   // #---------handle edit district (both district and municipality)
   const handleEdit = (id, name, district) => {
@@ -197,66 +222,6 @@ const MunicipalityTable = () => {
   }, [searchTerm, municipalities]);
  //########### importing excel file #############
 
-
-  // handle file upload and process excel
-  const importExcel = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    if (file && file.name.endsWith(".xlsx")) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const data = new Uint8Array(event.target.result);
-        const workbook = XLSX.read(data, { type: "array" });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-        console.log("Imported Data:", jsonData);
-
-        // Assuming the Excel rows have { municipality: <name>, District: <district name> }
-        const formattedRows = jsonData.map((row, index) => {
-          const districtId = districts.find((district) => district.name === row.District)?.id;
-          return {
-            id: index + 1,  // Simple ID mapping (or generate your own if needed)
-            name: row.municipality || "Unknown",  // Set default name if not present
-            districtId: districtId || null,  // Match district ID based on name
-          };
-        });
-
-        // Now you can dispatch the createMunicipality action to add them to the store
-        formattedRows.forEach((municipality) => {
-          if (municipality.districtId) {
-            dispatch(createMunicipality(municipality)); // Ensure this matches your Redux action
-          }
-        });
-
-        toast.success("Excel Data Imported Successfully!");
-      };
-      reader.readAsArrayBuffer(file);
-    } else {
-      toast.error("Please upload a valid .xlsx file.");
-    }
-
-
-        // // Assuming each row corresponds to a municipality with 'name' and 'district_name' columns
-        // jsonData.forEach((municipality) => {
-        //   if (municipality.name && municipality.district_name) {
-        //     // Dispatch an action to add this municipality to your store
-        //     dispatch(createMunicipality({
-        //       name: municipality.name,
-        //       district_name: municipality.district_name
-        //     }));
-        //   }
-        // });
-
-    //     toast.success("Excel Data Imported Successfully!");
-    //   };
-    //   reader.readAsArrayBuffer(file);
-    // } else {
-    //   toast.error("Please upload a valid .xlsx file.");
-    // }
-  };
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(
       municipalities.map((municipality) => ({
@@ -296,103 +261,106 @@ const MunicipalityTable = () => {
         <div className="col-lg-10">
           <div className="card">
           <nav className="navbar navbar-expand-lg navbar-light bg-light">
-  <div className="container-fluid">
-    <h5 className="navbar-brand">Municipalities</h5>
-    <div className="navbar-nav ml-auto">
-      {/* Add Municipality Button */}
+            <div className="container-fluid">
+              <h5 className="navbar-brand">Municipalities</h5>
+              <div className="navbar-nav ml-auto">
+                {/* Add Municipality Button */}
 
-        <Button variant="contained"  component={Link} to= "create"color="primary" startIcon={<AddCircleOutlineIcon />}>
-          Add Municipality
-        </Button>
+                  <Button variant="contained"  component={Link} to= "create"color="primary" startIcon={<AddCircleOutlineIcon />}>
+                    Add Municipality
+                  </Button>
 
 
-      {/* Search Bar */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          setSearchTerm(e.target.q.value);
-        }}
-        className="form-inline ml-3 d-flex" // Added d-flex for better alignment
-      >
-        <div className="input-group">
-          <TextField
-            id="default-search"
-            name="search_term"
-            value={searchTerm}
-            className="form-control" // Keep form-control for default styling
-            placeholder="Search Municipalities..."
-            onChange={handleSearchChange}
-            required
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            fullWidth // Use fullWidth to make the search input take up the available space
-          />
-        </div>
-      </form>
-    </div>
+                {/* Search Bar */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setSearchTerm(e.target.q.value);
+                  }}
+                  className="form-inline ml-3 d-flex" // Added d-flex for better alignment
+                >
+                  <div className="input-group">
+                    <TextField
+                      id="default-search"
+                      name="search_term"
+                      value={searchTerm}
+                      className="form-control" // Keep form-control for default styling
+                      placeholder="Search Municipalities..."
+                      onChange={handleSearchChange}
+                      required
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      fullWidth // Use fullWidth to make the search input take up the available space
+                    />
+                  </div>
+                </form>
+              </div>
 
-    {/* Export buttons */}
-    <div className="form-inline ml-4" id="navbarSupportedContent">
-      <ul className="navbar-nav mr-30">
-        {/* Export Excel Button */}
-        <li className="nav-item">
-          <Button
-            variant="outlined"
-            color="info"
-            startIcon={<FileDownloadIcon />}
-            onClick={exportToExcel}
-          >
-            Export Excel
-          </Button>
-        </li>
+              {/* Export buttons */}
+              <div className="form-inline ml-4" id="navbarSupportedContent">
+                <ul className="navbar-nav mr-30">
+                  {/* Export Excel Button */}
+                  <li className="nav-item">
+                    <Button
+                      variant="outlined"
+                      color="info"
+                      startIcon={<FileDownloadIcon />}
+                      onClick={exportToExcel}
+                    >
+                      Export Excel
+                    </Button>
+                  </li>
 
-        {/* Export PDF Button */}
-        <li className="nav-item">
-          <Button
-            variant="outlined"
-            color="info"
-            startIcon={<PictureAsPdfIcon />}
-            onClick={exportToPDF}
-          >
-            Export PDF
-          </Button>
-        </li>
+                  {/* Export PDF Button */}
+                  <li className="nav-item">
+                    <Button
+                      variant="outlined"
+                      color="info"
+                      startIcon={<PictureAsPdfIcon />}
+                      onClick={exportToPDF}
+                    >
+                      Export PDF
+                    </Button>
+                  </li>
 
-        {/* Import Excel Button */}
-        <Button
-          variant="contained"
-          sx={{
-            marginBottom: '8px',
-            marginLeft: 1,
-            marginRight: 1,
-            backgroundColor: '#3f51b5', // Custom color
-            color: 'white', // Text color
-            '&:hover': {
-              backgroundColor: '#303f9f', // Darker shade on hover
-            },
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <FileUploadIcon sx={{ marginRight: 1 }} />
-          Import Excel
-          <input
-            type="file"
-            accept=".xlsx, .xls"
-            hidden
-            onChange={importExcel}  // Call the function to handle file import
-          />
-        </Button>
-      </ul>
-    </div>
-  </div>
-</nav>
+                  {/* Import Excel Button */}
+
+               {/* Import Excel Button */}
+                   <Button
+                      variant="contained"
+                      sx={{
+                        marginBottom: '8px',
+                        marginLeft: 1,
+                        marginRight: 1,
+                        backgroundColor: '#3f51b5',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: '#303f9f',
+                        },
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <FileUploadIcon sx={{ marginRight: 1 }} />
+                      Import Excel
+                      <input
+                        type="file"
+                        accept=".xlsx, .xls"
+                        hidden
+                        onChange={importExcel}
+                      />
+                    </Button>
+
+                </ul>
+              </div>
+            </div>
+          </nav>
 
 
             <div className="card-body">

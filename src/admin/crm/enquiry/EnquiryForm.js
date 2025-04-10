@@ -1,7 +1,4 @@
-
-
-
-        //this work fine best code ever
+//this work fine best code ever
 import React, { useState, useEffect } from "react";
 import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { Link } from "react-router-dom";
@@ -19,14 +16,17 @@ import { useNavigate, useParams } from "react-router-dom"; // Import useParams
 import { toast } from "react-toastify";
 import {
   createEnquiry,
-  updatedEnquiry,
+  fetchEnquiryById,
   fetchEnquiryByIdUpdate,
 } from "../../redux/slice/crm/enquirySlice";
 import "react-phone-input-2/lib/style.css";
 import { AppBar, Toolbar, Typography, IconButton, Button } from "@mui/material";
-import { ArrowBack as ArrowBackIcon, TableChart as TableChartIcon } from "@mui/icons-material";
+import {
+  ArrowBack as ArrowBackIcon,
+  TableChart as TableChartIcon,
+} from "@mui/icons-material";
 
-const EnquiryForm = () => {
+const EnquiryForm = ({ enquiryId }) => {
   const [activeTab, setActiveTab] = useState("1");
   const { id } = useParams(); // Get the enquiry ID from URL
   const dispatch = useDispatch();
@@ -51,22 +51,22 @@ const EnquiryForm = () => {
     street_address: "",
     sec_address: "",
     estimated_amount: "",
-    problem: "",
+    enquiry_purpose: "",
     known_by: "",
     created: "",
     next_follow_up_date: "",
     history: "",
-    status:""
+    status: "",
   });
-  // const createStatus = useSelector((state) => state.enquiries.createStatus);
-  // const updateStatus = useSelector((state) => state.enquiries.updateStatus);
-  // const createError = useSelector((state) => state.enquiries.createError);
-  // const updateError = useSelector((state) => state.enquiries.updateError);
-
+  const createError = useSelector((state) => state.enquiries.createError);
+  const updateError = useSelector((state) => state.enquiries.updateError);
   const enquiries = useSelector((state) => state.enquiries.list || []);
-  const enquiryData = useSelector((state) => state.enquiries.currentEnquiry);
-    const isLoading = useSelector((state) => state.enquiries.isLoading);
-    const error = useSelector((state) => state.enquiries.error);
+  const enquiryToUpdate = useSelector(
+    (state) => state.enquiries.currentEnquiry
+  );
+
+  const isLoading = useSelector((state) => state.enquiries.isLoading);
+  const error = useSelector((state) => state.enquiries.error);
 
   // Toggle function for switching tabs
   const toggle = (tab) => {
@@ -74,11 +74,7 @@ const EnquiryForm = () => {
       setActiveTab(tab);
     }
   };
-  // Retrieve data from the store
 
-  const enquiryToUpdate = useSelector(
-    (state) => state.enquiries.enquiryToUpdate
-  );
   useEffect(() => {
     console.log("Current Enquiry State:", enquiryToUpdate);
   }, [enquiryToUpdate]);
@@ -91,19 +87,16 @@ const EnquiryForm = () => {
   const { list: designations } = useSelector((state) => state.designations);
 
   useEffect(() => {
-    if (id) {
-      dispatch(fetchEnquiryByIdUpdate(id));
+    if (enquiryId) {
+      dispatch(fetchEnquiryByIdUpdate(enquiryId));
     }
-  }, [id, dispatch]);
-  useEffect(() => {
-    if (enquiryData) {
-      setFormData(enquiryData); // Set form data when enquiryData is available
-    }
-  }, [enquiryData]);
-  // useEffect(() => {
-  //   dispatch(fetchEnquiryById(enquiryId));
-  // }, [dispatch, enquiryId]);
+  }, [dispatch, enquiryId]);
 
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchEnquiryById(id));
+    }
+  }, [dispatch, id]);
   // pri_phone number validate
   const validatePhoneNumber = (value) => {
     const phoneLength = value.replace(/\D/g, "").length;
@@ -131,7 +124,14 @@ const EnquiryForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   useEffect(() => {
+    if (id) {
+      dispatch(fetchEnquiryByIdUpdate(id)); // Fetch the enquiry by ID for update
+    }
+  }, [id, dispatch]);
+
+  useEffect(() => {
     if (enquiryToUpdate && id) {
+      // Ensure all form fields are populated
       setFormData({
         customer_name: enquiryToUpdate.customer_name || "",
         category: enquiryToUpdate.category || "",
@@ -145,21 +145,20 @@ const EnquiryForm = () => {
         province: enquiryToUpdate.province || "",
         district: enquiryToUpdate.district || "",
         municipality: enquiryToUpdate.municipality || "",
-
         street_address: enquiryToUpdate.street_address || "",
-        sec_address: enquiryData.sec_address || "",
+        sec_address: enquiryToUpdate.sec_address || "",
         estimated_amount: enquiryToUpdate.estimated_amount || "",
-        problem: enquiryToUpdate.problem || "",
+        enquiry_purpose: enquiryToUpdate.enquiry_purpose || "",
         known_by: enquiryToUpdate.known_by || "",
         created: enquiryToUpdate.created || "",
         next_follow_up_date: enquiryToUpdate.next_follow_up_date || "",
         history: enquiryToUpdate.history || "",
-        status:enquiryToUpdate.status||"",
+        status: enquiryToUpdate.status || "",
       });
     } else if (!enquiryToUpdate && id) {
-      toast.error("Failed to load enquiry details for update.");
+      toast.error("Failed to load project details for update.");
     }
-  }, [enquiryToUpdate,id]);
+  }, [enquiryToUpdate, id]); // This ensures it runs only when the enquiryToUpdate changes
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -195,48 +194,47 @@ const EnquiryForm = () => {
     district: formData.district,
     municipality: formData.municipality,
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Validate required fields
-    // if (!formData.customer_name || !formData.category || !formData.pri_phone) {
-    //   toast.error("Please fill in all required fields.");
-    //   return;
-    // }
-    // if (!phoneValid) {
-    //   toast.error("Please enter a valid phone number.");
-    //   return;
-    // }
-
     console.log("Form data before submission:", formDataToSubmit); // Debug log
 
     if (id) {
-      dispatch(fetchEnquiryByIdUpdate({ id, ...formDataToSubmit }))
+      // Updating an enquiry
+      dispatch(fetchEnquiryByIdUpdate({ id, formData: formDataToSubmit }))
         .unwrap()
-        .then((updatedEnquiry) => {
+        .then(() => {
           toast.success("Enquiry updated successfully!");
           navigate("/dashboard/crm/enquiry");
         })
         .catch((error) => {
-          console.error("API error:", error);
+          console.error("Update error details:", error);
+          if (error.response) {
+            console.error("Response data:", error.response.data);
+            console.error("Response status:", error.response.status);
+            console.error("Response headers:", error.response.headers);
+          }
           toast.error(
-            `Failed to update enquiry: ${error.message || "An error occurred"}`
+            `Failed to update enquiry: ${
+              error.response?.data?.message || error.message || "Unknown error"
+            }`
           );
         });
     } else {
+      // Creating a new enquiry
       dispatch(createEnquiry(formDataToSubmit))
         .unwrap()
         .then(() => {
           toast.success("Enquiry created successfully!");
-          setFormData(FormData); // Reset form
+          setFormData({}); // Reset form
           navigate("/dashboard/crm/enquiry");
         })
         .catch((error) => {
           console.error("API error:", error);
-          toast.error(
-            `Failed to create enquiry: ${error.message || "An error occurred"}`
-          );
+          // Improved error handling
+          const errorMessage =
+            error?.message ||
+            "An unknown error occurred while creating the enquiry.";
+          toast.error(`Failed to create enquiry: ${errorMessage}`);
         });
     }
   };
@@ -274,8 +272,7 @@ const EnquiryForm = () => {
         <TabContent activeTab={activeTab}>
           <TabPane tabId="1">
             <div className="card">
-              {/*  */}
-              {/* <nav className="navbar navbar-expand-lg navbar-light bg-light">
+              <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
                   <h5 className="navbar-brand">
                     {" "}
@@ -287,74 +284,47 @@ const EnquiryForm = () => {
                     </Link>
                   </div>
                 </div>
-              </nav> */}
-               <AppBar position="static" color="default" elevation={3}>
-      <Toolbar>
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="back"
-          component={Link}
-          to="/dashboard/crm/enquiry"
-        >
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h6" color="inherit" sx={{ flexGrow: 1 }}>
-          {id ? "Update Enquiry" : "Add Enquiry"}
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<TableChartIcon />}
-          component={Link}
-          to="/dashboard/crm/enquiry"
-        >
-          Enquiry Table
-        </Button>
-      </Toolbar>
-    </AppBar>
+              </nav>
+              <AppBar position="static" color="default" elevation={3}>
+                <Toolbar>
+                  <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="back"
+                    component={Link}
+                    to="/dashboard/crm/enquiry"
+                  >
+                    <ArrowBackIcon />
+                  </IconButton>
+                  <Typography variant="h6" color="inherit" sx={{ flexGrow: 1 }}>
+                    {id ? "Update Enquiry" : "Add Enquiry"}
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<TableChartIcon />}
+                    component={Link}
+                    to="/dashboard/crm/enquiry"
+                  >
+                    Enquiry Table
+                  </Button>
+                </Toolbar>
+              </AppBar>
               {/*  */}
               <div className="card-body">
                 <form onSubmit={handleSubmit}>
-                  {/* <ProvinceDistrictSelector
-                    onProvinceChange={handleProvinceChange}
-                    onDistrictChange={handleDistrictChange}
-                    // selectedProvince={formData.province}
-                    // selectedDistrict={formData.district}
-                  /> */}
-
                   <div className="row">
                     {/* customer name */}
-                    {/* <div className="col-md-4">
+
+                    <div className="col-md-4">
                       <div className="form-group">
-                        <label htmlFor="name">Customer Name:</label>
+                        <label htmlFor="enquiry">customer name:</label>
                         <input
                           type="text"
                           id="customer_name"
                           name="customer_name"
                           value={formData.customer_name}
                           // onChange={handleInputChange}
-                          className="form-control"
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              customer_name: e.target.value,
-                            })
-                          }
-                          // onChange={(e) => dispatch(setenquiryToUpdate({ ...enquiryToUpdate, name: e.target.value }))}
-                          required
-                        />
-                      </div>
-                    </div> */}
-                     <div className="col-md-4">
-                    <div className="form-group">
-                      <label htmlFor="enquiry">customer name:</label>
-                      <input
-                          type="text"
-                          id="customer_name"
-                          name="customer_name"
-                          value={formData.customer_name}
-                          // onChange={handleInputChange}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
@@ -364,7 +334,7 @@ const EnquiryForm = () => {
                           className="form-control"
                           required
                         />
-                      {/* <select
+                        {/* <select
                         id="enquiry"
                         name="enquiry_id"
                         value={formData.enquiry_id}
@@ -387,9 +357,8 @@ const EnquiryForm = () => {
                           <option>No enquiries available</option>
                         )}
                       </select> */}
+                      </div>
                     </div>
-                  </div>
-
 
                     {/* categories */}
 
@@ -445,17 +414,19 @@ const EnquiryForm = () => {
 
                     <div className="col-md-4">
                       <div className="form-group">
-                        <label htmlFor="problem">Problem/Requirement:</label>
+                        <label htmlFor="enquiry_purpose">
+                          Problem/Requirement:
+                        </label>
                         <textarea
                           type="text"
-                          id="problem"
-                          name="problem"
-                          value={formData.problem}
+                          id="enquiry_purpose"
+                          name="enquiry_purpose"
+                          value={formData.enquiry_purpose}
                           // onChange={handleInputChange}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
-                              problem: e.target.value,
+                              enquiry_purpose: e.target.value,
                             })
                           }
                           className="form-control"
@@ -762,18 +733,6 @@ const EnquiryForm = () => {
                     </div>
                   </div>
 
-                  {/* "Same as Permanent Address" Checkbox */}
-                  {/* <div className="form-group mt-3">
-                    <input
-                      type="checkbox"
-                      id="sameAddressCheckbox"
-                      onChange={handleSameAddress}
-                    />
-                    <label htmlFor="sameAddressCheckbox" className="ml-2">
-                      Same as Permanent Address
-                    </label>
-                  </div> */}
-
                   <div className="form-group">
                     <button
                       type="button"
@@ -880,7 +839,6 @@ const EnquiryForm = () => {
                         </select>
                       </div>
                     </div>
-
 
                     <div className="col-md-4">
                       <div className="form-group">
@@ -1024,7 +982,7 @@ export default EnquiryForm;
 //     street_address: "",
 
 //     estimated_amount: "",
-//     problem: "",
+//     enquiry_purpose: "",
 //     known_by: "",
 //     created: "",
 //     history: "",
@@ -1035,7 +993,7 @@ export default EnquiryForm;
 //   // const updateError = useSelector((state) => state.enquiries.updateError);
 
 //   const enquiries = useSelector((state) => state.enquiries.list || []);
-//   const enquiryData = useSelector((state) => state.enquiries.currentEnquiry);
+//   const enquiryToUpdate = useSelector((state) => state.enquiries.currentEnquiry);
 //   //#start sppech to text setup
 //   const [isListening, setIsListening] = useState(false);
 //   const [recognition, setRecognition] = useState(null);
@@ -1131,10 +1089,10 @@ export default EnquiryForm;
 //     }
 //   }, [id, dispatch]);
 //   useEffect(() => {
-//     if (enquiryData) {
-//       setFormData(enquiryData); // Set form data when enquiryData is available
+//     if (enquiryToUpdate) {
+//       setFormData(enquiryToUpdate); // Set form data when enquiryToUpdate is available
 //     }
-//   }, [enquiryData]);
+//   }, [enquiryToUpdate]);
 
 //   // pri_phone number validate
 //   const validatePhoneNumber = (value) => {
@@ -1177,7 +1135,7 @@ export default EnquiryForm;
 //         ward_no: enquiryToUpdate.ward_no || "",
 //         street_address: enquiryToUpdate.street_address || "",
 //         estimated_amount: enquiryToUpdate.estimated_amount || "",
-//         problem: enquiryToUpdate.problem || "",
+//         enquiry_purpose: enquiryToUpdate.enquiry_purpose || "",
 //         known_by: enquiryToUpdate.known_by || "",
 //         created: enquiryToUpdate.created || "",
 //         history: enquiryToUpdate.history || "",
@@ -1451,17 +1409,17 @@ export default EnquiryForm;
 
 //                     <div className="col-md-4">
 //                       <div className="form-group">
-//                         <label htmlFor="problem">problem:</label>
+//                         <label htmlFor="enquiry_purpose">enquiry_purpose:</label>
 //                         <textarea
 //                           type="text"
-//                           id="problem"
-//                           name="problem"
-//                           value={formData.problem}
+//                           id="enquiry_purpose"
+//                           name="enquiry_purpose"
+//                           value={formData.enquiry_purpose}
 //                           // onChange={handleInputChange}
 //                           onChange={(e) =>
 //                             setFormData({
 //                               ...formData,
-//                               problem: e.target.value,
+//                               enquiry_purpose: e.target.value,
 //                             })
 //                           }
 //                           className="form-control"
@@ -1496,30 +1454,30 @@ export default EnquiryForm;
 //                       </div>
 //                     </div>
 //                     {/* gender */}
-                    // <div className="col-md-4">
-                    //   <div className="form-group">
-                    //     <label htmlFor="gender">Gender:</label>
-                    //     <select
-                    //       id="gender"
-                    //       name="gender"
-                    //       value={formData.gender}
-                    //       // onChange={handleInputChange}
-                    //       onChange={(e) =>
-                    //         setFormData({
-                    //           ...formData,
-                    //           gender: e.target.value,
-                    //         })
-                    //       }
-                    //       className="form-control"
-                    //       required
-                    //     >
-                    //       <option value="">Select Gender</option>
-                    //       <option value="male">Male</option>
-                    //       <option value="female">Female</option>
-                    //       <option value="other">Other</option>
-                    //     </select>
-                    //   </div>
-                    // </div>
+// <div className="col-md-4">
+//   <div className="form-group">
+//     <label htmlFor="gender">Gender:</label>
+//     <select
+//       id="gender"
+//       name="gender"
+//       value={formData.gender}
+//       // onChange={handleInputChange}
+//       onChange={(e) =>
+//         setFormData({
+//           ...formData,
+//           gender: e.target.value,
+//         })
+//       }
+//       className="form-control"
+//       required
+//     >
+//       <option value="">Select Gender</option>
+//       <option value="male">Male</option>
+//       <option value="female">Female</option>
+//       <option value="other">Other</option>
+//     </select>
+//   </div>
+// </div>
 //                   </div>
 
 //                   {/* pri phone */}
