@@ -18,12 +18,28 @@ const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, i
   const addServiceRow = () => {
     setServices([...services, { service_name: "", service_description: "", service_price: 0, quantity: 1 }]);
   };
-
   const updateService = (index, key, value) => {
     const updatedServices = [...services];
     updatedServices[index][key] = key === 'service_price' || key === 'quantity' ? parseFloat(value) || 0 : value;
+
+    // Ensure the values are always valid
+    if (key === 'service_price' && isNaN(updatedServices[index][key])) {
+      updatedServices[index][key] = 0; // Default to 0 if invalid
+    }
+
+    if (key === 'quantity' && isNaN(updatedServices[index][key])) {
+      updatedServices[index][key] = 1; // Default to 1 if invalid
+    }
+
     setServices(updatedServices);
   };
+  // console.log("Services before validation:", formData.services);
+
+  // const updateService = (index, key, value) => {
+  //   const updatedServices = [...services];
+  //   updatedServices[index][key] = key === 'service_price' || key === 'quantity' ? parseFloat(value) || 0 : value;
+  //   setServices(updatedServices);
+  // };
 
   const calculateSubtotalService = () => {
     return services.reduce((acc, service) => acc + service.service_price * service.quantity, 0);
@@ -105,19 +121,21 @@ const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, i
         </Table>
       </TableContainer>
 
-      {/* Display Total Calculation */}
-      {/* <Box mt={4}>
-        <Typography variant="h6">Subtotal: ${calculateSubtotalService().toFixed(2)}</Typography>
-        {includeTax && <Typography variant="h6">Tax: ${(calculateSubtotalService() * (tax_percentage / 100)).toFixed(2)}</Typography>}
-        {includeDiscount && <Typography variant="h6">Discount: ${(calculateSubtotalService() * (discount_percentage / 100)).toFixed(2)}</Typography>}
-        <Typography variant="h5">Total: ${calculateTotalService().toFixed(2)}</Typography>
-      </Box> */}
+
     </Box>
   );
 };
 
 export default ServiceQuotation;
 
+
+{/* Display Total Calculation */}
+      {/* <Box mt={4}>
+        <Typography variant="h6">Subtotal: ${calculateSubtotalService().toFixed(2)}</Typography>
+        {includeTax && <Typography variant="h6">Tax: ${(calculateSubtotalService() * (tax_percentage / 100)).toFixed(2)}</Typography>}
+        {includeDiscount && <Typography variant="h6">Discount: ${(calculateSubtotalService() * (discount_percentage / 100)).toFixed(2)}</Typography>}
+        <Typography variant="h5">Total: ${calculateTotalService().toFixed(2)}</Typography>
+      </Box> */}
 
 
 // import React from "react";

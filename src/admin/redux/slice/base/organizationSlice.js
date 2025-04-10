@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-// Fetch districts by organization ID
+
+// API requests
 export const fetchDistrictsByOrganization = createAsyncThunk(
   "districts/fetchDistrictsByOrganization",
   async (organizationId, thunkAPI) => {
@@ -8,12 +9,13 @@ export const fetchDistrictsByOrganization = createAsyncThunk(
       const response = await axios.get(
         `http://127.0.0.1:8000/api/setup/districts/?organization=${organizationId}`
       );
-      return response.data.result.data; // Adjust based on API response
+      return response.data.result.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.result.data);
+      return thunkAPI.rejectWithValue(error.response?.data?.result?.data || error.message);
     }
   }
 );
+
 export const fetchOrganizations = createAsyncThunk(
   "organizations/fetchOrganizations",
   async (_, thunkAPI) => {
@@ -21,12 +23,13 @@ export const fetchOrganizations = createAsyncThunk(
       const response = await axios.get(
         "http://127.0.0.1:8000/api/setup/organization/"
       );
-      return response.data.result.data; // Adjust this based on your actual API response structure
+      return response.data.result.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.result.data);
+      return thunkAPI.rejectWithValue(error.response?.data?.result?.data || error.message);
     }
   }
 );
+
 export const createOrganization = createAsyncThunk(
   "organization/create",
   async (formData, { rejectWithValue }) => {
@@ -37,16 +40,11 @@ export const createOrganization = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data);
-      }
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
-
-// Fetch a single organization by ID
 export const fetchOrganizationById = createAsyncThunk(
   "organizations/fetchOrganizationById",
   async (id, thunkAPI) => {
@@ -56,10 +54,11 @@ export const fetchOrganizationById = createAsyncThunk(
       );
       return response.data.result.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.result.data);
+      return thunkAPI.rejectWithValue(error.response?.data?.result?.data || error.message);
     }
   }
 );
+
 export const updateOrganizationStatus = createAsyncThunk(
   "organizations/updateStatus",
   async ({ id, status }) => {
@@ -70,8 +69,7 @@ export const updateOrganizationStatus = createAsyncThunk(
     return response.data.result;
   }
 );
-// Update organization
-// Update organization
+
 export const updateOrganization = createAsyncThunk(
   "organizations/updateOrganization",
   async ({ id, name }, thunkAPI) => {
@@ -82,11 +80,11 @@ export const updateOrganization = createAsyncThunk(
       );
       return response.data.result.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.result.data);
+      return thunkAPI.rejectWithValue(error.response?.data?.result?.data || error.message);
     }
   }
 );
-// search
+
 export const searchOrganization = createAsyncThunk(
   "organizations/searchOrganization",
   async (searchTerm) => {
@@ -104,12 +102,14 @@ export const deleteOrganization = createAsyncThunk(
       await axios.delete(
         `http://127.0.0.1:8000/api/setup/organization/delete/${id}/`
       );
-      return id; // Return the ID of the deleted organization
+      return id;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.result.data);
+      return thunkAPI.rejectWithValue(error.response?.data?.result?.data || error.message);
     }
   }
 );
+
+// Slice Definition
 const organizationSlice = createSlice({
   name: "organizations",
   initialState: {
@@ -122,12 +122,7 @@ const organizationSlice = createSlice({
     updateError: null,
     deleteStatus: null,
     deleteError: null,
-    currentOrganization: null, // Added this line
-    createStatus: null,
-    updateStatus: null,
-    deleteStatus: null,
-
-
+    currentOrganization: null,
   },
   reducers: {
     setCurrentOrganization(state, action) {
@@ -165,30 +160,20 @@ const organizationSlice = createSlice({
         state.createError = action.payload || action.error.message;
       })
 
-      // Fetch organization By ID
-     // Fetch organization By ID
-        .addCase(fetchOrganizationById.pending, (state) => {
-          state.isLoading = true;
-          state.error = null;
-        })
-        .addCase(fetchOrganizationById.fulfilled, (state, action) => {
-          state.isLoading = false;
-          state.currentOrganization = action.payload; // Fixed typo here
-        })
-        .addCase(fetchOrganizationById.rejected, (state, action) => {
-          state.isLoading = false;
-          state.error = action.payload || action.error.message;
-        })
+      // Fetch organization by ID
+      .addCase(fetchOrganizationById.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchOrganizationById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.currentOrganization = action.payload;
+      })
+      .addCase(fetchOrganizationById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || action.error.message;
+      })
 
-        .addCase(updateOrganizationStatus.fulfilled, (state, action) => {
-          const updatedOrganization = action.payload;
-          state.list = state.list.map((organization) =>
-            organization.id === updatedOrganization.id ? updatedOrganization : organization
-          );
-          if (state.currentOrganization && state.currentOrganization.id === updatedOrganization.id) {
-            state.currentOrganization = updatedOrganization;
-          }
-        })
       // Update organization
       .addCase(updateOrganization.pending, (state) => {
         state.updateStatus = "loading";
@@ -202,20 +187,6 @@ const organizationSlice = createSlice({
       .addCase(updateOrganization.rejected, (state, action) => {
         state.updateStatus = "failed";
         state.updateError = action.payload || action.error.message;
-      })
-
-      // Search organization
-      .addCase(searchOrganization.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(searchOrganization.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.list = action.payload;
-      })
-      .addCase(searchOrganization.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload || action.error.message;
       })
 
       // Delete organization

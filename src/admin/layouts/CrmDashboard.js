@@ -6,7 +6,6 @@ import Footer from "../components/footer/Footer";
 import { Outlet } from "react-router-dom";
 import CrmHeader from "../components/navbar/CrmHeader";
 
-
 function CrmDashboard() {
   return (
     <div>

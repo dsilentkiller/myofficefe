@@ -18,67 +18,58 @@ const LoginForm = () => {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [openToast, setOpenToast] = useState(false);
   const navigate = useNavigate();
 
+  // Redirect to dashboard if already logged in
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
       navigate("/dashboard");
     }
   }, [navigate]);
 
+  // Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccessMessage("");
     setLoading(true);
-
-    if (!email || !password || !code) {
-        setError("Email, password, and vendor code are required.");
-        setLoading(false);
-        return;
+    // || !code
+    if (!email || !password) {
+      setError("All fields are required.");
+      setLoading(false);
+      return;
     }
-
-    const payload = { email, password, code };
 
     try {
-        const response = await axios.post(
-            "http://localhost:8000/api/vendor/login/",
-            payload,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                },
-            }
-        );
+      const response = await axios.post(
+        "http://localhost:8000/api/vendor/login/",
+        new URLSearchParams({ email, password, code }),
 
-        if (response.status === 200) {
-            localStorage.setItem("access_token", response.data.access);
-            localStorage.setItem("refresh_token", response.data.refresh);
-
-            setSuccessMessage("Login successful!");
-            setOpenToast(true);
-
-            // Wait for the toast message to be visible before navigating
-            setTimeout(() => {
-                navigate("/dashboard");
-            }, 2000); // 2-second delay to prevent re-renders
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         }
+      );
+
+      if (response.status === 200) {
+        localStorage.setItem("access_token", response.data.access);
+        localStorage.setItem("refresh_token", response.data.refresh);
+        setOpenToast(true);
+
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1500);
+      }
     } catch (err) {
-        setLoading(false);
-        if (err.response) {
-            setError(
-                err.response.data.message ||
-                "Invalid credentials. Please check your email, password, and vendor code."
-            );
-        } else {
-            setError("Cannot connect to the server. Please check your network.");
-        }
+      setError(
+        err.response?.data?.message ||
+          "Invalid credentials. Please check your details."
+      );
+    } finally {
+      setLoading(false);
     }
-};
-
+  };
 
   return (
     <Box
@@ -86,15 +77,16 @@ const LoginForm = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        minHeight: "100vh",
         background: "linear-gradient(to right, #4A90E2, #142850)",
+        padding: 2,
       }}
     >
       <Paper
         elevation={6}
         sx={{
-          padding: 4,
-          width: 400,
+          p: 4,
+          width: { xs: "90%", sm: 400 },
           textAlign: "center",
           borderRadius: 3,
         }}
@@ -111,11 +103,6 @@ const LoginForm = () => {
             {error}
           </Alert>
         )}
-        {successMessage && (
-          <Alert severity="success" sx={{ mt: 2 }}>
-            {successMessage}
-          </Alert>
-        )}
 
         <form onSubmit={handleSubmit}>
           <TextField
@@ -124,6 +111,7 @@ const LoginForm = () => {
             margin="normal"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <TextField
             label="Password"
@@ -132,6 +120,7 @@ const LoginForm = () => {
             margin="normal"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
           <TextField
             label="Vendor Code"
@@ -139,18 +128,24 @@ const LoginForm = () => {
             margin="normal"
             value={code}
             onChange={(e) => setCode(e.target.value)}
+            required
           />
           <Button
             type="submit"
             variant="contained"
             fullWidth
-            sx={{ mt: 2, bgcolor: "#4A90E2", "&:hover": { bgcolor: "#357ABD" } }}
+            sx={{
+              mt: 2,
+              bgcolor: "#4A90E2",
+              "&:hover": { bgcolor: "#357ABD" },
+            }}
             disabled={loading}
           >
             {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
           </Button>
         </form>
 
+        {/* Success Notification */}
         <Snackbar
           open={openToast}
           autoHideDuration={3000}
@@ -167,6 +162,179 @@ const LoginForm = () => {
 
 export default LoginForm;
 
+//#### it has multirendering issue while login.
+// import React, { useState, useEffect } from "react";
+// import axios from "axios";
+// import {
+//   TextField,
+//   Button,
+//   CircularProgress,
+//   Snackbar,
+//   Alert,
+//   Typography,
+//   Paper,
+//   Box,
+// } from "@mui/material";
+// import { useNavigate } from "react-router-dom";
+
+// const LoginForm = () => {
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [code, setCode] = useState("");
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+//   const [success, setSuccess] = useState("");
+//   const [openToast, setOpenToast] = useState(false);
+//   const navigate = useNavigate();
+
+//   // Check if the user is already logged in when the component mounts
+//   useEffect(() => {
+//     if (localStorage.getItem("access_token")) {
+//       navigate("/dashboard"); // Redirect to dashboard if already logged in
+//     }
+//   }, [navigate]);
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setError("");
+//     setSuccess("");
+//     setLoading(true);
+
+//     if (!email || !password || !code) {
+//       setError("Email, password, and vendor code are required.");
+//       setLoading(false);
+//       return;
+//     }
+
+//     const payload = { email, password, code };
+
+//     try {
+//       const response = await axios.post(
+//         "http://localhost:8000/api/vendor/login/",
+//         payload,
+//         {
+//           headers: {
+//             // "Content-Type": "application/json",
+//             "Content-Type": "application/x-www-form-urlencoded",
+//             Accept: "application/json",
+//           },
+//           body: new URLSearchParams({
+//             email,
+//             password,
+//             code,
+//           }),
+//         }
+//       );
+
+//       if (response.status === 200) {
+//         // Store tokens in localStorage
+
+//         localStorage.setItem("access_token", response.data.access);
+//         localStorage.setItem("refresh_token", response.data.refresh);
+
+//         // Redirect immediately to the dashboard without any delay
+//         navigate("/dashboard");
+//       }
+//     } catch (err) {
+//       setLoading(false);
+//       if (err.response) {
+//         setError(
+//           err.response.data.message ||
+//             "Invalid credentials. Please check your email, password, and vendor code."
+//         );
+//       } else {
+//         setError("Cannot connect to the server. Please check your network.");
+//       }
+//     }
+//   };
+
+//   return (
+//     <Box
+//       sx={{
+//         display: "flex",
+//         justifyContent: "center",
+//         alignItems: "center",
+//         height: "100vh",
+//         background: "linear-gradient(to right, #4A90E2, #142850)",
+//       }}
+//     >
+//       <Paper
+//         elevation={6}
+//         sx={{
+//           padding: 4,
+//           width: 400,
+//           textAlign: "center",
+//           borderRadius: 3,
+//         }}
+//       >
+//         <Typography variant="h4" fontWeight="bold" color="primary">
+//           MyOffice
+//         </Typography>
+//         <Typography variant="subtitle1" color="textSecondary">
+//           Manage your office seamlessly
+//         </Typography>
+
+//         {error && (
+//           <Alert severity="error" sx={{ mt: 2 }}>
+//             {error}
+//           </Alert>
+//         )}
+
+//         <form onSubmit={handleSubmit}>
+//           <TextField
+//             label="Email"
+//             fullWidth
+//             margin="normal"
+//             value={email}
+//             onChange={(e) => setEmail(e.target.value)}
+//           />
+//           <TextField
+//             label="Password"
+//             type="password"
+//             fullWidth
+//             margin="normal"
+//             value={password}
+//             onChange={(e) => setPassword(e.target.value)}
+//           />
+//           <TextField
+//             label="Vendor Code"
+//             fullWidth
+//             margin="normal"
+//             value={code}
+//             onChange={(e) => setCode(e.target.value)}
+//           />
+//           <Button
+//             type="submit"
+//             variant="contained"
+//             fullWidth
+//             sx={{
+//               mt: 2,
+//               bgcolor: "#4A90E2",
+//               "&:hover": { bgcolor: "#357ABD" },
+//             }}
+//             disabled={loading}
+//           >
+//             {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+//             {/* {error && <p style={{ color: "red" }}>{error}</p>} */}
+//             {/* {success && <p style={{ color: "green" }}>{success}</p>} */}
+//           </Button>
+//         </form>
+
+//         <Snackbar
+//           open={openToast}
+//           autoHideDuration={3000}
+//           onClose={() => setOpenToast(false)}
+//         >
+//           <Alert onClose={() => setOpenToast(false)} severity="success">
+//             Login Successful! Redirecting...
+//           </Alert>
+//         </Snackbar>
+//       </Paper>
+//     </Box>
+//   );
+// };
+
+// export default LoginForm;
 
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
@@ -300,23 +468,6 @@ export default LoginForm;
 
 // export default LoginForm;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //lsastt
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
@@ -366,7 +517,6 @@ export default LoginForm;
 //                     // If login is successful, save the access and refresh tokens
 //                     localStorage.setItem("access_token", response.data.access);
 //                     localStorage.setItem("refresh_token", response.data.refresh);
-
 
 //      // Redirect to dashboard after successful login
 //             navigate("/dashboard");
@@ -454,9 +604,6 @@ export default LoginForm;
 //     const [successMessage, setSuccessMessage] = useState("");
 //     const [openToast, setOpenToast] = useState(false); // State to control the toast visibility
 //     const navigate = useNavigate();
-
-
-
 
 //     const handleSubmit = async (e) => {
 //       e.preventDefault();
@@ -549,10 +696,6 @@ export default LoginForm;
 
 // export default LoginForm;
 
-
-
-
-
 // import React, { useState, useEffect } from "react";
 // import axios from "axios";
 // import { useNavigate } from "react-router-dom";
@@ -562,11 +705,11 @@ export default LoginForm;
 // const LoginForm = () => {
 //   const [name, setEmail] = useState("");
 //   const [password, setPassword] = useState("");
-  // const [error, setError] = useState("");
-  // const [successMessage, setSuccessMessage] = useState("");
-  // const [loading, setLoading] = useState(false);
-  // const [openToast, setOpenToast] = useState(false); // State to control the toast visibility
-  // const navigate = useNavigate();
+// const [error, setError] = useState("");
+// const [successMessage, setSuccessMessage] = useState("");
+// const [loading, setLoading] = useState(false);
+// const [openToast, setOpenToast] = useState(false); // State to control the toast visibility
+// const navigate = useNavigate();
 
 //   useEffect(() => {
 //     // Redirect to dashboard if already logged in
@@ -575,43 +718,43 @@ export default LoginForm;
 //     }
 //   }, [navigate]);
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setError("");
-  //   setSuccessMessage("");
-  //   setLoading(true); // Show loading spinner during the login request
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+//   setError("");
+//   setSuccessMessage("");
+//   setLoading(true); // Show loading spinner during the login request
 
-  //   if (!name || !password) {
-  //     setError("Both name and password are required.");
-  //     setLoading(false);
-  //     return;
-  //   }
+//   if (!name || !password) {
+//     setError("Both name and password are required.");
+//     setLoading(false);
+//     return;
+//   }
 
-  //   try {
-  //     const response = await axios.post("http://localhost:8000/api/login/", {
-  //       name,
-  //       password,
-  //     });
+//   try {
+//     const response = await axios.post("http://localhost:8000/api/login/", {
+//       name,
+//       password,
+//     });
 
-  //     // If login is successful, save the access and refresh tokens
-  //     localStorage.setItem("access_token", response.data.access);
-  //     localStorage.setItem("refresh_token", response.data.refresh);
+//     // If login is successful, save the access and refresh tokens
+//     localStorage.setItem("access_token", response.data.access);
+//     localStorage.setItem("refresh_token", response.data.refresh);
 
-  //     setSuccessMessage("Login successful!");
-  //     setOpenToast(true); // Show the toast message
+//     setSuccessMessage("Login successful!");
+//     setOpenToast(true); // Show the toast message
 
-  //     // Redirect to dashboard after successful login
-  //     navigate("/dashboard");
+//     // Redirect to dashboard after successful login
+//     navigate("/dashboard");
 
-  //     // Clear the form fields after login
-  //     setEmail("");
-  //     setPassword("");
-  //     setLoading(false);
-  //   } catch (err) {
-  //     setError("Invalid credentials. Please try again.");
-  //     setLoading(false);
-  //   }
-  // };
+//     // Clear the form fields after login
+//     setEmail("");
+//     setPassword("");
+//     setLoading(false);
+//   } catch (err) {
+//     setError("Invalid credentials. Please try again.");
+//     setLoading(false);
+//   }
+// };
 
 //   // Close the toast
 //   const handleCloseToast = () => {
@@ -691,7 +834,6 @@ export default LoginForm;
 // };
 
 // export default LoginForm;
-
 
 // ## -------- dashboard login and work greatestDurationDenominator./
 
@@ -784,4 +926,3 @@ export default LoginForm;
 // };
 
 // export default LoginForm;
-

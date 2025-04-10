@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -18,7 +17,12 @@ import {
 } from "@mui/material";
 import ProductQuotation from "./ProductQuotationForm";
 import ServiceQuotation from "./ServiceQuotationForm";
-import { createProductQuotation, createServiceQuotation, fetchProductQuotations, fetchServiceQuotations } from "../../redux/slice/crm/quotationSlice";
+import {
+  createProductQuotation,
+  createServiceQuotation,
+  fetchProductQuotations,
+  fetchServiceQuotations,
+} from "../../redux/slice/crm/quotationSlice";
 import { fetchCustomers } from "../../redux/slice/customer/customerSlice";
 import { fetchCategories } from "../../redux/slice/crm/categorySlice";
 import { fetchDepartments } from "../../redux/slice/base/departmentSlice";
@@ -27,31 +31,47 @@ import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
-
-const QuotationForm = ({ existingQuotation }) => {
+const QuotationForm = ({ existingQuotation = {} }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [quotationType, setQuotationType] = useState(existingQuotation?.quotation_type || "service");
-  const [includeTax, setIncludeTax] = useState(existingQuotation?.include_tax || false);
-  const [taxPercentage, setTaxPercentage] = useState(existingQuotation?.tax_percentage || 0);
-  const [includeDiscount, setIncludeDiscount] = useState(existingQuotation?.include_discount || false);
-  const [discountPercentage, setDiscountPercentage] = useState(existingQuotation?.discount_percentage || 0);
+  const [quotationType, setQuotationType] = useState(
+    existingQuotation.quotation_type || "service"
+  );
+  const [includeTax, setIncludeTax] = useState(
+    existingQuotation.include_tax || false
+  );
+  const [taxPercentage, setTaxPercentage] = useState(
+    existingQuotation.tax_percentage || 0
+  );
+  const [includeDiscount, setIncludeDiscount] = useState(
+    existingQuotation.include_discount || false
+  );
+  const [discountPercentage, setDiscountPercentage] = useState(
+    existingQuotation.discount_percentage || 0
+  );
 
-  const [products, setProducts] = useState(existingQuotation?.products || [{ product_name: "", quantity: 1, price: 0 }]);
-  const [services, setServices] = useState(existingQuotation?.services || [{ service_name: "", service_description: "", service_price: 0.0, quantity: 1 }]);
+  const [products, setProducts] = useState(
+    existingQuotation.products || [{ product_name: "", quantity: 1, price: 0 }]
+  );
+  const [services, setServices] = useState(
+    existingQuotation.services || [
+      {
+        service_name: "",
+        service_description: "",
+        service_price: 0.0,
+        quantity: 1,
+      },
+    ]
+  );
   const [selectionType, setSelectionType] = useState("customer");
-  const [selectedCustomerOrEnquiry, setSelectedCustomerOrEnquiry] = useState(existingQuotation?.customer_or_enquiry_id || "");
-  const currentDate = new Date().toISOString().split('T')[0];
+  const [selectedCustomerOrEnquiry, setSelectedCustomerOrEnquiry] = useState(
+    existingQuotation.customer_or_enquiry_id || ""
+  );
+  const currentDate = new Date().toISOString().split("T")[0];
 
   const { list: customers } = useSelector((state) => state.customers);
-  const { list: departments } = useSelector((state) => state.departments);
-  const { list: designations } = useSelector((state) => state.designations);
-  const { list: categories } = useSelector((state) => state.categories);
   const { list: enquiries } = useSelector((state) => state.enquiries);
-
-  const isLoading = useSelector((state) => state.enquiries.isLoading);
-  const error = useSelector((state) => state.enquiries.error);
 
   useEffect(() => {
     dispatch(fetchEnquiries());
@@ -66,39 +86,165 @@ const QuotationForm = ({ existingQuotation }) => {
 
     if (quotationType === "product") {
       subtotal = products.reduce(
-        (sum, product) => sum + product.quantity * product.price, 0
+        (sum, product) => sum + product.quantity * product.price,
+        0
       );
     } else if (quotationType === "service") {
       subtotal = services.reduce(
-        (sum, service) => sum + (parseFloat(service.quantity) || 1) * (parseFloat(service.service_price) || 0),
+        (sum, service) =>
+          sum +
+          (parseFloat(service.quantity) || 1) *
+            (parseFloat(service.service_price) || 0),
         0
       );
     }
 
     const taxAmount = includeTax ? (subtotal * taxPercentage) / 100 : 0;
-    const discountAmount = includeDiscount ? (subtotal * discountPercentage) / 100 : 0;
+    const discountAmount = includeDiscount
+      ? (subtotal * discountPercentage) / 100
+      : 0;
     const total = subtotal + taxAmount - discountAmount;
 
     return { subtotal, taxAmount, discountAmount, total };
   };
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+
+  //   // Ensure either customer or enquiry is selected
+  //   if (!selectedCustomerOrEnquiry) {
+  //     toast.error(
+  //       `Please select a ${
+  //         selectionType === "customer" ? "customer" : "enquiry"
+  //       }`
+  //     );
+  //     return;
+  //   }
+
+  //   const total = calculateTotal();
+
+  //   // Construct the form data
+  //   const formData = {
+  //     enquiry: null,
+  //     customer: null,
+  //     quotation_date: currentDate,
+  //     tax_percentage: taxPercentage,
+  //     discount_percentage: discountPercentage,
+  //     subtotal: total.subtotal,
+  //     tax_amount: total.taxAmount,
+  //     discount_amount: total.discountAmount,
+  //     total_amount: total.total,
+  //     products: quotationType === "product" ? products : [],
+  //     services: quotationType === "service" ? services : [],
+  //     selection_type: selectionType,
+  //   };
+
+  //   // Get selected customer or enquiry by ID
+  //   const selectedItem =
+  //     selectionType === "customer"
+  //       ? customers.find(
+  //           (customer) => customer.id === selectedCustomerOrEnquiry
+  //         )
+  //       : enquiries.find((enquiry) => enquiry.id === selectedCustomerOrEnquiry);
+
+  //   if (!selectedItem) {
+  //     toast.error(`Selected ${selectionType} not found`);
+  //     return;
+  //   }
+
+  //   // Add customer_name or enquiry_name to formData
+  //   if (selectionType === "customer") {
+  //     formData.customer = selectedItem.id; // Ensure customer_id is set
+  //     formData.customer_name = selectedItem.customer_name; // Add customer_name to formData
+  //   } else if (selectionType === "enquiry") {
+  //     formData.enquiry = selectedItem.id; // Ensure enquiry_id is set
+  //     formData.enquiry_name =
+  //       selectedItem.enquiry_name || selectedItem.customer_name; // Add enquiry_name to formData
+  //   }
+
+  //   // Validate required fields for services and products
+  //   const validateServiceFields = formData.services.every((service, index) => {
+  //     if (
+  //       !service.service_name ||
+  //       !service.service_price ||
+  //       !service.quantity
+  //     ) {
+  //       toast.error(`Service at index ${index} is missing required fields.`);
+  //       return false; // Invalid field, break validation
+  //     }
+  //     return true; // Valid service
+  //   });
+
+  //   const validateProductFields = formData.products.every((product, index) => {
+  //     if (!product.product_name || !product.price || !product.quantity) {
+  //       toast.error(`Product at index ${index} is missing required fields.`);
+  //       return false; // Invalid field, break validation
+  //     }
+  //     return true; // Valid product
+  //   });
+
+  //   // If there are missing fields, stop form submission
+  //   if (!validateServiceFields || !validateProductFields) {
+  //     return; // Prevent API call
+  //   }
+
+  //   // Ensure subtotal is valid
+  //   if (!formData.subtotal || formData.subtotal <= 0) {
+  //     toast.error("Subtotal must be greater than 0.");
+  //     return;
+  //   }
+
+  //   // Ensure customer_name or enquiry_name is set
+  //   if (!formData.customer_name && !formData.enquiry_name) {
+  //     toast.error("Either customer_name or enquiry_name must be provided.");
+  //     return;
+  //   }
+
+  //   // Make API request to create the quotation
+  //   const createQuotation =
+  //     quotationType === "product"
+  //       ? dispatch(createProductQuotation(formData))
+  //       : dispatch(createServiceQuotation(formData));
+
+  //   createQuotation
+  //     .unwrap()
+  //     .then((response) => {
+  //       toast.success(
+  //         `${
+  //           quotationType.charAt(0).toUpperCase() + quotationType.slice(1)
+  //         } quotation created successfully!`
+  //       );
+  //       navigate(`/dashboard/crm/quotations`);
+  //     })
+  //     .catch((error) => {
+  //       console.log("Create Error:", error);
+  //       if (error.errors) {
+  //         // Log all errors for specific fields
+  //         Object.entries(error.errors).forEach(([field, messages]) => {
+  //           messages.forEach((msg) => toast.error(`${field}: ${msg}`));
+  //         });
+  //       } else {
+  //         toast.error(`Create Error: ${error.message || "Unknown error"}`);
+  //       }
+  //     });
+  // };
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
     // Ensure either customer or enquiry is selected
     if (!selectedCustomerOrEnquiry) {
-      toast.error(`Please select a ${selectionType === "customer" ? "customer" : "enquiry"}`);
+      toast.error(
+        `Please select a ${selectionType === "customer" ? "customer" : "enquiry"}`
+      );
       return;
     }
-
+  
     const total = calculateTotal();
-
+  
     // Construct the form data
-    // Define the enquiryId based on selectionType
-// let enquiryId = null;
     const formData = {
-      enquiry: null, // Ensure this is populated with the correct ID
-      customer:null,
-
+      enquiry: null,
+      customer: null,
       quotation_date: currentDate,
       tax_percentage: taxPercentage,
       discount_percentage: discountPercentage,
@@ -108,90 +254,49 @@ const QuotationForm = ({ existingQuotation }) => {
       total_amount: total.total,
       products: quotationType === "product" ? products : [],
       services: quotationType === "service" ? services : [],
-      selection_type: selectionType,
+      selection_type: selectionType, // Ensure this is set
     };
-
+  
     // Get selected customer or enquiry by ID
-    const selectedItem = selectionType === "customer"
-  ? customers.find((customer) => customer.id === selectedCustomerOrEnquiry)
-  : enquiries.find((enquiry) => enquiry.id === selectedCustomerOrEnquiry);
-  console.log('Selected Enquiry ID:', selectedCustomerOrEnquiry);
-  console.log('Selected Item:', selectedItem);
-
-if (!selectedItem) {
-  toast.error(`Selected ${selectionType} not found`);
-  return;
-}
-
-// Add customer_name or enquiry_name to formData
-if (selectionType === "customer") {
-  formData.customer = selectedItem.id;  // Ensure customer_id is set
-  formData.customer_name = selectedItem.customer_name; // Add customer_name to formData
-} else if (selectionType === "enquiry") {
-  formData.enquiry = selectedItem.id;  // Ensure enquiry_id is set
-  formData.enquiry_name = selectedItem.enquiry_name || selectedItem.customer_name;  // Add enquiry_name to formData
-}
-
-// Log formData to debug
-console.log("Form Data: ", formData);
-
-
-    // Log the form data for debugging (can remove later)
-    // console.log("Form Data: ", formData);
-
-    // Validate required fields for services and products
-    const validateServiceFields = formData.services.every((service, index) => {
-      if (!service.service_name || !service.service_price || !service.quantity) {
-        toast.error(`Service at index ${index} is missing required fields.`);
-        return false; // Invalid field, break validation
-      }
-      return true; // Valid service
-    });
-
-    const validateProductFields = formData.products.every((product, index) => {
-      if (!product.product_name || !product.price || !product.quantity) {
-        toast.error(`Product at index ${index} is missing required fields.`);
-        return false; // Invalid field, break validation
-      }
-      return true; // Valid product
-    });
-
-    // If there are missing fields, stop form submission
-    if (!validateServiceFields || !validateProductFields) {
-      return; // Prevent API call
-    }
-
-    // Ensure subtotal is valid
-    if (!formData.subtotal || formData.subtotal <= 0) {
-      toast.error("Subtotal must be greater than 0.");
+    const selectedItem =
+      selectionType === "customer"
+        ? customers.find((customer) => customer.id === selectedCustomerOrEnquiry)
+        : enquiries.find((enquiry) => enquiry.id === selectedCustomerOrEnquiry);
+  
+    if (!selectedItem) {
+      toast.error(`Selected ${selectionType} not found`);
       return;
     }
-
-    // Ensure customer_name or enquiry_name is set
-    if (!formData.customer_name && !formData.enquiry_name) {
-      toast.error("Either customer_name or enquiry_name must be provided.");
-      return;
+  
+    // Add customer_name or enquiry_name to formData
+    if (selectionType === "customer") {
+      formData.customer = selectedItem.id; // Ensure customer_id is set
+      formData.customer_name = selectedItem.customer_name; // Add customer_name to formData
+    } else if (selectionType === "enquiry") {
+      formData.enquiry = selectedItem.id; // Ensure enquiry_id is set
+      formData.enquiry_name =
+        selectedItem.enquiry_name || selectedItem.customer_name; // Add enquiry_name to formData
     }
-
+  
+    // Log formData to debug
+    console.log("Form Data: ", formData);
+  
     // Make API request to create the quotation
     const createQuotation =
       quotationType === "product"
         ? dispatch(createProductQuotation(formData))
         : dispatch(createServiceQuotation(formData));
-
+  
     createQuotation
       .unwrap()
       .then((response) => {
         toast.success(
           `${quotationType.charAt(0).toUpperCase() + quotationType.slice(1)} quotation created successfully!`
         );
-        dispatch(fetchProductQuotations());
-        dispatch(fetchServiceQuotations());
         navigate(`/dashboard/crm/quotations`);
       })
       .catch((error) => {
         console.log("Create Error:", error);
-
         if (error.errors) {
           // Log all errors for specific fields
           Object.entries(error.errors).forEach(([field, messages]) => {
@@ -202,13 +307,7 @@ console.log("Form Data: ", formData);
         }
       });
   };
-
-
-
-
-          const totals = calculateTotal();
-
-
+  const totals = calculateTotal();
 
   return (
     <Box p={4} maxWidth="900px" mx="auto">
@@ -226,8 +325,8 @@ console.log("Form Data: ", formData);
               onChange={(e) => setSelectionType(e.target.value)}
               label="Select From"
             >
-              <MenuItem value="customer">customer</MenuItem>
-              <MenuItem value="enquiry">enquiry</MenuItem>
+              <MenuItem value="customer">Customer</MenuItem>
+              <MenuItem value="enquiry">Enquiry</MenuItem>
             </Select>
           </FormControl>
 
@@ -239,21 +338,30 @@ console.log("Form Data: ", formData);
             required
             sx={{ mt: 2 }}
           >
-            <MenuItem value="">Select {selectionType === "customer" ? "Customer" : "Enquiry"}</MenuItem>
-            {selectionType === "customer" && Array.isArray(customers) && customers.length > 0 ? (
+            <MenuItem value="">
+              Select {selectionType === "customer" ? "Customer" : "Enquiry"}
+            </MenuItem>
+            {selectionType === "customer" &&
+            Array.isArray(customers) &&
+            customers.length > 0 ? (
               customers.map((customer) => (
                 <MenuItem key={customer.id} value={customer.id}>
                   {customer.customer_name}
                 </MenuItem>
               ))
-            ) : selectionType === "enquiry" && Array.isArray(enquiries) && enquiries.length > 0 ? (
+            ) : selectionType === "enquiry" &&
+              Array.isArray(enquiries) &&
+              enquiries.length > 0 ? (
               enquiries.map((enquiry) => (
                 <MenuItem key={enquiry.id} value={enquiry.id}>
                   {enquiry.customer_name || "No Enquiry Name"}
                 </MenuItem>
               ))
             ) : (
-              <MenuItem>No {selectionType === "customer" ? "customer" : "enquiry"} available</MenuItem>
+              <MenuItem>
+                No {selectionType === "customer" ? "customer" : "enquiry"}{" "}
+                available
+              </MenuItem>
             )}
           </Select>
 
@@ -266,15 +374,26 @@ console.log("Form Data: ", formData);
               onChange={(e) => setQuotationType(e.target.value)}
               label="Quotation Type"
             >
-              <MenuItem value="service">service</MenuItem>
-              <MenuItem value="product">product</MenuItem>
+              <MenuItem value="service">Service</MenuItem>
+              <MenuItem value="product">Product</MenuItem>
             </Select>
           </FormControl>
 
           {/* Tax and Discount Section */}
-          <Box mt={4} display="flex" justifyContent="space-between" alignItems="center" gap={2}>
+          <Box
+            mt={4}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            gap={2}
+          >
             <FormControlLabel
-              control={<Switch checked={includeTax} onChange={(e) => setIncludeTax(e.target.checked)} />}
+              control={
+                <Switch
+                  checked={includeTax}
+                  onChange={(e) => setIncludeTax(e.target.checked)}
+                />
+              }
               label="Include Tax"
             />
             {includeTax && (
@@ -282,11 +401,18 @@ console.log("Form Data: ", formData);
                 type="number"
                 label="Tax Percentage (%)"
                 value={taxPercentage}
-                onChange={(e) => setTaxPercentage(e.target.value ? +e.target.value : 0)}
+                onChange={(e) =>
+                  setTaxPercentage(e.target.value ? +e.target.value : 0)
+                }
               />
             )}
             <FormControlLabel
-              control={<Switch checked={includeDiscount} onChange={(e) => setIncludeDiscount(e.target.checked)} />}
+              control={
+                <Switch
+                  checked={includeDiscount}
+                  onChange={(e) => setIncludeDiscount(e.target.checked)}
+                />
+              }
               label="Include Discount"
             />
             {includeDiscount && (
@@ -294,7 +420,9 @@ console.log("Form Data: ", formData);
                 type="number"
                 label="Discount Percentage (%)"
                 value={discountPercentage}
-                onChange={(e) => setDiscountPercentage(e.target.value ? +e.target.value : 0)}
+                onChange={(e) =>
+                  setDiscountPercentage(e.target.value ? +e.target.value : 0)
+                }
               />
             )}
           </Box>
@@ -308,10 +436,18 @@ console.log("Form Data: ", formData);
 
           {/* Display Totals */}
           <Box mt={4} textAlign="center">
-            <Typography variant="h6">Subtotal: {totals.subtotal.toFixed(2)}</Typography>
-            <Typography variant="h6">Tax: {totals.taxAmount.toFixed(2)}</Typography>
-            <Typography variant="h6">Discount: {totals.discountAmount.toFixed(2)}</Typography>
-            <Typography variant="h5" color="primary">Total: {totals.total.toFixed(2)}</Typography>
+            <Typography variant="h6">
+              Subtotal: {totals.subtotal.toFixed(2)}
+            </Typography>
+            <Typography variant="h6">
+              Tax: {totals.taxAmount.toFixed(2)}
+            </Typography>
+            <Typography variant="h6">
+              Discount: {totals.discountAmount.toFixed(2)}
+            </Typography>
+            <Typography variant="h5" color="primary">
+              Total: {totals.total.toFixed(2)}
+            </Typography>
           </Box>
 
           <Box textAlign="center" mt={4}>
@@ -327,6 +463,413 @@ console.log("Form Data: ", formData);
 
 export default QuotationForm;
 
+// ###form isnot submit
+// import React, { useState, useEffect } from "react";
+// import {
+//   Box,
+//   Grid,
+//   Typography,
+//   Paper,
+//   FormControl,
+//   InputLabel,
+//   Select,
+//   MenuItem,
+//   Button,
+//   Switch,
+//   FormControlLabel,
+//   TextField,
+//   CircularProgress,
+//   FormHelperText,
+// } from "@mui/material";
+// import ProductQuotation from "./ProductQuotationForm";
+// import ServiceQuotation from "./ServiceQuotationForm";
+// import {
+//   createProductQuotation,
+//   createServiceQuotation,
+//   fetchProductQuotations,
+//   fetchServiceQuotations,
+// } from "../../redux/slice/crm/quotationSlice";
+// import { fetchCustomers } from "../../redux/slice/customer/customerSlice";
+// import { fetchCategories } from "../../redux/slice/crm/categorySlice";
+// import { fetchDepartments } from "../../redux/slice/base/departmentSlice";
+// import { fetchDesignations } from "../../redux/slice/base/designationSlice";
+// import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
+// import { useNavigate } from "react-router-dom";
+// import { toast } from "react-toastify";
+// import { useSelector, useDispatch } from "react-redux";
+
+// const QuotationForm = ({ existingQuotation }) => {
+//   const navigate = useNavigate();
+//   const dispatch = useDispatch();
+
+//   const [quotationType, setQuotationType] = useState(
+//     existingQuotation?.quotation_type || "service"
+//   );
+//   const [includeTax, setIncludeTax] = useState(
+//     existingQuotation?.include_tax || false
+//   );
+//   const [taxPercentage, setTaxPercentage] = useState(
+//     existingQuotation?.tax_percentage || 0
+//   );
+//   const [includeDiscount, setIncludeDiscount] = useState(
+//     existingQuotation?.include_discount || false
+//   );
+//   const [discountPercentage, setDiscountPercentage] = useState(
+//     existingQuotation?.discount_percentage || 0
+//   );
+
+//   const [products, setProducts] = useState(
+//     existingQuotation?.products || [{ product_name: "", quantity: 1, price: 0 }]
+//   );
+//   const [services, setServices] = useState(
+//     existingQuotation?.services || [
+//       {
+//         service_name: "",
+//         service_description: "",
+//         service_price: 0.0,
+//         quantity: 1,
+//       },
+//     ]
+//   );
+//   const [selectionType, setSelectionType] = useState("customer");
+//   const [selectedCustomerOrEnquiry, setSelectedCustomerOrEnquiry] = useState(
+//     existingQuotation?.customer_or_enquiry_id || ""
+//   );
+//   const currentDate = new Date().toISOString().split("T")[0];
+
+//   const { list: customers } = useSelector((state) => state.customers);
+//   const { list: departments } = useSelector((state) => state.departments);
+//   const { list: designations } = useSelector((state) => state.designations);
+//   const { list: categories } = useSelector((state) => state.categories);
+//   const { list: enquiries } = useSelector((state) => state.enquiries);
+
+//   const isLoading = useSelector((state) => state.enquiries.isLoading);
+//   const error = useSelector((state) => state.enquiries.error);
+
+//   useEffect(() => {
+//     dispatch(fetchEnquiries());
+//     dispatch(fetchCategories());
+//     dispatch(fetchCustomers());
+//     dispatch(fetchDesignations());
+//     dispatch(fetchDepartments());
+//   }, [dispatch]);
+
+//   const calculateTotal = () => {
+//     let subtotal = 0;
+
+//     if (quotationType === "product") {
+//       subtotal = products.reduce(
+//         (sum, product) => sum + product.quantity * product.price,
+//         0
+//       );
+//     } else if (quotationType === "service") {
+//       subtotal = services.reduce(
+//         (sum, service) =>
+//           sum +
+//           (parseFloat(service.quantity) || 1) *
+//             (parseFloat(service.service_price) || 0),
+//         0
+//       );
+//     }
+
+//     const taxAmount = includeTax ? (subtotal * taxPercentage) / 100 : 0;
+//     const discountAmount = includeDiscount
+//       ? (subtotal * discountPercentage) / 100
+//       : 0;
+//     const total = subtotal + taxAmount - discountAmount;
+
+//     return { subtotal, taxAmount, discountAmount, total };
+//   };
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+
+//     // Ensure either customer or enquiry is selected
+//     if (!selectedCustomerOrEnquiry) {
+//       toast.error(
+//         `Please select a ${
+//           selectionType === "customer" ? "customer" : "enquiry"
+//         }`
+//       );
+//       return;
+//     }
+
+//     const total = calculateTotal();
+
+//     // Construct the form data
+//     // Define the enquiryId based on selectionType
+//     // let enquiryId = null;
+//     const formData = {
+//       enquiry: null, // Ensure this is populated with the correct ID
+//       customer: null,
+
+//       quotation_date: currentDate,
+//       tax_percentage: taxPercentage,
+//       discount_percentage: discountPercentage,
+//       subtotal: total.subtotal,
+//       tax_amount: total.taxAmount,
+//       discount_amount: total.discountAmount,
+//       total_amount: total.total,
+//       products: quotationType === "product" ? products : [],
+//       services: quotationType === "service" ? services : [],
+//       selection_type: selectionType,
+//     };
+
+//     // Get selected customer or enquiry by ID
+//     const selectedItem =
+//       selectionType === "customer"
+//         ? customers.find(
+//             (customer) => customer.id === selectedCustomerOrEnquiry
+//           )
+//         : enquiries.find((enquiry) => enquiry.id === selectedCustomerOrEnquiry);
+//     console.log("Selected Enquiry ID:", selectedCustomerOrEnquiry);
+//     console.log("Selected Item:", selectedItem);
+
+//     if (!selectedItem) {
+//       toast.error(`Selected ${selectionType} not found`);
+//       return;
+//     }
+
+//     // Add customer_name or enquiry_name to formData
+//     if (selectionType === "customer") {
+//       formData.customer = selectedItem.id; // Ensure customer_id is set
+//       formData.customer_name = selectedItem.customer_name; // Add customer_name to formData
+//     } else if (selectionType === "enquiry") {
+//       formData.enquiry = selectedItem.id; // Ensure enquiry_id is set
+//       formData.enquiry_name =
+//         selectedItem.enquiry_name || selectedItem.customer_name; // Add enquiry_name to formData
+//     }
+
+//     // Log formData to debug
+//     console.log("Form Data: ", formData);
+
+//     // Log the form data for debugging (can remove later)
+//     // console.log("Form Data: ", formData);
+
+//     // Validate required fields for services and products
+//     const validateServiceFields = formData.services.every((service, index) => {
+//       if (
+//         !service.service_name ||
+//         !service.service_price ||
+//         !service.quantity
+//       ) {
+//         toast.error(`Service at index ${index} is missing required fields.`);
+//         return false; // Invalid field, break validation
+//       }
+//       return true; // Valid service
+//     });
+
+//     const validateProductFields = formData.products.every((product, index) => {
+//       if (!product.product_name || !product.price || !product.quantity) {
+//         toast.error(`Product at index ${index} is missing required fields.`);
+//         return false; // Invalid field, break validation
+//       }
+//       return true; // Valid product
+//     });
+
+//     // If there are missing fields, stop form submission
+//     if (!validateServiceFields || !validateProductFields) {
+//       return; // Prevent API call
+//     }
+
+//     // Ensure subtotal is valid
+//     if (!formData.subtotal || formData.subtotal <= 0) {
+//       toast.error("Subtotal must be greater than 0.");
+//       return;
+//     }
+
+//     // Ensure customer_name or enquiry_name is set
+//     if (!formData.customer_name && !formData.enquiry_name) {
+//       toast.error("Either customer_name or enquiry_name must be provided.");
+//       return;
+//     }
+
+//     // Make API request to create the quotation
+//     const createQuotation =
+//       quotationType === "product"
+//         ? dispatch(createProductQuotation(formData))
+//         : dispatch(createServiceQuotation(formData));
+
+//     createQuotation
+//       .unwrap()
+//       .then((response) => {
+//         toast.success(
+//           `${
+//             quotationType.charAt(0).toUpperCase() + quotationType.slice(1)
+//           } quotation created successfully!`
+//         );
+//         dispatch(fetchProductQuotations());
+//         dispatch(fetchServiceQuotations());
+//         navigate(`/dashboard/crm/quotations`);
+//       })
+//       .catch((error) => {
+//         console.log("Create Error:", error);
+
+//         if (error.errors) {
+//           // Log all errors for specific fields
+//           Object.entries(error.errors).forEach(([field, messages]) => {
+//             messages.forEach((msg) => toast.error(`${field}: ${msg}`));
+//           });
+//         } else {
+//           toast.error(`Create Error: ${error.message || "Unknown error"}`);
+//         }
+//       });
+//   };
+
+//   const totals = calculateTotal();
+
+//   return (
+//     <Box p={4} maxWidth="900px" mx="auto">
+//       <Paper elevation={3}>
+//         <Box p={3}>
+//           <Typography variant="h4" align="center" gutterBottom>
+//             Quotation Form
+//           </Typography>
+
+//           <FormControl fullWidth>
+//             <InputLabel id="selection-type-label">Select From</InputLabel>
+//             <Select
+//               labelId="selection-type-label"
+//               value={selectionType}
+//               onChange={(e) => setSelectionType(e.target.value)}
+//               label="Select From"
+//             >
+//               <MenuItem value="customer">customer</MenuItem>
+//               <MenuItem value="enquiry">enquiry</MenuItem>
+//             </Select>
+//           </FormControl>
+
+//           <Select
+//             id="customer-or-enquiry"
+//             value={selectedCustomerOrEnquiry}
+//             onChange={(e) => setSelectedCustomerOrEnquiry(e.target.value)}
+//             fullWidth
+//             required
+//             sx={{ mt: 2 }}
+//           >
+//             <MenuItem value="">
+//               Select {selectionType === "customer" ? "Customer" : "Enquiry"}
+//             </MenuItem>
+//             {selectionType === "customer" &&
+//             Array.isArray(customers) &&
+//             customers.length > 0 ? (
+//               customers.map((customer) => (
+//                 <MenuItem key={customer.id} value={customer.id}>
+//                   {customer.customer_name}
+//                 </MenuItem>
+//               ))
+//             ) : selectionType === "enquiry" &&
+//               Array.isArray(enquiries) &&
+//               enquiries.length > 0 ? (
+//               enquiries.map((enquiry) => (
+//                 <MenuItem key={enquiry.id} value={enquiry.id}>
+//                   {enquiry.customer_name || "No Enquiry Name"}
+//                 </MenuItem>
+//               ))
+//             ) : (
+//               <MenuItem>
+//                 No {selectionType === "customer" ? "customer" : "enquiry"}{" "}
+//                 available
+//               </MenuItem>
+//             )}
+//           </Select>
+
+//           {/* Quotation Type Selector */}
+//           <FormControl fullWidth sx={{ mt: 2 }}>
+//             <InputLabel id="quotation-type-label">Quotation Type</InputLabel>
+//             <Select
+//               labelId="quotation-type-label"
+//               value={quotationType}
+//               onChange={(e) => setQuotationType(e.target.value)}
+//               label="Quotation Type"
+//             >
+//               <MenuItem value="service">service</MenuItem>
+//               <MenuItem value="product">product</MenuItem>
+//             </Select>
+//           </FormControl>
+
+//           {/* Tax and Discount Section */}
+//           <Box
+//             mt={4}
+//             display="flex"
+//             justifyContent="space-between"
+//             alignItems="center"
+//             gap={2}
+//           >
+//             <FormControlLabel
+//               control={
+//                 <Switch
+//                   checked={includeTax}
+//                   onChange={(e) => setIncludeTax(e.target.checked)}
+//                 />
+//               }
+//               label="Include Tax"
+//             />
+//             {includeTax && (
+//               <TextField
+//                 type="number"
+//                 label="Tax Percentage (%)"
+//                 value={taxPercentage}
+//                 onChange={(e) =>
+//                   setTaxPercentage(e.target.value ? +e.target.value : 0)
+//                 }
+//               />
+//             )}
+//             <FormControlLabel
+//               control={
+//                 <Switch
+//                   checked={includeDiscount}
+//                   onChange={(e) => setIncludeDiscount(e.target.checked)}
+//                 />
+//               }
+//               label="Include Discount"
+//             />
+//             {includeDiscount && (
+//               <TextField
+//                 type="number"
+//                 label="Discount Percentage (%)"
+//                 value={discountPercentage}
+//                 onChange={(e) =>
+//                   setDiscountPercentage(e.target.value ? +e.target.value : 0)
+//                 }
+//               />
+//             )}
+//           </Box>
+
+//           {/* Render either ProductQuotation or ServiceQuotation */}
+//           {quotationType === "product" ? (
+//             <ProductQuotation products={products} setProducts={setProducts} />
+//           ) : (
+//             <ServiceQuotation services={services} setServices={setServices} />
+//           )}
+
+//           {/* Display Totals */}
+//           <Box mt={4} textAlign="center">
+//             <Typography variant="h6">
+//               Subtotal: {totals.subtotal.toFixed(2)}
+//             </Typography>
+//             <Typography variant="h6">
+//               Tax: {totals.taxAmount.toFixed(2)}
+//             </Typography>
+//             <Typography variant="h6">
+//               Discount: {totals.discountAmount.toFixed(2)}
+//             </Typography>
+//             <Typography variant="h5" color="primary">
+//               Total: {totals.total.toFixed(2)}
+//             </Typography>
+//           </Box>
+
+//           <Box textAlign="center" mt={4}>
+//             <Button variant="contained" color="primary" onClick={handleSubmit}>
+//               Send Quotation
+//             </Button>
+//           </Box>
+//         </Box>
+//       </Paper>
+//     </Box>
+//   );
+// };
+
+// export default QuotationForm;
 
 //old quotation form work well
 // import React, { useState, useEffect } from "react";
@@ -374,13 +917,11 @@ export default QuotationForm;
 //   const [selectedCustomerOrEnquiry, setSelectedCustomerOrEnquiry] = useState("");
 //   const currentDate = new Date().toISOString().split('T')[0]; // Get today's date
 
-
 //   const { list: customers } = useSelector((state) => state.customers);
 //   const { list: departments } = useSelector((state) => state.departments);
 //   const { list: designations } = useSelector((state) => state.designations);
 //   const { list: categories } = useSelector((state) => state.categories);
 //   const { list: enquiries } = useSelector((state) => state.enquiries);
-
 
 //   const isLoading = useSelector((state) => state.enquiries.isLoading);
 //   const error = useSelector((state) => state.enquiries.error);
@@ -408,7 +949,6 @@ export default QuotationForm;
 //         0
 //       );
 //     }
-
 
 //     const taxAmount = includeTax ? (subtotal * taxPercentage) / 100 : 0;
 //     const discountAmount = includeDiscount ? (subtotal * discountPercentage) / 100 : 0;
@@ -439,7 +979,6 @@ export default QuotationForm;
 //     }
 
 //     const total = calculateTotal();
-
 
 // // added
 // const currentDate = new Date().toISOString().split('T')[0]; // Get today's date
@@ -553,7 +1092,6 @@ export default QuotationForm;
 
 //           <div className="form-group">
 
-
 //           <FormControl fullWidth>
 //   <InputLabel id="selection-type-label">Select From</InputLabel>
 //   <Select
@@ -663,120 +1201,109 @@ export default QuotationForm;
 
 // export default QuotationForm;
 
+// const handleSubmit = (e) => {
+//   e.preventDefault();
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
+//   // Ensure either customer or enquiry is selected
+//   if (!selectedCustomerOrEnquiry) {
+//     toast.error(`Please select a ${selectionType === "customer" ? "customer" : "enquiry"}`);
+//     return;
+//   }
 
-  //   // Ensure either customer or enquiry is selected
-  //   if (!selectedCustomerOrEnquiry) {
-  //     toast.error(`Please select a ${selectionType === "customer" ? "customer" : "enquiry"}`);
-  //     return;
-  //   }
+//   const total = calculateTotal();
 
-  //   const total = calculateTotal();
+//   // Construct the form data
+//   const formData = {
+//     quotation_date: currentDate,
+//     tax_percentage: taxPercentage,
+//     discount_percentage: discountPercentage,
+//     subtotal: total.subtotal,
+//     tax_amount: total.taxAmount,
+//     discount_amount: total.discountAmount,
+//     total_amount: total.total,
+//     products: quotationType === "product" ? products : [],
+//     services: quotationType === "service" ? services : [],
+//     selection_type: selectionType,
+//   };
 
-  //   // Construct the form data
-  //   const formData = {
-  //     quotation_date: currentDate,
-  //     tax_percentage: taxPercentage,
-  //     discount_percentage: discountPercentage,
-  //     subtotal: total.subtotal,
-  //     tax_amount: total.taxAmount,
-  //     discount_amount: total.discountAmount,
-  //     total_amount: total.total,
-  //     products: quotationType === "product" ? products : [],
-  //     services: quotationType === "service" ? services : [],
-  //     selection_type: selectionType,
-  //   };
+//   // Get selected customer or enquiry by ID
+//   const selectedItem = selectionType === "customer"
+//     ? customers.find((customer) => customer.id === selectedCustomerOrEnquiry)
+//     : enquiries.find((enquiry) => enquiry.id === selectedCustomerOrEnquiry);
 
-  //   // Get selected customer or enquiry by ID
-  //   const selectedItem = selectionType === "customer"
-  //     ? customers.find((customer) => customer.id === selectedCustomerOrEnquiry)
-  //     : enquiries.find((enquiry) => enquiry.id === selectedCustomerOrEnquiry);
+//   // Check if selected item exists
+//   if (!selectedItem) {
+//     toast.error(`Selected ${selectionType} not found`);
+//     return;
+//   }
 
-  //   // Check if selected item exists
-  //   if (!selectedItem) {
-  //     toast.error(`Selected ${selectionType} not found`);
-  //     return;
-  //   }
+//   // Add customer_id or enquiry_id to formData
+//   if (selectionType === "customer") {
+//     formData.customer_name = selectedItem.id; // Store customer_id
+//   } else if (selectionType === "enquiry") {
+//     formData.enquiry_name = selectedItem.id; // Store enquiry_id
+//   }
 
-  //   // Add customer_id or enquiry_id to formData
-  //   if (selectionType === "customer") {
-  //     formData.customer_name = selectedItem.id; // Store customer_id
-  //   } else if (selectionType === "enquiry") {
-  //     formData.enquiry_name = selectedItem.id; // Store enquiry_id
-  //   }
+//   // Log the form data for debugging (can remove later)
+//   console.log("Form Data: ", formData);
 
-  //   // Log the form data for debugging (can remove later)
-  //   console.log("Form Data: ", formData);
+//   // Validate required fields for services and products
+//   const validateServiceFields = formData.services.every((service, index) => {
+//     if (!service.service_name || !service.service_price || !service.quantity) {
+//       toast.error(`Service at index ${index} is missing required fields.`);
+//       return false; // Invalid field, break validation
+//     }
+//     return true; // Valid service
+//   });
 
-  //   // Validate required fields for services and products
-  //   const validateServiceFields = formData.services.every((service, index) => {
-  //     if (!service.service_name || !service.service_price || !service.quantity) {
-  //       toast.error(`Service at index ${index} is missing required fields.`);
-  //       return false; // Invalid field, break validation
-  //     }
-  //     return true; // Valid service
-  //   });
+//   const validateProductFields = formData.products.every((product, index) => {
+//     if (!product.product_name || !product.price || !product.quantity) {
+//       toast.error(`Product at index ${index} is missing required fields.`);
+//       return false; // Invalid field, break validation
+//     }
+//     return true; // Valid product
+//   });
 
-  //   const validateProductFields = formData.products.every((product, index) => {
-  //     if (!product.product_name || !product.price || !product.quantity) {
-  //       toast.error(`Product at index ${index} is missing required fields.`);
-  //       return false; // Invalid field, break validation
-  //     }
-  //     return true; // Valid product
-  //   });
+//   // If there are missing fields, stop form submission
+//   if (!validateServiceFields || !validateProductFields) {
+//     return; // Prevent API call
+//   }
 
-  //   // If there are missing fields, stop form submission
-  //   if (!validateServiceFields || !validateProductFields) {
-  //     return; // Prevent API call
-  //   }
+//   // Ensure subtotal is valid
+//   if (!formData.subtotal || formData.subtotal <= 0) {
+//     toast.error("Subtotal must be greater than 0.");
+//     return;
+//   }
 
-  //   // Ensure subtotal is valid
-  //   if (!formData.subtotal || formData.subtotal <= 0) {
-  //     toast.error("Subtotal must be greater than 0.");
-  //     return;
-  //   }
+//   // Make API request to create the quotation
+//   const createQuotation =
+//     quotationType === "product"
+//       ? dispatch(createProductQuotation(formData))
+//       : dispatch(createServiceQuotation(formData));
 
-  //   // Make API request to create the quotation
-  //   const createQuotation =
-  //     quotationType === "product"
-  //       ? dispatch(createProductQuotation(formData))
-  //       : dispatch(createServiceQuotation(formData));
+//   createQuotation
+//     .unwrap()
+//     .then((response) => {
+//       toast.success(
+//         `${quotationType.charAt(0).toUpperCase() + quotationType.slice(1)} quotation created successfully!`
+//       );
+//       dispatch(fetchProductQuotations());
+//       dispatch(fetchServiceQuotations());
+//       navigate(`/dashboard/crm/quotations`);
+//     })
+//     .catch((error) => {
+//       console.log("Create Error:", error);
 
-  //   createQuotation
-  //     .unwrap()
-  //     .then((response) => {
-  //       toast.success(
-  //         `${quotationType.charAt(0).toUpperCase() + quotationType.slice(1)} quotation created successfully!`
-  //       );
-  //       dispatch(fetchProductQuotations());
-  //       dispatch(fetchServiceQuotations());
-  //       navigate(`/dashboard/crm/quotations`);
-  //     })
-  //     .catch((error) => {
-  //       console.log("Create Error:", error);
-
-  //       if (error.errors) {
-  //         // Log all errors for specific fields
-  //         Object.entries(error.errors).forEach(([field, messages]) => {
-  //           messages.forEach((msg) => toast.error(`${field}: ${msg}`));
-  //         });
-  //       } else {
-  //         toast.error(`Create Error: ${error.message || "Unknown error"}`);
-  //       }
-  //     });
-  // };
-
-
-
-
-
-
-
-
-
-
+//       if (error.errors) {
+//         // Log all errors for specific fields
+//         Object.entries(error.errors).forEach(([field, messages]) => {
+//           messages.forEach((msg) => toast.error(`${field}: ${msg}`));
+//         });
+//       } else {
+//         toast.error(`Create Error: ${error.message || "Unknown error"}`);
+//       }
+//     });
+// };
 
 //changes made in submit form
 // import React, { useState,useEffect} from "react";
@@ -808,7 +1335,6 @@ export default QuotationForm;
 // import {fetchProductQuotations,fetchServiceQuotations} from "../../redux/slice/crm/quotationSlice"
 // // import{fetch}
 
-
 // const QuotationForm = () => {
 //     const navigate = useNavigate(); // For navigation after form submission
 //     const dispatch = useDispatch();
@@ -819,8 +1345,6 @@ export default QuotationForm;
 //   const [discountPercentage, setDiscountPercentage] = useState(0);
 //   // const CustomerOrEnquirySelect = ({ customers, enquiries, formData, setFormData }) => {
 //   //   const [selectionType, setSelectionType] = useState("customer"); // State to track if Customer or Enquiry is selected
-
-
 
 //   const [products, setProducts] = useState([{ product_name: "", quantity: 1, price: 0 }]);
 //   const { list: customers } = useSelector((state) => state.customers);
@@ -884,8 +1408,6 @@ export default QuotationForm;
 //     console.log('Calculated Tax Amount:', taxAmount);
 //     console.log('Calculated Discount Amount:', discountAmount);
 //     console.log('Calculated Total:', total);
-
-
 
 //     return { subtotal, taxAmount, discountAmount, total };
 //   };
@@ -1250,7 +1772,6 @@ export default QuotationForm;
 //             <Typography variant="h5" color="primary">Total: {total.total.toFixed(2)}</Typography>
 //           </Box>
 
-
 //           <Box textAlign="center" mt={4}>
 //             <Button variant="contained" color="primary" onClick={handleSubmit}>
 //               Send Quotation
@@ -1263,7 +1784,6 @@ export default QuotationForm;
 // };
 
 // export default QuotationForm;
-
 
 //adding customer or enquiry
 // import React, { useState,useEffect} from "react";
@@ -1292,7 +1812,6 @@ export default QuotationForm;
 // import { toast } from "react-toastify";
 // import { useSelector, useDispatch } from "react-redux";
 // import {CircularProgress,FormHelperText} from "@mui/material";
-
 
 // const QuotationForm = () => {
 //     const navigate = useNavigate(); // For navigation after form submission
@@ -1447,10 +1966,7 @@ export default QuotationForm;
 //     }
 //   };
 
-
-
 //   const total = calculateTotal();
-
 
 //   return (
 //     <Box p={4} maxWidth="900px" mx="auto">
@@ -1853,7 +2369,6 @@ export default QuotationForm;
 //             <Typography variant="h5" color="primary">Total: {total.total.toFixed(2)}</Typography>
 //           </Box>
 
-
 //           <Box textAlign="center" mt={4}>
 //             <Button variant="contained" color="primary" onClick={handleSubmit}>
 //               Send Quotation
@@ -1896,33 +2411,33 @@ export default QuotationForm;
 // import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
 // import {CircularProgress,FormHelperText} from "@mui/material";
 // const QuotationForm = () => {
-  // const navigate = useNavigate();
-  // const dispatch = useDispatch();
-  // const [quotationType, setQuotationType] = useState("service");
-  // const [includeTax, setIncludeTax] = useState(false);
-  // const [taxPercentage, setTaxPercentage] = useState(0);
-  // const [includeDiscount, setIncludeDiscount] = useState(false);
-  // const [discountPercentage, setDiscountPercentage] = useState(0);
-  // const [products, setProducts] = useState([{ name: "", quantity: 1, price: 0 }]);
-  // const { list: customers } = useSelector((state) => state.customers);
-  // const { list: departments } = useSelector((state) => state.departments);
-  // const { list: designations } = useSelector((state) => state.designations);
-  // const { list: categories } = useSelector((state) => state.categories);
+// const navigate = useNavigate();
+// const dispatch = useDispatch();
+// const [quotationType, setQuotationType] = useState("service");
+// const [includeTax, setIncludeTax] = useState(false);
+// const [taxPercentage, setTaxPercentage] = useState(0);
+// const [includeDiscount, setIncludeDiscount] = useState(false);
+// const [discountPercentage, setDiscountPercentage] = useState(0);
+// const [products, setProducts] = useState([{ name: "", quantity: 1, price: 0 }]);
+// const { list: customers } = useSelector((state) => state.customers);
+// const { list: departments } = useSelector((state) => state.departments);
+// const { list: designations } = useSelector((state) => state.designations);
+// const { list: categories } = useSelector((state) => state.categories);
 
-    // const enquiries = useSelector((state) => state.enquiries.list);
-    // const isLoading = useSelector((state) => state.enquiries.isLoading);
-    // const error = useSelector((state) => state.enquiries.error);
+// const enquiries = useSelector((state) => state.enquiries.list);
+// const isLoading = useSelector((state) => state.enquiries.isLoading);
+// const error = useSelector((state) => state.enquiries.error);
 
-  // const [formData, setFormData] = useState({
-  //   customerName: "",
-  //   organizationName: "",
-  //   category: "",
-  //   department: "",
-  //   designation: "",
-  //   employeeName: "",
-  //   email: "",
-  //   phone: "",
-  // });
+// const [formData, setFormData] = useState({
+//   customerName: "",
+//   organizationName: "",
+//   category: "",
+//   department: "",
+//   designation: "",
+//   employeeName: "",
+//   email: "",
+//   phone: "",
+// });
 
 //   useEffect(() => {
 //     dispatch(fetchCategories());
@@ -1959,7 +2474,6 @@ export default QuotationForm;
 //   // useEffect(() => {
 //   //   setTotals(calculateTotal());
 //   // }, [products, services, taxPercentage, discountPercentage, includeTax, includeDiscount, quotationType]);
-
 
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
@@ -2015,10 +2529,9 @@ export default QuotationForm;
 //     }
 //   };
 
-
-  // const handleChange = (e) => {
-  //   setFormData({ ...formData, [e.target.name]: e.target.value });
-  // };
+// const handleChange = (e) => {
+//   setFormData({ ...formData, [e.target.name]: e.target.value });
+// };
 //   return (
 //     <Box p={4} maxWidth="900px" mx="auto">
 //       <Paper elevation={3}>
@@ -2027,128 +2540,128 @@ export default QuotationForm;
 //             Quotation Form
 //           </Typography>
 
-        //   {/* Sender Card */}
-        //   <Grid container spacing={4}>
-        //     <Grid item md={6} xs={12}>
-        //       <Paper elevation={3} sx={{ padding: "20px", borderRadius: 2 }}>
-        //         <Typography variant="h6" gutterBottom>Sender Information</Typography>
-        //         <FormControl fullWidth sx={{ marginBottom: "15px" }}>
-        //           <InputLabel id="department-label">Department</InputLabel>
-        //           <Select
-        //             labelId="department-label"
-        //             value={formData.department}
-        //             onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-        //           >
-        //             <MenuItem value="">Select Department</MenuItem>
-        //             {departments.map((department) => (
-        //               <MenuItem key={department.id} value={department.id}>{department.name}</MenuItem>
-        //             ))}
-        //           </Select>
-        //         </FormControl>
-        //         <FormControl fullWidth sx={{ marginBottom: "15px" }}>
-        //           <InputLabel id="designation-label">Designation</InputLabel>
-        //           <Select
-        //             labelId="designation-label"
-        //             value={formData.designation}
-        //             onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-        //           >
-        //             <MenuItem value="">Select Designation</MenuItem>
-        //             {designations.map((designation) => (
-        //               <MenuItem key={designation.id} value={designation.id}>{designation.name}</MenuItem>
-        //             ))}
-        //           </Select>
-        //         </FormControl>
-        //           {/* Customer Name Selection */}
-        // <FormControl fullWidth required sx={{ marginBottom: "20px" }}>
-        //   <InputLabel id="enquiry-label">Customer Name</InputLabel>
-        //   <Select
-        //     labelId="enquiry-label"
-        //     id="enquiry"
-        //     name="enquiry_id"
-        //     value={formData.enquiry_id}
-            //onChange={handleChange}
-        //     label="Customer Name"
-        //     fullWidth
-        //   >
-        //     <MenuItem value="">
-        //       <em>Select Enquiry</em>
-        //     </MenuItem>
-        //     {isLoading ? (
-        //       <MenuItem disabled>
-        //         <CircularProgress size={24} />
-        //       </MenuItem>
-        //     ) : error ? (
-        //       <MenuItem disabled>{error}</MenuItem>
-        //     ) : enquiries.length > 0 ? (
-        //       enquiries.map((enquiry) => (
-        //         <MenuItem key={enquiry.id} value={enquiry.id}>
-        //           {enquiry.enquiry_name}
-        //         </MenuItem>
-        //       ))
-        //     ) : (
-        //       <MenuItem disabled>No enquiries available</MenuItem>
-        //     )}
-        //   </Select>
-        //   <FormHelperText>Required</FormHelperText>
-        // </FormControl>
+//   {/* Sender Card */}
+//   <Grid container spacing={4}>
+//     <Grid item md={6} xs={12}>
+//       <Paper elevation={3} sx={{ padding: "20px", borderRadius: 2 }}>
+//         <Typography variant="h6" gutterBottom>Sender Information</Typography>
+//         <FormControl fullWidth sx={{ marginBottom: "15px" }}>
+//           <InputLabel id="department-label">Department</InputLabel>
+//           <Select
+//             labelId="department-label"
+//             value={formData.department}
+//             onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+//           >
+//             <MenuItem value="">Select Department</MenuItem>
+//             {departments.map((department) => (
+//               <MenuItem key={department.id} value={department.id}>{department.name}</MenuItem>
+//             ))}
+//           </Select>
+//         </FormControl>
+//         <FormControl fullWidth sx={{ marginBottom: "15px" }}>
+//           <InputLabel id="designation-label">Designation</InputLabel>
+//           <Select
+//             labelId="designation-label"
+//             value={formData.designation}
+//             onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+//           >
+//             <MenuItem value="">Select Designation</MenuItem>
+//             {designations.map((designation) => (
+//               <MenuItem key={designation.id} value={designation.id}>{designation.name}</MenuItem>
+//             ))}
+//           </Select>
+//         </FormControl>
+//           {/* Customer Name Selection */}
+// <FormControl fullWidth required sx={{ marginBottom: "20px" }}>
+//   <InputLabel id="enquiry-label">Customer Name</InputLabel>
+//   <Select
+//     labelId="enquiry-label"
+//     id="enquiry"
+//     name="enquiry_id"
+//     value={formData.enquiry_id}
+//onChange={handleChange}
+//     label="Customer Name"
+//     fullWidth
+//   >
+//     <MenuItem value="">
+//       <em>Select Enquiry</em>
+//     </MenuItem>
+//     {isLoading ? (
+//       <MenuItem disabled>
+//         <CircularProgress size={24} />
+//       </MenuItem>
+//     ) : error ? (
+//       <MenuItem disabled>{error}</MenuItem>
+//     ) : enquiries.length > 0 ? (
+//       enquiries.map((enquiry) => (
+//         <MenuItem key={enquiry.id} value={enquiry.id}>
+//           {enquiry.enquiry_name}
+//         </MenuItem>
+//       ))
+//     ) : (
+//       <MenuItem disabled>No enquiries available</MenuItem>
+//     )}
+//   </Select>
+//   <FormHelperText>Required</FormHelperText>
+// </FormControl>
 
-        //       </Paper>
-        //     </Grid>
+//       </Paper>
+//     </Grid>
 
-          //   {/* Customer Card */}
-          //   <Grid item md={6} xs={12}>
-          //     <Paper elevation={3} sx={{ padding: "20px", borderRadius: 2 }}>
-          //       <Typography variant="h6" gutterBottom>Customer Information</Typography>
-          //       <FormControl fullWidth sx={{ marginBottom: "15px" }}>
-          //         <InputLabel id="customer-label">Customer</InputLabel>
-          //         <Select
-          //           labelId="customer-label"
-          //           value={formData.customerName}
-          //           onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-          //         >
-          //           <MenuItem value="">Select Customer</MenuItem>
-          //           {customers.map((customer) => (
-          //             <MenuItem key={customer.id} value={customer.id}>{customer.customer_name}</MenuItem>
-          //           ))}
-          //         </Select>
-          //       </FormControl>
-          //       <TextField
-          //         fullWidth
-          //         label="Organization Name"
-          //         value={formData.organizationName}
-          //         onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
-          //         sx={{ marginBottom: "15px" }}
-          //       />
-          //       <FormControl fullWidth sx={{ marginBottom: "15px" }}>
-          //         <InputLabel id="category-label">Category</InputLabel>
-          //         <Select
-          //           labelId="category-label"
-          //           value={formData.category}
-          //           onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-          //         >
-          //           <MenuItem value="">Select Category</MenuItem>
-          //           {categories.map((category) => (
-          //             <MenuItem key={category.id} value={category.id}>{category.category_name}</MenuItem>
-          //           ))}
-          //         </Select>
-          //       </FormControl>
-          //       <TextField
-          //         fullWidth
-          //         label="Email"
-          //         value={formData.email}
-          //         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          //         sx={{ marginBottom: "15px" }}
-          //       />
-          //       <TextField
-          //         fullWidth
-          //         label="Phone"
-          //         value={formData.phone}
-          //         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          //         sx={{ marginBottom: "15px" }}
-          //       />
-          //     </Paper>
-          //   </Grid>
-          // </Grid>
+//   {/* Customer Card */}
+//   <Grid item md={6} xs={12}>
+//     <Paper elevation={3} sx={{ padding: "20px", borderRadius: 2 }}>
+//       <Typography variant="h6" gutterBottom>Customer Information</Typography>
+//       <FormControl fullWidth sx={{ marginBottom: "15px" }}>
+//         <InputLabel id="customer-label">Customer</InputLabel>
+//         <Select
+//           labelId="customer-label"
+//           value={formData.customerName}
+//           onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
+//         >
+//           <MenuItem value="">Select Customer</MenuItem>
+//           {customers.map((customer) => (
+//             <MenuItem key={customer.id} value={customer.id}>{customer.customer_name}</MenuItem>
+//           ))}
+//         </Select>
+//       </FormControl>
+//       <TextField
+//         fullWidth
+//         label="Organization Name"
+//         value={formData.organizationName}
+//         onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
+//         sx={{ marginBottom: "15px" }}
+//       />
+//       <FormControl fullWidth sx={{ marginBottom: "15px" }}>
+//         <InputLabel id="category-label">Category</InputLabel>
+//         <Select
+//           labelId="category-label"
+//           value={formData.category}
+//           onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+//         >
+//           <MenuItem value="">Select Category</MenuItem>
+//           {categories.map((category) => (
+//             <MenuItem key={category.id} value={category.id}>{category.category_name}</MenuItem>
+//           ))}
+//         </Select>
+//       </FormControl>
+//       <TextField
+//         fullWidth
+//         label="Email"
+//         value={formData.email}
+//         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+//         sx={{ marginBottom: "15px" }}
+//       />
+//       <TextField
+//         fullWidth
+//         label="Phone"
+//         value={formData.phone}
+//         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+//         sx={{ marginBottom: "15px" }}
+//       />
+//     </Paper>
+//   </Grid>
+// </Grid>
 
 //           {/* Quotation Type Selector */}
 //           <FormControl fullWidth mt={3} sx={{ marginBottom: "20px", marginTop: "30px"  }}>
@@ -2220,7 +2733,6 @@ export default QuotationForm;
 // };
 
 // export default QuotationForm;
-
 
 //added letter head
 // import React, { useState } from "react";
@@ -2745,8 +3257,6 @@ export default QuotationForm;
 
 //adding customer  products
 
-
-
 //product work well
 // // import React, { useState } from "react";
 // import {
@@ -3163,7 +3673,6 @@ export default QuotationForm;
 
 // export default QuotationForm;
 
-
 //include terms
 // import React, { useState } from "react";
 // import {
@@ -3457,8 +3966,6 @@ export default QuotationForm;
 
 // export default QuotationForm;
 
-
-
 // import React, { useState } from "react";
 // import {
 //   Box,
@@ -3538,8 +4045,6 @@ export default QuotationForm;
 //               });
 
 //     }
-
-
 
 //   return (
 //     <Box p={4} maxWidth="900px" mx="auto">
@@ -3631,7 +4136,6 @@ export default QuotationForm;
 
 // export default QuotationForm;
 
-
 // import React, { useState } from "react";
 // import {
 //   Box,
@@ -3702,7 +4206,6 @@ export default QuotationForm;
 //   setAcceptanceDetails((prev) => ({ ...prev, [field]: value }));
 // };
 
-
 // const addTerm = () => {
 //   setTerms([...terms, ""]);
 // };
@@ -3742,7 +4245,6 @@ export default QuotationForm;
 //     setServices(updatedServices);
 //   };
 
-
 //   // Calculate subtotal  PRODUCT
 //   const calculateSubtotalProduct = () => {
 //     return products.reduce((acc, product) => acc + product.quantity * product.price, 0);
@@ -3759,7 +4261,6 @@ export default QuotationForm;
 //   console.log("Tax:", taxPercentage);
 //   console.log("Discount:", discountPercentage);
 //   //CALCULATE subtotal and total for service
-
 
 //   const calculateSubtotalService = () => {
 //     return services.reduce((acc, service) => acc + service.price, 0);
@@ -3786,7 +4287,6 @@ export default QuotationForm;
 //   if (includeDiscount) total -= (total * discountPercentage) / 100;
 //   return total; // return the number, don't apply toFixed here
 // };
-
 
 //   return (
 //     <Box p={4} maxWidth="900px" mx="auto">
@@ -3868,7 +4368,6 @@ export default QuotationForm;
 
 //           <Divider />
 
-
 //           {/* <Divider /> */}
 
 //           {/* Dynamic QuotationForm Details */}
@@ -3942,30 +4441,30 @@ export default QuotationForm;
 //                         </Box>
 //                           {/* Summary Section */}
 //                         {/* Terms & Conditions */}
-                        //                       <Box mt={4}>
-                        // <Typography variant="h5" gutterBottom>
-                        //   Terms & Conditions
-                        // </Typography>
-                        // <Typography variant="body2" gutterBottom>
-                        //   Please add any terms and conditions for the quotation.
-                        // </Typography>
-                        // {terms.map((term, index) => (
-                        //   <Box display="flex" alignItems="center" mb={2} key={index}>
-                        //     <TextField
-                        //       fullWidth
-                        //       value={term}
-                        //       onChange={(e) => updateTerm(index, e.target.value)}
-                        //       placeholder={`Enter term ${index + 1}`}
-                        //       variant="outlined"
-                        //     />
-                        //     <Button
-                        //       color="secondary"
-                        //       onClick={() => removeTerm(index)}
-                        //       style={{ marginLeft: "8px" }}
-                        //     >
-                        //       Remove
-                        //     </Button>
-                        //   </Box>
+//                       <Box mt={4}>
+// <Typography variant="h5" gutterBottom>
+//   Terms & Conditions
+// </Typography>
+// <Typography variant="body2" gutterBottom>
+//   Please add any terms and conditions for the quotation.
+// </Typography>
+// {terms.map((term, index) => (
+//   <Box display="flex" alignItems="center" mb={2} key={index}>
+//     <TextField
+//       fullWidth
+//       value={term}
+//       onChange={(e) => updateTerm(index, e.target.value)}
+//       placeholder={`Enter term ${index + 1}`}
+//       variant="outlined"
+//     />
+//     <Button
+//       color="secondary"
+//       onClick={() => removeTerm(index)}
+//       style={{ marginLeft: "8px" }}
+//     >
+//       Remove
+//     </Button>
+//   </Box>
 //                         ))}
 //                         <Button variant="outlined" onClick={addTerm}>
 //                           Add Term
@@ -4068,7 +4567,6 @@ export default QuotationForm;
 //             )}
 //           </Box>
 
-
 //             <Box>
 //       <Paper sx={{ padding: 3 }}>
 //         {/* Tax and Discount Section */}
@@ -4147,6 +4645,3 @@ export default QuotationForm;
 // };
 
 // export default QuotationForm;
-
-
-

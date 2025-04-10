@@ -1,156 +1,4 @@
-// import React, { useEffect, useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { Link, useNavigate } from "react-router-dom";
-// import { fetchFollows, deleteFollow } from "../../redux/slice/crm/followSlice";
-// import { toast } from "react-toastify";
-// import {
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableContainer,
-//   TableHead,
-//   TableRow,
-//   Paper,
-//   Tooltip,
-//   Button,
-//   IconButton,
-//   TextField,
-//   AppBar,
-//   Toolbar,
-//   Typography,
-// } from "@mui/material";
-// import { ArrowUpward, ArrowDownward, Add as AddIcon, Search as SearchIcon } from "@mui/icons-material";
-// import FollowDelete from "./FollowDelete";
-// const FollowTable = ({ enquiryId }) => {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const [searchTerm, setSearchTerm] = useState("");
-//   const [followToDelete, setFollowToDelete] = useState(null);
-//   const [filteredFollows, setFilteredFollows] = useState([]);
-//   const [sortOrder, setSortOrder] = useState("asc");
-//   const [expandedRows, setExpandedRows] = useState({});
 
-//   const fetchError = useSelector((state) => state.follows?.fetchError);
-//   const { list: follows = [], isLoading, deleteError } = useSelector((state) => state.follows || {});
-
-//   useEffect(() => {
-//     dispatch(fetchFollows());
-//   }, [dispatch]);
-
-//   // Filter follows by enquiryId
-//   useEffect(() => {
-//     if (follows && enquiryId) {
-//       const filtered = follows.filter(follow => follow.enquiry_id === enquiryId);
-//       setFilteredFollows(filtered);
-//     }
-//   }, [follows, enquiryId]);
-
-//   // Sorting logic for the customer name
-//   const sortedFollows = [...filteredFollows].sort((a, b) => {
-//     const nameA = a.customer_name.toLowerCase();
-//     const nameB = b.customer_name.toLowerCase();
-//     if (nameA < nameB) return sortOrder === "asc" ? -1 : 1;
-//     if (nameA > nameB) return sortOrder === "asc" ? 1 : -1;
-//     return 0;
-//   });
-
-//   const toggleSortOrder = () => {
-//     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-//   };
-
-//   const handleExpandRow = (customerName) => {
-//     setExpandedRows((prevState) => ({
-//       ...prevState,
-//       [customerName]: !prevState[customerName],
-//     }));
-//   };
-
-//   return (
-//     <div className="content-wrapper">
-//       <TableContainer component={Paper} sx={{ maxHeight: 400, overflowX: "auto" }}>
-//         {isLoading && <p>Loading...</p>}
-//         {fetchError && <p className="text-danger">{fetchError}</p>}
-//         {!isLoading && !fetchError && (
-//           <Table aria-label="follow table" sx={{ minWidth: 650 }}>
-//             <TableHead>
-//               <TableRow>
-//                 <TableCell>#</TableCell>
-//                 <TableCell>
-//                   Name
-//                   <Tooltip title="Sort">
-//                     <IconButton onClick={toggleSortOrder}>
-//                       {sortOrder === "asc" ? <ArrowDownward /> : <ArrowUpward />}
-//                     </IconButton>
-//                   </Tooltip>
-//                 </TableCell>
-//                 <TableCell>Follow by</TableCell>
-//                 <TableCell>Next Follow Up Date</TableCell>
-//                 <TableCell>Last Followup At</TableCell>
-//                 <TableCell>Remark</TableCell>
-//                 <TableCell>Notes</TableCell>
-//                 <TableCell>Actions</TableCell>
-//               </TableRow>
-//             </TableHead>
-//             <TableBody>
-//               {sortedFollows.length > 0 ? (
-//                 sortedFollows.map((follow, index) => {
-//                   const isExpanded = expandedRows[follow.customer_name];
-//                   return (
-//                     <React.Fragment key={follow.id}>
-//                       {/* Toggle Row */}
-//                       {index === 0 || sortedFollows[index - 1].customer_name !== follow.customer_name ? (
-//                         <>
-//                           <TableRow onClick={() => handleExpandRow(follow.customer_name)} style={{ cursor: "pointer" }}>
-//                             <TableCell colSpan={8} sx={{ fontWeight: "bold" }}>
-//                               {follow.customer_name} {isExpanded ? "▲" : "▼"}
-//                             </TableCell>
-//                           </TableRow>
-//                           {isExpanded &&
-//                             sortedFollows
-//                               .filter((f) => f.customer_name === follow.customer_name)
-//                               .map((followItem, subIndex) => (
-//                                 <TableRow key={followItem.id}>
-//                                   <TableCell>{subIndex + 1}</TableCell>
-//                                   <TableCell>{followItem.customer_name}</TableCell>
-//                                   <TableCell>{followItem.follow_by}</TableCell>
-//                                   <TableCell>{followItem.due_date}</TableCell>
-//                                   <TableCell>{followItem.created}</TableCell>
-//                                   <TableCell>{followItem.remark}</TableCell>
-//                                   <TableCell>{followItem.notes}</TableCell>
-//                                   <TableCell>
-//                                     <Button variant="outlined" color="warning" onClick={() => navigate(`/dashboard/crm/follow/update/${followItem.id}`)} size="small">
-//                                       Edit
-//                                     </Button>
-//                                     <Button variant="outlined" color="info" onClick={() => navigate(`/dashboard/crm/follow/detail/${followItem.id}`)} size="small">
-//                                       View
-//                                     </Button>
-//                                     {/* <Button variant="outlined" color="error" onClick={() => handleDelete(followItem.id)} size="small"> */}
-//                                       {/* Delete
-//                                     </Button> */}
-//                                   </TableCell>
-//                                 </TableRow>
-//                               ))}
-//                         </>
-//                       ) : null}
-//                     </React.Fragment>
-//                   );
-//                 })
-//               ) : (
-//                 <TableRow>
-//                   <TableCell colSpan="8" align="center">
-//                     No follow-ups found for this enquiry.
-//                   </TableCell>
-//                 </TableRow>
-//               )}
-//             </TableBody>
-//           </Table>
-//         )}
-//       </TableContainer>
-//     </div>
-//   );
-// };
-
-// export default FollowTable;
 
 
 import React, { useEffect, useState } from "react";
@@ -182,7 +30,7 @@ import FollowDelete from "./FollowDelete";
 const FollowTable = ({ enquiryId}) => {
   // sending enquiryId to the FollowTable component because you want to display follow-up records related only to that specific enquir
 
-console.log('checkeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',enquiryId)
+console.log('checkeeeeeeeeeeeeeeeeeeeeee',enquiryId)
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -1673,6 +1521,159 @@ export default FollowTable;
 //       </div>
 //     </div>
 //     // </div>
+//   );
+// };
+
+// export default FollowTable;
+// import React, { useEffect, useState } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { Link, useNavigate } from "react-router-dom";
+// import { fetchFollows, deleteFollow } from "../../redux/slice/crm/followSlice";
+// import { toast } from "react-toastify";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableContainer,
+//   TableHead,
+//   TableRow,
+//   Paper,
+//   Tooltip,
+//   Button,
+//   IconButton,
+//   TextField,
+//   AppBar,
+//   Toolbar,
+//   Typography,
+// } from "@mui/material";
+// import { ArrowUpward, ArrowDownward, Add as AddIcon, Search as SearchIcon } from "@mui/icons-material";
+// import FollowDelete from "./FollowDelete";
+// const FollowTable = ({ enquiryId }) => {
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [followToDelete, setFollowToDelete] = useState(null);
+//   const [filteredFollows, setFilteredFollows] = useState([]);
+//   const [sortOrder, setSortOrder] = useState("asc");
+//   const [expandedRows, setExpandedRows] = useState({});
+
+//   const fetchError = useSelector((state) => state.follows?.fetchError);
+//   const { list: follows = [], isLoading, deleteError } = useSelector((state) => state.follows || {});
+
+//   useEffect(() => {
+//     dispatch(fetchFollows());
+//   }, [dispatch]);
+
+//   // Filter follows by enquiryId
+//   useEffect(() => {
+//     if (follows && enquiryId) {
+//       const filtered = follows.filter(follow => follow.enquiry_id === enquiryId);
+//       setFilteredFollows(filtered);
+//     }
+//   }, [follows, enquiryId]);
+
+//   // Sorting logic for the customer name
+//   const sortedFollows = [...filteredFollows].sort((a, b) => {
+//     const nameA = a.customer_name.toLowerCase();
+//     const nameB = b.customer_name.toLowerCase();
+//     if (nameA < nameB) return sortOrder === "asc" ? -1 : 1;
+//     if (nameA > nameB) return sortOrder === "asc" ? 1 : -1;
+//     return 0;
+//   });
+
+//   const toggleSortOrder = () => {
+//     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+//   };
+
+//   const handleExpandRow = (customerName) => {
+//     setExpandedRows((prevState) => ({
+//       ...prevState,
+//       [customerName]: !prevState[customerName],
+//     }));
+//   };
+
+//   return (
+//     <div className="content-wrapper">
+//       <TableContainer component={Paper} sx={{ maxHeight: 400, overflowX: "auto" }}>
+//         {isLoading && <p>Loading...</p>}
+//         {fetchError && <p className="text-danger">{fetchError}</p>}
+//         {!isLoading && !fetchError && (
+//           <Table aria-label="follow table" sx={{ minWidth: 650 }}>
+//             <TableHead>
+//               <TableRow>
+//                 <TableCell>#</TableCell>
+//                 <TableCell>
+//                   Name
+//                   <Tooltip title="Sort">
+//                     <IconButton onClick={toggleSortOrder}>
+//                       {sortOrder === "asc" ? <ArrowDownward /> : <ArrowUpward />}
+//                     </IconButton>
+//                   </Tooltip>
+//                 </TableCell>
+//                 <TableCell>Follow by</TableCell>
+//                 <TableCell>Next Follow Up Date</TableCell>
+//                 <TableCell>Last Followup At</TableCell>
+//                 <TableCell>Remark</TableCell>
+//                 <TableCell>Notes</TableCell>
+//                 <TableCell>Actions</TableCell>
+//               </TableRow>
+//             </TableHead>
+//             <TableBody>
+//               {sortedFollows.length > 0 ? (
+//                 sortedFollows.map((follow, index) => {
+//                   const isExpanded = expandedRows[follow.customer_name];
+//                   return (
+//                     <React.Fragment key={follow.id}>
+//                       {/* Toggle Row */}
+//                       {index === 0 || sortedFollows[index - 1].customer_name !== follow.customer_name ? (
+//                         <>
+//                           <TableRow onClick={() => handleExpandRow(follow.customer_name)} style={{ cursor: "pointer" }}>
+//                             <TableCell colSpan={8} sx={{ fontWeight: "bold" }}>
+//                               {follow.customer_name} {isExpanded ? "▲" : "▼"}
+//                             </TableCell>
+//                           </TableRow>
+//                           {isExpanded &&
+//                             sortedFollows
+//                               .filter((f) => f.customer_name === follow.customer_name)
+//                               .map((followItem, subIndex) => (
+//                                 <TableRow key={followItem.id}>
+//                                   <TableCell>{subIndex + 1}</TableCell>
+//                                   <TableCell>{followItem.customer_name}</TableCell>
+//                                   <TableCell>{followItem.follow_by}</TableCell>
+//                                   <TableCell>{followItem.due_date}</TableCell>
+//                                   <TableCell>{followItem.created}</TableCell>
+//                                   <TableCell>{followItem.remark}</TableCell>
+//                                   <TableCell>{followItem.notes}</TableCell>
+//                                   <TableCell>
+//                                     <Button variant="outlined" color="warning" onClick={() => navigate(`/dashboard/crm/follow/update/${followItem.id}`)} size="small">
+//                                       Edit
+//                                     </Button>
+//                                     <Button variant="outlined" color="info" onClick={() => navigate(`/dashboard/crm/follow/detail/${followItem.id}`)} size="small">
+//                                       View
+//                                     </Button>
+//                                     {/* <Button variant="outlined" color="error" onClick={() => handleDelete(followItem.id)} size="small"> */}
+//                                       {/* Delete
+//                                     </Button> */}
+//                                   </TableCell>
+//                                 </TableRow>
+//                               ))}
+//                         </>
+//                       ) : null}
+//                     </React.Fragment>
+//                   );
+//                 })
+//               ) : (
+//                 <TableRow>
+//                   <TableCell colSpan="8" align="center">
+//                     No follow-ups found for this enquiry.
+//                   </TableCell>
+//                 </TableRow>
+//               )}
+//             </TableBody>
+//           </Table>
+//         )}
+//       </TableContainer>
+//     </div>
 //   );
 // };
 

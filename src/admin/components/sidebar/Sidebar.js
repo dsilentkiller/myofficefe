@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, Divider, Typography } from "@mui/material";
+import {
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Typography,
+} from "@mui/material";
 import {
   Dashboard as DashboardIcon,
   Person as PersonIcon,
@@ -11,7 +19,7 @@ import {
 } from "@mui/icons-material";
 
 const HrmSidebar = ({ activeSection }) => {
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState("");
 
   // useEffect(() => {
   //   // Retrieve vendor name from localStorage
@@ -37,7 +45,14 @@ const HrmSidebar = ({ activeSection }) => {
           },
         }}
       >
-        <div style={{ padding: "16px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div
+          style={{
+            padding: "16px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
           <Link to="/dashboard" style={{ textDecoration: "none" }}>
             <Typography variant="h6" sx={{ fontWeight: 600, color: "#FFFFFF" }}>
               Myoffice
@@ -46,7 +61,14 @@ const HrmSidebar = ({ activeSection }) => {
         </div>
 
         {/* User Panel */}
-        <div style={{ padding: "16px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div
+          style={{
+            padding: "16px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
           <Link to="/dashboard/profile" style={{ textDecoration: "none" }}>
             <Typography
               variant="h6"
@@ -57,8 +79,10 @@ const HrmSidebar = ({ activeSection }) => {
                 alignItems: "center",
               }}
             >
-              <PersonIcon sx={{ marginRight: 1, color: "#FFFFFF" }} /> {/* User Icon */}
-              {vendorName ? vendorName : "Loading..."} {/* Display vendor name here */}
+              <PersonIcon sx={{ marginRight: 1, color: "#FFFFFF" }} />{" "}
+              {/* User Icon */}
+              {/* {vendorName ? vendorName : "Loading..."} Display vendor name here */}
+              Paaru
             </Typography>
           </Link>
         </div>
@@ -79,7 +103,8 @@ const HrmSidebar = ({ activeSection }) => {
                 backgroundColor: "#1ABC9C",
                 color: "#FFFFFF",
               },
-              backgroundColor: activeSection === "dashboard" ? "#1ABC9C" : "#34495E", // Active background color
+              backgroundColor:
+                activeSection === "dashboard" ? "#1ABC9C" : "#34495E", // Active background color
               borderRadius: "8px",
               marginBottom: "10px",
             }}
@@ -192,8 +217,6 @@ const HrmSidebar = ({ activeSection }) => {
 };
 
 export default HrmSidebar;
-
-
 
 // import React from "react";
 // import { Link } from "react-router-dom";
@@ -378,10 +401,6 @@ export default HrmSidebar;
 // };
 
 // export default HrmSidebar;
-
-
-
-
 
 //old route#########################################
 
@@ -712,7 +731,6 @@ export default HrmSidebar;
 // };
 
 // export default Sidebar;
-
 
 // old sidebar######
 // import React from "react";

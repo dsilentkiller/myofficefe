@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 import {
   createFollow,
   updateFollowById,
-  fetchFollows
+  fetchFollows,
+  checkDuplicateFollow,
 } from "../../redux/slice/crm/followSlice";
 
 import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
@@ -21,68 +22,84 @@ const FollowForm = ({ enquiryId }) => {
     due_date: "",
     remark: "",
     notes: "",
-    created: "",  // Ensure initialized with empty string or default value
+    created: "", // Ensure initialized with empty string or default value
   });
 
+  // Handle Submit Action
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("Form Data: ", formData); // Log form data to check
 
-    if (id) {
+    // Check for duplicate follow-up
+    if (!id) {
+      dispatch(checkDuplicateFollow(formData))
+        .unwrap()
+        .then((response) => {
+          if (response.exists) {
+            toast.error("This follow-up already exists.");
+            return;
+          }
+
+          // Proceed with creation
+          dispatch(createFollow(formData))
+            .unwrap()
+            .then(() => {
+              toast.success("Follow created successfully!");
+              dispatch(fetchFollows());
+              setFormData({
+                enquiry: enquiryId,
+                follow_by: "",
+                due_date: "",
+                remark: "",
+                notes: "",
+                created: "",
+              });
+              navigate("/dashboard/crm/follow");
+            })
+            .catch((error) => {
+              setErrors(error.errors || {});
+              toast.error(error.message || "Failed to create follow.");
+            });
+        });
+    } else {
+      // Update follow-up logic
       dispatch(updateFollowById({ id, ...formData }))
         .unwrap()
         .then(() => {
           toast.success("Follow updated successfully!");
-          dispatch(fetchFollows()); // Refresh the follow table
+          dispatch(fetchFollows());
           navigate("/dashboard/crm/follow");
         })
         .catch((error) => {
           setErrors(error.errors || {});
           toast.error(error.message || "Failed to update follow.");
         });
-    } else {
-      dispatch(createFollow(formData))
-        .unwrap()
-        .then(() => {
-          toast.success("Follow created successfully!"); // Success message
-          dispatch(fetchFollows()); // Refresh the follow table with the new follow
-          setFormData({
-            enquiry: enquiryId,
-            follow_by: "",
-            due_date: "",
-            remark: "",
-            notes: "",
-            created: "", // Reset formData after creation
-          });
-          navigate("/dashboard/crm/follow");
-        })
-        .catch((error) => {
-          setErrors(error.errors || {});
-          toast.error(error.message || "Failed to create follow.");
-        });
     }
   };
-
+  // // Fetch enquiries and follow-up to edit
   const enquiries = useSelector((state) => state.enquiries.list);
   const followToUpdate = useSelector((state) => state.follows.CurrentFollow);
+  console.log("follow to update data is ", followToUpdate);
   const isLoading = useSelector((state) => state.enquiries.isLoading);
   const error = useSelector((state) => state.enquiries.error);
+  // const currentFollow = useSelector((state) => state.follows.currentFollow);
 
   useEffect(() => {
     dispatch(fetchEnquiries());
     if (id) {
-      dispatch(updateFollowById(id));
+      dispatch(fetchFollows());
     }
   }, [dispatch, id]);
 
   useEffect(() => {
     if (followToUpdate && id) {
       setFormData({
-        enquiry: followToUpdate.enquiry_id || "",
+        enquiry: followToUpdate.enquiryId || "",
         follow_by: followToUpdate.follow_by || "",
         due_date: followToUpdate.due_date || "",
         remark: followToUpdate.remark || "",
         notes: followToUpdate.notes || "",
-        created: followToUpdate.created || "",  // Ensure created is initialized
+        created: followToUpdate.created || "", // Ensure created is initialized
       });
     }
   }, [followToUpdate, id]);
@@ -224,7 +241,6 @@ const FollowForm = ({ enquiryId }) => {
 
 export default FollowForm;
 
-
 // import React, { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { useNavigate, useParams } from "react-router-dom";
@@ -232,7 +248,7 @@ export default FollowForm;
 // import {
 //   createFollow,
 //   updateFollowById,
-//   fetchFollows
+//   fetchFollows,
 // } from "../../redux/slice/crm/followSlice";
 
 // import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
@@ -554,8 +570,6 @@ export default FollowForm;
 //   const handleChange = (e) => {
 //     setFormData({ ...formData, [e.target.name]: e.target.value });
 //   };
-
-
 
 //   return (
 //     <div className="content-wrapper">

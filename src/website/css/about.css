@@ -1,0 +1,120 @@
+/* Container for the About page */
+.about-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f9fa; /* Background color to prevent empty space */
+  }
+  
+  /* About Section Styling */
+  .about-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .about-content {
+    /* background: url("/images/background.jpg") no-repeat center center fixed; Set background image */
+    background-size: cover;
+    padding: 50px 0;
+    color: black; /* Ensures text is readable on a background image */
+    min-height: 60vh; /* Ensures the section has enough height */
+  }
+  
+  .about-heading {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color : black;
+  }
+  
+  .intro-text {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    font-weight: 300;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .company-overview {
+    margin-bottom: 40px;
+  }
+  
+  .company-overview h2 {
+    font-size: 2rem;
+    color: black;
+    margin-bottom: 15px;
+  }
+  
+  .company-overview p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: black;
+  }
+  
+  .crm-features {
+    margin-top: 50px;
+  }
+  
+  .crm-features h2 {
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .feature-item {
+    background: rgba(0, 0, 0, 0.5); /* Darken background behind feature text */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .feature-item h3 {
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: 15px;
+  }
+  
+  .feature-item p {
+    font-size: 1rem;
+    color: #ddd;
+    line-height: 1.6;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .about-content h1 {
+      font-size: 2rem;
+    }
+  
+    .feature-item {
+      padding: 15px;
+    }
+  
+    .company-overview h2 {
+      font-size: 1.6rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .about-content h1 {
+      font-size: 1.8rem;
+    }
+  
+    .intro-text {
+      font-size: 1rem;
+    }
+  
+    .feature-item {
+      padding: 10px;
+    }
+  
+    .company-overview h2 {
+      font-size: 1.4rem;
+    }
+  }
+  

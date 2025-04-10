@@ -15,13 +15,19 @@ import followReducer from "./admin/redux/slice/crm/followSlice";
 import customerReducer from "./admin/redux/slice/customer/customerSlice";
 import accountReducer from "./admin/redux/slice/crm/accountSlice";
 import employeeReducer from "./admin/redux/slice/hrm/employeeSlice";
-import meetingUpdateReducer from "./admin/redux/slice/crm/meetingUpdateSlice";
+// import meetingUpdateReducer from "./admin/redux/slice/crm/meetingUpdateSlice";
 import assetReducer from "./admin/redux/slice/hrm/assetSlice";
 import leaveReducer from "./admin/redux/slice/hrm/leaveSlice";
-import userReducer from "./admin/redux/slice/user/UserSlice"
-import quotationReducer from "./admin/redux/slice/crm/quotationSlice"
+import userReducer from "./admin/redux/slice/user/UserSlice";
+import quotationReducer from "./admin/redux/slice/crm/quotationSlice";
 import meetingReducer from "./admin/redux/slice/crm/meetingSlice";
-import proposalReducer from "./admin/redux/slice/crm/proposalSlice"
+import proposalReducer from "./admin/redux/slice/crm/proposalSlice";
+import aiChatReducer from "./admin/redux/slice/ai_agent/aiChatSlice";
+import aboutReducer from "./admin/redux/slice/website/aboutSlice";
+import contactReducer from "./admin/redux/slice/website/contactSlice";
+import servicesReducer from "./admin/redux/slice/website/servicesSlice";
+import demoReducer from "./admin/redux/slice/website/demoSlice";
+
 const store = configureStore({
   reducer: {
     districts: districtReducer,
@@ -36,17 +42,22 @@ const store = configureStore({
     categories: categoryReducer, //
     enquiries: enquiryReducer,
     follows: followReducer,
-    customers:customerReducer,
-    account:accountReducer,
-    employees:employeeReducer,
-    assets:assetReducer,
-    leaves:leaveReducer,
+    customers: customerReducer,
+    account: accountReducer,
+    employees: employeeReducer,
+    assets: assetReducer,
+    leaves: leaveReducer,
     // meetingupdates: meetingUpdateReducer, // Ensure this matches your slice name
     // meetingupdates: meetingUpdateReducer,
-    meetings: meetingReducer,  // Make sure 'meetings' is the correct key here
+    meetings: meetingReducer, // Make sure 'meetings' is the correct key here
     user: userReducer, // Add the user slice here
     quotations: quotationReducer, // Make sure this is properly mapped
-    proposals: proposalReducer,  // Add the reducer here
+    proposals: proposalReducer, // Add the reducer here
+    aiChat: aiChatReducer,
+    about: aboutReducer,
+    service: servicesReducer,
+    contact: contactReducer,
+    requestDemo: demoReducer,
   },
   //
 
@@ -54,4 +65,3 @@ const store = configureStore({
 });
 
 export default store;
-
