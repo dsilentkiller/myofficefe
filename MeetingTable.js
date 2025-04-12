@@ -44,29 +44,53 @@ const MeetingTable = () => {
   const [meetingToDelete, setMeetingToDelete] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const handleDelete = (meetingId) => {
-    dispatch(deleteMeeting({ meetingId }));
-  };
-
   const handleRowAction = (actionKey, rowData) => {
     if (actionKey === "edit") {
       navigate(`/meeting/edit/${rowData.id}`);
     } else if (actionKey === "delete") {
-      setMeetingToDelete(rowData.id);
-      setIsDeleteModalOpen(true);
+      setProjectToDelete(rowData.id); // Set the meeting to delete
+      setIsDeleteModalOpen(true); // Open the delete confirmation modal
     } else if (actionKey === "view") {
       navigate(`/meeting/detail/${rowData.id}`);
     }
-  };
-  const handleConfirmDelete = () => {
-    dispatch(deleteMeeting({ meetingId: meetingToDelete }));
-    setIsDeleteModalOpen(false);
-    toast.success("Meeting update deleted successfully!");
   };
 
   const handleAdd = () => {
     navigate("/dashboard/crm/meeting/create");
   };
+
+  const handleEdit = (meeting) => {
+    navigate(`/dashboard/crm/meeting/update/${meeting.id}/`);
+  };
+
+  const handleView = (meeting) => {
+    navigate(`/dashboard/crm/meeting/detail/${meeting.id}/`);
+  };
+  // This is the function for deleting a meeting
+  const handleDelete = (meeting) => {
+    setProjectToDelete(meeting.id); // Store the meeting ID to delete
+    setIsDeleteModalOpen(true); // Open the delete confirmation modal
+  };
+
+  // const handleRowAction = (actionKey, rowData) => {
+  //   if (actionKey === "edit") {
+  //     navigate(`/meeting/edit/${rowData.id}`);
+  //   } else if (actionKey === "delete") {
+  //     setMeetingToDelete(rowData.id);
+  //     setIsDeleteModalOpen(true);
+  //   } else if (actionKey === "view") {
+  //     navigate(`/meeting/detail/${rowData.id}`);
+  //   }
+  // };
+  // const handleConfirmDelete = () => {
+  //   dispatch(deleteMeeting({ meetingId: meetingToDelete }));
+  //   setIsDeleteModalOpen(false);
+  //   toast.success("Meeting update deleted successfully!");
+  // };
+
+  // const handleAdd = () => {
+  //   navigate("/dashboard/crm/meeting/create");
+  // };
 
   return (
     <>
