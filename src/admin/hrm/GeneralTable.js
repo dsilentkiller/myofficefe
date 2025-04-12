@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableHead,
@@ -31,7 +30,7 @@ import {
   PictureAsPdf as PdfIcon,
   TableChart as TableIcon,
   FileDownload as ExcelIcon,
-  CheckCircle as CheckCircleIcon
+  CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -61,7 +60,8 @@ const GeneralTable = ({
   const handleSearch = (e) => setSearch(e.target.value.toLowerCase());
 
   const handleSort = (field) => {
-    const isAscending = sortConfig.field === field && sortConfig.direction === "asc";
+    const isAscending =
+      sortConfig.field === field && sortConfig.direction === "asc";
     setSortConfig({ field, direction: isAscending ? "desc" : "asc" });
   };
 
@@ -135,9 +135,7 @@ const GeneralTable = ({
   };
 
   const filteredData = data.filter((row) =>
-    columns.some((col) =>
-      String(row[col.field]).toLowerCase().includes(search)
-    )
+    columns.some((col) => String(row[col.field]).toLowerCase().includes(search))
   );
 
   const sortedData = filteredData.sort((a, b) => {
@@ -149,170 +147,215 @@ const GeneralTable = ({
   });
 
   return (
-    <div className="table-container">
-       <div className="table-wrapper">
-       <table className="table table-bordered">
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-              <Typography left variant="h6" sx={{ textAlign: 'left', fontWeight: 'bold', color: '#333', flexGrow: 1 }}>{title}</Typography>
-              <div className="navbar-nav ml-auto">
-                <Box sx={{ display: "flex",position:"static", alignItems: "center", gap: 2 }}>
-                  <InputBase
-                    placeholder="Search..."
-                    value={search}
-                    onChange={handleSearch}
-                    startAdornment={<Search />}
-                  />
-                  <Tooltip title="Export as PDF">
-                    <IconButton onClick={exportPDF}>
-                      <FileDownload />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Export as Excel">
-                    <IconButton onClick={exportExcel}>
-                      <FileDownload />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Import File">
-                    <IconButton component="label">
-                      <FileUpload />
-                      <input type="file" hidden onChange={importFile} />
-                    </IconButton>
-                  </Tooltip>
-                  <Button
-                    variant="contained"
-                    startIcon={<Add />}
-                    onClick={onAdd}
-                    sx={{ bgcolor: "primary.main", color: "white" }}
-                  >
-                    Add
-                  </Button>
-                </Box>
-              </div>
-            </nav>
-            <Table sx={{ borderCollapse: "collapse", border: "2px solid #ddd", borderRadius: "4px" }}>
-              <TableHead>
-                <TableRow sx={{ borderBottom: "2px solid #ddd" }}>
-                  <TableCell sx={{ borderRight: "1px solid #ddd", borderTop: "1px solid #ddd", borderLeft: "1px solid #ddd" }}>
+    <div className="content-wrapper">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+        <Typography
+          left
+          variant="h6"
+          sx={{
+            textAlign: "left",
+            fontWeight: "bold",
+            color: "#333",
+            flexGrow: 1,
+          }}
+        >
+          {title}
+        </Typography>
+        <div className="navbar-nav ml-auto">
+          <Box
+            sx={{
+              display: "flex",
+              position: "static",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            <InputBase
+              placeholder="Search..."
+              value={search}
+              onChange={handleSearch}
+              startAdornment={<Search />}
+            />
+            <Tooltip title="Export as PDF">
+              <IconButton onClick={exportPDF}>
+                <FileDownload />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Export as Excel">
+              <IconButton onClick={exportExcel}>
+                <FileDownload />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Import File">
+              <IconButton component="label">
+                <FileUpload />
+                <input type="file" hidden onChange={importFile} />
+              </IconButton>
+            </Tooltip>
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              onClick={onAdd}
+              sx={{ bgcolor: "primary.main", color: "white" }}
+            >
+              Add
+            </Button>
+          </Box>
+        </div>
+      </nav>
+      <Table
+        sx={{
+          borderCollapse: "collapse",
+          border: "2px solid #ddd",
+          borderRadius: "4px",
+        }}
+      >
+        <TableHead>
+          <TableRow sx={{ borderBottom: "2px solid #ddd" }}>
+            <TableCell
+              sx={{
+                borderRight: "1px solid #ddd",
+                borderTop: "1px solid #ddd",
+                borderLeft: "1px solid #ddd",
+              }}
+            >
+              <Checkbox
+                indeterminate={
+                  selectedRows.length > 0 && selectedRows.length < data.length
+                }
+                checked={selectedRows.length === data.length}
+                onChange={(e) =>
+                  setSelectedRows(e.target.checked ? data.map((d) => d.id) : [])
+                }
+              />
+            </TableCell>
+            {columns.map((col) => (
+              <TableCell
+                key={col.field}
+                sx={{
+                  borderBottom: "2px solid #ddd",
+                  borderRight: "1px solid #ddd",
+                  borderLeft: "1px solid #ddd",
+                  fontWeight: "bold",
+                }}
+              >
+                <div onClick={() => handleSort(col.field)}>
+                  {col.label}
+                  {sortConfig.field === col.field &&
+                    (sortConfig.direction === "asc" ? (
+                      <ArrowUpward fontSize="small" />
+                    ) : (
+                      <ArrowDownward fontSize="small" />
+                    ))}
+                </div>
+              </TableCell>
+            ))}
+            <TableCell
+              sx={{
+                borderBottom: "2px solid #ddd",
+                borderRight: "1px solid #ddd",
+                borderLeft: "1px solid #ddd",
+              }}
+            >
+              Actions
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {sortedData.length === 0 ? (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length + 2}
+                sx={{ textAlign: "center", padding: "16px", color: "gray" }}
+              >
+                No Data Found
+              </TableCell>
+            </TableRow>
+          ) : (
+            sortedData
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => (
+                <TableRow
+                  key={row.id}
+                  hover
+                  sx={{
+                    borderBottom: "1px solid #ddd",
+                    borderLeft: "1px solid #ddd",
+                    borderRight: "1px solid #ddd",
+                  }}
+                >
+                  <TableCell sx={{ borderRight: "1px solid #ddd" }}>
                     <Checkbox
-                      indeterminate={selectedRows.length > 0 && selectedRows.length < data.length}
-                      checked={selectedRows.length === data.length}
-                      onChange={(e) =>
-                        setSelectedRows(e.target.checked ? data.map((d) => d.id) : [])
-                      }
+                      checked={selectedRows.includes(row.id)}
+                      onChange={() => handleSelectRow(row.id)}
                     />
                   </TableCell>
                   {columns.map((col) => (
                     <TableCell
                       key={col.field}
-                      sx={{
-                        borderBottom: "2px solid #ddd",
-                        borderRight: "1px solid #ddd",
-                        borderLeft: "1px solid #ddd",
-                        fontWeight: "bold",
-                      }}
+                      sx={{ borderRight: "1px solid #ddd" }}
                     >
-                      <div onClick={() => handleSort(col.field)}>
-                        {col.label}
-                        {sortConfig.field === col.field &&
-                          (sortConfig.direction === "asc" ? (
-                            <ArrowUpward fontSize="small" />
-                          ) : (
-                            <ArrowDownward fontSize="small" />
-                          ))}
-                      </div>
+                      {row[col.field]}
                     </TableCell>
                   ))}
-                  <TableCell sx={{ borderBottom: "2px solid #ddd", borderRight: "1px solid #ddd", borderLeft: "1px solid #ddd" }}>Actions</TableCell>
+                  <TableCell
+                    sx={{
+                      borderRight: "1px solid #ddd",
+                      borderBottom: "1px solid #ddd",
+                    }}
+                  >
+                    <Tooltip title="View">
+                      <IconButton onClick={() => onView(row)}>
+                        <Visibility />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Edit">
+                      <IconButton onClick={() => onEdit(row)}>
+                        <Edit />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                      <IconButton onClick={() => onDelete(row)}>
+                        <Delete />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {sortedData.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={columns.length + 2} sx={{ textAlign: "center", padding: "16px", color: "gray" }}>
-                      No Data Found
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  sortedData
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <TableRow
-                        key={row.id}
-                        hover
-                        sx={{
-                          borderBottom: "1px solid #ddd",
-                          borderLeft: "1px solid #ddd",
-                          borderRight: "1px solid #ddd",
-                        }}
-                      >
-                        <TableCell
-                          sx={{ borderRight: "1px solid #ddd" }}
-                        >
-                          <Checkbox
-                            checked={selectedRows.includes(row.id)}
-                            onChange={() => handleSelectRow(row.id)}
-                          />
-                        </TableCell>
-                        {columns.map((col) => (
-                          <TableCell
-                            key={col.field}
-                            sx={{ borderRight: "1px solid #ddd" }}
-                          >
-                            {row[col.field]}
-                          </TableCell>
-                        ))}
-                        <TableCell
-                          sx={{
-                            borderRight: "1px solid #ddd",
-                            borderBottom: "1px solid #ddd",
-                          }}
-                        >
-                          <Tooltip title="View">
-                            <IconButton onClick={() => onView(row)}>
-                              <Visibility />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Edit">
-                            <IconButton onClick={() => onEdit(row)}>
-                              <Edit />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Delete">
-                            <IconButton onClick={() => onDelete(row)}>
-                              <Delete />
-                            </IconButton>
-                          </Tooltip>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                )}
-              </TableBody>
-            </Table>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 2 }}>
-              <TablePagination
-                component="div"
-                count={sortedData.length}
-                page={page}
-                onPageChange={(e, newPage) => setPage(newPage)}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={(e) => setRowsPerPage(parseInt(e.target.value, 10))}
-              />
-              {/* <Box sx={{ display: "flex", alignItems: "center" }}>
+              ))
+          )}
+        </TableBody>
+      </Table>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: 2,
+        }}
+      >
+        <TablePagination
+          component="div"
+          count={sortedData.length}
+          page={page}
+          onPageChange={(e, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(e) =>
+            setRowsPerPage(parseInt(e.target.value, 10))
+          }
+        />
+        {/* <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Tooltip title="Scroll Right">
                   <IconButton onClick={() => window.scrollBy(100, 0)}>
                     <ArrowForward />
                   </IconButton>
                 </Tooltip>
               </Box> */}
-            </Box>
-        </table>
-      </div>
+      </Box>
     </div>
   );
 };
 
 export default GeneralTable;
-
 
 // import {
 //   Table,
@@ -359,7 +402,6 @@ export default GeneralTable;
 
 // import * as XLSX from "xlsx";
 
-
 // const GeneralTable = ({
 //   title,
 //   columns = [],
@@ -382,7 +424,6 @@ export default GeneralTable;
 //     const isAscending = sortConfig.field === field && sortConfig.direction === "asc";
 //     setSortConfig({ field, direction: isAscending ? "desc" : "asc" });
 //   };
-
 
 //   const exportPDF = () => {
 //     try {
@@ -599,8 +640,6 @@ export default GeneralTable;
 //                   </Tooltip>
 //                 </TableCell>
 
-
-
 //              </TableRow>
 //             ))}
 //         </TableBody>
@@ -754,7 +793,6 @@ export default GeneralTable;
 
 // export default GeneralTable;
 
-
 //########## old table ############
 // import React, { useState } from "react";
 // import {
@@ -831,7 +869,6 @@ export default GeneralTable;
 //     }
 //   });
 
-
 //   const handleSort = () => setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
 
 //   const handleChangePage = (event, newPage) => setPage(newPage);
@@ -839,8 +876,6 @@ export default GeneralTable;
 //     setRowsPerPage(parseInt(event.target.value, 10));
 //     setPage(0);
 //   };
-
-
 
 //   return (
 //     <div>
@@ -921,5 +956,3 @@ export default GeneralTable;
 // };
 
 // export default GeneralTable;
-
-
