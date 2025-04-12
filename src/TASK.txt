@@ -1,0 +1,1288 @@
+import React from "react";
+import { Link } from "react-router-dom";
+
+const ProjectTable = ({ projects }) => {
+  return (
+    <div className="content-wrapper">
+      <div className="row justify-content-center">
+        <div className="col-lg-10">
+          <div className="card">
+            {/* heading */}
+            <nav className="navbar navbar-expand-lg navbar-light bg-light">
+              <div className="container-fluid">
+                <h5 className="navbar-brand">projects Table</h5>
+                <div className="navbar-nav ml-auto">
+                  <Link
+                    to="/admin/projects/create/"
+                    className="nav-link btn btn-info"
+                  >
+                    <h5>Add projects</h5>
+                  </Link>
+                  <form
+                    method="get"
+                    action="/projects/search"
+                    className="form-inline ml-3"
+                  >
+                    <div className="input-group">
+                      <input
+                        type="search"
+                        id="default-search"
+                        name="q"
+                        className="form-control"
+                        placeholder="Search Mockups, Logos..."
+                        required
+                      />
+                      <div className="input-group-append">
+                        <button type="submit" className="btn btn-info">
+                          Search
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <div className="form-inline ml-4" id="navbarSupportedContent">
+                  <ul className="navbar-nav mr-30">
+                    <li className="nav-item ">
+                      <button
+                        id="projectsTable"
+                        className="nav-link bg-info px-1 py-1 text-sm uppercase tracking-widest hover:bg-white hover:text-black mr-px ml-2"
+                      >
+                        <i className="fas fa-file-csv"></i>
+                        {/* Font Awesome icon for CSV */}
+                      </button>
+                    </li>
+                    {/* Add other export buttons here */}
+                  </ul>
+                </div>
+              </div>
+            </nav>
+            {/* heading end */}
+            <div className="card-body">
+              <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                  <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                    <div className="overflow-x-auto overflow-y-auto max-h-[400px]">
+                      <div className="overflow-x-auto">
+                        <table className="table table-bordered">
+                          <thead>
+                            <tr>
+                              <th>Client ID</th>
+                              <th>Project Name</th>
+                              <th>Description</th>
+                              <th>Start Date</th>
+                              <th>End Date</th>
+                              <th>Status</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {projects.length > 0 ? (
+                              projects.map((project, index) => (
+                                <tr key={index}>
+                                  <td>{project.client_id}</td>
+                                  <td>{project.project_name}</td>
+                                  <td>{project.description}</td>
+                                  <td>{project.start_date}</td>
+                                  <td>{project.end_date}</td>
+                                  <td>{project.status}</td>
+                                  <td>
+                                    <Link
+                                      to={`/projects/update/${projects.id}`}
+                                    >
+                                      Edit
+                                    </Link>
+                                    |
+                                    <Link
+                                      to={`/projects/detail/${projects.id}`}
+                                    >
+                                      View
+                                    </Link>
+                                    |
+                                    <Link
+                                      to={`/projects/delete/${projects.id}`}
+                                    >
+                                      Delete
+                                    </Link>
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan="8">No projects found</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProjectTable;
+1.ERROR
+projects is undefined
+ProjectTable@http://localh
+2.live search 
+3.duplicate name check 
+4.export pdf /excel 
+5.edit project  with Toast message 
+6.delete project with Toast message
+7.detail project  according to id 
+
+
+#---------------------------------------------------------------
+
+in above , my project syructure is  admin >components>( footer >Footer.js,navbar>DefaultHeader.js and UserHeader.js,sidebar>Sidebar.js  )
+inside UserHeader(Employee,Customer ....) when click on employee , it goes to EmployeeList.js(inside EmployeeList.js , AddEmployee where click in Add EMployee it goes to employee Form.js
+)
+admin>container>user>employee>(EmployeeList.js,Detail.js,Form.js)
+admin>layouts>UserDashboard.js (this is dashboard with DefaultHeader,Userheader , EmployeeList table ,Footer)
+admin>layouts>AssetsDashboard.js 
+admin>container>assets>(AssignAssetsList.js,AssignAssetsForm.js )(AssetsForm.js,AssetsList.js)
+admin>routes>AdminRoute.js  
+App.js 
+
+
+###------------
+accoring to sidebar title make => list,form , dashboard , admin url and view page properly.
+
+# Remaining 
+1.added navbar for every app in backend
+2.added crud page for every navabar title with dashboard header,route 
+
+############## -------------------- question 
+api 
+    path('zone/', views.ZoneAPIView.as_view(), name='zone-list'),
+    path('zone/create/', views.ZoneAPIView.as_view(), name='zone-create'),
+    path('zone/update/<int:pk>/',
+         views.ZoneAPIView.as_view(), name='zone-update'),
+    path('zone/delete/<int:pk>/',
+         views.ZoneAPIView.as_view(), name='zone-delete'),
+    ################### province route###################
+    path('province/', views.ProvinceAPIView.as_view(), name='province-list'),
+    path('province/create/', views.ProvinceAPIView.as_view(), name='province-create'),
+    path('province/update/<int:pk>/',
+         views.ProvinceAPIView.as_view(), name='province-update'),
+    path('province/delete/<int:pk>/',
+         views.ProvinceAPIView.as_view(), name='province-delete'),
+    ############## municipality##############
+    path('municipality/', views.MunicipalityAPIView.as_view(),
+         name='municipality-list'),
+    path('municipality/create/', views.MunicipalityAPIView.as_view(),
+         name='municipality-create'),
+    path('municipality/update/<int:pk>/',
+         views.MunicipalityAPIView.as_view(), name='municipality-update'),
+    path('municipality/delete/<int:pk>/',
+         views.MunicipalityAPIView.as_view(), name='municipality-delete'),
+
+    ####################### District ##############################
+    path('district/', views.DistrictAPIView.as_view(), name='district-list'),
+    path('district/create/', views.DistrictAPIView.as_view(), name='district-create'),
+    path('district/update/<int:pk>/',
+         views.DistrictAPIView.as_view(), name='district-update'),
+    path('district/delete/<int:pk>/',
+         views.DistrictAPIView.as_view(), name='district-delete'), 
+  path('department/', views.DepartmentListView.as_view(), name='department_list'),
+    path('department/create/', views.DepartmentCreateView.as_view(),
+         name='department_create'),
+    path('department/delete/<int:pk>/',
+         views.DepartmentDeleteView.as_view(), name='department_delete'),
+    path('department/update/<int:pk>/',
+         views.DepartmentUpdateView.as_view(), name='department_update'),
+
+    ############# designation route#############################################
+    path('designation/', views.DesignationListView.as_view(),
+         name='designation_list'),
+    path('designation/delete/<int:pk>/',
+         views.DesignationDeleteView.as_view(), name='designation_delete'),
+    path('designation/update/<int:pk>/',
+         views.DesignationUpdateView.as_view(), name='designation_update'),
+    path('designation/create/', views.DesignationCreateView.as_view(),
+         name='designation_create'), 
+ path('list/', views.EmployeeListAPIView.as_view(), name='employee_list'),
+    path('new/', views.EmployeeCreateAPIView.as_view(),
+         name='employee_create'),
+
+    path('detail/<int:pk>',
+         views.EmployeeDetailAPIView.as_view(), name='employee_detail'),
+    path('update/<int:pk>', views.EmployeeUpdateAPIView.as_view(),
+         name='employee_update'),
+    path('delete/<int:pk>', views.EmployeeDeleteAPIView.as_view(),
+         name='employee_delete'),
+    path('employee-search/', views.EmployeeSearchAPIView.as_view(), name='employee-search'),
+
+and this is form in react 
+import React, { useState, useEffect } from "react";
+import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
+import classnames from "classnames";
+import { Link } from "react-router-dom";
+// import { connect } from "react-redux";
+// import { addEmployee } from "../../../redux/actions/employeeActions";
+import axios from "axios";
+
+const EmployeeForm = ({ addEmployee }) => {
+  const [activeTab, setActiveTab] = useState("1");
+  const [departments, setDepartments] = useState([]);
+  const [designations, setDesignations] = useState([]);
+  const [provinces, setProvinces] = useState([]);
+  const [zones, setZones] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [municipalities, setMunicipalities] = useState([]);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    employee_type: "",
+    role: "",
+    date_issued: "",
+
+    department: "",
+    zone: "",
+    district: "",
+    municipality: "",
+    ward_no: "",
+    tole_name: "",
+
+    temp_department: "",
+    temp_zone: "",
+    temp_district: "",
+    temp_municipality: "",
+    temp_ward_no: "",
+    temp_tole_name: "",
+
+    pri_phone: "",
+    sec_phone: "",
+    email: "",
+    gender: "",
+    dob: "",
+    department: "",
+    designation: "",
+    salary: "",
+    supervisor_name: "",
+    joining_date: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  function handleSameAddress(event) {
+    if (event.target.checked) {
+      setFormData({
+        ...formData,
+        temp_department: formData.department,
+        temp_zone: formData.zone,
+        temp_district: formData.district,
+        temp_municipality: formData.municipality,
+        temp_ward_no: formData.ward_no,
+        temp_tole_name: formData.tole_name,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        temp_department: "",
+        temp_zone: "",
+        temp_district: "",
+        temp_municipality: "",
+        temp_ward_no: "",
+        temp_tole_name: "",
+      });
+    }
+  }
+
+  useEffect(() => {
+    // Fetch departments data
+
+    // Fetch zones data
+
+    const fetchZone = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/setup/zone/create/"
+        );
+        setZones(response.data);
+      } catch (error) {
+        console.error("There was an error fetching the zones!", error);
+      }
+    };
+
+    // Fetch districts data
+    const fetchDistricts = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/setup/district/"
+        );
+        setDistricts(response.data);
+      } catch (error) {
+        console.error("There was an error fetching the district!", error);
+      }
+    };
+
+    // Fetch municipalities data
+    const fetchMunicipalities = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/setup/municipality/"
+        );
+        setMunicipalities(response.data);
+      } catch (error) {
+        console.error("There was an error fetching the municipality!", error);
+      }
+    };
+
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get("api/setup/department/create/");
+        setDepartments(response.data);
+      } catch (error) {
+        console.error("There was an error fetching the departments!", error);
+      }
+    };
+
+    const fetchDesignations = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/setup/designation/create/"
+        );
+        setDesignations(response.data);
+      } catch (error) {
+        console.error("There was an error fetching the designations!", error);
+      }
+    };
+
+    fetchDepartments();
+    fetchDesignations();
+    fetchMunicipalities();
+    fetchDistricts();
+    fetchZone();
+  }, []);
+
+  const toggle = (tab) => {
+    if (activeTab !== tab) setActiveTab(tab);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/employee/new/",
+        formData
+      );
+      console.log(response.data);
+      alert("Employee created successfully!");
+      // You can reset the form or navigate to another page here
+    } catch (error) {
+      console.error("There was an error creating the employee!", error);
+      alert("Failed to create employee.");
+    }
+  };
+
+  return (
+    <div className="content-wrapper" style={{ marginBottom: "20mm" }}>
+      {/* <div className="container-fluid"> */}
+      <div className="card">
+        <Nav tabs>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: activeTab === "1" })}
+              onClick={() => toggle("1")}
+            >
+              General Information
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: activeTab === "2" })}
+              onClick={() => toggle("2")}
+            >
+              Address
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: activeTab === "3" })}
+              onClick={() => toggle("3")}
+            >
+              Company Info
+            </NavLink>
+          </NavItem>
+        </Nav>
+        <TabContent activeTab={activeTab}>
+          <TabPane tabId="1">
+            <div className="card">
+              <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                <div className="container-fluid">
+                  <h5 className="navbar-brand">Add Employee</h5>
+                  <div className="navbar-nav ml-auto">
+                    <Link to="dashboard/user/employee">
+                      <h5>Employee List</h5>
+                    </Link>
+                  </div>
+                </div>
+              </nav>
+              <div className="card-body">
+                <form onSubmit={handleSubmit}>
+                  <div className="row">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="name">Name:</label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="date_issued">Date Issued:</label>
+                        <input
+                          type="date"
+                          id="date_issued"
+                          name="date_issued"
+                          value={formData.date_issued}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="pri_phone">Primary Phone:</label>
+                        <input
+                          type="text"
+                          id="pri_phone"
+                          name="pri_phone"
+                          value={formData.pri_phone}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="sec_phone">Secondary Phone:</label>
+                        <input
+                          type="text"
+                          id="sec_phone"
+                          name="sec_phone"
+                          value={formData.sec_phone}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="email">Email:</label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="gender">Gender:</label>
+                        <select
+                          id="gender"
+                          name="gender"
+                          value={formData.gender}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select Gender</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="dob">Date of Birth:</label>
+                        <input
+                          type="date"
+                          id="dob"
+                          name="dob"
+                          value={formData.dob}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => toggle("2")}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </TabPane>
+
+          <TabPane tabId="2">
+            <div className="card">
+              <div className="card-body">
+                <form>
+                  <div className="row mt-3">
+                    <h5 className="btn btn-info mb-2">Permanent Address</h5>
+                  </div>
+                  <div className="row">
+                    {/* Permanent Address Fields */}
+
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="province">Province:</label>
+                        <select
+                          id="province"
+                          name="province"
+                          value={formData.province}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select province</option>
+                          {provinces.map((province) => (
+                            <option key={province.id} value={province.id}>
+                              {province.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="zone">Zone:</label>
+                        <select
+                          id="zone"
+                          name="zone"
+                          value={formData.zone}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select Zone</option>
+                          {zones.map((zone) => (
+                            <option key={zone.id} value={zone.id}>
+                              {zone.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    {/* district */}
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="district">District:</label>
+                        <select
+                          id="district"
+                          name="district"
+                          value={formData.district}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select District</option>
+                          {districts.map((district) => (
+                            <option key={district.id} value={district.id}>
+                              {district.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  {/* municuipality */}
+                  <div className="row">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="municipality">Municipality:</label>
+                        <select
+                          id="municipality"
+                          name="municipality"
+                          value={formData.municipality}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select Municipality</option>
+                          {municipalities.map((municipality) => (
+                            <option
+                              key={municipality.id}
+                              value={municipality.id}
+                            >
+                              {municipality.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    {/*  */}
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="ward_no">Ward No:</label>
+                        <input
+                          type="text"
+                          id="ward_no"
+                          name="ward_no"
+                          value={formData.ward_no}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="tole_name">Tole Name:</label>
+                        <input
+                          type="text"
+                          id="tole_name"
+                          name="tole_name"
+                          value={formData.tole_name}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* "Same as Permanent Address" Checkbox */}
+                  <div className="form-group mt-3">
+                    <input
+                      type="checkbox"
+                      id="sameAddressCheckbox"
+                      onChange={handleSameAddress}
+                    />
+                    <label htmlFor="sameAddressCheckbox" className="ml-2">
+                      Same as Permanent Address
+                    </label>
+                  </div>
+
+                  {/* Temporary Address Fields */}
+                  <div className="row mt-3">
+                    <h5 className="btn btn-info mb-2">Temporary Address</h5>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="temp_department">department:</label>
+                        <select
+                          id="temp_department"
+                          name="temp_department"
+                          value={formData.temp_department}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select department</option>
+                          {departments.map((department) => (
+                            <option key={department.id} value={department.id}>
+                              {department.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="temp_zone">Zone:</label>
+                        <select
+                          id="temp_zone"
+                          name="temp_zone"
+                          value={formData.temp_zone}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select Zone</option>
+                          {zones.map((zone) => (
+                            <option key={zone.id} value={zone.id}>
+                              {zone.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="temp_district">District:</label>
+                        <select
+                          id="temp_district"
+                          name="temp_district"
+                          value={formData.temp_district}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select District</option>
+                          {districts.map((district) => (
+                            <option key={district.id} value={district.id}>
+                              {district.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="temp_municipality">Municipality:</label>
+                        <select
+                          id="temp_municipality"
+                          name="temp_municipality"
+                          value={formData.temp_municipality}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select Municipality</option>
+                          {municipalities.map((municipality) => (
+                            <option
+                              key={municipality.id}
+                              value={municipality.id}
+                            >
+                              {municipality.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="temp_ward_no">Ward No:</label>
+                        <input
+                          type="text"
+                          id="temp_ward_no"
+                          name="temp_ward_no"
+                          value={formData.temp_ward_no}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="temp_tole_name">Tole Name:</label>
+                        <input
+                          type="text"
+                          id="temp_tole_name"
+                          name="temp_tole_name"
+                          value={formData.temp_tole_name}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => toggle("3")}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </TabPane>
+
+          <TabPane tabId="3">
+            <div className="card">
+              <div className="card-body">
+                <form onSubmit={handleSubmit}>
+                  <div className="row">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="department">Departments:</label>
+                        <select
+                          id="department"
+                          name="department"
+                          value={formData.department}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        >
+                          <option value="">Select department</option>
+                          {departments.map((department) => (
+                            <option key={department.id} value={department.id}>
+                              {department.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="designation">Designation:</label>
+                        <input
+                          type="text"
+                          id="designation"
+                          name="designation"
+                          value={formData.designation}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="salary">Salary:</label>
+                        <input
+                          type="number"
+                          id="salary"
+                          name="salary"
+                          value={formData.salary}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="supervisor_name">
+                          Supervisor Name:
+                        </label>
+                        <input
+                          type="text"
+                          id="supervisor_name"
+                          name="supervisor_name"
+                          value={formData.supervisor_name}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label htmlFor="joining_date">Joining Date:</label>
+                        <input
+                          type="date"
+                          id="joining_date"
+                          name="joining_date"
+                          value={formData.joining_date}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <button type="submit" className="btn btn-primary">
+                      Add Employee
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </TabPane>
+        </TabContent>
+      </div>
+      {/* </div> */}
+    </div>
+  );
+};
+
+export default EmployeeForm;
+
+
+
+ERROR
+fetchMunicipalities is not defined
+zones.map is not a function
+ChatGPT said:
+ChatGPT
+It looks like you're running into two issues: one is related to the fetchMunicipalities function not being defined, and the other is that zones.map is not working because zones is not an array. Let's address these issues one by one.
+
+Issue 1: fetchMunicipalities is not defined
+This error occurs because the fetchMunicipalities function is referenced in the useEffect hook, but it seems there's no definition for it.
+
+Possible Solution: Make sure that fetchMunicipalities is defined and called properly inside useEffect. It seems like you might have a typo or missing function definition. Double-check that the fetchMunicipalities function is correctly defined, like so:
+
+jsx
+Copy code
+const fetchMunicipalities = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/api/setup/municipality/");
+    setMunicipalities(response.data);
+  } catch (error) {
+    console.error("There was an error fetching the municipalities!", error);
+  }
+};
+Ensure that this function is correctly defined and included in the useEffect hook:
+
+jsx
+Copy code
+useEffect(() => {
+  const fetchDepartments = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/setup/department/");
+      setDepartments(response.data);
+    } catch (error) {
+      console.error("There was an error fetching the departments!", error);
+    }
+  };
+
+  const fetchDesignations = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/setup/designation/");
+      setDesignations(response.data);
+    } catch (error) {
+      console.error("There was an error fetching the designations!", error);
+    }
+  };
+
+  const fetchZones = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/setup/zone/");
+      setZones(response.data);
+    } catch (error) {
+      console.error("There was an error fetching the zones!", error);
+    }
+  };
+
+  const fetchDistricts = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/setup/district/");
+      setDistricts(response.data);
+    } catch (error) {
+      console.error("There was an error fetching the districts!", error);
+    }
+  };
+
+  const fetchMunicipalities = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/setup/municipality/");
+      setMunicipalities(response.data);
+    } catch (error) {
+      console.error("There was an error fetching the municipalities!", error);
+    }
+  };
+
+  fetchDepartments();
+  fetchDesignations();
+  fetchZones();
+  fetchDistricts();
+  fetchMunicipalities();
+}, []);
+Issue 2: zones.map is not a function
+This error indicates that zones is not being treated as an array when map is called on it. This often happens when the data fetched is not in the expected format.
+
+Possible Solution: Ensure that the API response for zones is an array. You can add a console log to inspect the data you're receiving:
+
+jsx
+Copy code
+const fetchZones = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/api/setup/zone/");
+    console.log("Zones data:", response.data); // Check the format here
+    setZones(response.data);
+  } catch (error) {
+    console.error("There was an error fetching the zones!", error);
+  }
+};
+Ensure that your API is returning data in the correct format. It should be an array of objects for zones.map to work:
+
+json
+Copy code
+[
+  { "id": 1, "name": "Zone 1" },
+  { "id": 2, "name": "Zone 2" }
+]
+If the response is nested inside another object, you'll need to adjust accordingly:
+
+jsx
+Copy code
+const fetchZones = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/api/setup/zone/");
+    console.log("Zones data:", response.data); // Inspect the response structure
+    setZones(response.data.zones); // Adjust based on the actual response structure
+  } catch (error) {
+    console.error("There was an error fetching the zones!", error);
+  }
+};
+By making sure the API endpoints are correct and handling the data properly, these issues should be resolved. If problems persist, double-check the API responses and adjust the data handling as needed.
+
+
+2/2
+
+
+
+You said:
+now this issue come in above ERROR
+departments.map is not a function
+ChatGPT said:
+ChatGPT
+The error departments.map is not a function indicates that departments is not an array when you try to use the map method on it. This usually happens if departments is undefined or an object rather than an array.
+
+Here are some steps to debug and fix this issue:
+
+1. Verify API Response
+Ensure that the response from your API endpoint returns data in the correct format. For example, your fetchDepartments function should expect an array of department objects.
+
+Check Response Format:
+
+js
+Copy code
+const fetchDepartments = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/api/setup/department/");
+    console.log(response.data); // Inspect the response data in the console
+    setDepartments(response.data);
+  } catch (error) {
+    console.error("There was an error fetching the departments!", error);
+  }
+};
+Ensure that response.data is indeed an array of departments.
+
+2. Initialize State Properly
+Ensure that the initial state for departments is set to an empty array. This avoids issues with map method if the data hasn't been fetched yet.
+
+js
+Copy code
+const [departments, setDepartments] = useState([]);
+3. Verify API Endpoint
+Ensure that the API endpoint you are hitting (http://127.0.0.1:8000/api/setup/department/) is correct and returning data in the expected format. For example, the response should look something like:
+
+json
+Copy code
+[
+  {"id": 1, "name": "HR"},
+  {"id": 2, "name": "IT"}
+]
+4. Check Data Processing
+Sometimes, the API might return an object with a nested array or other structure. If the data is not in the expected format, you may need to adjust how you process the data.
+
+For example, if the API response is:
+
+json
+Copy code
+{
+  "departments": [
+    {"id": 1, "name": "HR"},
+    {"id": 2, "name": "IT"}
+  ]
+}
+You need to adjust your code to:
+
+js
+Copy code
+const fetchDepartments = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/api/setup/department/");
+    console.log(response.data); // Inspect the response data in the console
+    setDepartments(response.data.departments); // Adjust this if needed
+  } catch (error) {
+    console.error("There was an error fetching the departments!", error);
+  }
+};
+5. Handle Undefined Data
+You can add a fallback to handle cases where the data might not be an array to avoid runtime errors.
+
+js
+Copy code
+{departments && Array.isArray(departments) && departments.map((department) => (
+  <option key={department.id} value={department.id}>
+    {department.name}
+  </option>
+))}
+Example of Updated fetchDepartments
+Here's how the updated fetchDepartments function might look if you expect the data to be in a specific format:
+
+js
+Copy code
+const fetchDepartments = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/api/setup/department/");
+    if (Array.isArray(response.data)) {
+      setDepartments(response.data);
+    } else {
+      console.error("Unexpected data format", response.data);
+    }
+  } catch (error) {
+    console.error("There was an error fetching the departments!", error);
+  }
+};
+Summary
+Ensure your initial state is an empty array.
+Check that the API returns data in the expected format.
+Adjust how you process the data if the format is different from what you expect.
+Use conditional rendering to handle cases where data might be undefined or not in the correct format.
+By following these steps, you should be able to resolve the departments.map is not a function error and ensure your departments state is handled correctly.
+
+
+
+You said:
+ERROR
+zones.map is not a function
+ChatGPT said:
+ChatGPT
+The error zones.map is not a function indicates that zones is not an array when you try to use the map method on it. This is similar to the departments.map issue you encountered earlier. Here’s a structured approach to diagnose and fix this issue:
+
+1. Check Initial State
+Ensure that the initial state for zones is set to an empty array to avoid issues before data is fetched:
+
+js
+Copy code
+const [zones, setZones] = useState([]);
+2. Inspect API Response
+Make sure that the response from your API endpoint is indeed an array of zone objects. Log the response to check its structure:
+
+js
+Copy code
+const fetchZones = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/api/setup/zone/");
+    console.log(response.data); // Check the structure of response.data
+    setZones(response.data);   // Ensure this is an array
+  } catch (error) {
+    console.error("There was an error fetching the zones!", error);
+  }
+};
+3. Verify Data Structure
+Sometimes the API might return an object with a nested array or a different structure. Ensure that response.data is in the expected format. For instance, if the API response looks like this:
+
+json
+Copy code
+{
+  "zones": [
+    {"id": 1, "name": "North Zone"},
+    {"id": 2, "name": "South Zone"}
+  ]
+}
+You need to adjust your code to:
+
+js
+Copy code
+const fetchZones = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/api/setup/zone/");
+    if (Array.isArray(response.data.zones)) {
+      setZones(response.data.zones);  // Use response.data.zones if it's nested
+    } else {
+      console.error("Unexpected data format", response.data);
+    }
+  } catch (error) {
+    console.error("There was an error fetching the zones!", error);
+  }
+};
+4. Handle Undefined or Invalid Data
+Add a fallback to ensure you only call map if zones is a valid array:
+
+js
+Copy code
+{zones && Array.isArray(zones) && zones.map((zone) => (
+  <option key={zone.id} value={zone.id}>
+    {zone.name}
+  </option>
+))}
+5. Example of Fetch Function and Usage
+Here’s a complete example of how you might fetch and use zones in a React component:
+
+js
+Copy code
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const MyComponent = () => {
+  const [zones, setZones] = useState([]);
+
+  const fetchZones = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/setup/zone/");
+      if (Array.isArray(response.data)) {
+        setZones(response.data); // Set zones if response.data is an array
+      } else {
+        console.error("Unexpected data format", response.data);
+      }
+    } catch (error) {
+      console.error("There was an error fetching the zones!", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchZones();
+  }, []);
+
+  return (
+    <select>
+      {zones && Array.isArray(zones) && zones.map((zone) => (
+        <option key={zone.id} value={zone.id}>
+          {zone.name}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+export default MyComponent;
+Summary
+Initialize State: Set zones to an empty array initially.
+Inspect API Response: Verify that the API returns an array.
+Adjust Data Handling: Ensure that the response data is in the expected format.
+Conditional Rendering: Safeguard against invalid data with checks before calling map.
+By following these steps, you should be able to fix the zones.map is not a function error and handle your data correctly.
+
+
+
+#--------------------------------------
+
+
+

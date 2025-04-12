@@ -1,0 +1,39 @@
+.event-detail-container {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    max-width: 800px;
+    margin: 20px auto;
+  }
+  
+  .event-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .event-metadata {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .attendees-list {
+    margin-top: 20px;
+    font-size: 14px;
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .attendees-list li {
+    margin-bottom: 5px;
+  }
+  
+  .event-description {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #444;
+  }
+  

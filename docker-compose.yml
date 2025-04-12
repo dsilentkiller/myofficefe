@@ -1,0 +1,44 @@
+version: "3.11"
+
+services:
+  backend:
+    build: ./myoffice
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./myoffice:/app
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=myoffice
+      - DB_USER=postgres
+      - DB_PASSWORD=root
+      - DB_PORT=5432
+      - ALLOWED_HOSTS=*
+
+  frontend:
+    build: ./myofficefe
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./myofficefe:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://backend:8000
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:

@@ -1,0 +1,15 @@
+.content-wrapper {
+    margin: 20px;
+  }
+  
+  .card {
+    width: 100%;
+  }
+  
+  .row > .col-md-3 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 15px;
+  }
+  
