@@ -27,6 +27,11 @@
 .App-link {
   color: #61dafb;
 }
+/* to remove dashboard overflow */
+html, body {
+  overflow: hidden;
+}
+
 
 @keyframes App-logo-spin {
   from {
