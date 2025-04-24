@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import MeetingDelete from "./MeetingDelete";
 
 const MeetingTable = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,21 @@ const MeetingTable = () => {
 
   const [meetingToDelete, setMeetingToDelete] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+
+    return date.toLocaleString("en-US", {
+      timeZone: "Asia/Kathmandu", // Ensures correct timezone
+      year: "numeric",
+      month: "long", // "April"
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false, // Use 24-hour format
+    });
+  };
 
   useEffect(() => {
     dispatch(fetchMeetings());
@@ -56,6 +72,19 @@ const MeetingTable = () => {
     navigate("/dashboard/crm/meeting/create");
   };
 
+  const handleEdit = (meeting) => {
+    navigate(`/dashboard/crm/meeting/update/${meeting.id}/`);
+  };
+
+  const handleView = (meeting) => {
+    navigate(`/dashboard/crm/meeting/detail/${meeting.id}/`);
+  };
+  // This is the function for deleting a meeting
+  const handleDelete = (meeting) => {
+    setMeetingToDelete(meeting.id); // Store the meeting ID to delete
+    setIsDeleteModalOpen(true); // Open the delete confirmation modal
+  };
+
   // Safeguard against empty meetings array or undefined
   const formattedMeetings = meetings.map((meeting, index) => ({
     ...meeting,
@@ -65,6 +94,7 @@ const MeetingTable = () => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
+  console.log("Formatted date:", formatDateTime("2025-04-13T00:00:00+05:45"));
 
   return (
     <div className="col-md-12">
@@ -76,7 +106,12 @@ const MeetingTable = () => {
           { label: "Title", field: "title", sortable: true },
           { label: "Conclusion", field: "conclusion" },
           { label: "Follow-up By", field: "followup_by" },
-          { label: "Follow-up Due Date", field: "followup_due_date" },
+          {
+            label: "Follow-up Due Date",
+            field: "followup_due_date",
+            render: (row) => formatDateTime(row.followup_due_date),
+            width: 200,
+          },
           { label: "Remark", field: "remark" },
           { label: "Status", field: "status" },
         ]}
@@ -85,9 +120,23 @@ const MeetingTable = () => {
           { label: "Delete", icon: <Delete />, key: "delete" },
           { label: "View", icon: <Visibility />, key: "view" },
         ]}
-        onRowAction={handleRowAction}
+        onRowAction={(actionKey, rowData) =>
+          handleRowAction(actionKey, rowData)
+        }
+        onEdit={handleEdit}
+        onView={handleView}
+        onDelete={handleDelete}
         onAdd={handleAdd}
       />
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <MeetingDelete
+          id={meetingToDelete}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={handleDelete}
+        />
+      )}
 
       <Dialog
         open={isDeleteModalOpen}
