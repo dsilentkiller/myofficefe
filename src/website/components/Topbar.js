@@ -6,7 +6,7 @@ import {
   FaTwitter,
   FaLinkedin,
 } from "react-icons/fa"; // Importing social media icons
-import "../css/topbar.css"; // Import the custom CSS
+import "../css/components/topbar.css"; // Import the custom CSS
 
 const Topbar = () => {
   return (

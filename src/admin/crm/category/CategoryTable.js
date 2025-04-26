@@ -1,5 +1,3 @@
-
-
 //####################### old table start ############
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,12 +10,19 @@ import {
   // deleteError,
 } from "../../redux/slice/crm/categorySlice";
 import { Link } from "react-router-dom";
-import "../../../admin/css/Table.css"; // Ensure this includes necessary styles
+
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
 import CategoryDelete from "./CategoryDelete";
 import { toast } from "react-toastify"; // Import toast for error messages
-import "../../css/Table.css";
-import { AppBar, Toolbar, Typography, TextField, IconButton, Button } from "@mui/material";
+import "../../css/table/Table.css";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  TextField,
+  IconButton,
+  Button,
+} from "@mui/material";
 import {
   Add as AddIcon,
   Search as SearchIcon,
@@ -34,13 +39,16 @@ import {
   TableRow,
   Paper,
   TablePagination,
-
   TableSortLabel,
 } from "@mui/material";
 
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-import { Edit as EditIcon, Delete as DeleteIcon, Save as SaveIcon } from '@mui/icons-material';
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Save as SaveIcon,
+} from "@mui/icons-material";
 
 // import jsPDF from "jspdf";
 // import autoTable from "jspdf-autotable"; // Import the autoTable plugin
@@ -64,7 +72,6 @@ const CategoryTable = () => {
     // error,
     deleteError,
   } = useSelector((state) => state.categories || {});
-
 
   //--- handle searchitem in a table ----
   const handleSearchChange = (e) => {
@@ -149,48 +156,56 @@ const CategoryTable = () => {
           <div className="card">
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
               <div className="container-fluid">
-                 {/* Navbar Title */}
-                      <Typography variant="h6" style={{textAlign: 'left', fontWeight: 'bold', flexGrow: 1 }}>
-                        Category List
-                      </Typography>
+                {/* Navbar Title */}
+                <Typography
+                  variant="h6"
+                  style={{ textAlign: "left", fontWeight: "bold", flexGrow: 1 }}
+                >
+                  Category List
+                </Typography>
                 <div className="navbar-nav ml-auto">
-                 {/* Add Category Button */}
-                            <Link to="create" style={{ textDecoration: 'none' }}>
-                              <Button
-                                variant="contained"
-                                color="primary"
-                                startIcon={<AddIcon />}
-                                style={{ marginRight: '16px' }}
-                              >
-                                Add Category
-                              </Button>
-                            </Link>
-                              <form
-                                onSubmit={(e) => {
-                                  e.preventDefault();
-                                  setSearchTerm(e.target.q.value);
-                                }}
-                                className="form-inline ml-3"
-                              >
-                                  {/* Search Bar */}
-                            <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
-                              <TextField
-                                variant="outlined"
-                                size="small"
-                                placeholder="Search..."
-                                value={searchTerm}
-                                onChange={handleSearchChange}
-                                InputProps={{
-                                  endAdornment: (
-                                    <IconButton>
-                                      <SearchIcon />
-                                    </IconButton>
-                                  ),
-                                }}
-                                sx={{ width: 250 }}
-                              />
-                            </div>
-
+                  {/* Add Category Button */}
+                  <Link to="create" style={{ textDecoration: "none" }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<AddIcon />}
+                      style={{ marginRight: "16px" }}
+                    >
+                      Add Category
+                    </Button>
+                  </Link>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      setSearchTerm(e.target.q.value);
+                    }}
+                    className="form-inline ml-3"
+                  >
+                    {/* Search Bar */}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginRight: 20,
+                      }}
+                    >
+                      <TextField
+                        variant="outlined"
+                        size="small"
+                        placeholder="Search..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        InputProps={{
+                          endAdornment: (
+                            <IconButton>
+                              <SearchIcon />
+                            </IconButton>
+                          ),
+                        }}
+                        sx={{ width: 250 }}
+                      />
+                    </div>
                   </form>
                 </div>
               </div>
@@ -219,43 +234,47 @@ const CategoryTable = () => {
                           ) : (
                             formatName(category.category_name || "") // Default to empty string if name is null
                           )}
+                        </td>
+                        <td>
+                          {/* Edit or Save Button */}
+                          {editId === category.id ? (
+                            <Button
+                              onClick={handleUpdate}
+                              variant="contained"
+                              color="success"
+                              startIcon={<SaveIcon />}
+                              size="small"
+                              style={{ marginRight: 8 }}
+                            >
+                              Save
+                            </Button>
+                          ) : (
+                            <IconButton
+                              onClick={() =>
+                                handleEdit(
+                                  category.id,
+                                  category.category_name || ""
+                                )
+                              }
+                              color="primary"
+                              size="small"
+                              aria-label="edit"
+                              style={{ marginRight: 8 }}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          )}
 
-                                  </td>
-                                  <td>
-                                {/* Edit or Save Button */}
-                                {editId === category.id ? (
-                                  <Button
-                                    onClick={handleUpdate}
-                                    variant="contained"
-                                    color="success"
-                                    startIcon={<SaveIcon />}
-                                    size="small"
-                                    style={{ marginRight: 8 }}
-                                  >
-                                    Save
-                                  </Button>
-                                ) : (
-                                  <IconButton
-                                    onClick={() => handleEdit(category.id, category.category_name || "")}
-                                    color="primary"
-                                    size="small"
-                                    aria-label="edit"
-                                    style={{ marginRight: 8 }}
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                )}
-
-                                {/* Delete Button */}
-                                <IconButton
-                                  onClick={() => handleDelete(category.id)}
-                                  color="error"
-                                  size="small"
-                                  aria-label="delete"
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                            </td>
+                          {/* Delete Button */}
+                          <IconButton
+                            onClick={() => handleDelete(category.id)}
+                            color="error"
+                            size="small"
+                            aria-label="delete"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </td>
                       </tr>
                     ) : null
                   )}

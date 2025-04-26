@@ -6,8 +6,9 @@ import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { createEvent } from "../../redux/slice/crm/eventSlice"; // Adjust path as needed
 import "../../css/eventForm.css";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import PhoneInput from "react-phone-input-2";
 
 const EventForm = ({ handleClose, show }) => {

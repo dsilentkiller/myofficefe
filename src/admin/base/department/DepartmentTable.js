@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDepartments, updateDepartment, deleteDepartment } from "../../redux/slice/base/departmentSlice";
+import {
+  fetchDepartments,
+  updateDepartment,
+  deleteDepartment,
+} from "../../redux/slice/base/departmentSlice";
 import { Link } from "react-router-dom";
-import "../../../admin/css/Table.css";
+import "../../../admin/css/table/Table.css";
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
 import DepartmentDelete from "./DepartmentDelete";
 import { toast } from "react-toastify";
-import "../../css/Table.css";
+
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 
 // Material-UI imports
 import { Button, InputAdornment, TextField } from "@mui/material";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import SearchIcon from '@mui/icons-material/Search';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import SearchIcon from "@mui/icons-material/Search";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 
 const DepartmentTable = () => {
   const dispatch = useDispatch();
@@ -28,7 +32,11 @@ const DepartmentTable = () => {
 
   const updateStatus = useSelector((state) => state.departments.updateStatus);
   const updateError = useSelector((state) => state.departments.updateError);
-  const { list: departments, isLoading, error } = useSelector((state) => state.departments || {});
+  const {
+    list: departments,
+    isLoading,
+    error,
+  } = useSelector((state) => state.departments || {});
 
   useEffect(() => {
     dispatch(fetchDepartments());
@@ -54,7 +62,9 @@ const DepartmentTable = () => {
     if (updateStatus === "succeeded") {
       toast.success("departments updated successfully!");
     } else if (updateStatus === "failed") {
-      toast.error(`Failed to update department: ${updateError || "Unknown error"}`);
+      toast.error(
+        `Failed to update department: ${updateError || "Unknown error"}`
+      );
     }
   }, [updateStatus, updateError]);
 
@@ -80,7 +90,9 @@ const DepartmentTable = () => {
         dispatch(fetchDepartments());
       })
       .catch((error) => {
-        toast.error(`Failed to delete department: ${error.message || "Unknown error"}`);
+        toast.error(
+          `Failed to delete department: ${error.message || "Unknown error"}`
+        );
       });
   };
 
@@ -132,10 +144,15 @@ const DepartmentTable = () => {
                 <div className="navbar-nav ml-auto">
                   {/* Add Department Button */}
 
-                    <Button variant="contained"  component={Link} to ="create" color="primary" startIcon={<AddCircleOutlineIcon />}>
-                      Add Department
-                    </Button>
-
+                  <Button
+                    variant="contained"
+                    component={Link}
+                    to="create"
+                    color="primary"
+                    startIcon={<AddCircleOutlineIcon />}
+                  >
+                    Add Department
+                  </Button>
 
                   {/* Search Bar */}
                   <form
@@ -196,17 +213,17 @@ const DepartmentTable = () => {
                       <Button
                         variant="contained"
                         sx={{
-                          marginBottom: '8px',
+                          marginBottom: "8px",
                           marginLeft: 1,
                           marginRight: 1,
-                          backgroundColor: '#3f51b5',
-                          color: 'white',
-                          '&:hover': {
-                            backgroundColor: '#303f9f',
+                          backgroundColor: "#3f51b5",
+                          color: "white",
+                          "&:hover": {
+                            backgroundColor: "#303f9f",
                           },
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                       >
                         <FileUploadIcon sx={{ marginRight: 1 }} />
@@ -215,7 +232,9 @@ const DepartmentTable = () => {
                           type="file"
                           accept=".xlsx, .xls"
                           hidden
-                          onChange={(e) => { /* Handle Excel import logic here */ }}
+                          onChange={(e) => {
+                            /* Handle Excel import logic here */
+                          }}
                         />
                       </Button>
                     </li>
@@ -258,7 +277,9 @@ const DepartmentTable = () => {
                                         <input
                                           type="text"
                                           value={newName}
-                                          onChange={(e) => setNewName(e.target.value)}
+                                          onChange={(e) =>
+                                            setNewName(e.target.value)
+                                          }
                                         />
                                       ) : (
                                         formatName(department.name || "")
@@ -266,12 +287,20 @@ const DepartmentTable = () => {
                                     </td>
                                     <td>
                                       {editId === department.id ? (
-                                        <button onClick={handleUpdate} className="btn btn-success">
+                                        <button
+                                          onClick={handleUpdate}
+                                          className="btn btn-success"
+                                        >
                                           Save
                                         </button>
                                       ) : (
                                         <button
-                                          onClick={() => handleEdit(department.id, department.name || "")}
+                                          onClick={() =>
+                                            handleEdit(
+                                              department.id,
+                                              department.name || ""
+                                            )
+                                          }
                                           className="btn btn-primary"
                                         >
                                           <FaEdit />
@@ -279,7 +308,9 @@ const DepartmentTable = () => {
                                       )}
                                       <span> </span>
                                       <button
-                                        onClick={() => handleDelete(department.id)}
+                                        onClick={() =>
+                                          handleDelete(department.id)
+                                        }
                                         className="btn btn-danger"
                                       >
                                         <FaTrash />
@@ -313,7 +344,6 @@ const DepartmentTable = () => {
 };
 
 export default DepartmentTable;
-
 
 // import React, { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";

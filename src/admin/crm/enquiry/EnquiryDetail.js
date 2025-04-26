@@ -6,6 +6,7 @@ import {
   convertToCustomer,
   updateEnquiryStatus,
 } from "../../redux/slice/crm/enquirySlice";
+import { fetchMeetings } from "../../redux/slice/crm/meetingSlice";
 import {
   FollowupByEnquiryId,
   fetchFollows,
@@ -41,6 +42,10 @@ const EnquiryDetail = () => {
   const filteredFollows = follows.filter(
     (follow) => Number(follow.enquiry_id) === Number(enquiryId)
   );
+  // for meetingS
+
+  const { meetings = [] } = useSelector((state) => state.meetings || {});
+  console.log("data fetched here 1:...", meetings);
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
@@ -53,6 +58,10 @@ const EnquiryDetail = () => {
       dispatch(FollowupByEnquiryId(enquiryId)); // Fetch follow-ups for this enquiry
     }
   }, [enquiryId, dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchMeetings());
+  }, [dispatch]);
 
   if (loading) {
     return <div>Loading...</div>;

@@ -26,7 +26,7 @@ import DistrictTable from "./admin/base/district/DistrictTable";
 import DistrictForm from "./admin/base/district/Form";
 import UpdateProvince from "./admin/base/province/UpdateProvince";
 // import DeleteProvince from "./admin/base/province/DeleteProvince";
-import MunicipalityList from "./admin/base/municipality/List";
+import MunicipalityTable from "./admin/base/municipality/List";
 import DeleteMunicipality from "./admin/base/municipality/DeleteMunicipality";
 import UpdateMunicipality from "./admin/base/municipality/Update";
 import MunicipalityForm from "./admin/base/municipality/Form";
@@ -71,8 +71,11 @@ import CustomerDetail from "./admin/client/customer/CustomerDetail";
 import UpdateEnquiryForm from "./admin/crm/enquiry/UpdateEnquiryForm";
 
 import PrivateRoute from "./admin/accounts/PrivateRoute"; // Adjust the path if needed
-import MeetingUpdateTable from "./admin/crm/meetingupdate/MeetingUpdateTable";
-import MeetingUpdateForm from "./admin/crm/meetingupdate/MeetingForm";
+import MeetingTable from "./admin/crm/meetingupdate/MeetingTable";
+import MeetingForm from "./admin/crm/meetingupdate/MeetingForm";
+import MeetingUpdateForm from "./admin/crm/meetingupdate/MeetingUpdateForm";
+import MeetingDetail from "./admin/crm/meetingupdate/MeetingDetail";
+
 import LostEnquiryTable from "./admin/crm/enquiry/LostEnquiryTable";
 import LoginForm from "./admin/accounts/LoginForm";
 import QuotationForm from "./admin/crm/quotation/QuotationForm";
@@ -90,11 +93,11 @@ import ProposalTable from "./admin/crm/proposal/ProposalTable";
 import ProposalDetail from "./admin/crm/proposal/ProposalDetail";
 import OrganizationDetail from "./admin/base/organization/OrganizationDetail";
 import AIChat from "./admin/ai_agent/AIChat";
-import Homepage from "./website/HomePage";
-import About from "./website/About";
-import Services from "./website/Services";
-import Contact from "./website/Contact";
-import RequestDemo from "./website/RequestDemo";
+import Homepage from "./website/container/HomePage";
+import About from "./website/container/About";
+import Services from "./website/container/Services";
+import Contact from "./website/container/Contact";
+import RequestDemo from "./website/container/RequestDemo";
 function App() {
   const isAuthenticated = localStorage.getItem("access_token") !== null;
   const userRole = localStorage.getItem("user_role"); // Assuming role is stored in localStorage
@@ -160,13 +163,13 @@ function App() {
                 <Route path="event/update/:id/" element={<EventUpdate />} />
                 <Route path="event/detail/:id/" element={<EventDetail />} />
                 {/* meetingupdate */}
-                <Route path="meetings/" element={<MeetingUpdateTable />} />
-                <Route path="meeting/create" element={<MeetingUpdateForm />} />
+                <Route path="meetings/" element={<MeetingTable />} />
+                <Route path="meeting/create/" element={<MeetingForm />} />
                 <Route
-                  path="meetingupdate/:eventId"
-                  component={MeetingUpdateForm}
+                  path="meeting/update/:id/"
+                  element={<MeetingUpdateForm />}
                 />
-
+                <Route path="meeting/detail/:id/" element={<MeetingDetail />} />
                 {/* <Route path="meetingupdate/create/:eventId" element={<MeetingUpdateForm/>} /> */}
 
                 {/* dashboard/crm/attendees */}
@@ -307,7 +310,7 @@ function App() {
                   path="district/delete/:id/"
                   element={<DeleteDistrict />}
                 />
-                <Route path="municipality" element={<MunicipalityList />} />
+                <Route path="municipality" element={<MunicipalityTable />} />
                 <Route
                   path="municipality/create"
                   element={<MunicipalityForm />}

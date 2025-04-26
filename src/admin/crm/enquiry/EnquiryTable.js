@@ -1,23 +1,30 @@
 import React from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import "../../css/Table.css";
+import "../../css/table/enquiryTable.css";
 import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
-import {  useDispatch } from "react-redux"; // Correct import
+import { useDispatch } from "react-redux"; // Correct import
 import { Link, useNavigate } from "react-router-dom";
 import EnquiryDelete from "./EnquiryDelete";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { fetchCustomers } from "../../redux/slice/customer/customerSlice";
 import * as XLSX from "xlsx";
-import { AppBar, Toolbar, Typography, TextField, IconButton, Button } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  TextField,
+  IconButton,
+  Button,
+} from "@mui/material";
 import {
   Add as AddIcon,
   Search as SearchIcon,
   PictureAsPdf as PdfIcon,
   TableChart as TableIcon,
   FileDownload as ExcelIcon,
-  CheckCircle as CheckCircleIcon
+  CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
 import {
   Table,
@@ -34,9 +41,9 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { toast } from "react-toastify";
-import {convertToCustomer } from "../../redux/slice/crm/enquirySlice"
+import { convertToCustomer } from "../../redux/slice/crm/enquirySlice";
 
 const EnquiryTable = () => {
   const [enquiries, setEnquiries] = useState([]);
@@ -57,13 +64,12 @@ const EnquiryTable = () => {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("name");
   const [selected, setSelected] = useState([]);
- const [page, setPage] = useState(0);
- const [rowsPerPage, setRowsPerPage] = useState(10);
- const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
- const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [message, setMessage] = useState('');
-  const [customers, setCustomers] = useState([]);  // State for customer list
-
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [message, setMessage] = useState("");
+  const [customers, setCustomers] = useState([]); // State for customer list
 
   const handleConvertToCustomer = async (enquiryId) => {
     const resultAction = await dispatch(convertToCustomer(enquiryId));
@@ -71,52 +77,52 @@ const EnquiryTable = () => {
       setMessage("Enquiry successfully converted to customer!");
       setOpenSnackbar(true);
     } else {
-      setMessage(resultAction.payload || "Error converting enquiry to customer.");
+      setMessage(
+        resultAction.payload || "Error converting enquiry to customer."
+      );
       setOpenSnackbar(true);
     }
   };
-
 
   // Handle snackbar close
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };
 
- //########### importing excel file #############
- const importExcel = (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
+  //########### importing excel file #############
+  const importExcel = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const data = new Uint8Array(e.target.result);
-    const workbook = XLSX.read(data, { type: "array" });
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    const parsedData = XLSX.utils.sheet_to_json(sheet);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const parsedData = XLSX.utils.sheet_to_json(sheet);
 
-    const formattedRows = parsedData.map((row, index) => ({
-      id: index + 1,
-      name: row.Name || "Unknown",
-      dueDate: row.DueDate || "2024-12-31",
-      status: row.Status || "Pending",
-    }));
-    setEnquiries((prevRows) => [...prevRows, ...formattedRows]);
+      const formattedRows = parsedData.map((row, index) => ({
+        id: index + 1,
+        name: row.Name || "Unknown",
+        dueDate: row.DueDate || "2024-12-31",
+        status: row.Status || "Pending",
+      }));
+      setEnquiries((prevRows) => [...prevRows, ...formattedRows]);
+    };
+    reader.readAsArrayBuffer(file);
   };
-  reader.readAsArrayBuffer(file);
-};
-const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    importExcel(event);
-    toast.success("Excel file imported successfully!");
-  } else {
-    toast.error("Please select a valid Excel file!");
-  }
-};
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      importExcel(event);
+      toast.success("Excel file imported successfully!");
+    } else {
+      toast.error("Please select a valid Excel file!");
+    }
+  };
 
-//################ fech enquiries############################################
-
+  //################ fech enquiries############################################
 
   useEffect(() => {
     //fetching data
@@ -147,17 +153,19 @@ const handleFileChange = (event) => {
 
     if (searchTerm) {
       setFilteredEnquiries(
-        enquiries.filter((enquiry) =>
-          enquiry.enquiry_name && typeof enquiry.enquiry_name === 'string' &&
-          enquiry.enquiry_name.toLowerCase().includes(searchTerm.toLowerCase())
+        enquiries.filter(
+          (enquiry) =>
+            enquiry.enquiry_name &&
+            typeof enquiry.enquiry_name === "string" &&
+            enquiry.enquiry_name
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())
         )
       );
     } else {
       setFilteredEnquiries(enquiries);
     }
-
-  })
-
+  });
 
   useEffect(() => {
     dispatch(fetchEnquiries()); // Fetch enquiries using the dispatched action
@@ -191,8 +199,8 @@ const handleFileChange = (event) => {
 
     return tomorrow.getTime() === nextFollowUp.getTime();
   };
-//################# pagination handle#############
-const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
+  //################# pagination handle#############
+  const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
 
   const handlePageChange = (event, newPage) => {
     setCurrentPage(newPage + 1);
@@ -230,20 +238,17 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
     return <div>Error loading enquiries: {error.message}</div>;
   }
 
-//############# sorting by customer name##############
+  //############# sorting by customer name##############
   const handleSortRequest = (property) => {
     const isAscending = orderBy === property && order === "asc";
     setOrder(isAscending ? "desc" : "asc");
     setOrderBy(property);
   };
 
-
   //###############  handle searchitem in a table ----
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
-
-
 
   //##############converting first letter  capital
   const formatName = (name) => {
@@ -253,29 +258,29 @@ const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   };
-// ### handle sort
-const handleSort = (key) => {
-  const direction =
-    sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
+  // ### handle sort
+  const handleSort = (key) => {
+    const direction =
+      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
 
-  const sortedRows = [...enquiries].sort((a, b) => {
-    if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
-    if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
-    return 0;
-  });
+    const sortedRows = [...enquiries].sort((a, b) => {
+      if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
+      if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
 
-  setSortConfig({ key, direction });
-  setEnquiries(sortedRows);
-};
-//################ handle hilighted row with due  date near or pass
-const isHighlighted = (dueDate) => {
-  const today = new Date();
-  const targetDate = new Date(dueDate);
-  const timeDifference = targetDate - today;
-  const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    setSortConfig({ key, direction });
+    setEnquiries(sortedRows);
+  };
+  //################ handle hilighted row with due  date near or pass
+  const isHighlighted = (dueDate) => {
+    const today = new Date();
+    const targetDate = new Date(dueDate);
+    const timeDifference = targetDate - today;
+    const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
 
-  return daysDifference >= -7 && daysDifference <= 1;
-};
+    return daysDifference >= -7 && daysDifference <= 1;
+  };
 
   // export to excel;
   if (error) return <div>Error: {error}</div>;
@@ -312,7 +317,7 @@ const isHighlighted = (dueDate) => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Designations");
     XLSX.writeFile(workbook, "enquiries.xlsx");
   };
-//export to pdf
+  //export to pdf
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.text("enquiries List", 20, 10);
@@ -356,14 +361,22 @@ const isHighlighted = (dueDate) => {
           {/* heading */}
           <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
+              {/* Enquiry Table Title */}
+              <Typography
+                left
+                variant="h6"
+                sx={{
+                  textAlign: "left",
+                  fontWeight: "bold",
+                  color: "#333",
+                  flexGrow: 1,
+                }}
+              >
+                Enquiry Table
+              </Typography>
 
-               {/* Enquiry Table Title */}
-                <Typography left variant="h6" sx={{ textAlign: 'left', fontWeight: 'bold', color: '#333', flexGrow: 1 }}>
-                  Enquiry Table
-                </Typography>
-
-                <div className="navbar-nav ml-auto">
-                        <Button
+              <div className="navbar-nav ml-auto">
+                <Button
                   variant="contained"
                   color="primary"
                   startIcon={<AddIcon />}
@@ -374,124 +387,187 @@ const isHighlighted = (dueDate) => {
                   Add Enquiry
                 </Button>
 
-                      {/* Search Bar */}
-        <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
-          <TextField
-            variant="outlined"
-            size="small"
-             label="Search Enquiries..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            InputProps={{
-              endAdornment: (
-                <IconButton>
-                  <SearchIcon />
-                </IconButton>
-              ),
-            }}
-            sx={{ width: 250 }}
-          />
-        </div>
+                {/* Search Bar */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginRight: 20,
+                  }}
+                >
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    label="Search Enquiries..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    InputProps={{
+                      endAdornment: (
+                        <IconButton>
+                          <SearchIcon />
+                        </IconButton>
+                      ),
+                    }}
+                    sx={{ width: 250 }}
+                  />
+                </div>
 
-        {/* Export Buttons */}
-        <Button
-          variant="outlined"
-          color="info"
-          startIcon={<ExcelIcon />}
-          onClick={exportToExcel}
-          sx={{ marginRight: 1 }}
-        >
-          Export Excel
-        </Button>
-        <Button
-          variant="outlined"
-          color="error"
-          startIcon={<PdfIcon />}
-          onClick={exportToPDF}
-        >
-          Export PDF
-        </Button>
-            <Button
-                variant="contained"  // You can also use "outlined" if you prefer
-                // component="label"
-                sx={{
-                  marginBottom: '8px',
-                  marginLeft:1,
-                  marginRight: 1,
-                  backgroundColor: '#3f51b5',  // Your custom color
-                  color: 'white',  // Text color
-                  '&:hover': {
-                    backgroundColor: '#303f9f',  // Darker shade on hover
-                  },
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <UploadFileIcon sx={{ marginRight: 1 }} />
-                Import Excel
-                <input
-                  type="file"
-                  accept=".xlsx, .xls"
-                  hidden
-                  onChange={handleFileChange}  // Call the function to handle file import
-                />
-              </Button>
+                {/* Export Buttons */}
+                <Button
+                  variant="outlined"
+                  color="info"
+                  startIcon={<ExcelIcon />}
+                  onClick={exportToExcel}
+                  sx={{ marginRight: 1 }}
+                >
+                  Export Excel
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  startIcon={<PdfIcon />}
+                  onClick={exportToPDF}
+                >
+                  Export PDF
+                </Button>
+                <Button
+                  variant="contained" // You can also use "outlined" if you prefer
+                  // component="label"
+                  sx={{
+                    marginBottom: "8px",
+                    marginLeft: 1,
+                    marginRight: 1,
+                    backgroundColor: "#3f51b5", // Your custom color
+                    color: "white", // Text color
+                    "&:hover": {
+                      backgroundColor: "#303f9f", // Darker shade on hover
+                    },
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <UploadFileIcon sx={{ marginRight: 1 }} />
+                  Import Excel
+                  <input
+                    type="file"
+                    accept=".xlsx, .xls"
+                    hidden
+                    onChange={handleFileChange} // Call the function to handle file import
+                  />
+                </Button>
               </div>
-
-        </div>
+            </div>
           </nav>
           {/* heading end */}
           <div className="card-body">
             <div className="table-container">
               <table className="table table-bordered">
-                 {/* Snackbar for Toast Notification */}
+                {/* Snackbar for Toast Notification */}
                 <Snackbar
                   open={openSnackbar}
                   autoHideDuration={6000}
                   onClose={handleCloseSnackbar}
                   message={message}
-                  anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                 />
                 <TableHead>
-                    <TableRow>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>#</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Customer Name   <TableSortLabel
-                          active={sortConfig.key === "customer_name"}
-                          direction={sortConfig.direction}
-                          onClick={() => handleSort("customer_name")}
-                        ></TableSortLabel>
-
-                      </TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Enquiry Date</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Next Follow Up Date
+                  <TableRow>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      #
+                    </TableCell>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Customer Name{" "}
                       <TableSortLabel
-                                active={sortConfig.key === "due_date"}
-                                direction={sortConfig.direction}
-                                onClick={() => handleSort("due_date")}>
-                     </TableSortLabel>
-                      </TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Category</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Organization</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Department</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Designation</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Phone</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Email</TableCell>
-                      {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Gender</TableCell> */}
-                      {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Province</TableCell>
+                        active={sortConfig.key === "customer_name"}
+                        direction={sortConfig.direction}
+                        onClick={() => handleSort("customer_name")}
+                      ></TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Enquiry Date
+                    </TableCell>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Next Follow Up Date
+                      <TableSortLabel
+                        active={sortConfig.key === "due_date"}
+                        direction={sortConfig.direction}
+                        onClick={() => handleSort("due_date")}
+                      ></TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Category
+                    </TableCell>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Organization
+                    </TableCell>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Department
+                    </TableCell>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Designation
+                    </TableCell>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Phone
+                    </TableCell>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Email
+                    </TableCell>
+                    {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Gender</TableCell> */}
+                    {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Province</TableCell>
                       <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>District</TableCell> */}
-                      {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Municipality</TableCell> */}
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Street Address</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Budget</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Enquiry Purpose</TableCell>
-                      {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Known By</TableCell> */}
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>History</TableCell>
-                      <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Actions</TableCell>
-                    </TableRow>
+                    {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Municipality</TableCell> */}
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Street Address
+                    </TableCell>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Budget
+                    </TableCell>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Enquiry Purpose
+                    </TableCell>
+                    {/* <TableCell style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>Known By</TableCell> */}
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      History
+                    </TableCell>
+                    <TableCell
+                      style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
+                    >
+                      Actions
+                    </TableCell>
+                  </TableRow>
                 </TableHead>
 
                 <tbody>
-                {filteredEnquiries.length > 0 ? (
+                  {filteredEnquiries.length > 0 ? (
                     filteredEnquiries.map((enquiry, index) => {
                       // Check if next follow-up date is tomorrow
                       const isRedMark = isTomorrow(enquiry.next_follow_up_date);
@@ -514,7 +590,7 @@ const isHighlighted = (dueDate) => {
                             {formatDateTime(enquiry.next_follow_up_date)}
                           </td>
                           <td>{enquiry.category_name}</td>
-                              <td>{formatName(enquiry.organization_name)}</td>
+                          <td>{formatName(enquiry.organization_name)}</td>
                           <td>{formatName(enquiry.department_name)}</td>
                           <td>{formatName(enquiry.designation_name)}</td>
                           <td>{enquiry.pri_phone}</td>
@@ -538,33 +614,35 @@ const isHighlighted = (dueDate) => {
                           </td>
 
                           <TableCell>
-                          <IconButton
-                            color="primary"
-                            href={`/dashboard/crm/enquiry/update/${enquiry.id}`}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                        color="info"
-                        href={`/dashboard/crm/enquiry/detail/${enquiry.id}`}
-                      >
-                        <VisibilityIcon />
-                      </IconButton>
-                      <IconButton
-                        color="error"
-                        onClick={() => setEnquiryToDelete(enquiry.id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                      <Button
+                            <IconButton
+                              color="primary"
+                              href={`/dashboard/crm/enquiry/update/${enquiry.id}`}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              color="info"
+                              href={`/dashboard/crm/enquiry/detail/${enquiry.id}`}
+                            >
+                              <VisibilityIcon />
+                            </IconButton>
+                            <IconButton
+                              color="error"
+                              onClick={() => setEnquiryToDelete(enquiry.id)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                            <Button
                               variant="contained"
                               color="success"
                               startIcon={<CheckCircleIcon />}
-                              onClick={() => handleConvertToCustomer(enquiry.id)}
+                              onClick={() =>
+                                handleConvertToCustomer(enquiry.id)
+                              }
                             >
-                              Convert to Customer
+                              convert {/* Convert to customer*/}
                             </Button>
-                    </TableCell>
+                          </TableCell>
                         </tr>
                       );
                     })
@@ -577,9 +655,9 @@ const isHighlighted = (dueDate) => {
               </table>
             </div>
 
-           {/* Pagination */}
-           <TablePagination
-              rowsPerPageOptions={[10, 25, 50,100]}
+            {/* Pagination */}
+            <TablePagination
+              rowsPerPageOptions={[10, 25, 50, 100]}
               component="div"
               count={filteredEnquiries.length}
               rowsPerPage={itemsPerPage}
@@ -597,13 +675,11 @@ const isHighlighted = (dueDate) => {
           />
         )}
       </div>
-
     </div>
   );
 };
 
 export default EnquiryTable;
-
 
 //############ old table fine working #########################################
 // import React from "react";
@@ -672,7 +748,6 @@ export default EnquiryTable;
 //   const [message, setMessage] = useState('');
 //   const [customers, setCustomers] = useState([]);  // State for customer list
 
-
 //   // Simulate the conversion logic (you can replace this with an actual API call)
 //   const handleConvertToCustomer = (enquiryId) => {
 //     // Find the enquiry by ID
@@ -739,7 +814,6 @@ export default EnquiryTable;
 
 // //################ fech enquiries############################################
 
-
 //   useEffect(() => {
 //     //fetching data
 //     const fetchEnquiries = async () => {
@@ -776,8 +850,6 @@ export default EnquiryTable;
 //       setFilteredEnquiries(enquiries);
 //     }
 //   }, [currentPage, itemsPerPage, searchTerm, enquiries]);
-
-
 
 //   useEffect(() => {
 //     dispatch(fetchEnquiries()); // Fetch enquiries using the dispatched action
@@ -856,7 +928,6 @@ export default EnquiryTable;
 //     setOrder(isAscending ? "desc" : "asc");
 //     setOrderBy(property);
 //   };
-
 
 //   //###############  handle searchitem in a table ----
 //   const handleSearchChange = (e) => {

@@ -1,32 +1,55 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMeetings, deleteMeeting } from "../../redux/slice/crm/meetingSlice";
+import {
+  fetchMeetings,
+  deleteMeeting,
+} from "../../redux/slice/crm/meetingSlice";
 import GeneralTable from "../../hrm/GeneralTable";
 import { Edit, Delete, Visibility } from "@mui/icons-material";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from "@mui/material";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+} from "@mui/material";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import MeetingDelete from "./MeetingDelete";
 
-const MeetingTable = ({ eventId }) => {
+const MeetingTable = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Get the meetings from the Redux state with safe default for `meetings`
-  const { meetings = [], isLoading, error } = useSelector((state) => state.meetings);
-  console.log("meetings:", meetings);
+  const {
+    meetings = [],
+    isLoading,
+    error,
+  } = useSelector((state) => state.meetings || {});
+  console.log("data fetched here :...", meetings);
 
   const [meetingToDelete, setMeetingToDelete] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+
+    return date.toLocaleString("en-US", {
+      timeZone: "Asia/Kathmandu", // Ensures correct timezone
+      year: "numeric",
+      month: "long", // "April"
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false, // Use 24-hour format
+    });
+  };
 
   useEffect(() => {
-    if (eventId) {
-      dispatch(fetchMeetings(eventId));
-    }
-  }, [dispatch, eventId]);
-
-  const handleDelete = (meetingId) => {
-    dispatch(deleteMeeting({ eventId, meetingId }));
-  };
+    dispatch(fetchMeetings());
+  }, [dispatch]);
 
   const handleRowAction = (actionKey, rowData) => {
     if (actionKey === "edit") {
@@ -46,7 +69,20 @@ const MeetingTable = ({ eventId }) => {
   };
 
   const handleAdd = () => {
-    navigate('/dashboard/crm/meeting/create');
+    navigate("/dashboard/crm/meeting/create");
+  };
+
+  const handleEdit = (meeting) => {
+    navigate(`/dashboard/crm/meeting/update/${meeting.id}/`);
+  };
+
+  const handleView = (meeting) => {
+    navigate(`/dashboard/crm/meeting/detail/${meeting.id}/`);
+  };
+  // This is the function for deleting a meeting
+  const handleDelete = (meeting) => {
+    setMeetingToDelete(meeting.id); // Store the meeting ID to delete
+    setIsDeleteModalOpen(true); // Open the delete confirmation modal
   };
 
   // Safeguard against empty meetings array or undefined
@@ -58,10 +94,7 @@ const MeetingTable = ({ eventId }) => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-
-  if (meetings.length === 0) {
-    return <div>No meeting updates available for this event.</div>;
-  }
+  console.log("Formatted date:", formatDateTime("2025-04-13T00:00:00+05:45"));
 
   return (
     <div className="col-md-12">
@@ -73,7 +106,12 @@ const MeetingTable = ({ eventId }) => {
           { label: "Title", field: "title", sortable: true },
           { label: "Conclusion", field: "conclusion" },
           { label: "Follow-up By", field: "followup_by" },
-          { label: "Follow-up Due Date", field: "followup_due_date" },
+          {
+            label: "Follow-up Due Date",
+            field: "followup_due_date",
+            render: (row) => formatDateTime(row.followup_due_date),
+            width: 200,
+          },
           { label: "Remark", field: "remark" },
           { label: "Status", field: "status" },
         ]}
@@ -82,11 +120,28 @@ const MeetingTable = ({ eventId }) => {
           { label: "Delete", icon: <Delete />, key: "delete" },
           { label: "View", icon: <Visibility />, key: "view" },
         ]}
-        onRowAction={handleRowAction}
+        onRowAction={(actionKey, rowData) =>
+          handleRowAction(actionKey, rowData)
+        }
+        onEdit={handleEdit}
+        onView={handleView}
+        onDelete={handleDelete}
         onAdd={handleAdd}
       />
 
-      <Dialog open={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)}>
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <MeetingDelete
+          id={meetingToDelete}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={handleDelete}
+        />
+      )}
+
+      <Dialog
+        open={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+      >
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -108,7 +163,6 @@ const MeetingTable = ({ eventId }) => {
 
 export default MeetingTable;
 
-
 // import React, { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // // import { fetchMeetings, deleteMeeting} from "../../redux/slice/crm/meetingUpdateSlice";
@@ -122,7 +176,7 @@ export default MeetingTable;
 // import { FaTrash, FaEdit } from "react-icons/fa";
 // // import { fetchMeetings} from "../../redux/slice/crm/meetingSlice";
 
-// const MeetingTable = ({ eventId }) => {
+// const MeetingTable = ({  }) => {
 //   const dispatch = useDispatch();
 //   const navigate = useNavigate();
 
@@ -134,15 +188,15 @@ export default MeetingTable;
 //   const [meetingToDelete, setMeetingToDelete] = useState(null);
 //   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-//   // Dispatch fetch action when eventId changes
+//   // Dispatch fetch action when  changes
 //   // const { meetings, isLoading, error } = useSelector((state) => state.meetings);
 
 //   useEffect(() => {
-//     dispatch(fetchMeetings(eventId));
-//   }, [dispatch, eventId]);
+//     dispatch(fetchMeetings());
+//   }, [dispatch, ]);
 
 //   const handleDelete = (meetingId) => {
-//     dispatch(deleteMeeting({ eventId, meetingId }));
+//     dispatch(deleteMeeting({ , meetingId }));
 //   };
 
 //   const handleRowAction = (actionKey, rowData) => {
@@ -176,7 +230,6 @@ export default MeetingTable;
 //   //   return <div>Loading...</div>;
 //   // }
 //   return (
-
 
 //   // Show message if there are no meeting updates
 //   // if (meetings.length === 0) {

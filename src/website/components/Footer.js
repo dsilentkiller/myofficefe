@@ -10,7 +10,7 @@ import {
   FaMapMarkerAlt,
 } from "react-icons/fa"; // Import icons from react-icons/fa
 import { Container, Row, Col, Nav } from "react-bootstrap";
-import "../css/footer.css"; // Assuming your footer styles are defined here
+import "../css/components/footer.css"; // Assuming your footer styles are defined here
 
 const Footer = () => {
   return (

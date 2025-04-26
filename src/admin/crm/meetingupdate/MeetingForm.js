@@ -1,22 +1,23 @@
-
 //latest form for meetingupdate in crmheader
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { useNavigate, useParams } from "react-router-dom";
-import { createMeetingUpdate, fetchMeetingUpdate } from "../../redux/slice/crm/meetingUpdateSlice";
+import {
+  createMeeting,
+  fetchMeetings,
+} from "../../redux/slice/crm/meetingSlice";
 import { TextField } from "@mui/material";
 
 const MeetingForm = () => {
   const { eventId } = useParams(); // Fetch eventId from URL params
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-
-  // Log the eventId to check if it's being correctly fetched
-  // useEffect(() => {
-  //   console.log("Fetched eventId:", eventId);  // Check if eventId is available
-  // }, [eventId]);
+  useEffect(() => {
+    dispatch(fetchMeetings());
+  }, [dispatch]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -27,15 +28,7 @@ const MeetingForm = () => {
     status: "",
   });
 
-  const meetingupdates = useSelector((state) => state.meetingupdates.list || []);
-
-  useEffect(() => {
-    if (eventId) {
-      dispatch(fetchMeetingUpdate(eventId)); // Fetch meeting updates based on eventId
-    } else {
-      console.error("eventId is missing or undefined.");
-    }
-  }, [dispatch, eventId]);
+  const meetings = useSelector((state) => state.meetings?.list || []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -44,16 +37,22 @@ const MeetingForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-
     // Validate form fields
-    if (!formData.title || !formData.conclusion || !formData.followup_by || !formData.status) {
+    if (
+      !formData.title ||
+      !formData.conclusion ||
+      !formData.followup_by ||
+      !formData.status
+    ) {
       toast.error("Please fill out all required fields.");
       return;
     }
 
     // Check if the title already exists
-    const existingMeetingUpdate = meetingupdates.some(
-      (update) => update.title && update.title.toLowerCase() === formData.title.toLowerCase()
+    const existingMeetingUpdate = meetings.some(
+      (update) =>
+        update.title &&
+        update.title.toLowerCase() === formData.title.toLowerCase()
     );
 
     if (existingMeetingUpdate) {
@@ -63,7 +62,9 @@ const MeetingForm = () => {
 
     try {
       // Include eventId in the payload
-      const result = await dispatch(createMeetingUpdate({ eventId, formData })).unwrap();
+      const result = await dispatch(
+        createMeeting({ eventId, formData })
+      ).unwrap();
       toast.success("Meeting update created successfully!");
 
       // Reset form fields after submission
@@ -191,7 +192,9 @@ const MeetingForm = () => {
                   </button>
                   <button
                     className="btn btn-secondary"
-                    onClick={() => navigate(`/dashboard/crm/enquiry/detail/${eventId}/`)}
+                    onClick={() =>
+                      navigate(`/dashboard/crm/enquiry/detail/${eventId}/`)
+                    }
                   >
                     Back
                   </button>
@@ -206,12 +209,6 @@ const MeetingForm = () => {
 };
 
 export default MeetingForm;
-
-
-
-
-
-
 
 // import React, { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
@@ -503,7 +500,6 @@ export default MeetingForm;
 
 // export default MeetingForm;
 
-
 //form isnot submitted to db
 // import React, { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
@@ -593,8 +589,6 @@ export default MeetingForm;
 //     }
 
 //   };
-
-
 
 //   return (
 //     <div className="content-wrapper">
@@ -703,7 +697,6 @@ export default MeetingForm;
 //                     Save
 //                   </button>
 
-
 //                 <button
 //                 className="btn btn-secondary"
 //                 onClick={() => navigate(`/dashboard/crm/enquiry/detail/${eventId}/`)}
@@ -744,7 +737,7 @@ export default MeetingForm;
 //     // status:"2nd Meeting need","3rd Meeting need","4th Meeting Need","5th meeting need","Converted to Work","Mark as Lost"
 //   });
 //   const dispatch = useDispatch();
-  // const navigate = useNavigate();
+// const navigate = useNavigate();
 //   // const createStatus = useSelector(
 //   //   (state) => state.meetingupdates.createStatus
 //   // );
@@ -756,8 +749,6 @@ export default MeetingForm;
 //   useEffect(() => {
 //     dispatch(fetchMeetingUpdate()); // Ensure meetingupdates are fetched on component mount
 //   }, [dispatch]);
-
-
 
 //   const handleChange = (e) => {
 //     setFormData({ ...formData, [e.target.name]: e.target.value });

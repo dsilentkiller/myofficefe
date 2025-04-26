@@ -7,7 +7,7 @@ import CategoryIcon from "@mui/icons-material/Category"; // Icon for Category
 import EventIcon from "@mui/icons-material/Event"; // Icon for Event
 import AssignmentIcon from "@mui/icons-material/Assignment"; // Icon for Enquiry
 import FollowTheSignsIcon from "@mui/icons-material/FollowTheSigns"; // Icon for Followup
-
+import "../../css/navbar.css"
 const CrmHeader = () => {
   return (
     <div>
@@ -170,3 +170,4 @@ const CrmHeader = () => {
 };
 
 export default CrmHeader;
+

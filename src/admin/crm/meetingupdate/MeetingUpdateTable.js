@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMeetingUpdate, deleteMeetingUpdate } from "../../redux/slice/crm/meetingUpdateSlice";
+import {
+  fetchMeetingUpdate,
+  deleteMeetingUpdate,
+} from "../../redux/slice/crm/meetingUpdateSlice";
 import GeneralTable from "../../hrm/GeneralTable";
 import { Edit, Delete, Visibility } from "@mui/icons-material";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from "@mui/material";
-import { toast } from "react-toastify";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+} from "@mui/material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { FaTrash, FaEdit } from "react-icons/fa";
@@ -14,8 +26,10 @@ const MeetingUpdateTable = ({ eventId }) => {
   const navigate = useNavigate();
 
   // Get the state from Redux
-  const { list: meetingupdates, loading } = useSelector((state) => state.meetingupdates);
-  console.log('meeting----',meetingupdates)
+  const { list: meetingupdates, loading } = useSelector(
+    (state) => state.meetingupdates
+  );
+  console.log("meeting----", meetingupdates);
 
   const [meetingUpdateToDelete, setMeetingUpdateToDelete] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -45,25 +59,25 @@ const MeetingUpdateTable = ({ eventId }) => {
   };
 
   const handleAdd = () => {
-    navigate('/dashboard/crm/meetingupdate/create');
+    navigate("/dashboard/crm/meetingupdate/create");
   };
 
-  const formattedMettingUpdates = meetingupdates.map((meetingupdate, index) => ({
-    ...meetingupdates,
-    index: index + 1,
-  }));
+  const formattedMettingUpdates = meetingupdates.map(
+    (meetingupdate, index) => ({
+      ...meetingupdates,
+      index: index + 1,
+    })
+  );
 
   // Show loading message if data is still being fetched
   // if (loading) {
   //   return <div>Loading...</div>;
   // }
   return (
-
-
-  // Show message if there are no meeting updates
-  // if (meetingupdates.length === 0) {
-  //   return <div>No meeting updates available for this event.</div>;
-  // }
+    // Show message if there are no meeting updates
+    // if (meetingupdates.length === 0) {
+    //   return <div>No meeting updates available for this event.</div>;
+    // }
     <div className="col-md-12">
       <GeneralTable
         title="Meeting Updates"
@@ -86,7 +100,10 @@ const MeetingUpdateTable = ({ eventId }) => {
         onAdd={handleAdd}
       />
 
-      <Dialog open={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)}>
+      <Dialog
+        open={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+      >
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -94,8 +111,12 @@ const MeetingUpdateTable = ({ eventId }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIsDeleteModalOpen(false)} color="primary">Cancel</Button>
-          <Button onClick={handleConfirmDelete} color="secondary">Confirm</Button>
+          <Button onClick={() => setIsDeleteModalOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="secondary">
+            Confirm
+          </Button>
         </DialogActions>
       </Dialog>
     </div>
@@ -103,20 +124,6 @@ const MeetingUpdateTable = ({ eventId }) => {
 };
 
 export default MeetingUpdateTable;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //second last final
 // import React, { useEffect, useState } from "react";
@@ -140,7 +147,6 @@ export default MeetingUpdateTable;
 
 //   const [meetingUpdateToDelete, setMeetingUpdateToDelete] = useState(null);
 //   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
 
 //   useEffect(() => {
 //     if (eventId) {
@@ -169,7 +175,6 @@ export default MeetingUpdateTable;
 //   };
 //   console.log("eventId in MeetingUpdateTable:", eventId);
 // console.log("Meeting updates in Redux:", meetingupdates);
-
 
 //   const handleConfirmDelete = () => {
 //     dispatch(deleteMeetingUpdate(meetingUpdateToDelete));
@@ -223,7 +228,6 @@ export default MeetingUpdateTable;
 
 // export default MeetingUpdateTable;
 
-
 // import React, { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { fetchMeetingUpdate, deleteMeetingUpdate } from "../../redux/slice/crm/meetingUpdateSlice";
@@ -243,7 +247,6 @@ export default MeetingUpdateTable;
 
 //   const [meetingUpdateToDelete, setMeetingUpdateToDelete] = useState(null);
 //   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
 
 //   // useEffect(() => {
 //   //   dispatch(fetchMeetingUpdate(id));
@@ -323,23 +326,6 @@ export default MeetingUpdateTable;
 
 // export default MeetingUpdateTable;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //####### old table ###########
 // import { Link } from "react-router-dom";
 // import * as XLSX from "xlsx";
@@ -359,7 +345,6 @@ export default MeetingUpdateTable;
 // import autoTable from "jspdf-autotable";
 // import { useNavigate } from "react-router-dom";
 // // import { MeetingUpdateTable } from '../meetingupdate/MeetingUpdateTable';
-
 
 // const MeetingUpdateTable = () => {
 //   const dispatch = useDispatch();
@@ -600,7 +585,8 @@ export default MeetingUpdateTable;
 
 // export default MeetingUpdateTable;
 
-{/* <div className="col-lg-10">
+{
+  /* <div className="col-lg-10">
 //   <div className="card">
 //     <nav className="navbar navbar-expand-lg navbar-light bg-light">
 //       <div className="container-fluid">
@@ -611,7 +597,8 @@ export default MeetingUpdateTable;
 //           </Link>
 //           <form className="form-inline ml-3">
 //             <div className="input-group">
-//               <input */}
+//               <input */
+}
 //                 type="search"
 //                 className="form-control"
 //                 placeholder="Search meetingupdate..."

@@ -29,7 +29,9 @@ import { fetchDepartments } from "../../redux/slice/base/departmentSlice";
 import { fetchDesignations } from "../../redux/slice/base/designationSlice";
 import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { useSelector, useDispatch } from "react-redux";
 const QuotationForm = ({ existingQuotation = {} }) => {
   const navigate = useNavigate();
@@ -230,17 +232,19 @@ const QuotationForm = ({ existingQuotation = {} }) => {
   // };
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     // Ensure either customer or enquiry is selected
     if (!selectedCustomerOrEnquiry) {
       toast.error(
-        `Please select a ${selectionType === "customer" ? "customer" : "enquiry"}`
+        `Please select a ${
+          selectionType === "customer" ? "customer" : "enquiry"
+        }`
       );
       return;
     }
-  
+
     const total = calculateTotal();
-  
+
     // Construct the form data
     const formData = {
       enquiry: null,
@@ -256,18 +260,20 @@ const QuotationForm = ({ existingQuotation = {} }) => {
       services: quotationType === "service" ? services : [],
       selection_type: selectionType, // Ensure this is set
     };
-  
+
     // Get selected customer or enquiry by ID
     const selectedItem =
       selectionType === "customer"
-        ? customers.find((customer) => customer.id === selectedCustomerOrEnquiry)
+        ? customers.find(
+            (customer) => customer.id === selectedCustomerOrEnquiry
+          )
         : enquiries.find((enquiry) => enquiry.id === selectedCustomerOrEnquiry);
-  
+
     if (!selectedItem) {
       toast.error(`Selected ${selectionType} not found`);
       return;
     }
-  
+
     // Add customer_name or enquiry_name to formData
     if (selectionType === "customer") {
       formData.customer = selectedItem.id; // Ensure customer_id is set
@@ -277,21 +283,23 @@ const QuotationForm = ({ existingQuotation = {} }) => {
       formData.enquiry_name =
         selectedItem.enquiry_name || selectedItem.customer_name; // Add enquiry_name to formData
     }
-  
+
     // Log formData to debug
     console.log("Form Data: ", formData);
-  
+
     // Make API request to create the quotation
     const createQuotation =
       quotationType === "product"
         ? dispatch(createProductQuotation(formData))
         : dispatch(createServiceQuotation(formData));
-  
+
     createQuotation
       .unwrap()
       .then((response) => {
         toast.success(
-          `${quotationType.charAt(0).toUpperCase() + quotationType.slice(1)} quotation created successfully!`
+          `${
+            quotationType.charAt(0).toUpperCase() + quotationType.slice(1)
+          } quotation created successfully!`
         );
         navigate(`/dashboard/crm/quotations`);
       })

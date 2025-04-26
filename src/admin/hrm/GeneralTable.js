@@ -17,24 +17,24 @@ import {
   Search,
   ArrowUpward,
   ArrowDownward,
-  ArrowForward,
-  ArrowBack,
+  // ArrowForward,
+  // ArrowBack,
   Edit,
   Delete,
   Visibility,
   FileUpload,
   FileDownload,
   Add,
-  Add as AddIcon,
-  Search as SearchIcon,
-  PictureAsPdf as PdfIcon,
-  TableChart as TableIcon,
-  FileDownload as ExcelIcon,
-  CheckCircle as CheckCircleIcon,
+  // Add as AddIcon,
+  // Search as SearchIcon,
+  // PictureAsPdf as PdfIcon,
+  // TableChart as TableIcon,
+  // FileDownload as ExcelIcon,
+  // CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
-import axios from "axios";
+// import axios from "axios";
 import { useState, useEffect } from "react";
-import "../css/Table.css";
+import "../css/table/generalTable.css";
 import { toast } from "react-toastify";
 
 import jsPDF from "jspdf";
@@ -147,7 +147,20 @@ const GeneralTable = ({
   });
 
   return (
-    <div className="content-wrapper">
+    <div
+      className="content-wrapper"
+      // style={{
+      //   border: "2px solid #ddd",
+      //   borderRadius: "4px",
+      //   // maxHeight: "650px", // adjust height as needed
+      //   // overflowY: "auto",
+      //   // overflowX: "hidden",
+      //   // border: "2px solid #ddd",
+      //   // borderRadius: "4px",
+      //   // marginBottom: 2, // to reduce gap before pagination
+      //   // }}
+      // }}
+    >
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <Typography
           left
@@ -203,13 +216,9 @@ const GeneralTable = ({
           </Box>
         </div>
       </nav>
-      <Table
-        sx={{
-          borderCollapse: "collapse",
-          border: "2px solid #ddd",
-          borderRadius: "4px",
-        }}
-      >
+      <div className="table-container" style = {{ maxHeight:600,overflow:"auto" }}>  
+
+      <Table>
         <TableHead>
           <TableRow sx={{ borderBottom: "2px solid #ddd" }}>
             <TableCell
@@ -261,12 +270,19 @@ const GeneralTable = ({
             </TableCell>
           </TableRow>
         </TableHead>
+      {/* <div className ="table-container" style={{maxHeight:600,overflow:auto}}> */}
+     
         <TableBody>
           {sortedData.length === 0 ? (
             <TableRow>
               <TableCell
                 colSpan={columns.length + 2}
-                sx={{ textAlign: "center", padding: "16px", color: "gray" }}
+                sx={{
+                  textAlign: "center",
+                  padding: "6px",
+                  color: "gray",
+                  maxHeight: "400px", // Limit height for scrolling
+                }}
               >
                 No Data Found
               </TableCell>
@@ -324,13 +340,20 @@ const GeneralTable = ({
               ))
           )}
         </TableBody>
+        {/* </div> */}
       </Table>
+
       <Box
         sx={{
+          position: "sticky",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           marginTop: 2,
+          bottom: 0,
+          backgroundColor: "#fff",
+          borderTop: "1px solid #e0e0e0",
+          zIndex: 1,
         }}
       >
         <TablePagination
@@ -342,20 +365,15 @@ const GeneralTable = ({
           onRowsPerPageChange={(e) =>
             setRowsPerPage(parseInt(e.target.value, 10))
           }
+          rowsPerPageOptions={[]}
         />
-        {/* <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Tooltip title="Scroll Right">
-                  <IconButton onClick={() => window.scrollBy(100, 0)}>
-                    <ArrowForward />
-                  </IconButton>
-                </Tooltip>
-              </Box> */}
       </Box>
+       </div> 
     </div>
   );
 };
 
-export default GeneralTable;
+export default GeneralTable
 
 // import {
 //   Table,

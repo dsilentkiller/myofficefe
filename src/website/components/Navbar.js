@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import "../css/navbar.css";
+import "../css/components/navbar.css";
 import { FaBars, FaTimes } from "react-icons/fa"; // Import icons for hamburger menu
 
 const Navbar = () => {

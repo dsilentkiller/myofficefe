@@ -58,9 +58,9 @@ const EnquiryForm = ({ enquiryId }) => {
     history: "",
     status: "",
   });
-  const createError = useSelector((state) => state.enquiries.createError);
-  const updateError = useSelector((state) => state.enquiries.updateError);
-  const enquiries = useSelector((state) => state.enquiries.list || []);
+  // const createError = useSelector((state) => state.enquiries.createError);
+  // const updateError = useSelector((state) => state.enquiries.updateError);
+  // const enquiries = useSelector((state) => state.enquiries.list || []);
   const enquiryToUpdate = useSelector(
     (state) => state.enquiries.currentEnquiry
   );

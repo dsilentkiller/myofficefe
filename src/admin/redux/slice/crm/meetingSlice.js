@@ -1,17 +1,22 @@
 // meetingSlice.js
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 // Define the initial state of the slice
 
 // Thunks to interact with the API (CRUD operations)
 
 export const fetchMeetings = createAsyncThunk(
-  'meetings/fetchMeetings',
+  "meetings/fetchMeetings",
   async (eventId, thunkAPI) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/events/${eventId}/meetings/`);
-      return response.data;
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/meeting-update/list/`
+
+        // `http://127.0.0.1:8000/api/events/${eventId}/meetings/`
+      );
+      console.log("data:", response.data);
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -19,10 +24,14 @@ export const fetchMeetings = createAsyncThunk(
 );
 
 export const createMeeting = createAsyncThunk(
-  'meetings/createMeeting',
-  async ({ eventId, meetingData }, thunkAPI) => {
+  "meetings/createMeeting",
+  async ({ eventId, formData }, thunkAPI) => {
     try {
-      const response = await axios.post(`http://127.0.0.1:8000/api/events/${eventId}/meetings/`, meetingData);
+      const response = await axios.post(
+        `http://127.0.0.1:8000/api/meeting-update/create/`,
+        // `http://127.0.0.1:8000/api/events/${eventId}/meetings/`,
+        formData
+      );
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -31,23 +40,47 @@ export const createMeeting = createAsyncThunk(
 );
 
 export const updateMeeting = createAsyncThunk(
-  'meetings/updateMeeting',
-  async ({ eventId, meetingId, meetingData }, thunkAPI) => {
+  "meetings/updateMeeting",
+  async ({ id, eventId, meetingId, formData }, thunkAPI) => {
     try {
-      const response = await axios.put(`http://127.0.0.1:8000/api/events/${eventId}/meetings/${meetingId}/`, meetingData);
-      return response.data;
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/meeting-update/update/${id}/`,
+        // `http://127.0.0.1:8000/api/events/${eventId}/meetings/${meetingId}/`,
+        formData
+      );
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
+// In your redux/slice/crm/meetingSlice.js
+
+// Async action to fetch meeting details by ID
+export const meetingDetail = createAsyncThunk(
+  "meetings/meetingDetail",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/meeting-update/detail/${id}/`
+      );
+      if (!response.ok) throw new Error("Failed to fetch meeting details");
+      return await response.json();
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 export const deleteMeeting = createAsyncThunk(
-  'meetings/deleteMeeting',
-  async ({ eventId, meetingId }, thunkAPI) => {
+  "meetings/deleteMeeting",
+  async (id, thunkAPI) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/events/${eventId}/meetings/${meetingId}/`);
-      return meetingId; // Returning meetingId so we can remove it from state
+      await axios.delete(
+        `http://127.0.0.1:8000/api/meeting-update/delete/${id}/`
+        // `http://127.0.0.1:8000/api/events/${eventId}/meetings/${meetingId}/`
+      );
+      return id; // Returning meetingId so we can remove it from state
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -56,8 +89,8 @@ export const deleteMeeting = createAsyncThunk(
 
 // Create the slice
 const meetingSlice = createSlice({
-  name: 'meetings',
-  initialState:{
+  name: "meetings",
+  initialState: {
     meeting: [],
     isLoading: false,
     error: null,
@@ -102,22 +135,33 @@ const meetingSlice = createSlice({
     });
 
     // Edit meeting
-    builder.addCase(updateMeeting.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(updateMeeting.fulfilled, (state, action) => {
-      state.isLoading = false;
-      const updatedMeetingIndex = state.meetings.findIndex(
-        (meeting) => meeting.id === action.payload.id
-      );
-      if (updatedMeetingIndex !== -1) {
-        state.meetings[updatedMeetingIndex] = action.payload;
-      }
-    });
-    builder.addCase(updateMeeting.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload;
-    });
+    builder
+      .addCase(updateMeeting.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateMeeting.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentMeeting = action.payload; // set the fetched meeting data
+      });
+
+    builder
+      .addCase(updateMeeting.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      //detail
+      .addCase(meetingDetail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(meetingDetail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentMeeting = action.payload;
+      })
+      .addCase(meetingDetail.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
 
     // Delete meeting
     builder.addCase(deleteMeeting.pending, (state) => {

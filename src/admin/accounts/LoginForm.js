@@ -50,6 +50,16 @@ const LoginForm = () => {
             "Content-Type": "application/x-www-form-urlencoded",
           },
         }
+        // const response = await axios.post(
+        //   "https://backend.myofficeai.org/api/vendor/login/",
+        //   new URLSearchParams({ email, password, code }),
+        //   {
+        //     headers: {
+        //       "Content-Type": "application/x-www-form-urlencoded",
+        //     },
+        //     withCredentials: true, // only if you're setting session cookies across origins
+        //   }
+        // );
       );
 
       if (response.status === 200) {

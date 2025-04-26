@@ -4,7 +4,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "../../css/Table.css";
+import "../../css/table/Table.css";
 import { deleteCategory } from "../../redux/slice/crm/categorySlice";
 import CategoryTable from "./CategoryTable";
 

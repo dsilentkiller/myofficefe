@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   createFollow,
   updateFollowById,
@@ -11,71 +13,20 @@ import {
 
 import { fetchEnquiries } from "../../redux/slice/crm/enquirySlice";
 
-const FollowForm = ({ enquiryId }) => {
+const FollowForm = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    enquiry: enquiryId,
+    enquiry: "",
     follow_by: "",
     due_date: "",
     remark: "",
     notes: "",
-    created: "", // Ensure initialized with empty string or default value
   });
 
-  // Handle Submit Action
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form Data: ", formData); // Log form data to check
-
-    // Check for duplicate follow-up
-    if (!id) {
-      dispatch(checkDuplicateFollow(formData))
-        .unwrap()
-        .then((response) => {
-          if (response.exists) {
-            toast.error("This follow-up already exists.");
-            return;
-          }
-
-          // Proceed with creation
-          dispatch(createFollow(formData))
-            .unwrap()
-            .then(() => {
-              toast.success("Follow created successfully!");
-              dispatch(fetchFollows());
-              setFormData({
-                enquiry: enquiryId,
-                follow_by: "",
-                due_date: "",
-                remark: "",
-                notes: "",
-                created: "",
-              });
-              navigate("/dashboard/crm/follow");
-            })
-            .catch((error) => {
-              setErrors(error.errors || {});
-              toast.error(error.message || "Failed to create follow.");
-            });
-        });
-    } else {
-      // Update follow-up logic
-      dispatch(updateFollowById({ id, ...formData }))
-        .unwrap()
-        .then(() => {
-          toast.success("Follow updated successfully!");
-          dispatch(fetchFollows());
-          navigate("/dashboard/crm/follow");
-        })
-        .catch((error) => {
-          setErrors(error.errors || {});
-          toast.error(error.message || "Failed to update follow.");
-        });
-    }
-  };
   // // Fetch enquiries and follow-up to edit
   const enquiries = useSelector((state) => state.enquiries.list);
   const followToUpdate = useSelector((state) => state.follows.CurrentFollow);
@@ -91,15 +42,19 @@ const FollowForm = ({ enquiryId }) => {
     }
   }, [dispatch, id]);
 
+  // useEffect(() => {
+  //   dispatch(fetchEnquiries());
+  //   if (id) dispatch(fetchFollows());
+  // }, [dispatch, id]);
+
   useEffect(() => {
     if (followToUpdate && id) {
       setFormData({
-        enquiry: followToUpdate.enquiryId || "",
+        enquiry: followToUpdate.enquiry_id || "",
         follow_by: followToUpdate.follow_by || "",
         due_date: followToUpdate.due_date || "",
         remark: followToUpdate.remark || "",
         notes: followToUpdate.notes || "",
-        created: followToUpdate.created || "", // Ensure created is initialized
       });
     }
   }, [followToUpdate, id]);
@@ -107,6 +62,107 @@ const FollowForm = ({ enquiryId }) => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (submitting) return; // Prevent duplicate submit
+    setSubmitting(true);
+
+    try {
+      if (!id) {
+        const response = await dispatch(
+          checkDuplicateFollow(formData)
+        ).unwrap();
+        if (response.exists) {
+          toast.error("This follow-up already exists.");
+          setSubmitting(false);
+          return;
+        }
+
+        await dispatch(createFollow(formData)).unwrap();
+        toast.success("Follow created successfully!");
+      } else {
+        await dispatch(updateFollowById({ id, ...formData })).unwrap();
+        toast.success("Follow updated successfully!");
+      }
+
+      dispatch(fetchFollows());
+      setFormData({
+        enquiry: "",
+        follow_by: "",
+        due_date: "",
+        remark: "",
+        notes: "",
+      });
+
+      setTimeout(() => {
+        navigate("/dashboard/crm/follow");
+      }, 1200);
+    } catch (error) {
+      setErrors(error.errors || {});
+      toast.error(error.message || "Something went wrong!");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  // const payload = { ...formData, enquiry_id: formData.enquiry };
+  // delete payload.enquiry;
+  // await dispatch(updateFollowById({ id, ...payload })).unwrap();
+
+  // Handle Submit Action
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   console.log("Form Data: ", formData); // Log form data to check
+  //   if (submitting) return; // Prevent duplicate submit
+  //   setSubmitting(true);
+
+  // Check for duplicate follow-up
+  // if (!id) {
+  //   dispatch(checkDuplicateFollow(formData))
+  //     .unwrap()
+  //     .then((response) => {
+  //       if (response.exists) {
+  //         toast.error("This follow-up already exists.");
+  //         return;
+  //       }
+
+  //       // Proceed with creation
+  //       dispatch(createFollow(formData))
+  //         .unwrap()
+  //         .then(() => {
+  //           toast.success("Follow created successfully!");
+  //           dispatch(fetchFollows());
+  //           setFormData({
+  //             enquiry: enquiry_id,
+  //             follow_by: "",
+  //             due_date: "",
+  //             remark: "",
+  //             notes: "",
+  //             created: "",
+  //           });
+  //           navigate("/dashboard/crm/follow");
+  //         })
+  //         .catch((error) => {
+  //           setErrors(error.errors || {});
+  //           toast.error(error.message || "Failed to create follow.");
+  //         });
+  //     });
+  // } else {
+  // Update follow-up logic
+  //   dispatch(updateFollowById({ id, ...formData }))
+  //     .unwrap()
+  //     .then(() => {
+  //       toast.success("Follow updated successfully!");
+  //       dispatch(fetchFollows());
+  //       navigate("/dashboard/crm/follow");
+  //     })
+  //     .catch((error) => {
+  //       setErrors(error.errors || {});
+  //       toast.error(error.message || "Failed to update follow.");
+  //     });
+  // }
+  // };
 
   return (
     <div className="content-wrapper">
@@ -165,7 +221,7 @@ const FollowForm = ({ enquiryId }) => {
                         <option value="call">Call</option>
                         <option value="whatsapp">WhatsApp</option>
                         <option value="linkedIn">LinkedIn</option>
-                        <option value="viber">Viber</option>
+                      <option value="viber">Viber</option>
                         <option value="email">Email</option>
                         <option value="meetup">Meetup</option>
                       </select>
@@ -227,8 +283,15 @@ const FollowForm = ({ enquiryId }) => {
 
                 {errors.non_field_errors && <p>{errors.non_field_errors[0]}</p>}
 
-                <button type="submit" className="btn btn-primary">
+                {/* <button type="submit" className="btn btn-primary">
                   {id ? "Update" : "Save"}
+                </button> */}
+                <button
+                  type="submit"
+                  className="btn btn-primary mt-3"
+                  disabled={submitting}
+                >
+                  {submitting ? "Submitting..." : id ? "Update" : "Save"}
                 </button>
               </form>
             </div>

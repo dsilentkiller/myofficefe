@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
 import GeneralTable from "../../hrm/GeneralTable";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProposals, deleteProposal } from "../../redux/slice/crm/proposalSlice";
+import {
+  fetchProposals,
+  deleteProposal,
+} from "../../redux/slice/crm/proposalSlice";
 import { Edit, Delete, Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import ProposalDelete from "./ProposalDelete"; // Import your delete confirmation modal
 
 const ProposalTable = () => {
@@ -12,40 +18,36 @@ const ProposalTable = () => {
   // ProposalTable.js
 
   useEffect(() => {
-    console.log('Dispatching fetchProposals...');
-    dispatch(fetchProposals());  // This should trigger the action to fetch proposals when the component mounts
+    console.log("Dispatching fetchProposals...");
+    dispatch(fetchProposals()); // This should trigger the action to fetch proposals when the component mounts
   }, [dispatch]);
 
-  const proposals = useSelector((state) => state.proposals?.proposals || []);  // Safe access with fallback
-  console.log('Proposals from Redux:', proposals);  // Check what data is in Redux
+  const proposals = useSelector((state) => state.proposals?.proposals || []); // Safe access with fallback
+  console.log("Proposals from Redux:", proposals); // Check what data is in Redux
 
-// console.log('Complete Redux State:', useSelector((state) => state));  // Log the entire Redux state
-const state = useSelector((state) => state); // This will give you the entire state
-console.log('Complete Redux State:', state);
+  // console.log('Complete Redux State:', useSelector((state) => state));  // Log the entire Redux state
+  const state = useSelector((state) => state); // This will give you the entire state
+  console.log("Complete Redux State:", state);
 
-console.log('Proposals from Redux:', proposals);  // Check what data is in Redux
-useEffect(() => {
-  console.log('Component mounted, fetching proposals...');
-  dispatch(fetchProposals());
-}, [dispatch]);
-
-
+  console.log("Proposals from Redux:", proposals); // Check what data is in Redux
+  useEffect(() => {
+    console.log("Component mounted, fetching proposals...");
+    dispatch(fetchProposals());
+  }, [dispatch]);
 
   const navigate = useNavigate();
   const [proposalToDelete, setProposalToDelete] = useState(null); // Store the proposal id to delete
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Modal open state
   useEffect(() => {
-    console.log('Fetched Proposals:', proposals); // Log to check if data is fetched correctly
+    console.log("Fetched Proposals:", proposals); // Log to check if data is fetched correctly
   }, [proposals]);
-
-
 
   const formattedProposals = proposals.map((proposal, index) => ({
     ...proposal,
     index: index + 1, // Add the index dynamically
   }));
 
-  console.log('Formatted Proposals:', formattedProposals);  // Check this log
+  console.log("Formatted Proposals:", formattedProposals); // Check this log
 
   const handleRowAction = (actionKey, rowData) => {
     if (actionKey === "edit") {
@@ -59,7 +61,7 @@ useEffect(() => {
   };
 
   const handleAdd = () => {
-    navigate('/dashboard/crm/proposal/create');
+    navigate("/dashboard/crm/proposal/create");
   };
 
   const handleEdit = (proposal) => {
@@ -76,7 +78,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="content-wrapper">
+    <>
       <GeneralTable
         title="Proposals"
         sx={{ position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 1 }}
@@ -93,7 +95,9 @@ useEffect(() => {
           { label: "Delete", icon: <Delete />, key: "delete" },
           { label: "View", icon: <Visibility />, key: "view" },
         ]}
-        onRowAction={(actionKey, rowData) => handleRowAction(actionKey, rowData)}
+        onRowAction={(actionKey, rowData) =>
+          handleRowAction(actionKey, rowData)
+        }
         onEdit={handleEdit}
         onView={handleView}
         onDelete={handleDelete}
@@ -119,7 +123,7 @@ useEffect(() => {
           onConfirm={() => dispatch(deleteProposal(proposalToDelete))}
         />
       )}
-    </div>
+    </>
   );
 };
 

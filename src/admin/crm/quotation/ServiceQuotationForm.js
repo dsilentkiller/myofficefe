@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -11,132 +11,406 @@ import {
   TableRow,
   TextField,
   Paper,
+  Grid,
 } from "@mui/material";
-const currentDate = new Date().toISOString().split('T')[0]; // Formats date as 'YYYY-MM-DD'
+import axios from "axios";
 
-const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, includeDiscount, discount_percentage }) => {
-  const addServiceRow = () => {
-    setServices([...services, { service_name: "", service_description: "", service_price: 0, quantity: 1 }]);
+const currentDate = new Date().toISOString().split("T")[0];
+
+const ServiceQuotationForm = () => {
+  const [quotation, setQuotation] = useState({
+    quotation_number: "",
+    date: currentDate,
+    enquiry: "",
+    organization: "",
+    tax_percentage: 0,
+    discount_percentage: 0,
+    notes: "",
+    status: "draft",
+  });
+
+  const [services, setServices] = useState([
+    {
+      service_name: "",
+      service_description: "",
+      service_price: 0,
+      quantity: 1,
+    },
+  ]);
+
+  const handleQuotationChange = (e) => {
+    const { name, value } = e.target;
+    setQuotation({ ...quotation, [name]: value });
   };
+
   const updateService = (index, key, value) => {
-    const updatedServices = [...services];
-    updatedServices[index][key] = key === 'service_price' || key === 'quantity' ? parseFloat(value) || 0 : value;
-
-    // Ensure the values are always valid
-    if (key === 'service_price' && isNaN(updatedServices[index][key])) {
-      updatedServices[index][key] = 0; // Default to 0 if invalid
-    }
-
-    if (key === 'quantity' && isNaN(updatedServices[index][key])) {
-      updatedServices[index][key] = 1; // Default to 1 if invalid
-    }
-
-    setServices(updatedServices);
-  };
-  // console.log("Services before validation:", formData.services);
-
-  // const updateService = (index, key, value) => {
-  //   const updatedServices = [...services];
-  //   updatedServices[index][key] = key === 'service_price' || key === 'quantity' ? parseFloat(value) || 0 : value;
-  //   setServices(updatedServices);
-  // };
-
-  const calculateSubtotalService = () => {
-    return services.reduce((acc, service) => acc + service.service_price * service.quantity, 0);
+    const updated = [...services];
+    updated[index][key] =
+      key === "service_price" || key === "quantity"
+        ? parseFloat(value) || 0
+        : value;
+    setServices(updated);
   };
 
-  const calculateTotalService = () => {
-    let subtotal = calculateSubtotalService();
-    let tax = includeTax ? (subtotal * tax_percentage) / 100 : 0;
-    let discount = includeDiscount ? (subtotal * discount_percentage) / 100 : 0;
+  const addServiceRow = () => {
+    setServices([
+      ...services,
+      {
+        service_name: "",
+        service_description: "",
+        service_price: 0,
+        quantity: 1,
+      },
+    ]);
+  };
+
+  const calculateSubtotal = () =>
+    services.reduce((acc, item) => acc + item.service_price * item.quantity, 0);
+
+  const calculateTax = (subtotal) =>
+    (quotation.tax_percentage / 100) * subtotal;
+
+  const calculateDiscount = (subtotal) =>
+    (quotation.discount_percentage / 100) * subtotal;
+
+  const calculateTotal = () => {
+    const subtotal = calculateSubtotal();
+    const tax = calculateTax(subtotal);
+    const discount = calculateDiscount(subtotal);
     return subtotal + tax - discount;
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const subtotal = calculateSubtotal();
+    const tax_amount = calculateTax(subtotal);
+    const discount_amount = calculateDiscount(subtotal);
+    const total_amount = subtotal + tax_amount - discount_amount;
+
+    try {
+      // 1. Create quotation
+      const quotationPayload = {
+        ...quotation,
+        subtotal,
+        tax_amount,
+        discount_amount,
+        total_amount,
+      };
+      const quotationRes = await axios.post(
+        "/api/quotations/",
+        quotationPayload
+      );
+      const quotationId = quotationRes.data.id;
+
+      // 2. Attach services
+      for (let service of services) {
+        await axios.post(`/api/quotations/${quotationId}/services/`, {
+          ...service,
+          total_price: service.service_price * service.quantity,
+        });
+      }
+
+      alert("Quotation successfully created!");
+    } catch (error) {
+      console.error("Failed to submit quotation", error);
+      alert("Error submitting quotation.");
+    }
+  };
+
   return (
-    <Box mt={4}>
-      <Typography variant="h5" gutterBottom>
-        Service Details
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{ p: 3, maxWidth: 900, mx: "auto" }}
+    >
+      <Typography variant="h4" mb={3}>
+        Create Quotation
       </Typography>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell><strong>Name</strong></TableCell>
-              <TableCell><strong>Description</strong></TableCell>
-              <TableCell><strong>Quantity</strong></TableCell>
-              <TableCell><strong>Cost (USD)</strong></TableCell>
-              <TableCell><strong>Total (USD)</strong></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {services.map((service, index) => (
-              <TableRow key={index}>
+
+      <Grid container spacing={2}>
+        {[
+          ["quotation_number", "Quotation Number"],
+          ["date", "Date", "date"],
+          ["enquiry", "Enquiry ID"],
+          ["organization", "Organization ID"],
+          ["tax_percentage", "Tax (%)", "number"],
+          ["discount_percentage", "Discount (%)", "number"],
+        ].map(([name, label, type = "text"]) => (
+          <Grid item xs={12} sm={6} key={name}>
+            <TextField
+              fullWidth
+              label={label}
+              name={name}
+              type={type}
+              value={quotation[name]}
+              onChange={handleQuotationChange}
+            />
+          </Grid>
+        ))}
+
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            label="Notes"
+            name="notes"
+            value={quotation.notes}
+            onChange={handleQuotationChange}
+          />
+        </Grid>
+      </Grid>
+
+      <Box mt={4}>
+        <Typography variant="h5" gutterBottom>
+          Service Details
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
                 <TableCell>
-                  <TextField
-                    fullWidth
-                    value={service.service_name}
-                    onChange={(e) => updateService(index, "service_name", e.target.value)}
-                    placeholder="Enter the name of the service"
-                  />
+                  <strong>Name</strong>
                 </TableCell>
                 <TableCell>
-                  <TextField
-                    fullWidth
-                    value={service.service_description}
-                    onChange={(e) => updateService(index, "service_description", e.target.value)}
-                    placeholder="Provide a brief description of the service"
-                  />
+                  <strong>Description</strong>
                 </TableCell>
                 <TableCell>
-                  <TextField
-                    fullWidth
-                    type="number"
-                    value={service.quantity}
-                    onChange={(e) => updateService(index, "quantity", e.target.value)}
-                    placeholder="Enter the quantity"
-                  />
+                  <strong>Quantity</strong>
                 </TableCell>
                 <TableCell>
-                  <TextField
-                    fullWidth
-                    type="number"
-                    value={service.service_price}
-                    onChange={(e) => updateService(index, "service_price", e.target.value)}
-                    placeholder="Enter the price per service"
-                  />
+                  <strong>Price</strong>
                 </TableCell>
                 <TableCell>
-                  ${(service.quantity * service.service_price).toFixed(2)}
+                  <strong>Total</strong>
                 </TableCell>
               </TableRow>
-            ))}
-            <TableRow>
-              <TableCell colSpan={5} align="center">
-                <Button variant="outlined" onClick={addServiceRow}>
-                  Add Service
-                </Button>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {services.map((service, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <TextField
+                      fullWidth
+                      value={service.service_name}
+                      onChange={(e) =>
+                        updateService(index, "service_name", e.target.value)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      fullWidth
+                      value={service.service_description}
+                      onChange={(e) =>
+                        updateService(
+                          index,
+                          "service_description",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      fullWidth
+                      type="number"
+                      value={service.quantity}
+                      onChange={(e) =>
+                        updateService(index, "quantity", e.target.value)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      fullWidth
+                      type="number"
+                      value={service.service_price}
+                      onChange={(e) =>
+                        updateService(index, "service_price", e.target.value)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    ${(service.quantity * service.service_price).toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              ))}
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  <Button variant="outlined" onClick={addServiceRow}>
+                    Add Service
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
 
+      <Box mt={4}>
+        <Typography variant="subtitle1">
+          Subtotal: ${calculateSubtotal().toFixed(2)}
+        </Typography>
+        <Typography variant="subtitle1">
+          Tax: ${calculateTax(calculateSubtotal()).toFixed(2)}
+        </Typography>
+        <Typography variant="subtitle1">
+          Discount: -${calculateDiscount(calculateSubtotal()).toFixed(2)}
+        </Typography>
+        <Typography variant="h6">
+          Total: ${calculateTotal().toFixed(2)}
+        </Typography>
+      </Box>
 
+      <Box mt={3}>
+        <Button type="submit" variant="contained" color="primary" fullWidth>
+          Submit Quotation
+        </Button>
+      </Box>
     </Box>
   );
 };
 
-export default ServiceQuotation;
+export default ServiceQuotationForm;
 
+// #### latest form####
 
-{/* Display Total Calculation */}
-      {/* <Box mt={4}>
+// import React from "react";
+// import {
+//   Box,
+//   Typography,
+//   Button,
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableContainer,
+//   TableHead,
+//   TableRow,
+//   TextField,
+//   Paper,
+// } from "@mui/material";
+// const currentDate = new Date().toISOString().split('T')[0]; // Formats date as 'YYYY-MM-DD'
+
+// const ServiceQuotation = ({ services, setServices, includeTax, tax_percentage, includeDiscount, discount_percentage }) => {
+//   const addServiceRow = () => {
+//     setServices([...services, { service_name: "", service_description: "", service_price: 0, quantity: 1 }]);
+//   };
+//   const updateService = (index, key, value) => {
+//     const updatedServices = [...services];
+//     updatedServices[index][key] = key === 'service_price' || key === 'quantity' ? parseFloat(value) || 0 : value;
+
+//     // Ensure the values are always valid
+//     if (key === 'service_price' && isNaN(updatedServices[index][key])) {
+//       updatedServices[index][key] = 0; // Default to 0 if invalid
+//     }
+
+//     if (key === 'quantity' && isNaN(updatedServices[index][key])) {
+//       updatedServices[index][key] = 1; // Default to 1 if invalid
+//     }
+
+//     setServices(updatedServices);
+//   };
+
+//   const calculateSubtotalService = () => {
+//     return services.reduce((acc, service) => acc + service.service_price * service.quantity, 0);
+//   };
+
+//   const calculateTotalService = () => {
+//     let subtotal = calculateSubtotalService();
+//     let tax = includeTax ? (subtotal * tax_percentage) / 100 : 0;
+//     let discount = includeDiscount ? (subtotal * discount_percentage) / 100 : 0;
+//     return subtotal + tax - discount;
+//   };
+
+//   return (
+//     <Box mt={4}>
+//       <Typography variant="h5" gutterBottom>
+//         Service Details
+//       </Typography>
+//       <TableContainer component={Paper}>
+//         <Table>
+//           <TableHead>
+//             <TableRow>
+//               <TableCell><strong>Name</strong></TableCell>
+//               <TableCell><strong>Description</strong></TableCell>
+//               <TableCell><strong>Quantity</strong></TableCell>
+//               <TableCell><strong>Cost (USD)</strong></TableCell>
+//               <TableCell><strong>Total (USD)</strong></TableCell>
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {services.map((service, index) => (
+//               <TableRow key={index}>
+//                 <TableCell>
+//                   <TextField
+//                     fullWidth
+//                     value={service.service_name}
+//                     onChange={(e) => updateService(index, "service_name", e.target.value)}
+//                     placeholder="Enter the name of the service"
+//                   />
+//                 </TableCell>
+//                 <TableCell>
+//                   <TextField
+//                     fullWidth
+//                     value={service.service_description}
+//                     onChange={(e) => updateService(index, "service_description", e.target.value)}
+//                     placeholder="Provide a brief description of the service"
+//                   />
+//                 </TableCell>
+//                 <TableCell>
+//                   <TextField
+//                     fullWidth
+//                     type="number"
+//                     value={service.quantity}
+//                     onChange={(e) => updateService(index, "quantity", e.target.value)}
+//                     placeholder="Enter the quantity"
+//                   />
+//                 </TableCell>
+//                 <TableCell>
+//                   <TextField
+//                     fullWidth
+//                     type="number"
+//                     value={service.service_price}
+//                     onChange={(e) => updateService(index, "service_price", e.target.value)}
+//                     placeholder="Enter the price per service"
+//                   />
+//                 </TableCell>
+//                 <TableCell>
+//                   ${(service.quantity * service.service_price).toFixed(2)}
+//                 </TableCell>
+//               </TableRow>
+//             ))}
+//             <TableRow>
+//               <TableCell colSpan={5} align="center">
+//                 <Button variant="outlined" onClick={addServiceRow}>
+//                   Add Service
+//                 </Button>
+//               </TableCell>
+//             </TableRow>
+//           </TableBody>
+//         </Table>
+//       </TableContainer>
+
+//     </Box>
+//   );
+// };
+
+// export default ServiceQuotation;
+
+// ############## latest form ####
+{
+  /* Display Total Calculation */
+}
+{
+  /* <Box mt={4}>
         <Typography variant="h6">Subtotal: ${calculateSubtotalService().toFixed(2)}</Typography>
         {includeTax && <Typography variant="h6">Tax: ${(calculateSubtotalService() * (tax_percentage / 100)).toFixed(2)}</Typography>}
         {includeDiscount && <Typography variant="h6">Discount: ${(calculateSubtotalService() * (discount_percentage / 100)).toFixed(2)}</Typography>}
         <Typography variant="h5">Total: ${calculateTotalService().toFixed(2)}</Typography>
-      </Box> */}
-
+      </Box> */
+}
 
 // import React from "react";
 // import {
@@ -260,9 +534,6 @@ export default ServiceQuotation;
 // };
 
 // export default ServiceQuotation;
-
-
-
 
 // //service related quotation form
 
@@ -496,7 +767,6 @@ export default ServiceQuotation;
 //       setServices(updatedServices);
 //     };
 
-
 //   // Calculate subtotal prodict
 //   const calculateSubtotalservice = () => {
 //     return services.reduce((acc, service) => acc + service.quantity * service.price, 0);
@@ -631,7 +901,6 @@ export default ServiceQuotation;
 //                                       />
 
 //                                     </TableCell>
-
 
 //                                     <TableCell colSpan={4} align="center">
 //                                           <Button variant="outlined" onClick={addServiceRow}>
@@ -805,6 +1074,3 @@ export default ServiceQuotation;
 // };
 
 // export default QuotationForm;
-
-
-

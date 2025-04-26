@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import "../../css/Table.css";
+import "../../css/table/Table.css";
 import {  useDispatch } from "react-redux"; // Correct import
 import { Link, useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";

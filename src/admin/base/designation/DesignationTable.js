@@ -6,7 +6,7 @@ import {
   deleteDesignation,
 } from "../../redux/slice/base/designationSlice";
 import { Link } from "react-router-dom";
-import "../../../admin/css/Table.css";
+import "../../../admin/css/table/Table.css";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import DesignationDelete from "./DesignationDelete";
 import { toast } from "react-toastify";

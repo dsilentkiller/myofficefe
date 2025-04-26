@@ -5,7 +5,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchFollows, deleteFollow } from "../../redux/slice/crm/followSlice";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 // import {fetchFollowupsByEnquiryId}
 import {
   Table,

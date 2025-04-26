@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchAttendees } from "../../redux/slice/crm/attendeeSlice";
 import { toast } from "react-toastify";
-import "../../css/Table.css";
+import "../../css/table/Table.css";
 import AttendeeDelete from "./AttendeeDelete";
 import { deleteAttendee } from "../../redux/slice/crm/attendeeSlice";
 

@@ -16,7 +16,6 @@
 //     dispatch(fetchProductQuotationsById(id));
 //   }, [dispatch, id]);
 
-
 //   if (loading) {
 //     return <div>Loading...</div>;
 //   }
@@ -83,7 +82,17 @@
 // export default ProductQuotationDetail;
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Paper, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import {
+  Paper,
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import { fetchProductQuotationById } from "../../redux/slice/crm/quotationSlice";
 
 const ProductQuotationDetail = () => {
@@ -118,14 +127,28 @@ const ProductQuotationDetail = () => {
   return (
     <div style={{ padding: "20px" }}>
       <Paper style={{ padding: "20px" }}>
-        <Typography variant="h4" gutterBottom>Product Quotation Details</Typography>
+        <Typography variant="h4" gutterBottom>
+          Product Quotation Details
+        </Typography>
 
-        <Typography variant="h6">Customer Name: {quotation.customer_name}</Typography>
-        <Typography variant="h6">Enquiry Name: {quotation.enquiry_name}</Typography>
-        <Typography variant="h6">Quotation Date: {quotation.quotation_date}</Typography>
-        <Typography variant="h6">Tax Percentage: {quotation.tax_percentage}%</Typography>
-        <Typography variant="h6">Discount Percentage: {quotation.discount_percentage}%</Typography>
-        <Typography variant="h6">Total Amount: ${quotation.total_amount}</Typography>
+        <Typography variant="h6">
+          Customer Name: {quotation.customer_name}
+        </Typography>
+        <Typography variant="h6">
+          Enquiry Name: {quotation.enquiry_name}
+        </Typography>
+        <Typography variant="h6">
+          Quotation Date: {quotation.quotation_date}
+        </Typography>
+        <Typography variant="h6">
+          Tax Percentage: {quotation.tax_percentage}%
+        </Typography>
+        <Typography variant="h6">
+          Discount Percentage: {quotation.discount_percentage}%
+        </Typography>
+        <Typography variant="h6">
+          Total Amount: ${quotation.total_amount}
+        </Typography>
 
         <TableContainer component={Paper} style={{ marginTop: "20px" }}>
           <Table>
@@ -150,7 +173,9 @@ const ProductQuotationDetail = () => {
           </Table>
         </TableContainer>
 
-        <Button onClick={() => navigate(-1)} style={{ marginTop: "20px" }}>Back</Button>
+        <Button onClick={() => navigate(-1)} style={{ marginTop: "20px" }}>
+          Back
+        </Button>
       </Paper>
     </div>
   );

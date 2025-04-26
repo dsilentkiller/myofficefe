@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import GeneralTable from "../../hrm/GeneralTable";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProject, deleteProject } from "../../redux/slice/crm/projectSlice";
+import {
+  fetchProject,
+  deleteProject,
+} from "../../redux/slice/crm/projectSlice";
 import { Edit, Delete, Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -34,9 +37,8 @@ const ProjectTable = () => {
     }
   };
 
-
   const handleAdd = () => {
-    navigate('/dashboard/crm/project/create');
+    navigate("/dashboard/crm/project/create");
   };
 
   const handleEdit = (project) => {
@@ -48,15 +50,13 @@ const ProjectTable = () => {
   };
   // This is the function for deleting a project
   const handleDelete = (project) => {
-
     setProjectToDelete(project.id); // Store the project ID to delete
     setIsDeleteModalOpen(true); // Open the delete confirmation modal
   };
 
-
-
   return (
-    <div className="content-wrapper">
+    <>
+
       <GeneralTable
         title="Projects"
         data={formattedProjects}
@@ -73,11 +73,12 @@ const ProjectTable = () => {
           { label: "Delete", icon: <Delete />, key: "delete" },
           { label: "View", icon: <Visibility />, key: "view" },
         ]}
-        onRowAction={(actionKey, rowData) => handleRowAction(actionKey, rowData)}
-
+        onRowAction={(actionKey, rowData) =>
+          handleRowAction(actionKey, rowData)
+        }
         onEdit={handleEdit}
         onView={handleView}
-        onDelete= {handleDelete}
+        onDelete={handleDelete}
         onAdd={handleAdd}
       />
 
@@ -89,12 +90,11 @@ const ProjectTable = () => {
           onConfirm={handleDelete}
         />
       )}
-    </div>
+    </>
   );
 };
 
 export default ProjectTable;
-
 
 // import { React,useState,useEffect} from "react";
 // import GeneralTable from "../../hrm/GeneralTable";
@@ -177,7 +177,6 @@ export default ProjectTable;
 //   //   }
 //   // });
 
-
 //   return (
 //     <div className="content-wrapper">
 //     <GeneralTable
@@ -224,20 +223,6 @@ export default ProjectTable;
 // };
 
 // export default ProjectTable;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React, { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
@@ -303,15 +288,15 @@ export default ProjectTable;
 
 //   const handleDelete = (id) => setProjectToDelete(id);
 
-  // const confirmDelete = (id) => {
-  //   dispatch(deleteProject(id))
-  //     .then(() => {
-  //       toast.success("Project deleted successfully!");
-  //       setProjectToDelete(null);
-  //       dispatch(fetchProject());
-  //     })
-  //     .catch(() => toast.error("Failed to delete project."));
-  // };
+// const confirmDelete = (id) => {
+//   dispatch(deleteProject(id))
+//     .then(() => {
+//       toast.success("Project deleted successfully!");
+//       setProjectToDelete(null);
+//       dispatch(fetchProject());
+//     })
+//     .catch(() => toast.error("Failed to delete project."));
+// };
 
 //   const handleExportExcel = () => {
 //     const worksheet = XLSX.utils.json_to_sheet(projects);
@@ -584,23 +569,23 @@ export default ProjectTable;
 //     setProjectToDelete(id);
 //   };
 
-  // const confirmDelete = (id) => {
-  //   dispatch(deleteProject(id))
-  //     .unwrap()
-  //     .then(() => {
-  //       toast.success("Project deleted successfully!");
-  //       setProjectToDelete(null);
-  //       dispatch(fetchProject());
-  //     })
-  //     .catch((error) => {
-  //       console.error("Delete Error:", error);
-  //       toast.error(
-  //         `Failed to delete project: ${
-  //           error.message || deleteError || "Unknown error"
-  //         }`
-  //       );
-  //     });
-  // };
+// const confirmDelete = (id) => {
+//   dispatch(deleteProject(id))
+//     .unwrap()
+//     .then(() => {
+//       toast.success("Project deleted successfully!");
+//       setProjectToDelete(null);
+//       dispatch(fetchProject());
+//     })
+//     .catch((error) => {
+//       console.error("Delete Error:", error);
+//       toast.error(
+//         `Failed to delete project: ${
+//           error.message || deleteError || "Unknown error"
+//         }`
+//       );
+//     });
+// };
 
 //   const formatName = React.useCallback((name) => {
 //     if (!name) return "";
@@ -730,8 +715,8 @@ export default ProjectTable;
 //                                 </td>
 //                                 <td>{project.status}</td>
 //                                 <td>
-                                  // <Link
-                                    // to={`/dashboard/crm/project/update/${project.id}`}
+// <Link
+// to={`/dashboard/crm/project/update/${project.id}`}
 //                                     className="btn btn-warning btn-sm"
 //                                   >
 //                                     <FaEdit />
@@ -761,14 +746,14 @@ export default ProjectTable;
 //                         </tbody>
 //                       </table>
 //                     </div>
-                    // {/* Delete Confirmation Modal */}
-                    // {projectToDelete !== null && (
-                    //   <ProjectDelete
-                    //     id={projectToDelete}
-                    //     onClose={() => setProjectToDelete(null)}
-                    //     onConfirm={() => confirmDelete(projectToDelete)}
-                    //   />
-                    // )}
+// {/* Delete Confirmation Modal */}
+// {projectToDelete !== null && (
+//   <ProjectDelete
+//     id={projectToDelete}
+//     onClose={() => setProjectToDelete(null)}
+//     onConfirm={() => confirmDelete(projectToDelete)}
+//   />
+// )}
 //                   </div>
 //                 </div>
 //               </div>
@@ -1261,13 +1246,13 @@ export default ProjectTable;
 //                                       Edit
 //                                     </Link>
 //                                     |
-                                    // <Link to={`/projects/detail/${project.id}`}>
-                                    //   View
-                                    // </Link>
-                                    // |
-                                    // <Link to={`/projects/delete/${project.id}`}>
-                                    //   Delete
-                                    // </Link>
+// <Link to={`/projects/detail/${project.id}`}>
+//   View
+// </Link>
+// |
+// <Link to={`/projects/delete/${project.id}`}>
+//   Delete
+// </Link>
 //                                   </td>
 //                                 </tr>
 //                               ))

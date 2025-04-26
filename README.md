@@ -68,3 +68,98 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+#========================= DOCKER ==================================#
+3-Tier Application with Docker (React + Django + PostgreSQL/MySQL)
+This project is a scalable 3-tier web application setup using React.js (frontend), Django REST Framework (backend), and PostgreSQL or MySQL (database), managed entirely with Docker and Docker Compose.
+
+📂 Project Structure
+
+my_project/
+├── backend/ # Django project
+│ ├── Dockerfile
+│ ├── requirements.txt
+├── frontend/ # React app
+│ ├── Dockerfile
+│ ├── package.json
+├── nginx/ # (Optional) NGINX for production
+├── .env # Environment variables
+└── docker-compose.yml # Orchestration
+🔧 Requirements
+Docker
+
+Docker Compose
+
+🛠️ Getting Started
+
+1. Clone the Repository
+
+git clone https://github.com/your-repo/your-project.git
+cd your-project 2. Add Environment Variables
+Create a .env file:
+
+DB_NAME=mydb
+DB_USER=myuser
+DB_PASSWORD=mypass 3. Build and Start the Containers
+
+        docker-compose up --build
+        This command will:
+
+        Start the PostgreSQL or MySQL database
+
+Launch the Django backend on http://localhost:8000
+
+Launch the React frontend on http://localhost:3000
+
+⚙️ Database Migrations
+Once the backend is running, run the following to apply migrations:
+docker exec -it django_backend python manage.py migrate
+(Optional) Create a superuser:
+docker exec -it django_backend python manage.py createsuperuser
+🔁 Useful Commands
+
+        Task	      Command
+        Start app	docker-compose up
+        Stop app	docker-compose down
+        Rebuild images	docker-compose up --build
+        Run Django shell	docker exec -it django_backend python manage.py shell
+        View logs	docker-compose logs -f
+        Enter backend container shell	docker exec -it django_backend bash
+
+🌍 Access the App
+Service URL
+Frontend http://localhost:3000
+Backend http://localhost:8000
+Admin http://localhost:8000/admin
+
+🧪 API Testing
+To call backend APIs from React, use:
+axios.get("http://localhost:8000/api/...")
+
+🔐 Enable CORS (in Django)
+In settings.py:
+INSTALLED_APPS += ['corsheaders']
+MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware', ...]
+CORS_ALLOW_ALL_ORIGINS = True
+🗄️ Switching to MySQL (Optional)
+To use MySQL:
+
+Replace postgres service in docker-compose.yml with:
+
+image: mysql:8
+environment:
+MYSQL_DATABASE: mydb
+MYSQL_USER: myuser
+MYSQL_PASSWORD: mypass
+MYSQL_ROOT_PASSWORD: rootpass
+Update DATABASES in backend/settings.py:
+'ENGINE': 'django.db.backends.mysql',
+Install MySQL client:
+pip install mysqlclient
+
+📦 Build for Production (Optional)
+Gunicorn + NGINX for production
+
+HTTPS support via Let's Encrypt
+
+React production build with npm run build

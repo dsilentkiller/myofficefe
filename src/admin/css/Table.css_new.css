@@ -1,0 +1,169 @@
+
+/* Sticky Navbar */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Keep the navbar above other elements */
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  /* Container for the dashboard */
+  .card {
+    width: auto;
+    padding: 0; /* Remove padding to ensure full width */
+    margin: 0; /* Remove margin to ensure full width */
+  }
+  
+  
+  
+  /* Table container with full width */
+  /* Table container with full width */
+  .Table {
+    position: relative;
+    width: 100%;
+    /* max-height: 600px; */
+    border: 2px solid #ddd;
+    border-radius: 1px;
+    border-collapse: collapse; /* Ensures borders collapse properly */
+    overflow: hidden; /* Prevent overflow from TableContainer */
+    table-layout: fixed; /* Make sure columns have fixed layout */
+  }
+         /* Sticky header styling */
+  .Table thead {
+          max-width: 100%;
+          position: sticky;
+          top: 0;
+          background: #f0f3f7;
+          z-index: 1;
+          white-space: nowrap;
+          /* padding: 0px; */
+        
+          text-align: left;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          border-bottom: 2px solid #ddd;
+          table-layout: fixed; /* Ensure the header follows the same layout as the body */
+        }
+  /* TableBody with scrollable content */
+  .Table tbody {
+    display: table;/* Make TableBody block to enable scrolling */
+    max-height: 400px; /* Set height for TableBody */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    width: 100%; /* Ensure TableBody takes the full width */
+    max-width: 100%;
+    white-space: nowrap; /* Prevent text wrapping */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margin */
+    table-layout: fixed; /* Ensure the table body follows the same layout */
+  }
+  /* Style for tables in enquiry section */
+  .table-container {
+    overflow-x: auto; /* Enables horizontal scrolling */
+    overflow-y: auto; /* Enables vertical scrolling */
+  } 
+  
+  
+  .Table td, .Table th {
+    /* padding: 8px; */
+    text-align: left;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap; /* Prevent text wrapping */
+  }
+  
+  .Table td:last-child, .Table th:last-child {
+    border-right: none; /* Remove the border on the last column */
+  }
+  
+  .table th:nth-child(8), /* Province */
+  .table td:nth-child(8) {
+    min-width: 120px; /* Ensures the word "Province" fits */
+    
+  }
+  
+  .table th:nth-child(9), /* District */
+  .table td:nth-child(9),
+  .table th:nth-child(10), /* Municipality */
+  .table td:nth-child(10) {
+    min-width: 150px; /* Adjust for larger content */
+  }
+  
+  .table th:last-child,
+  .table td:last-child {
+    width: 100px; /* Set a fixed width for the Action column */
+  }
+  
+  /* Table styling */
+  /* Pagination container styles */
+  .pagination-wrapper {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  
+  .due-soon {
+  background-color: #f8d7da; /* Light red for past due */
+  color: #721c24;
+  }
+  
+  .due-very-soon {
+  background-color: #fff3cd; /* Light yellow for due soon */
+  color: #856404;
+  }
+  
+  
+  /* Form styling for inputs */
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+  }
+  
+  .input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between input and button */
+  }
+  
+  .input-group input {
+    font-size: 1.2rem; /* Larger font size for the input field */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 300px; /* Wider input field */
+  }
+  
+  .input-group button {
+    font-size: 1.2rem; /* Larger font size for the button */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff; /* Primary button color */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .input-group button:hover {
+    background-color: #0056b3; /* Darker shade for hover */
+  }
+  
+  .error {
+    color: red;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+  
+  /* Font styling */
+  body {
+    font-family: 'Arial', sans-serif; /* Attractive font for the page */
+  }
+  
+  h5.dashboard-title {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Attractive font for headings */
+    font-size: 1.5rem; /* Larger font size for headings */
+    color: violet; /* Attractive color for headings */
+  }
