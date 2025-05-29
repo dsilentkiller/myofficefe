@@ -1,0 +1,20 @@
+#1 this reusable component for Navbar
+We're building a well-structured and feature-rich reusable,Mobile/Desktop Responsiveness, Scalability, Performance, Security, and Maintainability. MUI-based table component with capabilities like:
+
+Search
+
+Sort
+
+Pagination
+
+PDF/Excel Export
+
+File Import
+
+Row selection (multi)
+
+Dynamic column rendering
+
+CRUD action icons
+
+###

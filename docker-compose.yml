@@ -1,0 +1,59 @@
+services:
+  # backend:
+  #   container_name: backend_myoffice
+  #   build: ./myoffice
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - ./myoffice:/app
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     - DB_HOST=${DB_HOST}
+  #     - DB_NAME=${DB_NAME}
+  #     - DB_USER=${DB_USER}
+  #     - DB_PASSWORD=${DB_PASSWORD}
+  #     - DB_PORT=${DB_PORT}
+  #     - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+  #   command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+
+
+
+
+  frontend:
+    container_name: frontend_myoffice
+    build: ./myofficefe
+
+    ports:
+      - "3000:3000"
+    # RUN npm install -g serve
+
+    volumes:
+      - ./myofficefe:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=${REACT_APP_API_URL}
+
+    command: npx serve -s build
+
+#   db:
+#     image: postgres:16
+#     container_name: db_myoffice
+#     environment:
+#       - POSTGRES_DB=${DB_NAME}
+#       - POSTGRES_USER=${DB_USER}
+#       - POSTGRES_PASSWORD=${DB_PASSWORD}
+#     volumes:
+#       - pgdata:/var/lib/postgresql/data
+#     ports:
+#       - "5432:5432"
+#     restart: unless-stopped # keep container alive
+
+# volumes:
+#   pgdata:

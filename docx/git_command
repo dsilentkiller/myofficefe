@@ -1,0 +1,10 @@
+#1. 
+git add admin . 
+git commit -m "refactoring dir and file in project to manage project and feat(tables): integrate TableActionNavbar in Followup, Enquiry, Category tables 
+
+ Implemented TableActionNavbar in FollowupTable, EnquiryTable, and CategoryTable components 
+ Enhanced all components for mobile responsiveness using responsive layout and Tailwind CSS "
+
+#2 
+git add admin/components/crm/navbar/crm_header/CrmHeader.js 
+git commit -m "convert to   mobile responsive CrmHeader and remove search-icon"

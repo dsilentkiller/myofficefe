@@ -1,3 +1,6 @@
+<!-- // "proxy": "http://127.0.0.1:8000", -->
+
+  <!-- "proxy": "http://vendor1.lvh.me:8000", -->
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
