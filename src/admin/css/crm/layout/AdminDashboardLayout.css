@@ -1,0 +1,98 @@
+/* Global layout container */
+.container-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /* Ensures the layout fills the entire viewport */
+}
+
+/* Admin dashboard layout (flexbox container for header, sidebar, and content) */
+.admin-dashboard-layout {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/* Styling for the DefaultHeader (Global Header) */
+.default-header {
+    position: sticky;
+    /* Makes the header sticky */
+    top: 0;
+    z-index: 20;
+    /* Ensure it appears above other elements */
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+    /* Add border under the header */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Optional: Adds shadow for separation */
+    width: calc(100% - 240px);
+    /* Ensure it spans across the full width */
+}
+
+/* Sidebar styling */
+.sidebar {
+    flex-shrink: 0;
+    width: 240px;
+    /* Adjust as needed for sidebar width */
+    background-color: #f4f4f4;
+    /* Light gray background for sidebar */
+    padding: 16px;
+    border-right: 1px solid #ddd;
+    /* Optional: Add border to the right of the sidebar */
+    position: sticky;
+    /* Ensure sidebar stays in place when scrolling */
+    top: 64px;
+    /* Offset the sidebar position from the top header (adjust based on header height) */
+}
+
+/* Content area (this area will contain the Outlet for nested routes) */
+.dashboard-content {
+    width: calc(100% - 240px);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 16px;
+    /* Padding for content */
+    background-color: #f9f9f9;
+    /* Light background color for content area */
+    margin-top: 64px;
+    /* Offset the content area below the header */
+}
+
+/* Main content box */
+.admin-content {
+    display: flex;
+    flex-grow: 1;
+}
+
+/* Footer styling */
+.footer {
+    background-color: #333;
+    /* Dark background for the footer */
+    color: white;
+    /* White text color for footer */
+    padding: 12px;
+    text-align: center;
+    margin-top: auto;
+    /* Ensures the footer is at the bottom */
+    border-top: 1px solid #ddd;
+    /* Optional: Add border at the top of the footer */
+}
+
+/* Optional: Responsiveness adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+        /* Adjust sidebar width for smaller screens */
+    }
+
+    .admin-content {
+        flex-direction: column;
+        /* Stack sidebar and content vertically on smaller screens */
+    }
+
+    .default-header {
+        padding: 8px 16px;
+        /* Add more padding on smaller screens for better readability */
+    }
+}

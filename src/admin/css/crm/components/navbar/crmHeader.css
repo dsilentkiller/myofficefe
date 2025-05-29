@@ -1,0 +1,143 @@
+/* Container for each link */
+.crm-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  /* primary blue */
+  color: white;
+  flex-wrap: wrap;
+  /* allow items to wrap on smaller widths */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* subtle shadow */
+  box-sizing: border-box;
+  position: fixed;
+  top:10;
+  z-index:1000;
+}
+
+.crm-header .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  white-space: nowrap;
+  /* prevent breaking */
+  flex-shrink: 1;
+  /* allow shrinking */
+  color:#1565c0;
+}
+
+.crm-header .nav-links {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items:center;
+  /* wrap nav items if needed */
+}
+
+.crm-header .nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+
+/* Hamburger menu for mobile (optional) */
+.crm-header .hamburger {
+  display: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .crm-header {
+    justify-content: space-between;
+  }
+
+  .crm-header .nav-links {
+    display: none;
+    /* hide nav on small */
+    width: 100%;
+    margin-top: 10px;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .crm-header .hamburger {
+    display: block;
+  }
+
+  /* When hamburger clicked, toggle nav display */
+  .crm-header.active .nav-links {
+    display: flex;
+  }
+}
+
+
+
+.crm-link {
+  color: #1565c0;
+  /* professional blue */
+  text-decoration: none;
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  /* bold font */
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+/* Icon button styling with full blue background circle */
+.crm-icon-btn {
+  background-color: #dde2e8;
+  /* blue background */
+  border-radius: 50%;
+  /* circle */
+  padding: 8px;
+  /* adjust size */
+  margin-right: 8px;
+  color: white !important;
+  /* white icon color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.crm-icon-btn:hover {
+  background-color: #0d3c75;
+  /* darker blue on hover */
+  cursor: pointer;
+}
+
+.crm-icon-btn svg {
+  color: #1565c0 !important;
+  /* Force icon color to blue */
+}
+
+/* Responsive styles */
+@media (max-width: 900px) {
+  .crm-link {
+    font-size: 0.85rem;
+    margin-right: 12px;
+  }
+
+  .crm-icon-btn {
+    padding: 6px;
+    margin-right: 6px;
+  }
+
+  .content-area .MuiToolbar-root {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .content-area input[type="search"] {
+    width: 100%;
+    margin-top: 8px;
+  }
+}

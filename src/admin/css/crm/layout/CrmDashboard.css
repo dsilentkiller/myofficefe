@@ -1,0 +1,57 @@
+/* If using Tailwind, add these utilities in global CSS or use inline styles */
+
+/* Make sure container-wrapper takes full viewport height */
+.container-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    /* full viewport height */
+    overflow: hidden;
+    /* prevent unwanted scroll */
+    position: relative;
+}
+
+/* Header fixed at top */
+.fixed-position {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 50;
+    /* Optional: add shadow for better separation */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Main content fills between header and footer */
+main.p-4.flex-grow.overflow-y-auto {
+    margin-top: 60px;
+    /* height of header */
+    margin-bottom: 50px;
+    /* height of footer */
+    overflow-y: auto;
+    flex-grow: 1;
+    min-height: 0;
+    /* Important for flex scroll */
+}
+
+/* Footer fixed at bottom */
+.absolute.bottom-0.w-full {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 50;
+    /* Optional: add shadow for separation */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive tweaks */
+/* Adjust header/footer height for smaller devices */
+@media (max-width: 768px) {
+    main.p-4.flex-grow.overflow-y-auto {
+        margin-top: 56px;
+        /* smaller header height */
+        margin-bottom: 48px;
+        /* smaller footer height */
+    }
+}

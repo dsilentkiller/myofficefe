@@ -1,43 +1,92 @@
-import React from "react";
-import { Outlet, Route, Routes } from "react-router-dom";
-import Footer from "../components/footer/Footer";
-import SetupHeader from "../components/navbar/SetupHeader";
-import Sidebar from "../components/sidebar/Sidebar";
-// import ProvinceList from "../base/province/ProvinceList";
 
-// import ZoneList from "../base/zone/List";
-// import MunicipalityList from "../base/municipality/List";
-// import DayForm from "../base/day/Form";
-// import DistrictTable from "../base/district/DistrictTable";
-// import CustomerVisitPeriodList from "../base/customer_visit/List";
-// import CustomerVisitPeriodForm from "../base/customer_visit/Form";
-// import WorkingList from "../base/working/List";
-// import WorkingForm from "../base/working/Form";
-// import AssignGradeFormAndList from "../base/grade/assign_grade/List";
-import DefaultHeader from "../components/navbar/DefaultHeader";
-// import ProvinceForm from "../base/province/ProvinceForm";
-// import ZoneForm from "../base/zone/Form";
+import { Outlet } from "react-router-dom";
+import SetupHeader from "../../admin/components/base/navbar/setup/SetupHeader";
+
+
+
 const SetupDashboard = () => {
   return (
-    <div className="flex min-h-screen bg-light">
-      <Sidebar />
-      <div className="flex flex-col flex-grow bg-light">
-        <div className="flex flex-col flex-grow bg-light">
-          <DefaultHeader />
-          <SetupHeader />
-        </div>
-        <div className="flex-grow p-3">
-          {/* Define Routes for different setup components */}
-          {/* <DistrictTable /> */}
-          <Outlet />
-        </div>
-        <Footer />
-      </div>
-    </div>
+    <>
+    <div className="container-wrapper">   
+            
+            <div className="flex flex-col bg-light fixed-position">
+              <SetupHeader />
+            </div>
+             <main className="p-4 flex-grow overflow-y-auto">
+                <Outlet />
+              </main>
+
+            {/* <div className="flex flex-col bg-light absolute bottom-0 w-full">
+              <Footer />
+            </div> */}
+          </div>
+
+    </>
   );
 };
 
 export default SetupDashboard;
+
+
+// function SetupDashboard() {
+//   return (
+//     <div className="container-wrapper"> 
+//       <div className="flex flex-col bg-light fixed-position">
+//         <SetupHeader />
+//       </div>
+//       <main className="p-4 flex-grow overflow-y-auto">
+//         <Outlet />
+//       </main>
+//       <div className="flex flex-col bg-light absolute bottom-0 w-full">
+//         <Footer />
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default SetupDashboard;
+// const SetupDashboard = () => {
+//   return (
+//     <>
+
+    
+//     </>
+    
+//   );
+// };
+
+// export default SetupDashboard;
+
+
+// import { Outlet, Route, Routes } from "react-router-dom";
+// import SetupHeader from "../components/navbar/SetupHeader";
+// import Sidebar from "../components/sidebar/Sidebar";
+// import "../css/crm/layout/SetupDashboard.css"
+
+// const SetupDashboard = () => {
+//   return (
+//     <>
+//      <div className="container-wrapper">
+//             <h1>setup dashboard</h1>
+//           {/* <div className="flex min-h-screen bg-light"> */}
+//             {/* <Sidebar /> */}
+//             <div className="flex flex-col flex-grow bg-light"> 
+//               {/* setup specific header */}
+//                 <SetupHeader />
+//               {/* </div> */}
+//                 <main className="p-4 flex-grow overflow-y-auto">
+//                {/* //nested routes will render here */}
+//                   <Outlet />
+//               </main>
+
+        
+//           </div>
+//       </div>
+//  </>
+//   );
+// };
+
+// export default SetupDashboard;
 
 // import React from "react";
 // import SetupHeader from "../components/navbar/SetupHeader";

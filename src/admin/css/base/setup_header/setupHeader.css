@@ -1,0 +1,17 @@
+/* Setup Header */
+.setup-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    /* example height */
+    z-index: 1000;
+    /* high to stay on top */
+}
+
+/* Content below */
+.content-wrapper {
+    padding-top: 60px;
+    /* equal or greater than header height */
+}

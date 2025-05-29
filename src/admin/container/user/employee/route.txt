@@ -1,9 +1,0 @@
-Key Changes:
-Child Route Paths: Changed the paths for employee, employee/create, customer, and customer/create to be relative, rather than starting with a /.
-Explanation:
-When nesting routes under /user, the child routes should not start with a / because that makes them absolute paths. Instead, they should be relative to the parent path (/user). This allows React Router to correctly resolve them as nested routes under /user.
-This should resolve the runtime error you were encountering.
-
- Check Route Path Configuration
-Verify that the EmployeeList component is correctly imported and that the route path is correctly defined.
-The path should be "employee" and not "/employee" to ensure it's relative to the parent /user route.

@@ -1,32 +1,34 @@
 import { configureStore } from "@reduxjs/toolkit";
-import districtReducer from "./admin/redux/slice/base/districtSlice";
-import provinceReducer from "./admin/redux/slice/base/provinceSlice";
-// import { ProvinceReducer } from "./admin/redux/reducers/ProvinceReducer";
-import designationReducer from "./admin/redux/slice/base/designationSlice";
-import municipalityReducer from "./admin/redux/slice/base/municipalitySlice";
-import workingReducer from "./admin/redux/slice/base/workingSlice";
-import departmentReducer from "./admin/redux/slice/base/departmentSlice";
-import projectReducer from "./admin/redux/slice/crm/projectSlice";
-import eventReducer from "./admin/redux/slice/crm/eventSlice";
-import attendeeReducer from "./admin/redux/slice/crm/attendeeSlice";
-import categoryReducer from "./admin/redux/slice/crm/categorySlice";
-import enquiryReducer from "./admin/redux/slice/crm/enquirySlice";
-import followReducer from "./admin/redux/slice/crm/followSlice";
-import customerReducer from "./admin/redux/slice/customer/customerSlice";
-import accountReducer from "./admin/redux/slice/crm/accountSlice";
-import employeeReducer from "./admin/redux/slice/hrm/employeeSlice";
-// import meetingUpdateReducer from "./admin/redux/slice/crm/meetingUpdateSlice";
-import assetReducer from "./admin/redux/slice/hrm/assetSlice";
-import leaveReducer from "./admin/redux/slice/hrm/leaveSlice";
-import userReducer from "./admin/redux/slice/user/UserSlice";
-import quotationReducer from "./admin/redux/slice/crm/quotationSlice";
-import meetingReducer from "./admin/redux/slice/crm/meetingSlice";
-import proposalReducer from "./admin/redux/slice/crm/proposalSlice";
-import aiChatReducer from "./admin/redux/slice/ai_agent/aiChatSlice";
-import aboutReducer from "./admin/redux/slice/website/aboutSlice";
-import contactReducer from "./admin/redux/slice/website/contactSlice";
-import servicesReducer from "./admin/redux/slice/website/servicesSlice";
-import demoReducer from "./admin/redux/slice/website/demoSlice";
+import districtReducer from "./redux/slice/admin/base/districtSlice";
+import provinceReducer from "./redux/slice/admin/base/provinceSlice";
+// import { ProvinceReducer } from "./redux/reducers/ProvinceReducer";
+import designationReducer from "./redux/slice/admin/base/designationSlice";
+import municipalityReducer from "./redux/slice/admin/base/municipalitySlice";
+import workingReducer from "./redux/slice/admin/base/workingSlice";
+import departmentReducer from "./redux/slice/admin/base/departmentSlice";
+import projectReducer from "./redux/slice/admin/crm/projectSlice";
+import eventReducer from "./redux/slice/admin/crm/eventSlice";
+import attendeeReducer from "./redux/slice/admin/crm/attendeeSlice";
+import categoryReducer from "./redux/slice/admin/crm/categorySlice";
+import enquiryReducer from "./redux/slice/admin/crm/enquirySlice";
+import followReducer from "./redux/slice/admin/crm/followSlice";
+
+import customerReducer from "./redux/slice/admin/customer/customerSlice";
+import employeeReducer from "./redux/slice/admin/hrm/employeeSlice";
+// import meetingUpdateReducer from "./redux/slice/admin/crm/meetingUpdateSlice";
+// import assetReducer from "./redux/slice/hrm/assetSlice";
+// import leaveReducer from "./redux/slice/hrm/leaveSlice";
+import userReducer from "./redux/slice/admin/user/UserSlice";
+import quotationReducer from "./redux/slice/admin/crm/quotationSlice";
+import meetingReducer from "./redux/slice/admin/crm/meetingSlice";
+import proposalReducer from "./redux/slice/admin/crm/proposalSlice";
+// import aiChatReducer from "./redux/slice/ai_agent/aiChatSlice";
+import aboutReducer from "./redux/slice/cms/about/aboutSlice";
+import contactReducer from "./redux/slice/cms/contact/contactSlice";
+import servicesReducer from "./redux/slice/cms/service/servicesSlice";
+import demoReducer from "./redux/slice/cms/demo/demoSlice";
+import authReducer from "./redux/slice/admin/accounts/authSlice";
+import organizationReducer from "./redux/slice/admin/base/organizationSlice";
 
 const store = configureStore({
   reducer: {
@@ -36,6 +38,7 @@ const store = configureStore({
     workings: workingReducer,
     designations: designationReducer,
     departments: departmentReducer,
+    organizations:organizationReducer,
     projects: projectReducer,
     events: eventReducer,
     attendees: attendeeReducer, // Add the attendee slice here
@@ -43,21 +46,22 @@ const store = configureStore({
     enquiries: enquiryReducer,
     follows: followReducer,
     customers: customerReducer,
-    account: accountReducer,
+
     employees: employeeReducer,
-    assets: assetReducer,
-    leaves: leaveReducer,
+    // assets: assetReducer,
+    // leaves: leaveReducer,
     // meetingupdates: meetingUpdateReducer, // Ensure this matches your slice name
     // meetingupdates: meetingUpdateReducer,
     meetings: meetingReducer, // Make sure 'meetings' is the correct key here
     user: userReducer, // Add the user slice here
     quotations: quotationReducer, // Make sure this is properly mapped
     proposals: proposalReducer, // Add the reducer here
-    aiChat: aiChatReducer,
+    // aiChat: aiChatReducer,
     about: aboutReducer,
     service: servicesReducer,
     contact: contactReducer,
     requestDemo: demoReducer,
+    auth: authReducer,
   },
   //
 

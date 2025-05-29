@@ -1,129 +1,150 @@
 // ..............     old working route .......................................................
-import "./App.css";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import AdminDashboard from "./admin/AdminDashboard";
-
-import EmployeeForm from "./admin/hrm/employee/Form";
-import EmployeeList from "./admin/hrm/employee/EmployeeList";
-import CustomerTable from "./admin/client/customer/CustomerTable";
-import CustomerForm from "./admin/client/customer/CustomerForm";
-import LeaveCategoryList from "./admin/hrm/leave/leave_category/List";
-import LeaveForm from "./admin/hrm/leave/Form";
-import LeaveDashboard from "./admin/layouts/LeaveDashboard";
+// import LeaveCategoryList from "./admin/hrm/leave/leave_category/List";
+// import LeaveForm from "./admin/hrm/leave/Form";
+// import LeaveDashboard from "./admin/layouts/LeaveDashboard";
 // import AssetsDashboard from "./admin/layouts/AssetDashboard";
-import AssetsForm from "./admin/hrm/assets/AssetsForm";
-import AssetsList from "./admin/hrm/assets/AssetList";
+// import AssetsForm from "./admin/hrm/assets/AssetsForm";
+// import AssetsList from "./admin/hrm/assets/AssetList";
 // import AssignAssetsForm from "./admin/hrm/assets/AssignAssetsForm";
 // import AssignAssetsList from "./admin/hrm/assets/AssignAssetsList";
-import LeaveCategoryForm from "./admin/hrm/leave/leave_category/Form";
-import LeaveList from "./admin/hrm/leave/List";
+// import LeaveCategoryForm from "./admin/hrm/leave/leave_category/Form";
+// import LeaveList from "./admin/hrm/leave/List";
 // import AssetDashboard from "./admin/layouts/AssetDashboard";
+// import EmployeeForm from "./admin/hrm/employee/Form";
+// import EmployeeList from "./admin/hrm/employee/EmployeeList";
+// import { verifyToken } from "./redux/slice/admin/accounts/authSlice.jsx";
+// import HrmDashboard from "./admin/layouts/HrmDashboard";
+
+
+import "./App.css";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { getSubdomain } from "./admin/app/accounts/utils/getSubdomain.js";
+import { setTenant } from "./redux/slice/admin/tenant/tenantSlice.js";
+
+import { useSelector } from "react-redux";
+import AdminDashboard from "./admin/dashboard/AdminDashboard.js";
+
+import CustomerTable from "./admin/app/client/customer/CustomerTable";
+import CustomerForm from "./admin/app/client/customer/CustomerForm";
+import CustomerDetail from "./admin/app/client/customer/CustomerDetail.js"
 import SetupDashboard from "./admin/layouts/SetupDashboard";
-import ProvinceList from "./admin/base/province/ProvinceList";
-import DesignationTable from "./admin/base/designation/DesignationTable";
-import DesignationForm from "./admin/base/designation/DesignationForm";
-import DistrictTable from "./admin/base/district/DistrictTable";
-import DistrictForm from "./admin/base/district/Form";
-import UpdateProvince from "./admin/base/province/UpdateProvince";
-// import DeleteProvince from "./admin/base/province/DeleteProvince";
-import MunicipalityTable from "./admin/base/municipality/List";
-import DeleteMunicipality from "./admin/base/municipality/DeleteMunicipality";
-import UpdateMunicipality from "./admin/base/municipality/Update";
-import MunicipalityForm from "./admin/base/municipality/Form";
-import UpdateDistrict from "./admin/base/district/UpdateDistrict";
-import DeleteDistrict from "./admin/base/district/DeleteDistrict";
-import DeleteProvince from "./admin/base/province/DeleteProvince";
-import ProvinceForm from "./admin/base/province/ProvinceForm";
-import DepartmentTable from "./admin/base/department/DepartmentTable";
-import DepartmentForm from "./admin/base/department/DepartmentForm";
-import DepartmentDelete from "./admin/base/department/DepartmentDelete";
-import DayDelete from "./admin/base/day/DayDelete";
-import DayTable from "./admin/base/day/DayTable";
-import DayForm from "./admin/base/day/DayForm";
+import ProvinceList from "./admin/app/base/province/ProvinceList";
+import DesignationTable from "./admin/app/base/designation/DesignationTable";
+import DesignationForm from "./admin/app/base/designation/DesignationForm";
+import DistrictTable from "./admin/app/base/district/DistrictTable";
+import DistrictForm from "./admin/app/base/district/Form";
+import UpdateProvince from "./admin/app/base/province/UpdateProvince";
+// import DeleteProvince from "./admin/app/base/province/DeleteProvince";
+import MunicipalityTable from "./admin/app/base/municipality/List";
+import DeleteMunicipality from "./admin/app/base/municipality/DeleteMunicipality";
+import UpdateMunicipality from "./admin/app/base/municipality/Update";
+import MunicipalityForm from "./admin/app/base/municipality/Form";
+import UpdateDistrict from "./admin/app/base/district/UpdateDistrict";
+import DeleteDistrict from "./admin/app/base/district/DeleteDistrict";
+import DeleteProvince from "./admin/app/base/province/DeleteProvince";
+import ProvinceForm from "./admin/app/base/province/ProvinceForm";
+import DepartmentTable from "./admin/app/base/department/DepartmentTable";
+import DepartmentForm from "./admin/app/base/department/DepartmentForm";
+import DepartmentDelete from "./admin/app/base/department/DepartmentDelete";
+import DayDelete from "./admin/app/base/day/DayDelete";
+import DayTable from "./admin/app/base/day/DayTable";
+import DayForm from "./admin/app/base/day/DayForm.js";
 import CrmDashboard from "./admin/layouts/CrmDashboard";
-import ProjectTable from "./admin/crm/project/ProjectTable";
-import ProjectDelete from "./admin/crm/project/ProjectDelete";
-import ProjectForm from "./admin/crm/project/ProjectForm";
-import ProjectDetail from "./admin/crm/project/ProjectDetail";
-import EventSystem from "./admin/crm/event/EventSystem";
-import AttendeeForm from "./admin/crm/attendee/AttendeeForm";
-import AttendeeTable from "./admin/crm/attendee/AttendeeTable";
-import AttendeeDelete from "./admin/crm/attendee/AttendeeDelete";
-import AttendeeUpdate from "./admin/crm/attendee/AttendeeUpdate";
-import AttendeeDetail from "./admin/crm/attendee/AttendeeDetail";
-import EnquiryForm from "./admin/crm/enquiry/EnquiryForm";
-import EnquiryTable from "./admin/crm/enquiry/EnquiryTable";
-import CategoryTable from "./admin/crm/category/CategoryTable";
-import CategoryForm from "./admin/crm/category/CategoryForm";
-import CategoryDelete from "./admin/crm/category/CategoryDelete";
-import EventDetail from "./admin/crm/event/EventDetail";
-import EnquiryDelete from "./admin/crm/enquiry/EnquiryDelete";
-import EnquiryDetail from "./admin/crm/enquiry/EnquiryDetail";
-// import EnquiryUpdate from "./admin/crm/enquiry/EnquiryUpdate";
-import EventUpdate from "./admin/crm/event/EventUpdate";
-import FollowForm from "./admin/crm/followup/FollowForm";
-import FollowTable from "./admin/crm/followup/FollowupTable";
-import FollowDelete from "./admin/crm/followup/FollowDelete";
-import FollowDetail from "./admin/crm/followup/FollowDetail";
+import ProjectTable from "./admin/app/crm/project/ProjectTable";
+import ProjectDelete from "./admin/app/crm/project/ProjectDelete";
+import ProjectForm from "./admin/app/crm/project/ProjectForm";
+import ProjectDetail from "./admin/app/crm/project/ProjectDetail";
+import EventSystem from "./admin/app/crm/event/EventSystem";
+import AttendeeForm from "./admin/app/crm/attendee/AttendeeForm";
+import AttendeeTable from "./admin/app/crm/attendee/AttendeeTable";
+import AttendeeDelete from "./admin/app/crm/attendee/AttendeeDelete";
+import AttendeeUpdate from "./admin/app/crm/attendee/AttendeeUpdate";
+import AttendeeDetail from "./admin/app/crm/attendee/AttendeeDetail";
+import EnquiryForm from "./admin/app/crm/enquiry/EnquiryForm";
+import EnquiryTable from "./admin/app/crm/enquiry/EnquiryTable";
+import CategoryTable from "./admin/app/crm/category/CategoryTable";
+import CategoryForm from "./admin/app/crm/category/CategoryForm";
+import CategoryDelete from "./admin/app/crm/category/CategoryDelete";
+import EventDetail from "./admin/app/crm/event/EventDetail";
+import EnquiryDelete from "./admin/app/crm/enquiry/EnquiryDelete";
+import EnquiryDetail from "./admin/app/crm/enquiry/EnquiryDetail";
+import UpdateEnquiryForm from "./admin/app/crm/enquiry/EnquiryUpdate";
+import EventUpdate from "./admin/app/crm/event/EventUpdate";
+import FollowForm from "./admin/app/crm/followup/FollowForm";
+import FollowTable from "./admin/app/crm/followup/FollowupTable";
+import FollowDelete from "./admin/app/crm/followup/FollowDelete";
+import FollowDetail from "./admin/app/crm/followup/FollowDetail";
 import ClientDashboard from "./admin/layouts/ClientDashboard";
-import HrmDashboard from "./admin/layouts/HrmDashboard";
-import CustomerDetail from "./admin/client/customer/CustomerDetail";
-import UpdateEnquiryForm from "./admin/crm/enquiry/UpdateEnquiryForm";
 
-import PrivateRoute from "./admin/accounts/PrivateRoute"; // Adjust the path if needed
-import MeetingTable from "./admin/crm/meetingupdate/MeetingTable";
-import MeetingForm from "./admin/crm/meetingupdate/MeetingForm";
-import MeetingUpdateForm from "./admin/crm/meetingupdate/MeetingUpdateForm";
-import MeetingDetail from "./admin/crm/meetingupdate/MeetingDetail";
 
-import LostEnquiryTable from "./admin/crm/enquiry/LostEnquiryTable";
-import LoginForm from "./admin/accounts/LoginForm";
-import QuotationForm from "./admin/crm/quotation/QuotationForm";
-import UpdateFollowForm from "./admin/crm/followup/UpdateFollowForm";
+import PrivateRoute from "./admin/app/accounts/PrivateRoute.js"; // Adjust the path if needed
+import MeetingTable from "./admin/app/crm/meetingupdate/MeetingTable";
+import MeetingForm from "./admin/app/crm/meetingupdate/MeetingForm";
+import MeetingUpdateForm from "./admin/app/crm/meetingupdate/MeetingUpdateForm";
+import MeetingDetail from "./admin/app/crm/meetingupdate/MeetingDetail";
 
-import ServiceQuotationForm from "./admin/crm/quotation/ServiceQuotationForm";
-import ProductQuotationForm from "./admin/crm/quotation/ProductQuotationForm";
-import Letterhead from "./admin/base/letterhead/Letterhead";
-import QuotationTable from "./admin/crm/quotation/QuotationTable";
-import OrganizationForm from "./admin/base/organization/Form";
-import ServiceQuotationDetail from "./admin/crm/quotation/ServiceQuotationDetail";
-import ProductQuotationDetail from "./admin/crm/quotation/ProductQuotationDetail1";
-import ProposalForm from "./admin/crm/proposal/ProposalForm";
-import ProposalTable from "./admin/crm/proposal/ProposalTable";
-import ProposalDetail from "./admin/crm/proposal/ProposalDetail";
-import OrganizationDetail from "./admin/base/organization/OrganizationDetail";
-import AIChat from "./admin/ai_agent/AIChat";
-import Homepage from "./website/container/HomePage";
-import About from "./website/container/About";
-import Services from "./website/container/Services";
-import Contact from "./website/container/Contact";
-import RequestDemo from "./website/container/RequestDemo";
+import LostEnquiryTable from "./admin/app/crm/enquiry/LostEnquiryTable";
+import LoginForm from "./admin/app/accounts/LoginForm.js";
+
+import QuotationForm from "./admin/app/crm/quotation/QuotationForm";
+import UpdateFollowForm from "./admin/app/crm/followup/UpdateFollowForm";
+
+import ServiceQuotationForm from "./admin/app/crm/quotation/ServiceQuotationForm";
+import ProductQuotationForm from "./admin/app/crm/quotation/ProductQuotationForm";
+import Letterhead from "./admin/app/base/letterhead/Letterhead";
+import QuotationTable from "./admin/app/crm/quotation/QuotationTable";
+import OrganizationForm from "./admin/app/base/organization/Form.js";
+import ServiceQuotationDetail from "./admin/app/crm/quotation/ServiceQuotationDetail";
+import ProductQuotationDetail from "./admin/app/crm/quotation/ProductQuotationDetail1";
+import ProposalForm from "./admin/app/crm/proposal/ProposalForm";
+import ProposalTable from "./admin/app/crm/proposal/ProposalTable";
+import ProposalDetail from "./admin/app/crm/proposal/ProposalDetail";
+import OrganizationDetail from "./admin/app/base/organization/OrganizationDetail";
+// import AIChat from "./admin/ai_agent/AIChat";
+import WorkingTable from "./admin/app/base/working/WorkingTable.js";
+
+import Homepage from "./cms/pages/home/HomePage.js";
+import About from "./cms/pages/about/About";
+import Services from "./cms/pages/services/Services.js";
+import Contact from "./cms/pages/contact/Contact";
+import RequestDemo from "./cms/pages/request_demo/RequestDemo";
+import CmsLayout from "./cms/layout/CmsLayout"
+import AdminDashboardLayout from "./admin/dashboard/AdminDashboardLayout";
+
 function App() {
-  const isAuthenticated = localStorage.getItem("access_token") !== null;
-  const userRole = localStorage.getItem("user_role"); // Assuming role is stored in localStorage
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.auth || {});
+  // ✅ Runs only once on mount to set tenant
+  useEffect(() => {
+    const tenant = getSubdomain();
+    dispatch(setTenant(tenant));
+    localStorage.setItem("tenant", tenant);
+  }, [dispatch]); // Optional: add dispatch as a best practice
+
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="about/" element={<About />} />
-          <Route path="services/" element={<Services />} />
-          <Route path="contact/" element={<Contact />} />
+          <Route element={<CmsLayout />}>
+            <Route path="/" element={<Homepage />} />
+            <Route path="about/" element={<About />} />
+            <Route path="services/" element={<Services />} />
+            <Route path="contact/" element={<Contact />} />
 
-          <Route path="contact/" element={<Contact />} />
-          <Route path="request-demo/" element={<RequestDemo />} />
+            <Route path="contact/" element={<Contact />} />
+            <Route path="request-demo/" element={<RequestDemo />} />
+          </Route>
+
 
           {/* Public Route */}
           <Route path="/login" element={<LoginForm />} />
-
-          {/* <Route path="enquiry/update/:id/" element={<EnquiryForm />} /> */}
-          {/* <Route path="enquiry/lost-enquiry/" element={<LostEnquiryTable />} /> */}
-
           {/* Protected Routes */}
           <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
             {/* Admin Routes */}
             {/* {userRole === "admin" && ( */}
-            <Route path="/dashboard">
+            <Route path="/dashboard" element={<AdminDashboardLayout />}>
               {/* localhost/dashboard */}
               <Route index element={<AdminDashboard />} />
 
@@ -170,7 +191,6 @@ function App() {
                   element={<MeetingUpdateForm />}
                 />
                 <Route path="meeting/detail/:id/" element={<MeetingDetail />} />
-                {/* <Route path="meetingupdate/create/:eventId" element={<MeetingUpdateForm/>} /> */}
 
                 {/* dashboard/crm/attendees */}
                 <Route path="attendee/update/:id/" element={<AttendeeForm />} />
@@ -227,147 +247,136 @@ function App() {
                   element={<ServiceQuotationDetail />}
                 />
                 {/* proposal  */}
-                <Route path="proposal/create" element={<ProposalForm />} />
-                <Route path="proposals/" element={<ProposalTable />} />
-                <Route path="proposal/update/:id/" element={<ProposalForm />} />
-                <Route
-                  path="proposal/detail/:id/"
-                  element={<ProposalDetail />}
-                />
+                {/* <Route path="proposal/create" element={<ProposalForm />} />
+                    <Route path="proposals/" element={<ProposalTable />} />
+                    <Route path="proposal/update/:id/" element={<ProposalForm />} />
+                    <Route
+                      path="proposal/detail/:id/"
+                      element={<ProposalDetail />}
+                    /> */}
                 {/* ai chat */}
-                <Route path="ai/chat/" element={<AIChat />} />
-              </Route>
+                {/* <Route path="ai/chat/" element={<AIChat />} />
+                  </Route> */}
 
-              {/* Customer Routes */}
-              <Route path="customer" element={<ClientDashboard />}>
-                <Route path="customer-list" element={<CustomerTable />} />
-                <Route path="create" element={<CustomerForm />} />
-                <Route path="update/:id/" element={<CustomerForm />} />
-                <Route path="detail/:id/" element={<CustomerDetail />} />
-              </Route>
-              {/* aichat */}
-              {/* <Route path="ai" element={<ClientDashboard />}>
-                <Route path="customer-list" element={<CustomerTable />} />
-                <Route path="create" element={<CustomerForm />} />
-                <Route path="update/:id/" element={<CustomerForm />} />
-                <Route path="detail/:id/" element={<CustomerDetail />} />
-              </Route> */}
+                {/* Customer Routes */}
+                <Route path="customer" element={<ClientDashboard />}>
+                  <Route path="customer-list" element={<CustomerTable />} />
+                  <Route path="create" element={<CustomerForm />} />
+                  <Route path="update/:id/" element={<CustomerForm />} />
+                  <Route path="detail/:id/" element={<CustomerDetail />} />
+                </Route>
+                {/* aichat */}
+                {/* <Route path="ai" element={<ClientDashboard />}>
+                    <Route path="customer-list" element={<CustomerTable />} />
+                    <Route path="create" element={<CustomerForm />} />
+                    <Route path="update/:id/" element={<CustomerForm />} />
+                    <Route path="detail/:id/" element={<CustomerDetail />} />
+                  </Route> */}
 
-              {/* HRM Routes */}
-              <Route path="hrm" element={<HrmDashboard />}>
-                <Route
-                  path="employee/employee-list"
-                  element={<EmployeeList />}
-                />
-                <Route path="employee/create" element={<EmployeeForm />} />
+                {/* HRM Routes */}
+                {/* <Route path="hrm" element={<HrmDashboard />}>
+                    <Route
+                      path="employee/employee-list"
+                      element={<EmployeeList />}
+                    />
+                    <Route path="employee/create" element={<EmployeeForm />} />
 
-                <Route path="leave" element={<LeaveDashboard />}>
-                  <Route index element={<LeaveList />} />
-                  {/* // Default leave page */}
-                  {/* <Route path="list" element={<LeaveList />} /> */}
-                  <Route path="create" element={<LeaveForm />} />
-                  <Route path="category/list" element={<LeaveCategoryList />} />
+                    <Route path="leave" element={<LeaveDashboard />}>
+                      <Route index element={<LeaveList />} />
+                      {/* // Default leave page */}
+                {/* <Route path="list" element={<LeaveList />} /> */}
+                {/* <Route path="create" element={<LeaveForm />} />
+                      <Route path="category/list" element={<LeaveCategoryList />} />
+                      <Route
+                        path="category/create"
+                        element={<LeaveCategoryForm />}
+                      />
+                    </Route> */}
+                {/* hrm/asset */}
+                {/* <Route path="asset">
+                      <Route path="list" element={<AssetsList />} />
+                      <Route path="create" element={<AssetsForm />} />
+
+                      <Route path="assign-asset/list" element={<AssetsList />} />
+                      <Route path="assign-asset/create" element={<AssetsForm />} />
+                    </Route>
+
+                    <Route path="attendance">
+                      <Route path="list" element={<AssetsList />} />
+                      <Route path="create" element={<AssetsForm />} />
+                    </Route>
+                  </Route>  */}
+
+                {/* Setup Routes */}
+                <Route path="setup/" element={<SetupDashboard />}>
+                  <Route path="designation" element={<DesignationTable />} />
                   <Route
-                    path="category/create"
-                    element={<LeaveCategoryForm />}
+                    path="designation/create"
+                    element={<DesignationForm />}
+                  />
+                  <Route path="department" element={<DepartmentTable />} />
+                  <Route path="department/create" element={<DepartmentForm />} />
+                  <Route
+                    path="department/delete/:id"
+                    element={<DepartmentDelete />}
+                  />
+                  <Route path="district" element={<DistrictTable />} />
+                  <Route path="district/create/" element={<DistrictForm />} />
+                  <Route
+                    path="district/update/:id/"
+                    element={<UpdateDistrict />}
+                  />
+                  <Route
+                    path="district/delete/:id/"
+                    element={<DeleteDistrict />}
+                  />
+                  <Route path="municipality" element={<MunicipalityTable />} />
+                  <Route
+                    path="municipality/create"
+                    element={<MunicipalityForm />}
+                  />
+                  <Route
+                    path="municipality/update/:id"
+                    element={<UpdateMunicipality />}
+                  />
+                  <Route
+                    path="municipality/delete/:id"
+                    element={<DeleteMunicipality />}
+                  />
+                  <Route path="province" element={<ProvinceList />} />
+                  <Route path="province/create/" element={<ProvinceForm />} />
+                  <Route
+                    path="province/update/:id"
+                    element={<UpdateProvince />}
+                  />
+                  <Route
+                    path="province/delete/:id"
+                    element={<DeleteProvince />}
+                  />
+                  {/* Working day */}
+                  <Route path="working/" element={<WorkingTable />} />
+                  {/* <Route path="working/create" element={<WorkingForm />} />
+                    <Route path="working/delete/:id" element={<WorkingDelete />} /> */}
+                  {/* day */}
+                  <Route path="day" element={<DayTable />} />
+                  <Route path="day/create" element={<DayForm />} />
+                  <Route path="day/delete/:id" element={<DayDelete />} />
+                  {/* <Route path="letterhead/create" element={<Letterhead />} /> */}
+                  {/* <Route
+                      path="organization/create"
+                      element={<OrganizationForm />}
+                    /> */}
+                  <Route
+                    path="organization/detail/"
+                    element={<OrganizationDetail />}
                   />
                 </Route>
-                {/* hrm/asset */}
-                <Route path="asset">
-                  <Route path="list" element={<AssetsList />} />
-                  <Route path="create" element={<AssetsForm />} />
-
-                  <Route path="assign-asset/list" element={<AssetsList />} />
-                  <Route path="assign-asset/create" element={<AssetsForm />} />
-                </Route>
-
-                <Route path="attendance">
-                  <Route path="list" element={<AssetsList />} />
-                  <Route path="create" element={<AssetsForm />} />
-                </Route>
               </Route>
 
-              {/* Setup Routes */}
-              <Route path="setup" element={<SetupDashboard />}>
-                <Route path="designation" element={<DesignationTable />} />
-                <Route
-                  path="designation/create"
-                  element={<DesignationForm />}
-                />
-                <Route path="department" element={<DepartmentTable />} />
-                <Route path="department/create" element={<DepartmentForm />} />
-                <Route
-                  path="department/delete/:id"
-                  element={<DepartmentDelete />}
-                />
-                <Route path="district" element={<DistrictTable />} />
-                <Route path="district/create/" element={<DistrictForm />} />
-                <Route
-                  path="district/update/:id/"
-                  element={<UpdateDistrict />}
-                />
-                <Route
-                  path="district/delete/:id/"
-                  element={<DeleteDistrict />}
-                />
-                <Route path="municipality" element={<MunicipalityTable />} />
-                <Route
-                  path="municipality/create"
-                  element={<MunicipalityForm />}
-                />
-                <Route
-                  path="municipality/update/:id"
-                  element={<UpdateMunicipality />}
-                />
-                <Route
-                  path="municipality/delete/:id"
-                  element={<DeleteMunicipality />}
-                />
-                <Route path="province" element={<ProvinceList />} />
-                <Route path="province/create/" element={<ProvinceForm />} />
-                <Route
-                  path="province/update/:id"
-                  element={<UpdateProvince />}
-                />
-                <Route
-                  path="province/delete/:id"
-                  element={<DeleteProvince />}
-                />
-                <Route path="day" element={<DayTable />} />
-                <Route path="day/create" element={<DayForm />} />
-                <Route path="day/delete/:id" element={<DayDelete />} />
-                <Route path="letterhead/create" element={<Letterhead />} />
-                <Route
-                  path="organization/create"
-                  element={<OrganizationForm />}
-                />
-                <Route
-                  path="organization/detail"
-                  element={<OrganizationDetail />}
-                />
-              </Route>
             </Route>
-            {/* )} */}
-            {/* Add more protected routes for other roles if necessary */}
-            {/* Example: */}
-            {/* {userRole === "user" && ( */}
-            {/*   <Route path="/user/dashboard" element={<UserDashboard />} /> */}
-            {/* )} */}
-            {/* Vendor Routes */}
-            {/* {userRole === "vendor" && (
-              <Route path="/dashboard/vendor" element={<VendorDashboard />}>
-                <Route index element={<VendorDashboard />} />
-                <Route path="products" element={<VendorProductList />} />
-                <Route path="orders" element={<VendorOrders />} />
-                {/* Add other vendor-specific routes here */}
-            {/* </Route>
-            )}  */}
-            {/* </Route> */}
           </Route>
-
           {/* Logout Route */}
           {/* <Route path="/logout" element={<Logout />} /> */}
-
           {/* Catch-all Redirect */}
           {/* <Route path="*" element={<Navigate to="/login" />} /> */}
           {/* Fallback route */}
@@ -624,58 +633,58 @@ export default App;
 // import LeaveList from "./admin/hrm/leave/List";
 // // import AssetDashboard from "./admin/layouts/AssetDashboard";
 // import SetupDashboard from "./admin/layouts/SetupDashboard";
-// // import ZoneList from "./admin/base/zone/List";
-// // import ZoneForm from "./admin/base/zone/Form";
-// import ProvinceList from "./admin/base/province/ProvinceList";
+// // import ZoneList from "./admin/app/base/zone/List";
+// // import ZoneForm from "./admin/app/base/zone/Form";
+// import ProvinceList from "./admin/app/base/province/ProvinceList";
 
-// import DesignationTable from "./admin/base/designation/DesignationTable";
-// import DesignationForm from "./admin/base/designation/DesignationForm";
-// import DistrictTable from "./admin/base/district/DistrictTable";
-// import DistrictForm from "./admin/base/district/Form";
-// import UpdateProvince from "./admin/base/province/UpdateProvince";
-// // import DeleteProvince from "./admin/base/province/DeleteProvince";
-// import MunicipalityList from "./admin/base/municipality/List";
-// import DeleteMunicipality from "./admin/base/municipality/Delete";
-// import UpdateMunicipality from "./admin/base/municipality/Update";
-// import MunicipalityForm from "./admin/base/municipality/Form";
-// import UpdateDistrict from "./admin/base/district/UpdateDistrict";
-// import DeleteDistrict from "./admin/base/district/DeleteDistrict";
+// import DesignationTable from "./admin/app/base/designation/DesignationTable";
+// import DesignationForm from "./admin/app/base/designation/DesignationForm";
+// import DistrictTable from "./admin/app/base/district/DistrictTable";
+// import DistrictForm from "./admin/app/base/district/Form";
+// import UpdateProvince from "./admin/app/base/province/UpdateProvince";
+// // import DeleteProvince from "./admin/app/base/province/DeleteProvince";
+// import MunicipalityList from "./admin/app/base/municipality/List";
+// import DeleteMunicipality from "./admin/app/base/municipality/Delete";
+// import UpdateMunicipality from "./admin/app/base/municipality/Update";
+// import MunicipalityForm from "./admin/app/base/municipality/Form";
+// import UpdateDistrict from "./admin/app/base/district/UpdateDistrict";
+// import DeleteDistrict from "./admin/app/base/district/DeleteDistrict";
 
-// import DeleteProvince from "./admin/base/province/DeleteProvince";
-// import ProvinceForm from "./admin/base/province/ProvinceForm";
-// import DepartmentTable from "./admin/base/department/DepartmentTable";
-// import DepartmentForm from "./admin/base/department/DepartmentForm";
-// import DepartmentDelete from "./admin/base/department/DepartmentDelete";
-// import DayDelete from "./admin/base/day/DayDelete";
-// import DayTable from "./admin/base/day/DayTable";
-// import DayForm from "./admin/base/day/DayForm";
+// import DeleteProvince from "./admin/app/base/province/DeleteProvince";
+// import ProvinceForm from "./admin/app/base/province/ProvinceForm";
+// import DepartmentTable from "./admin/app/base/department/DepartmentTable";
+// import DepartmentForm from "./admin/app/base/department/DepartmentForm";
+// import DepartmentDelete from "./admin/app/base/department/DepartmentDelete";
+// import DayDelete from "./admin/app/base/day/DayDelete";
+// import DayTable from "./admin/app/base/day/DayTable";
+// import DayForm from "./admin/app/base/day/DayForm";
 // import CrmDashboard from "./admin/layouts/CrmDashboard";
-// import ProjectTable from "./admin/crm/project/ProjectTable";
-// import ProjectDelete from "./admin/crm/project/ProjectDelete";
-// import ProjectForm from "./admin/crm/project/ProjectForm";
-// import ProjectDetail from "./admin/crm/project/ProjectDetail";
-// import EventSystem from "./admin/crm/event/EventSystem";
-// import AttendeeForm from "./admin/crm/attendee/AttendeeForm";
-// import AttendeeTable from "./admin/crm/attendee/AttendeeTable";
-// // import MeetingUpdateTable from "./admin/crm/event/meetingupdate/MeetingUpdateTable";
-// // import MeetingUpdateForm from "./admin/crm/event/meetingupdate/MeetingUpdateForm";
-// import AttendeeDelete from "./admin/crm/attendee/AttendeeDelete";
-// import AttendeeUpdate from "./admin/crm/attendee/AttendeeUpdate";
-// import AttendeeDetail from "./admin/crm/attendee/AttendeeDetail";
-// import EnquiryForm from "./admin/crm/enquiry/EnquiryForm";
-// import EnquiryTable from "./admin/crm/enquiry/EnquiryTable";
-// import CategoryTable from "./admin/crm/category/CategoryTable";
-// import CategoryForm from "./admin/crm/category/CategoryForm";
-// import CategoryDelete from "./admin/crm/category/CategoryDelete";
-// import EventDetail from "./admin/crm/event/EventDetail";
-// import EnquiryDelete from "./admin/crm/enquiry/EnquiryDelete";
-// import EnquiryDetail from "./admin/crm/enquiry/EnquiryDetail";
-// // import EnquiryUpdate from "./admin/crm/enquiry/EnquiryUpdate";
-// import EventUpdate from "./admin/crm/event/EventUpdate";
-// import FollowForm from "./admin/crm/followup/FollowForm";
-// import FollowTable from "./admin/crm/followup/FollowupTable";
-// import FollowDelete from "./admin/crm/followup/FollowDelete";
-// import FollowDetail from "./admin/crm/followup/FollowDetail";
+// import ProjectTable from "./admin/app/crm/project/ProjectTable";
+// import ProjectDelete from "./admin/app/crm/project/ProjectDelete";
+// import ProjectForm from "./admin/app/crm/project/ProjectForm";
+// import ProjectDetail from "./admin/app/crm/project/ProjectDetail";
+// import EventSystem from "./admin/app/crm/event/EventSystem";
+// import AttendeeForm from "./admin/app/crm/attendee/AttendeeForm";
+// import AttendeeTable from "./admin/app/crm/attendee/AttendeeTable";
+// // import MeetingUpdateTable from "./admin/app/crm/event/meetingupdate/MeetingUpdateTable";
+// // import MeetingUpdateForm from "./admin/app/crm/event/meetingupdate/MeetingUpdateForm";
+// import AttendeeDelete from "./admin/app/crm/attendee/AttendeeDelete";
+// import AttendeeUpdate from "./admin/app/crm/attendee/AttendeeUpdate";
+// import AttendeeDetail from "./admin/app/crm/attendee/AttendeeDetail";
+// import EnquiryForm from "./admin/app/crm/enquiry/EnquiryForm";
+// import EnquiryTable from "./admin/app/crm/enquiry/EnquiryTable";
+// import CategoryTable from "./admin/app/crm/category/CategoryTable";
+// import CategoryForm from "./admin/app/crm/category/CategoryForm";
+// import CategoryDelete from "./admin/app/crm/category/CategoryDelete";
+// import EventDetail from "./admin/app/crm/event/EventDetail";
+// import EnquiryDelete from "./admin/app/crm/enquiry/EnquiryDelete";
+// import EnquiryDetail from "./admin/app/crm/enquiry/EnquiryDetail";
+// // import EnquiryUpdate from "./admin/app/crm/enquiry/EnquiryUpdate";
+// import EventUpdate from "./admin/app/crm/event/EventUpdate";
+// import FollowForm from "./admin/app/crm/followup/FollowForm";
+// import FollowTable from "./admin/app/crm/followup/FollowupTable";
+// import FollowDelete from "./admin/app/crm/followup/FollowDelete";
+// import FollowDetail from "./admin/app/crm/followup/FollowDetail";
 // import ClientDashboard from "./admin/layouts/ClientDashboard";
 // import HrmDashboard from "./admin/layouts/HrmDashboard";
 
@@ -868,53 +877,53 @@ export default App;
 // import { BrowserRouter, Route, Routes } from "react-router-dom";
 // import AdminDashboard from "./admin/AdminDashboard";
 // import SetupDashboard from "./admin/layouts/SetupDashboard";
-// import ProvinceList from "./admin/base/province/ProvinceList";
-// import DesignationTable from "./admin/base/designation/DesignationTable";
-// import DesignationForm from "./admin/base/designation/DesignationForm";
-// import DistrictTable from "./admin/base/district/DistrictTable";
-// import DistrictForm from "./admin/base/district/Form";
-// import UpdateProvince from "./admin/base/province/UpdateProvince";
-// import DeleteProvince from "./admin/base/province/DeleteProvince";
-// import MunicipalityList from "./admin/base/municipality/List";
-// import DeleteMunicipality from "./admin/base/municipality/Delete";
-// import UpdateMunicipality from "./admin/base/municipality/Update";
-// import MunicipalityForm from "./admin/base/municipality/Form";
-// import UpdateDistrict from "./admin/base/district/UpdateDistrict";
-// import DeleteDistrict from "./admin/base/district/DeleteDistrict";
-// import DepartmentTable from "./admin/base/department/DepartmentTable";
-// import DepartmentForm from "./admin/base/department/DepartmentForm";
-// import DepartmentDelete from "./admin/base/department/DepartmentDelete";
-// import DayDelete from "./admin/base/day/DayDelete";
-// import DayTable from "./admin/base/day/DayTable";
-// import DayForm from "./admin/base/day/DayForm";
+// import ProvinceList from "./admin/app/base/province/ProvinceList";
+// import DesignationTable from "./admin/app/base/designation/DesignationTable";
+// import DesignationForm from "./admin/app/base/designation/DesignationForm";
+// import DistrictTable from "./admin/app/base/district/DistrictTable";
+// import DistrictForm from "./admin/app/base/district/Form";
+// import UpdateProvince from "./admin/app/base/province/UpdateProvince";
+// import DeleteProvince from "./admin/app/base/province/DeleteProvince";
+// import MunicipalityList from "./admin/app/base/municipality/List";
+// import DeleteMunicipality from "./admin/app/base/municipality/Delete";
+// import UpdateMunicipality from "./admin/app/base/municipality/Update";
+// import MunicipalityForm from "./admin/app/base/municipality/Form";
+// import UpdateDistrict from "./admin/app/base/district/UpdateDistrict";
+// import DeleteDistrict from "./admin/app/base/district/DeleteDistrict";
+// import DepartmentTable from "./admin/app/base/department/DepartmentTable";
+// import DepartmentForm from "./admin/app/base/department/DepartmentForm";
+// import DepartmentDelete from "./admin/app/base/department/DepartmentDelete";
+// import DayDelete from "./admin/app/base/day/DayDelete";
+// import DayTable from "./admin/app/base/day/DayTable";
+// import DayForm from "./admin/app/base/day/DayForm";
 // import CrmDashboard from "./admin/layouts/CrmDashboard";
-// import ProjectTable from "./admin/crm/project/ProjectTable";
-// import ProjectDelete from "./admin/crm/project/ProjectDelete";
-// import ProjectForm from "./admin/crm/project/ProjectForm";
-// import ProjectDetail from "./admin/crm/project/ProjectDetail";
-// import EventSystem from "./admin/crm/event/EventSystem";
-// import AttendeeForm from "./admin/crm/attendee/AttendeeForm";
-// import AttendeeTable from "./admin/crm/attendee/AttendeeTable";
-// import AttendeeDelete from "./admin/crm/attendee/AttendeeDelete";
-// import AttendeeUpdate from "./admin/crm/attendee/AttendeeUpdate";
-// import AttendeeDetail from "./admin/crm/attendee/AttendeeDetail";
-// import EnquiryForm from "./admin/crm/enquiry/EnquiryForm";
-// import EnquiryTable from "./admin/crm/enquiry/EnquiryTable";
-// import CategoryTable from "./admin/crm/category/CategoryTable";
-// import CategoryForm from "./admin/crm/category/CategoryForm";
-// import CategoryDelete from "./admin/crm/category/CategoryDelete";
-// import EventDetail from "./admin/crm/event/EventDetail";
-// import EnquiryDelete from "./admin/crm/enquiry/EnquiryDelete";
-// import EnquiryDetail from "./admin/crm/enquiry/EnquiryDetail";
-// import EnquiryUpdate from "./admin/crm/enquiry/EnquiryUpdate";
-// import EventUpdate from "./admin/crm/event/EventUpdate";
-// import FollowForm from "./admin/crm/followup/FollowForm";
-// import FollowTable from "./admin/crm/followup/FollowupTable";
-// import FollowDelete from "./admin/crm/followup/FollowDelete";
+// import ProjectTable from "./admin/app/crm/project/ProjectTable";
+// import ProjectDelete from "./admin/app/crm/project/ProjectDelete";
+// import ProjectForm from "./admin/app/crm/project/ProjectForm";
+// import ProjectDetail from "./admin/app/crm/project/ProjectDetail";
+// import EventSystem from "./admin/app/crm/event/EventSystem";
+// import AttendeeForm from "./admin/app/crm/attendee/AttendeeForm";
+// import AttendeeTable from "./admin/app/crm/attendee/AttendeeTable";
+// import AttendeeDelete from "./admin/app/crm/attendee/AttendeeDelete";
+// import AttendeeUpdate from "./admin/app/crm/attendee/AttendeeUpdate";
+// import AttendeeDetail from "./admin/app/crm/attendee/AttendeeDetail";
+// import EnquiryForm from "./admin/app/crm/enquiry/EnquiryForm";
+// import EnquiryTable from "./admin/app/crm/enquiry/EnquiryTable";
+// import CategoryTable from "./admin/app/crm/category/CategoryTable";
+// import CategoryForm from "./admin/app/crm/category/CategoryForm";
+// import CategoryDelete from "./admin/app/crm/category/CategoryDelete";
+// import EventDetail from "./admin/app/crm/event/EventDetail";
+// import EnquiryDelete from "./admin/app/crm/enquiry/EnquiryDelete";
+// import EnquiryDetail from "./admin/app/crm/enquiry/EnquiryDetail";
+// import EnquiryUpdate from "./admin/app/crm/enquiry/EnquiryUpdate";
+// import EventUpdate from "./admin/app/crm/event/EventUpdate";
+// import FollowForm from "./admin/app/crm/followup/FollowForm";
+// import FollowTable from "./admin/app/crm/followup/FollowupTable";
+// import FollowDelete from "./admin/app/crm/followup/FollowDelete";
 // import Login from "./admin/accounts/Login";
 // // import ProtectedRoute from "./admin/accounts/ProtectedRoute";
 // import Logout from "./admin/accounts/Logout";
-// import ProvinceForm from "./admin/base/province/ProvinceForm";
+// import ProvinceForm from "./admin/app/base/province/ProvinceForm";
 // import ClientDashboard from "./admin/layouts/ClientDashboard";
 // import CustomerTable from "./admin/client/customer/CustomerTable";
 // import CustomerDetail from "./admin/client/customer/CustomerDetail";

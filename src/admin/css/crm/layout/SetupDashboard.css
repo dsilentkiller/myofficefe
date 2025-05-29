@@ -1,0 +1,34 @@
+/* Setup Dashboard Layout */
+.setup-dashboard-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* The Setup Header */
+.setup-dashboard-header {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Setup Dashboard Content */
+.setup-dashboard-content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f9f9f9;
+    overflow-y: auto;
+}
+
+/* Optional: Ensure the Setup Header stays on top of the content */
+.setup-dashboard-wrapper .setup-dashboard-header {
+    position: relative;
+    z-index: 10;
+}
+
+/* Responsiveness for smaller screens */
+@media (max-width: 768px) {
+    .setup-dashboard-content {
+        padding: 10px;
+    }
+}

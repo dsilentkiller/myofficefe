@@ -124,9 +124,7 @@ const HrmDashboard = () => {
       <div className="d-flex min-h-screen bg-light">
         <HrmSidebar />
         <div className="flex-grow-1 bg-light">
-          <div className="flex flex-col">
-            <DefaultHeader />
-          </div>
+    
           <div className="flex flex-col">
             <HrmNavbar/>
           </div>
@@ -256,8 +254,8 @@ const HrmDashboard = () => {
           </div>
         </div>
       </div>
-      <Footer />
-      <Outlet /> {/* This will render the nested routes */}
+      {/* <Footer /> */}
+      {/* <Outlet /> This will render the nested routes */}
     </div>
   );
 };

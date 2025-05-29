@@ -1,0 +1,15 @@
+/* Sidebar styling */
+.sidebar {
+    flex-shrink: 0;
+    width: 250px;
+    /* Adjust as needed for sidebar width */
+    background-color: #f4f4f4;
+    /* Light gray background for sidebar */
+    padding: 16px;
+    border-right: 1px solid #ddd;
+    /* Optional: Add border to the right of the sidebar */
+    position: sticky;
+    /* Ensure sidebar stays in place when scrolling */
+    top: 64px;
+    /* Offset the sidebar position from the top header (adjust based on header height) */
+}

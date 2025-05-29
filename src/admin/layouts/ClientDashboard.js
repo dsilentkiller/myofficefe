@@ -1,8 +1,8 @@
 import React from "react";
-import ClientHeader from "../components/navbar/ClientHeader"
-import Sidebar from "../components/sidebar/LeftSidebar";
+import ClientHeader from "../components/customer/ClientHeader"
+import Sidebar from "../components/common/sidebar/LeftSidebar";
 // import DefaultHeader from "../components/navbar/DefaultHeader";
-import Footer from "../components/footer/Footer";
+import Footer from "../components/common/footer/Footer";
 // import CustomerTable from "../client/customer/CustomerTable";
 import { Outlet } from "react-router-dom";
 // import { Route,Router} from "react-router-dom";
