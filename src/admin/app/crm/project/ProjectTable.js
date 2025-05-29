@@ -56,42 +56,42 @@ const ProjectTable = () => {
 
   return (
     <>
-   
 
-        <GeneralTable
-          title="Projects"
-          data={formattedProjects}
-          columns={[
-            { label: "#", field: "index" },
-            { label: "Project Name", field: "project_name", sortable: true },
-            { label: "Description", field: "description" },
-            { label: "Start Date", field: "start_date" },
-            { label: "End Date", field: "end_date" },
-            { label: "Status", field: "status" },
-          ]}
-          actions={[
-            { label: "Edit", icon: <Edit />, key: "edit" },
-            { label: "Delete", icon: <Delete />, key: "delete" },
-            { label: "View", icon: <Visibility />, key: "view" },
-          ]}
-          onRowAction={(actionKey, rowData) =>
-            handleRowAction(actionKey, rowData)
-          }
-          onEdit={handleEdit}
-          onView={handleView}
-          onDelete={handleDelete}
-          onAdd={handleAdd}
+
+      <GeneralTable
+        title="Projects"
+        data={formattedProjects}
+        columns={[
+          { label: "#", field: "index" },
+          { label: "Project Name", field: "project_name", sortable: true },
+          { label: "Description", field: "description" },
+          { label: "Start Date", field: "start_date" },
+          { label: "End Date", field: "end_date" },
+          { label: "Status", field: "status" },
+        ]}
+        actions={[
+          { label: "Edit", icon: <Edit />, key: "edit" },
+          { label: "Delete", icon: <Delete />, key: "delete" },
+          { label: "View", icon: <Visibility />, key: "view" },
+        ]}
+        onRowAction={(actionKey, rowData) =>
+          handleRowAction(actionKey, rowData)
+        }
+        onEdit={handleEdit}
+        onView={handleView}
+        onDelete={handleDelete}
+        onAdd={handleAdd}
+      />
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <ProjectDelete
+          id={projectToDelete}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={handleDelete}
         />
+      )}
 
-        {/* Delete Confirmation Modal */}
-        {isDeleteModalOpen && (
-          <ProjectDelete
-            id={projectToDelete}
-            onClose={() => setIsDeleteModalOpen(false)}
-            onConfirm={handleDelete}
-          />
-        )}
-  
     </>
   );
 };

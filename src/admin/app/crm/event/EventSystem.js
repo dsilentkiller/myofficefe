@@ -1,5 +1,4 @@
 //
-
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,7 +6,7 @@ import {
   createEvent,
   fetchEventByIdUpdate,
 } from "../../../../redux/slice/admin/crm/eventSlice";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import { momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import EventForm from "./EventForm";
 import { toast, ToastContainer } from "react-toastify";
@@ -15,6 +14,8 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useNavigate } from "react-router-dom";
 import "../../../css/crm/event/EventSystem.css";
+import CalendarDashboard from "./CalendarDashboard";
+
 const localizer = momentLocalizer(moment);
 
 const EventSystem = () => {
@@ -22,6 +23,11 @@ const EventSystem = () => {
   const navigate = useNavigate();
   const events = useSelector((state) => state.events?.events || []);
   const [showModal, setShowModal] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [selectedEvents, setSelectedEvents] = useState([]);
+
+  const toggleDarkMode = () => setDarkMode(!darkMode);
+
   const [eventData, setEventData] = useState({
     title: "",
     start: null,
@@ -31,33 +37,40 @@ const EventSystem = () => {
     organization_address: "",
     description: "",
   });
-  const [selectedEvents, setSelectedEvents] = useState([]); // State to store events for selected date
 
   useEffect(() => {
     dispatch(fetchEvents());
   }, [dispatch]);
-
 
   const handleClose = () => {
     setShowModal(false);
     resetForm();
   };
 
-
-  // Function to handle event selection
-  const handleSelectEvent = (event) => {
-    console.log('Selected event:', event);  // Debugging line
-    if (event && event.id) {
-      console.log('Navigating to event detail with ID:', event.id);  // Debugging line
-      navigate(`/dashboard/crm/event/detail/${event.id}`);
-    } else {
-      console.error('Event ID is missing or undefined');
-    }
-  };
-
   const handleShow = ({ start, end }) => {
     setEventData({ title: "", start, end, attendees: [], description: "" });
     setShowModal(true);
+  };
+
+  const handleScheduleButtonClick = () => {
+    setEventData({
+      title: "",
+      start: null,
+      end: null,
+      attendees: [],
+      organization_name: "",
+      organization_address: "",
+      description: "",
+    });
+    setShowModal(true);
+  };
+
+  const handleSelectEvent = (event) => {
+    if (event?.id) {
+      navigate(`/dashboard/crm/event/detail/${event.id}`);
+    } else {
+      console.error("Event ID is missing or undefined");
+    }
   };
 
   const handleSaveEvent = async (eventToSave) => {
@@ -77,7 +90,6 @@ const EventSystem = () => {
       toast.error("Failed to save event!");
     }
   };
-
 
   const handleDateClick = (date) => {
     const selectedDate = moment(date).startOf("day");
@@ -100,69 +112,208 @@ const EventSystem = () => {
   };
 
   return (
-    <div className="content-wrapper">
-      <div className="event-system-container">
-        <h1 className="page-title">Event Management</h1>
+    <>
+      {/* Schedule Event Button */}
+      {/* <div className="flex justify-end mb-4 px-4"> */}
+        {/* // Inside EventSystem component */}
+        {/* <button
+          onClick={() => navigate("event/scheduler")}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+        >
+          Scheduler
+        </button> */}
 
-        {/* Calendar Component */}
-        <div className="calendar-container">
-          <Calendar
-            localizer={localizer}
-            events={events.map((event) => ({
-              ...event,
-              id: event.id,//passing event id
-              start: new Date(event.start), // Ensure start is a Date object
-              end: new Date(event.end), // Ensure end is a Date object
-            }))}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: 500, margin: "50px" }}
-            selectable
-            views={["month", "week", "day"]} // Ensure week and day views are enabled
-            onSelectEvent={handleSelectEvent}
-            onSelectSlot={handleShow}
-            onNavigate={handleDateClick}
-          />
-        </div>
+      {/* </div> */}
 
-        {/* Display the list of events for the selected date */}
-        <div className="selected-events-container">
-          <h3 className="events-header">Events on Selected Date</h3>
-          {selectedEvents.length > 0 ? (
-            <div className="event-cards-container">
-              {selectedEvents.map((event) => (
-                <div key={event.id} className="event-card">
-                  <h4 className="event-title">{event.title}</h4>
-                  <p className="event-time">
-                    {moment(event.start).format("YYYY-MM-DD HH:mm")}
-                  </p>
-                  <p className="event-description">{event.description}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>No events for this date.</p>
-          )}
-        </div>
+      <CalendarDashboard
+        events={events}
+        selectedEvents={selectedEvents}
+        handleSelectEvent={handleSelectEvent}
+        handleShow={handleShow}
+        handleDateClick={handleDateClick}
+        eventData={eventData}
+        setEventData={setEventData}
+        handleSaveEvent={handleSaveEvent}
+        showModal={showModal}
+        handleClose={handleClose}
+        darkMode={darkMode}
+        toggleDarkMode={toggleDarkMode}
+      />
 
-        {/* Event Form Modal */}
-        <EventForm
-          eventData={eventData}
-          setEventData={setEventData}
-          handleSaveEvent={handleSaveEvent}
-          show={showModal}
-          handleClose={handleClose}
-        />
+      <EventForm
+        eventData={eventData}
+        setEventData={setEventData}
+        handleSaveEvent={handleSaveEvent}
+        show={showModal}
+        handleClose={handleClose}
+      />
 
-        {/* Toast Notifications */}
-        <ToastContainer />
-      </div>
-    </div>
+      <ToastContainer />
+    </>
   );
 };
 
 export default EventSystem;
 
+// import { useState, useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import {
+//   fetchEvents,
+//   createEvent,
+//   fetchEventByIdUpdate,
+// } from "../../../../redux/slice/admin/crm/eventSlice";
+// import { momentLocalizer } from "react-big-calendar";
+// import moment from "moment";
+// import EventForm from "./EventForm";
+// import { toast, ToastContainer } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
+// import "react-big-calendar/lib/css/react-big-calendar.css";
+// import { useNavigate } from "react-router-dom";
+// import "../../../css/crm/event/EventSystem.css";
+// import CalendarDashboard from "./CalendarDashboard"
+
+
+// const localizer = momentLocalizer(moment);
+
+
+// const EventSystem = () => {
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+//   const events = useSelector((state) => state.events?.events || []);
+//   const [showModal, setShowModal] = useState(false);
+//   const [darkMode, setDarkMode] = useState(false);
+
+//   const toggleDarkMode = () => setDarkMode(!darkMode);
+//   const [eventData, setEventData] = useState({
+//     title: "",
+//     start: null,
+//     end: null,
+//     attendees: [],
+//     organization_name: "",
+//     organization_address: "",
+//     description: "",
+//   });
+//   const [selectedEvents, setSelectedEvents] = useState([]); // State to store events for selected date
+
+//   useEffect(() => {
+//     dispatch(fetchEvents());
+//   }, [dispatch]);
+
+
+//   const handleClose = () => {
+//     setShowModal(false);
+//     resetForm();
+//   };
+
+
+//   // Function to handle event selection
+//   const handleSelectEvent = (event) => {
+//     console.log('Selected event:', event);  // Debugging line
+//     if (event && event.id) {
+//       console.log('Navigating to event detail with ID:', event.id);  // Debugging line
+//       navigate(`/dashboard/crm/event/detail/${event.id}`);
+//     } else {
+//       console.error('Event ID is missing or undefined');
+//     }
+//   };
+
+//   const handleShow = ({ start, end }) => {
+//     setEventData({ title: "", start, end, attendees: [], description: "" });
+//     setShowModal(true);
+//   };
+
+//   const handleSaveEvent = async (eventToSave) => {
+//     try {
+//       if (eventData.id) {
+//         await dispatch(
+//           fetchEventByIdUpdate({ id: eventData.id, eventToSave })
+//         ).unwrap();
+//         toast.success("Event updated successfully!");
+//       } else {
+//         await dispatch(createEvent(eventToSave)).unwrap();
+//         toast.success("Event created successfully!");
+//       }
+//       handleClose();
+//     } catch (error) {
+//       console.error("Error saving event: ", error);
+//       toast.error("Failed to save event!");
+//     }
+//   };
+
+
+//   const handleDateClick = (date) => {
+//     const selectedDate = moment(date).startOf("day");
+//     const filteredEvents = events.filter((event) =>
+//       moment(event.start).isSame(selectedDate, "day")
+//     );
+//     setSelectedEvents(filteredEvents);
+//   };
+
+//   const resetForm = () => {
+//     setEventData({
+//       title: "",
+//       start: null,
+//       end: null,
+//       attendees: [],
+//       organization_name: "",
+//       organization_address: "",
+//       description: "",
+//     });
+//   };
+
+//   return (
+//     <>
+
+//       <CalendarDashboard
+//         events={events}
+//         selectedEvents={selectedEvents}
+//         handleSelectEvent={handleSelectEvent}
+//         handleShow={handleShow}
+//         handleDateClick={handleDateClick}
+//         eventData={eventData}
+//         setEventData={setEventData}
+//         handleSaveEvent={handleSaveEvent}
+//         showModal={showModal}
+//         handleClose={handleClose}
+//         darkMode={darkMode}
+//         toggleDarkMode={toggleDarkMode}
+//       />
+
+//       <EventForm
+//         eventData={eventData}
+//         setEventData={setEventData}
+//         handleSaveEvent={handleSaveEvent}
+//         show={showModal}
+//         handleClose={handleClose}
+//       />
+
+//       <ToastContainer />
+//     </>
+//   );
+// };
+// export default EventSystem;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ###############
 
 // import React, { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";

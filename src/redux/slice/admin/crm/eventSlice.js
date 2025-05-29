@@ -35,18 +35,7 @@ export const fetchEventById = createAsyncThunk(
   }
 );
 
-// Fetch all Events action
-// export const fetchEvent = createAsyncThunk(
-//   "Events/fetchEvent",
-//   async (_, thunkAPI) => {
-//     try {
-//       const response = await axiosInstance.get("api/event/");
-//       return response.data.result;
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response?.data || error.message);
-//     }
-//   }
-// );
+
 
 // Async thunk for creating a new event
 export const createEvent = createAsyncThunk(
@@ -61,21 +50,7 @@ export const createEvent = createAsyncThunk(
   }
 );
 
-// Async thunk for updating an event
-// export const fetchEventByIdUpdate = createAsyncThunk(
-//   "events/fetchEventByIdUpdate",
-//   async ({ id, eventData }, { rejectWithValue }) => {
-//     try {
-//       const response = await axiosInstance.put(
-//         `api/event/update/${id}/`,
-//         eventData
-//       );
-//       return response.data.result;
-//     } catch (error) {
-//       return rejectWithValue(error.response.data);
-//     }
-//   }
-// );
+
 export const fetchEventByIdUpdate = createAsyncThunk(
   "events/updateEvent",
   async ({ id, eventToSave }, { rejectWithValue }) => {

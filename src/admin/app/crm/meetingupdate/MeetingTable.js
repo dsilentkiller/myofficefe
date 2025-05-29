@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchMeetings,
@@ -69,7 +69,7 @@ const MeetingTable = () => {
   };
 
   const handleAdd = () => {
-    navigate("/dashboard/crm/meeting/create");
+    navigate("/dashboard/crm/meetings/create");
   };
 
   const handleEdit = (meeting) => {

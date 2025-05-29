@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 const TableActionNavbar = ({
   title = "Table",
   addLink = "create",
+  onAdd,
   searchTerm,
   setSearchTerm,
   onExportExcel,
@@ -55,6 +56,7 @@ const TableActionNavbar = ({
         {showAddButton && (
           <Tooltip title="Add">
             <IconButton
+              onClick={onAdd}
               component={Link}
               to={addLink}
               color="primary"

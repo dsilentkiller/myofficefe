@@ -1,5 +1,5 @@
 //latest form for meetingupdate in crmheader
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -76,6 +76,7 @@ const MeetingForm = () => {
         remark: "",
         status: "",
       });
+      navigate("/dashboard/crm/meetings");
     } catch (error) {
       // Handle errors during form submission
       console.error("Error occurred during meeting update creation:", error);
@@ -84,8 +85,11 @@ const MeetingForm = () => {
   };
 
   return (
-    <div className="content-wrapper">
-      <div className="container" style={{ marginTop: "30px" }}>
+    <>
+      <div className="container" style={{
+        marginTop: "30px", minHeight: "calc(100vh - 100px)", padding: "20px",
+        background: "#f9f9f9",
+      }}>
         <div className="container-fluid">
           <div className="card">
             <div className="card-header">
@@ -204,7 +208,7 @@ const MeetingForm = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

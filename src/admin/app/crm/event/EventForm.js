@@ -111,197 +111,199 @@ const EventForm = ({ handleClose, show }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleClose} className="event-modal">
-      <Modal.Header closeButton>
-        <Modal.Title className="event-modal-title">Create Event</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          {/* Event Title */}
-          <Form.Group controlId="eventTitle" className="mb-6">
-            <Form.Label>Event Title</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter event title"
-              value={eventData.title || ""}
-              onChange={(e) =>
-                setEventData((prevData) => ({
-                  ...prevData,
-                  title: e.target.value,
-                }))
-              }
-              className="event-form-input"
-            />
-          </Form.Group>
+    <>
+      <Modal show={show} onHide={handleClose} size="lg" className="event-modal">
+        <Modal.Header closeButton>
+          <Modal.Title className="event-modal-title">Create Event</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            {/* Event Title */}
+            <Form.Group controlId="eventTitle" className="mb-6">
+              <Form.Label>Event Title</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter event title"
+                value={eventData.title || ""}
+                onChange={(e) =>
+                  setEventData((prevData) => ({
+                    ...prevData,
+                    title: e.target.value,
+                  }))
+                }
+                className="event-form-input"
+              />
+            </Form.Group>
 
-          {/* Description */}
-          <Form.Group controlId="eventDescription" className="mb-4">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              placeholder="Enter description"
-              value={eventData.description || ""}
-              onChange={(e) =>
-                setEventData((prevData) => ({
-                  ...prevData,
-                  description: e.target.value,
-                }))
-              }
-              className="event-form-input"
-            />
-          </Form.Group>
+            {/* Description */}
+            <Form.Group controlId="eventDescription" className="mb-4">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                placeholder="Enter description"
+                value={eventData.description || ""}
+                onChange={(e) =>
+                  setEventData((prevData) => ({
+                    ...prevData,
+                    description: e.target.value,
+                  }))
+                }
+                className="event-form-input"
+              />
+            </Form.Group>
 
-          {/* Organization Name */}
-          <Form.Group controlId="organizationName" className="mb-4">
-            <Form.Label>Organization Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter organization name"
-              value={eventData.organization_name || ""}
-              onChange={(e) =>
-                setEventData((prevData) => ({
-                  ...prevData,
-                  organization_name: e.target.value,
-                }))
-              }
-              className="event-form-input"
-            />
-          </Form.Group>
+            {/* Organization Name */}
+            <Form.Group controlId="organizationName" className="mb-4">
+              <Form.Label>Organization Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter organization name"
+                value={eventData.organization_name || ""}
+                onChange={(e) =>
+                  setEventData((prevData) => ({
+                    ...prevData,
+                    organization_name: e.target.value,
+                  }))
+                }
+                className="event-form-input"
+              />
+            </Form.Group>
 
-          {/* Organization Address */}
-          <Form.Group controlId="organizationAddress" className="mb-4">
-            <Form.Label>Organization Address</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter organization address"
-              value={eventData.organization_address || ""}
-              onChange={(e) =>
-                setEventData((prevData) => ({
-                  ...prevData,
-                  organization_address: e.target.value,
-                }))
-              }
-              className="event-form-input"
-            />
-          </Form.Group>
+            {/* Organization Address */}
+            <Form.Group controlId="organizationAddress" className="mb-4">
+              <Form.Label>Organization Address</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter organization address"
+                value={eventData.organization_address || ""}
+                onChange={(e) =>
+                  setEventData((prevData) => ({
+                    ...prevData,
+                    organization_address: e.target.value,
+                  }))
+                }
+                className="event-form-input"
+              />
+            </Form.Group>
 
-          {/* Attendees */}
-          <Form.Group controlId="eventAttendees" className="mb-4">
-            <Form.Label>Attendees</Form.Label>
-            {eventData.attendees.map((attendee, index) => (
-              <Row key={index} className="mb-3">
-                <Col md={10}>
-                  <Form.Control
-                    type="text"
-                    placeholder="Name"
-                    value={attendee.name}
-                    onChange={(e) =>
-                      handleAttendeeChange(index, "name", e.target.value)
-                    }
-                    isInvalid={!!errors[`attendee_${index}_name`]}
-                  />
-                </Col>
-                <Col md={10}>
-                  <Form.Control
-                    type="email"
-                    placeholder="Email"
-                    value={attendee.email}
-                    onChange={(e) =>
-                      handleAttendeeChange(index, "email", e.target.value)
-                    }
-                    isInvalid={!!errors[`attendee_${index}_email`]}
-                  />
-                </Col>
-                <Col md={10}>
-                  <PhoneInput
-                    country={"np"} // Country code for Nepal
-                    value={attendee.pri_phone}
-                    onChange={(value) =>
-                      handleAttendeeChange(index, "pri_phone", value)
-                    }
-                    inputStyle={{
-                      width: "100%",
-                      borderColor: errors[`attendee_${index}_pri_phone`] ? "red" : "green",
-                    }}
-                  />
-                  {errors[`attendee_${index}_pri_phone`] && (
-                    <p style={{ color: "red" }}>{errors[`attendee_${index}_pri_phone`]}</p>
-                  )}
-                </Col>
-                <Col md={1}>
-                  <Button
-                    variant="danger"
-                    onClick={() => handleRemoveAttendee(index)}
-                  >
-                    <AiOutlineMinus />
-                  </Button>
-                </Col>
-              </Row>
-            ))}
-            <Button variant="primary" onClick={handleAddAttendee}>
-              <AiOutlinePlus /> Add Attendee
-            </Button>
-          </Form.Group>
+            {/* Attendees */}
+            <Form.Group controlId="eventAttendees" className="d-flex  justify-content-between mb-2">
+              <Form.Label>Attendees</Form.Label>
+              {eventData.attendees.map((attendee, index) => (
+                <Row key={index} className="mb-3">
+                  <Col md={10}>
+                    <Form.Control
+                      type="text"
+                      placeholder="Name"
+                      value={attendee.name}
+                      onChange={(e) =>
+                        handleAttendeeChange(index, "name", e.target.value)
+                      }
+                      isInvalid={!!errors[`attendee_${index}_name`]}
+                    />
+                  </Col>
+                  <Col md={10}>
+                    <Form.Control
+                      type="email"
+                      placeholder="Email"
+                      value={attendee.email}
+                      onChange={(e) =>
+                        handleAttendeeChange(index, "email", e.target.value)
+                      }
+                      isInvalid={!!errors[`attendee_${index}_email`]}
+                    />
+                  </Col>
+                  <Col md={10}>
+                    <PhoneInput
+                      country={"np"} // Country code for Nepal
+                      value={attendee.pri_phone}
+                      onChange={(value) =>
+                        handleAttendeeChange(index, "pri_phone", value)
+                      }
+                      inputStyle={{
+                        width: "100%",
+                        borderColor: errors[`attendee_${index}_pri_phone`] ? "red" : "green",
+                      }}
+                    />
+                    {errors[`attendee_${index}_pri_phone`] && (
+                      <p style={{ color: "red" }}>{errors[`attendee_${index}_pri_phone`]}</p>
+                    )}
+                  </Col>
+                  <Col md={1}>
+                    <Button
+                      variant="danger"
+                      onClick={() => handleRemoveAttendee(index)}
+                    >
+                      <AiOutlineMinus />
+                    </Button>
+                  </Col>
+                </Row>
+              ))}
+              <Button variant="primary" onClick={handleAddAttendee}>
+                <AiOutlinePlus /> Add Attendee
+              </Button>
+            </Form.Group>
 
-          {/* Start Date */}
-          <Form.Group controlId="eventStart" className="mb-4">
-            <Form.Label>Start Date & Time</Form.Label>
-            <DatePicker
-              selected={eventData.start || null}
-              onChange={(date) =>
-                setEventData((prevData) => ({
-                  ...prevData,
-                  start: date,
-                }))
-              }
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="MMMM d, yyyy h:mm aa"
-              placeholderText="Select start date and time"
-              className="form-control event-date-picker"
-            />
-          </Form.Group>
+            {/* Start Date */}
+            <Form.Group controlId="eventStart" className="mb-4">
+              <Form.Label>Start Date & Time</Form.Label>
+              <DatePicker
+                selected={eventData.start || null}
+                onChange={(date) =>
+                  setEventData((prevData) => ({
+                    ...prevData,
+                    start: date,
+                  }))
+                }
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="MMMM d, yyyy h:mm aa"
+                placeholderText="Select start date and time"
+                className="form-control event-date-picker"
+              />
+            </Form.Group>
 
-          {/* End Date */}
-          <Form.Group controlId="eventEnd" className="mb-4">
-            <Form.Label>End Date & Time</Form.Label>
-            <DatePicker
-              selected={eventData.end || null}
-              onChange={(date) =>
-                setEventData((prevData) => ({
-                  ...prevData,
-                  end: date,
-                }))
-              }
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              dateFormat="MMMM d, yyyy h:mm aa"
-              placeholderText="Select end date and time"
-              className="form-control event-date-picker"
-            />
-          </Form.Group>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer className="d-flex justify-content-between">
-        <Button
-          variant="outline-secondary"
-          onClick={handleClose}
-          className="event-modal-close-btn"
-        >
-          Close
-        </Button>
-        <Button
-          variant="primary"
-          onClick={handleSave}
-          className="event-modal-save-btn"
-        >
-          Save Event
-        </Button>
-      </Modal.Footer>
-    </Modal>
+            {/* End Date */}
+            <Form.Group controlId="eventEnd" className="mb-4">
+              <Form.Label>End Date & Time</Form.Label>
+              <DatePicker
+                selected={eventData.end || null}
+                onChange={(date) =>
+                  setEventData((prevData) => ({
+                    ...prevData,
+                    end: date,
+                  }))
+                }
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="MMMM d, yyyy h:mm aa"
+                placeholderText="Select end date and time"
+                className="form-control event-date-picker"
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer className="d-flex justify-content-between">
+          <Button
+            variant="outline-secondary"
+            onClick={handleClose}
+            className="event-modal-close-btn"
+          >
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleSave}
+            className="event-modal-save-btn"
+          >
+            Save Event
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 };
 

@@ -292,7 +292,7 @@ const FollowTable = ({ followId }) => {
 
         <TableActionNavbar
           style={{ position: "relative", zIndex: 10, marginTop: 0 }}
-          title="Enquiry List"
+          title="Follow up  List"
           addLink="create"
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
@@ -326,8 +326,8 @@ const FollowTable = ({ followId }) => {
                   }}
                 >
                   <TableRow>
-                    <TableCell>#</TableCell>
-                    <TableCell>
+                    <TableCell style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}>#</TableCell>
+                    <TableCell style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}>
                       Name
                       <Tooltip title="Sort">
                         <IconButton onClick={toggleSortOrder}>
@@ -339,12 +339,12 @@ const FollowTable = ({ followId }) => {
                         </IconButton>
                       </Tooltip>
                     </TableCell>
-                    <TableCell>Follow by</TableCell>
-                    <TableCell>Next Follow Up Date</TableCell>
-                    <TableCell>Last Followup At</TableCell>
-                    <TableCell>Remark</TableCell>
-                    <TableCell>Notes</TableCell>
-                    <TableCell>Actions</TableCell>
+                    <TableCell style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }} >Follow by</TableCell>
+                    <TableCell style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}>Next Follow Up Date</TableCell>
+                    <TableCell style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}>Last Followup At</TableCell>
+                    <TableCell style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}>Remark</TableCell>
+                    <TableCell style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}>Notes</TableCell>
+                    <TableCell style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -447,7 +447,7 @@ const FollowTable = ({ followId }) => {
                     })
                   ) : (
                     <TableRow>
-                      <TableCell colSpan="8" align="center">
+                      <TableCell colSpan="8" align="center" style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}>
                         No follows found.
                       </TableCell>
                     </TableRow>

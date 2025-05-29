@@ -35,6 +35,7 @@ const GeneralTable = ({
   title,
   columns = [],
   data = [],
+  onAdd,
   onEdit,
   onDelete,
   onView,
@@ -142,14 +143,11 @@ const GeneralTable = ({
 
   return (
     <>
-      {/* <Box
-      className="content-wrapper"
-
-    > */}
 
       <TableActionNavbar
         title={title}
-        addLink="" // or use `onAdd` below if not navigating
+        onAdd={onAdd}
+
         searchTerm={search}
         setSearchTerm={handleSearch}
         onExportExcel={exportExcel}
@@ -204,6 +202,7 @@ const GeneralTable = ({
                   borderBottom: "2px solid #ddd",
                   borderRight: "1px solid #ddd",
                   borderLeft: "1px solid #ddd",
+                  width: "20%", fontWeight: "bold", backgroundColor: "#f5f5f5"
                 }}
               >
                 Actions
@@ -222,7 +221,9 @@ const GeneralTable = ({
                     padding: "6px",
                     color: "gray",
                     maxHeight: "400px", // Limit height for scrolling
+                    width: "20%", fontWeight: "bold", backgroundColor: "#f5f5f5"
                   }}
+
                 >
                   No Data Found
                 </TableCell>
@@ -294,7 +295,7 @@ const GeneralTable = ({
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      {/* </Box> */}
+
     </>
   );
 };

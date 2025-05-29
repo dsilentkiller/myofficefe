@@ -101,7 +101,7 @@ const ProjectForm = () => {
 
 
   return (
-    <div className="content-wrapper">
+    <>
       <div className="container">
         <div className="container-fluid">
           <div className="card">
@@ -136,21 +136,6 @@ const ProjectForm = () => {
                     </Col>
                     <Col md={4}>
                       <Form.Group>
-                        <Form.Label>Description</Form.Label>
-                        <Form.Control
-                          as="textarea"
-                          name="description"
-                          value={formData.description}
-                          onChange={handleChange}
-                          placeholder="Enter Description"
-                          required
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md={4}>
-                      <Form.Group>
                         <Form.Label>Start Date</Form.Label>
                         <Form.Control
                           type="datetime-local"
@@ -173,6 +158,11 @@ const ProjectForm = () => {
                         />
                       </Form.Group>
                     </Col>
+
+                  </Row>
+                  <Row>
+
+
                     <Col md={4}>
                       <Form.Group>
                         <Form.Label>Status</Form.Label>
@@ -192,6 +182,19 @@ const ProjectForm = () => {
                         </Form.Control>
                       </Form.Group>
                     </Col>
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          name="description"
+                          value={formData.description}
+                          onChange={handleChange}
+                          placeholder="Enter Description"
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
                   </Row>
                 </div>
                 <button type="submit" className="btn btn-primary">
@@ -202,7 +205,7 @@ const ProjectForm = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

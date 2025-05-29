@@ -65,7 +65,7 @@ const ProjectDetail = () => {
   }
 
   return (
-    <div className="content-wrapper">
+    <>
       <div className="container-fluid">
         <div className="row justify-content-center">
           <Col md={8}>
@@ -155,7 +155,7 @@ const ProjectDetail = () => {
           </Col>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

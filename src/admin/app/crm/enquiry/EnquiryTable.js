@@ -578,7 +578,7 @@ const EnquiryTable = () => {
                   })
                 ) : (
                   <tr>
-                    <td colSpan="17">No enquiries found</td>
+                    <td colSpan="17" style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}>No enquiries found</td>
                   </tr>
                 )}
               </tbody>

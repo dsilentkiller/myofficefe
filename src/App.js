@@ -112,6 +112,8 @@ import Contact from "./cms/pages/contact/Contact";
 import RequestDemo from "./cms/pages/request_demo/RequestDemo";
 import CmsLayout from "./cms/layout/CmsLayout"
 import AdminDashboardLayout from "./admin/dashboard/AdminDashboardLayout";
+import EventScheduler from "./admin/app/crm/event/EventScheduler.js";
+import EventManagement from "./admin/app/crm/event/EventScheduler.js";
 
 function App() {
   const dispatch = useDispatch();
@@ -183,9 +185,10 @@ function App() {
                 <Route path="event/create" element={<EventSystem />} />
                 <Route path="event/update/:id/" element={<EventUpdate />} />
                 <Route path="event/detail/:id/" element={<EventDetail />} />
-                {/* meetingupdate */}
+                {/* <Route path="event/scheduler/" element={<EventManagement />} /> */}
+                {/* /dashboard/crm/meetingupdate */}
                 <Route path="meetings/" element={<MeetingTable />} />
-                <Route path="meeting/create/" element={<MeetingForm />} />
+                <Route path="meetings/create/" element={<MeetingForm />} />
                 <Route
                   path="meeting/update/:id/"
                   element={<MeetingUpdateForm />}

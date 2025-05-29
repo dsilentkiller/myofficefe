@@ -539,6 +539,18 @@ const EnquiryForm = ({ enquiryId }) => {
                       {errors.sec_phone && <p>{errors.sec_phone}</p>}
                     </div>
 
+                    {/* <InputField
+                          label="Email"
+                          id="email"
+                          name="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          validate={validateEmail}
+                          required
+                          type="email"
+                          placeholder="example@domain.com"
+                        /> */}
+
                     {/* email */}
                     <div className="col-md-4">
                       <div className="form-group">

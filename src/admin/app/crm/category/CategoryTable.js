@@ -176,9 +176,9 @@ const CategoryTable = () => {
           <table className="table table-bordered table-striped align-middle">
             <thead className="table-light">
               <tr>
-                <th style={{ width: "5%" }}>#</th>
-                <th style={{ width: "30%", whiteSpace: "nowrap" }}>Name</th>
-                <th style={{ width: "20%" }}>Actions</th>
+                <th style={{ fontWeight: "bold", backgroundColor: "#f5f5f5", width: "5%" }}>#</th>
+                <th style={{ width: "30%", whiteSpace: "nowrap", fontWeight: "bold", backgroundColor: "#f5f5f5" }}>Name</th>
+                <th style={{ width: "20%", fontWeight: "bold", backgroundColor: "#f5f5f5" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
