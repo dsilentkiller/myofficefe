@@ -316,154 +316,143 @@ const QuotationForm = ({ existingQuotation = {} }) => {
   const totals = calculateTotal();
 
   return (
-    <Box p={4} maxWidth="900px" mx="auto">
-      <Paper elevation={3}>
-        <Box p={3}>
-          <Typography variant="h4" align="center" gutterBottom>
-            Quotation Form
-          </Typography>
+    <>
+      <Box p={4} maxWidth="900px" mx="auto">
+        <Paper elevation={3}>
+          <Box p={3}>
+            <Typography variant="h4" align="center" gutterBottom>
+              Quotation Form
+            </Typography>
 
-          <FormControl fullWidth>
-            <InputLabel id="selection-type-label">Select From</InputLabel>
+            <FormControl fullWidth>
+              <InputLabel id="selection-type-label">Select From</InputLabel>
+              <Select
+                labelId="selection-type-label"
+                value={selectionType}
+                onChange={(e) => setSelectionType(e.target.value)}
+                label="Select From"
+              >
+                <MenuItem value="customer">Customer</MenuItem>
+                <MenuItem value="enquiry">Enquiry</MenuItem>
+              </Select>
+            </FormControl>
+
             <Select
-              labelId="selection-type-label"
-              value={selectionType}
-              onChange={(e) => setSelectionType(e.target.value)}
-              label="Select From"
+              id="customer-or-enquiry"
+              value={selectedCustomerOrEnquiry}
+              onChange={(e) => setSelectedCustomerOrEnquiry(e.target.value)}
+              fullWidth
+              required
+              sx={{ mt: 2 }}
             >
-              <MenuItem value="customer">Customer</MenuItem>
-              <MenuItem value="enquiry">Enquiry</MenuItem>
-            </Select>
-          </FormControl>
-
-          <Select
-            id="customer-or-enquiry"
-            value={selectedCustomerOrEnquiry}
-            onChange={(e) => setSelectedCustomerOrEnquiry(e.target.value)}
-            fullWidth
-            required
-            sx={{ mt: 2 }}
-          >
-            <MenuItem value="">
-              Select {selectionType === "customer" ? "Customer" : "Enquiry"}
-            </MenuItem>
-            {selectionType === "customer" &&
-              Array.isArray(customers) &&
-              customers.length > 0 ? (
-              customers.map((customer) => (
-                <MenuItem key={customer.id} value={customer.id}>
-                  {customer.customer_name}
-                </MenuItem>
-              ))
-            ) : selectionType === "enquiry" &&
-              Array.isArray(enquiries) &&
-              enquiries.length > 0 ? (
-              enquiries.map((enquiry) => (
-                <MenuItem key={enquiry.id} value={enquiry.id}>
-                  {enquiry.customer_name || "No Enquiry Name"}
-                </MenuItem>
-              ))
-            ) : (
-              <MenuItem>
-                No {selectionType === "customer" ? "customer" : "enquiry"}{" "}
-                available
+              <MenuItem value="">
+                Select {selectionType === "customer" ? "Customer" : "Enquiry"}
               </MenuItem>
-            )}
-          </Select>
-
-          {/* Quotation Type Selector */}
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <InputLabel id="quotation-type-label">Quotation Type</InputLabel>
-            <Select
-              labelId="quotation-type-label"
-              value={quotationType}
-              onChange={(e) => setQuotationType(e.target.value)}
-              label="Quotation Type"
-            >
-              <MenuItem value="service">Service</MenuItem>
-              <MenuItem value="product">Product</MenuItem>
+              {selectionType === "customer" &&
+                Array.isArray(customers) &&
+                customers.length > 0 ? (
+                customers.map((customer) => (
+                  <MenuItem key={customer.id} value={customer.id}>
+                    {customer.customer_name}
+                  </MenuItem>
+                ))
+              ) : selectionType === "enquiry" &&
+                Array.isArray(enquiries) &&
+                enquiries.length > 0 ? (
+                enquiries.map((enquiry) => (
+                  <MenuItem key={enquiry.id} value={enquiry.id}>
+                    {enquiry.customer_name || "No Enquiry Name"}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem>
+                  No {selectionType === "customer" ? "customer" : "enquiry"}{" "}
+                  available
+                </MenuItem>
+              )}
             </Select>
-          </FormControl>
 
-          {/* Tax and Discount Section */}
-          <Box
-            mt={4}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            gap={2}
-          >
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={includeTax}
-                  onChange={(e) => setIncludeTax(e.target.checked)}
-                />
-              }
-              label="Include Tax"
-            />
-            {includeTax && (
-              <TextField
-                type="number"
-                label="Tax Percentage (%)"
-                value={taxPercentage}
-                onChange={(e) =>
-                  setTaxPercentage(e.target.value ? +e.target.value : 0)
+            {/* Quotation Type Selector */}
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel id="quotation-type-label">Quotation Type</InputLabel>
+              <Select
+                labelId="quotation-type-label"
+                value={quotationType}
+                onChange={(e) => setQuotationType(e.target.value)}
+                label="Quotation Type"
+              >
+                <MenuItem value="service">Service</MenuItem>
+                <MenuItem value="product">Product</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Tax and Discount Section */}
+            <Box
+              mt={4}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              gap={2}
+            >
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={includeTax}
+                    onChange={(e) => setIncludeTax(e.target.checked)}
+                  />
                 }
+                label="Include Tax"
               />
-            )}
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={includeDiscount}
-                  onChange={(e) => setIncludeDiscount(e.target.checked)}
+              {includeTax && (
+                <TextField
+                  type="number"
+                  label="Tax Percentage (%)"
+                  value={taxPercentage}
+                  onChange={(e) =>
+                    setTaxPercentage(e.target.value ? +e.target.value : 0)
+                  }
                 />
-              }
-              label="Include Discount"
-            />
-            {includeDiscount && (
-              <TextField
-                type="number"
-                label="Discount Percentage (%)"
-                value={discountPercentage}
-                onChange={(e) =>
-                  setDiscountPercentage(e.target.value ? +e.target.value : 0)
+              )}
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={includeDiscount}
+                    onChange={(e) => setIncludeDiscount(e.target.checked)}
+                  />
                 }
+                label="Include Discount"
               />
+              {includeDiscount && (
+                <TextField
+                  type="number"
+                  label="Discount Percentage (%)"
+                  value={discountPercentage}
+                  onChange={(e) =>
+                    setDiscountPercentage(e.target.value ? +e.target.value : 0)
+                  }
+                />
+              )}
+            </Box>
+
+            {/* Render either ProductQuotation or ServiceQuotation */}
+            {quotationType === "product" ? (
+              <ProductQuotation products={products} setProducts={setProducts} />
+            ) : (
+              <ServiceQuotation services={services} setServices={setServices} />
             )}
-          </Box>
 
-          {/* Render either ProductQuotation or ServiceQuotation */}
-          {quotationType === "product" ? (
-            <ProductQuotation products={products} setProducts={setProducts} />
-          ) : (
-            <ServiceQuotation services={services} setServices={setServices} />
-          )}
+            {/* Display Totals */}
 
-          {/* Display Totals */}
-          <Box mt={4} textAlign="center">
-            <Typography variant="h6">
-              Subtotal: {totals.subtotal.toFixed(2)}
-            </Typography>
-            <Typography variant="h6">
-              Tax: {totals.taxAmount.toFixed(2)}
-            </Typography>
-            <Typography variant="h6">
-              Discount: {totals.discountAmount.toFixed(2)}
-            </Typography>
-            <Typography variant="h5" color="primary">
-              Total: {totals.total.toFixed(2)}
-            </Typography>
-          </Box>
 
-          <Box textAlign="center" mt={4}>
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
-              Send Quotation
-            </Button>
+            <Box textAlign="center" mt={4}>
+              <Button variant="contained" color="primary" onClick={handleSubmit}>
+                Send Quotation
+              </Button>
+            </Box>
           </Box>
-        </Box>
-      </Paper>
-    </Box>
+        </Paper>
+      </Box>
+    </>
   );
 };
 

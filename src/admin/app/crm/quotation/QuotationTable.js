@@ -143,7 +143,7 @@ const QuotationTable = () => {
 
 
   return (
-    <div className="content-wrapper" style={{ display: "flex", justifyContent: "center", flexDirection: "column", overflow: "hidden" }}>
+    <>
       <AppBar position="static" color="gray">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
@@ -328,7 +328,7 @@ const QuotationTable = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </div>
+    </>
   );
 };
 
