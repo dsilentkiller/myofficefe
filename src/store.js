@@ -29,16 +29,17 @@ import servicesReducer from "./redux/slice/cms/service/servicesSlice";
 import demoReducer from "./redux/slice/cms/demo/demoSlice";
 import authReducer from "./redux/slice/admin/accounts/authSlice";
 import organizationReducer from "./redux/slice/admin/base/organizationSlice";
-
+import dayReducer from "./redux/slice/admin/base/daySlice";
 const store = configureStore({
   reducer: {
     districts: districtReducer,
     municipalities: municipalityReducer,
     provinces: provinceReducer,
     workings: workingReducer,
+    days: dayReducer,
     designations: designationReducer,
     departments: departmentReducer,
-    organizations:organizationReducer,
+    organizations: organizationReducer,
     projects: projectReducer,
     events: eventReducer,
     attendees: attendeeReducer, // Add the attendee slice here
