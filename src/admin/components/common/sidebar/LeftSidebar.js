@@ -1,7 +1,3 @@
-
-
-// new sidebar Sidebar.js
-import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Drawer,
@@ -10,110 +6,255 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-  Collapse,
-  IconButton,
-  Button,
   Typography,
 } from "@mui/material";
-import { Dashboard as DashboardIcon, Person as PersonIcon, ExpandLess, ExpandMore } from "@mui/icons-material";
+import {
+  Dashboard as DashboardIcon,
+  Person as PersonIcon,
+  Work as WorkIcon,
+  Settings as SettingsIcon,
+  Group as GroupIcon,
+} from "@mui/icons-material";
 
-const Sidebar = () => {
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+// Add props: features = { crm: true, hrm: false, customer: true }, theme = "default" or "blue"
+const Sidebar = ({ activeSection, features = {}, theme = "default" }) => {
+  const isABCdomain = window.location.hostname === "abc.localhost3000.com";
 
-  const toggleUserMenu = () => {
-    setUserMenuOpen(!userMenuOpen);
+  const colors = {
+    default: {
+      bg: "#2C3E50",
+      text: "#BDC3C7",
+      active: "#1ABC9C",
+      hover: "#16A085",
+    },
+    blue: {
+      bg: "#0D47A1",
+      text: "#E3F2FD",
+      active: "#1976D2",
+      hover: "#1565C0",
+    },
+  };
+
+  const currentTheme = colors[theme] || colors.default;
+
+  const navItemStyle = (sectionKey) => ({
+    color: currentTheme.text,
+    fontSize: "16px",
+    padding: "10px 16px",
+    backgroundColor: activeSection === sectionKey ? currentTheme.active : currentTheme.bg,
+    "&:hover": {
+      backgroundColor: currentTheme.hover,
+      color: "#FFFFFF",
+    },
+    borderRadius: "8px",
+    marginBottom: "10px",
+  });
+
+  const iconStyle = {
+    color: currentTheme.text,
   };
 
   return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: 240,
-        flexShrink: 0,
-        "& .MuiDrawer-paper": {
+    <aside>
+      <Drawer
+        variant="permanent"
+        sx={{
           width: 240,
-          boxSizing: "border-box",
-          backgroundColor: "#2c3e50", // Dark background color
-          color: "#ecf0f1", // Light text color for good contrast
-        },
-      }}
-    >
-      <div style={{ padding: "16px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Link to="/dashboard" className="brand-link">
-          <img
-            src="dist/img/AdminLTELogo.png"
-            alt="AdminLTE Logo"
-            style={{
-              borderRadius: "50%",
-              width: "50px",
-              height: "50px",
-              marginBottom: "10px",
-            }}
-          />
-          <Typography variant="h6" color="inherit" sx={{ fontWeight: 600 }}>
-            Myoffice
-          </Typography>
-        </Link>
-      </div>
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: 240,
+            boxSizing: "border-box",
+            backgroundColor: currentTheme.bg,
+            color: currentTheme.text,
+          },
+        }}
+      >
+        <div style={{ padding: 16, display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <Link to="/dashboard" style={{ textDecoration: "none" }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, color: "#FFFFFF" }}>
+              Myoffice
+            </Typography>
+          </Link>
+        </div>
 
-      <Divider />
+        {/* User Info */}
+        {isABCdomain && (
+          <div style={{ padding: 16, display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <Link to="/dashboard/profile" style={{ textDecoration: "none" }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, color: "#FFFFFF", display: "flex", alignItems: "center" }}>
+                <PersonIcon sx={{ marginRight: 1 }} />
+                Paaru
+              </Typography>
+            </Link>
+          </div>
+        )}
+        <Divider sx={{ backgroundColor: currentTheme.hover }} />
 
-      <List>
-        {/* Dashboard Item with Button Styling */}
-        <ListItem
-          button
-          component={Link}
-          to="/dashboard"
-          sx={{
-            color: "#ffffff", // Text color
-            fontSize: "34px", // Font size
-            padding: "10px 16px",
-            backgroundColor: "#3498db", // Dashboard button color
-            "&:hover": {
-              backgroundColor: "#2980b9", // Darken on hover
-            },
-            borderRadius: "8px",
-            marginBottom: "10px",
-          }}
-        >
-          <ListItemIcon sx={{ color: "#ffffff" }}>
-            <DashboardIcon />
-          </ListItemIcon>
-          <ListItemText primary="Dashboard" sx={{ color: "#ffffff" }} />
-        </ListItem>
+        {/* Navigation */}
+        <List>
+          <ListItem button component={Link} to="/dashboard" sx={navItemStyle("dashboard")}>
+            <ListItemIcon sx={iconStyle}>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
 
-        {/* Customer Menu with Button Styling */}
-        <ListItem
-          button
-          onClick={toggleUserMenu}
-          sx={{
-            color: "#ffffff", // Text color
-            fontSize: "16px", // Font size
-            padding: "10px 16px",
-            backgroundColor: "#e74c3c", // Customer button color
-            "&:hover": {
-              backgroundColor: "#c0392b", // Darken on hover
-            },
-            borderRadius: "8px",
-            marginTop: "10px",
-          }}
-        >
-          <ListItemIcon >
-            <PersonIcon />
-          </ListItemIcon>
-          <ListItemText primary="Customer" component={Link} to="/dashboard/customer/" sx={{ color: "#ffffff" }} />
-          {/* {userMenuOpen ? <ExpandLess sx={{ color: "#ffffff" }} /> : <ExpandMore sx={{ color: "#ffffff" }} />} */}
-        </ListItem>
+          {features.crm && (
+            <ListItem button component={Link} to="/dashboard/crm" sx={navItemStyle("crm")}>
+              <ListItemIcon sx={iconStyle}>
+                <WorkIcon />
+              </ListItemIcon>
+              <ListItemText primary="CRM" />
+            </ListItem>
+          )}
 
+          {features.customer && (
+            <ListItem button component={Link} to="/dashboard/customer" sx={navItemStyle("customer")}>
+              <ListItemIcon sx={iconStyle}>
+                <GroupIcon />
+              </ListItemIcon>
+              <ListItemText primary="Customer" />
+            </ListItem>
+          )}
 
+          {features.hrm && (
+            <ListItem button component={Link} to="/dashboard/hrm" sx={navItemStyle("hrm")}>
+              <ListItemIcon sx={iconStyle}>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText primary="HRM" />
+            </ListItem>
+          )}
 
-
-      </List>
-    </Drawer>
+          <ListItem button component={Link} to="/dashboard/setup" sx={navItemStyle("settings")}>
+            <ListItemIcon sx={iconStyle}>
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Settings" />
+          </ListItem>
+        </List>
+      </Drawer>
+    </aside>
   );
 };
 
 export default Sidebar;
+
+
+// new sidebar Sidebar.js doing great work
+// import { useState } from "react";
+// import { Link } from "react-router-dom";
+// import {
+//   Drawer,
+//   List,
+//   ListItem,
+//   ListItemIcon,
+//   ListItemText,
+//   Divider,
+//   Collapse,
+//   IconButton,
+//   Button,
+//   Typography,
+// } from "@mui/material";
+// import { Dashboard as DashboardIcon, Person as PersonIcon, ExpandLess, ExpandMore } from "@mui/icons-material";
+// // Add props :feature ={crmLtrue,hrm:true,customer:true},theme "default"or blue
+// const Sidebar = () => {
+//   const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+//   const toggleUserMenu = () => {
+//     setUserMenuOpen(!userMenuOpen);
+//   };
+
+//   return (
+//     <Drawer
+//       variant="permanent"
+//       sx={{
+//         width: 240,
+//         flexShrink: 0,
+//         "& .MuiDrawer-paper": {
+//           width: 240,
+//           boxSizing: "border-box",
+//           backgroundColor: "#2c3e50", // Dark background color
+//           color: "#ecf0f1", // Light text color for good contrast
+//         },
+//       }}
+//     >
+//       <div style={{ padding: "16px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+//         <Link to="/dashboard" className="brand-link">
+//           <img
+//             src="dist/img/AdminLTELogo.png"
+//             alt="AdminLTE Logo"
+//             style={{
+//               borderRadius: "50%",
+//               width: "50px",
+//               height: "50px",
+//               marginBottom: "10px",
+//             }}
+//           />
+//           <Typography variant="h6" color="inherit" sx={{ fontWeight: 600 }}>
+//             Myoffice
+//           </Typography>
+//         </Link>
+//       </div>
+
+//       <Divider />
+
+//       <List>
+//         {/* Dashboard Item with Button Styling */}
+//         <ListItem
+//           button
+//           component={Link}
+//           to="/dashboard"
+//           sx={{
+//             color: "#ffffff", // Text color
+//             fontSize: "34px", // Font size
+//             padding: "10px 16px",
+//             backgroundColor: "#3498db", // Dashboard button color
+//             "&:hover": {
+//               backgroundColor: "#2980b9", // Darken on hover
+//             },
+//             borderRadius: "8px",
+//             marginBottom: "10px",
+//           }}
+//         >
+//           <ListItemIcon sx={{ color: "#ffffff" }}>
+//             <DashboardIcon />
+//           </ListItemIcon>
+//           <ListItemText primary="Dashboard" sx={{ color: "#ffffff" }} />
+//         </ListItem>
+
+//         {/* Customer Menu with Button Styling */}
+//         <ListItem
+//           button
+//           onClick={toggleUserMenu}
+//           sx={{
+//             color: "#ffffff", // Text color
+//             fontSize: "16px", // Font size
+//             padding: "10px 16px",
+//             backgroundColor: "#e74c3c", // Customer button color
+//             "&:hover": {
+//               backgroundColor: "#c0392b", // Darken on hover
+//             },
+//             borderRadius: "8px",
+//             marginTop: "10px",
+//           }}
+//         >
+//           <ListItemIcon >
+//             <PersonIcon />
+//           </ListItemIcon>
+//           <ListItemText primary="Customer" component={Link} to="/dashboard/customer/" sx={{ color: "#ffffff" }} />
+//           {/* {userMenuOpen ? <ExpandLess sx={{ color: "#ffffff" }} /> : <ExpandMore sx={{ color: "#ffffff" }} />} */}
+//         </ListItem>
+
+
+
+
+//       </List>
+//     </Drawer>
+//   );
+// };
+
+// export default Sidebar;
 //old sidebar
 
 

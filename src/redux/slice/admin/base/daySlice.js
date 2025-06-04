@@ -16,26 +16,15 @@ export const fetchDays = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axiosInstance.get("api/setup/day/");
-      return response.data.result; // Adjust this based on your actual API response structure
+      console.log("response", response)
+
+      // return response.data.result|| []; // Adjust this based on your actual API response structure
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
-// export const createDay = createAsyncThunk(
-//   "days/createDay",
-//   async (dayData, thunkAPI) => {
-//     try {
-//       const response = await axiosInstance.post(
-//         "api/setup/day/create/",
-//         dayData
-//       );
-//       return response.data.result; // Adjust this based on your actual API response structure
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response.result.data);
-//     }
-//   }
-// );
+
 
 export const createDay = createAsyncThunk(
   "days/createDay",
@@ -102,8 +91,8 @@ export const deleteDay = createAsyncThunk(
       // Return a more descriptive error message
       return thunkAPI.rejectWithValue(
         error.response?.data?.message ||
-          error.message ||
-          "An unknown error occurred"
+        error.message ||
+        "An unknown error occurred"
       );
     }
   }
@@ -131,10 +120,16 @@ const daySlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
+      // .addCase(fetchDays.fulfilled, (state, action) => {
+      //   state.isLoading = false;
+      //   state.list = action.payload;
+      // })
       .addCase(fetchDays.fulfilled, (state, action) => {
         state.isLoading = false;
         state.list = action.payload;
+        // ?.result?.data || [];
       })
+
       .addCase(fetchDays.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
@@ -167,9 +162,20 @@ const daySlice = createSlice({
         state.createError = null;
       })
       .addCase(createDay.fulfilled, (state, action) => {
-        state.list.push(action.payload);
+        console.log("Create Day Payload:", action.payload);
+        if (Array.isArray(state.list)) {
+          state.list.push(action.payload); // Push only if `list` is an array
+        } else {
+          state.list = [action.payload]; // Convert to array if needed
+        }
         state.createStatus = "succeeded";
       })
+
+
+      // .addCase(createDay.fulfilled, (state, action) => {
+      //   state.list.push(action.payload);
+      //   state.createStatus = "succeeded";
+      // })
       .addCase(createDay.rejected, (state, action) => {
         state.createStatus = "failed";
         state.createError = action.error.message;

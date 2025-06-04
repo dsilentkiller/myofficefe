@@ -31,12 +31,11 @@ const MunicipalityForm = () => {
   useEffect(() => {
     if (createStatus === "failed") {
       toast.error(
-  `Error: ${
-    typeof createError === "object" && createError !== null
-      ? createError.message
-      : createError || "An error occurred"
-  }`
-);
+        `Error: ${typeof createError === "object" && createError !== null
+          ? createError.message
+          : createError || "An error occurred"
+        }`
+      );
 
     }
   }, [createStatus, createError]);
@@ -55,7 +54,7 @@ const MunicipalityForm = () => {
   };
 
   return (
-    <div className="content-wrapper">
+    <>
       <div className="container">
         <div className="container-fluid">
           <div className="card">
@@ -104,7 +103,7 @@ const MunicipalityForm = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

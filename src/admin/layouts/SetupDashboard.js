@@ -7,7 +7,7 @@ import SetupHeader from "../../admin/components/base/navbar/setup/SetupHeader";
 const SetupDashboard = () => {
   return (
     <>
-    <div className="container-wrapper">   
+    {/* <div className="container-wrapper">    */}
             
             <div className="flex flex-col bg-light fixed-position">
               <SetupHeader />
@@ -19,7 +19,7 @@ const SetupDashboard = () => {
             {/* <div className="flex flex-col bg-light absolute bottom-0 w-full">
               <Footer />
             </div> */}
-          </div>
+          {/* </div> */}
 
     </>
   );

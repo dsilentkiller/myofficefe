@@ -1,104 +1,79 @@
 // import React, { useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { fetchHome } from "../../../admin/redux/slice/website/homeSlice";
-import Navbar from "../../components/navbar/Navbar";
+// import Navbar from "../../components/navbar/Navbar";
 // import Topbar from "../../components/topbar/Topbar";
-import Footer from "../../components/footer/Footer";
+// import Footer from "../../components/footer/Footer";
 
 import "../../css/home/home.css";
 import { Link } from "react-router-dom";
-import heroImage from "../../assets/img/hero-section/hero_crm.jpg"; // adjust path as needed
-
-import BackgroundImage from "../../assets/img/hero-section/4680.jpg";
-import Topbar from "../../components/topbar/Topbar";
+// import heroImage from "../../assets/img/hero-section/hero_crm.jpg"; // adjust path as needed
+import HeroSection from "../../pages/herosection/HeroSection"
+// import BackgroundImage from "../../assets/img/hero-section/4680.jpg";
+// import Topbar from "../../components/topbar/Topbar";
 // Import the necessary CSS files
 const HomePage = () => {
-  // <Topbar/>
-  // Home page data
-  const homeData = {
-    title: "Innovative Solutions for Modern Businesses",
-    subtitle: "Transforming ideas into powerful digital experiences",
-    intro_text:
-      "We help businesses leverage cutting-edge technology to stay ahead of the competition. Our solutions are designed to optimize your operations, enhance customer experience, and drive growth.",
-    button_text: "Get Started",
-    button_link: "/request-demo",
-    hero_image: heroImage,
-    background_image: BackgroundImage,
-  };
 
   return (
     <div className="home-page">
 
-      <div
-        className="hero-section"
-        style={{ backgroundImage: `url(${homeData.background_image})` }}
-      >
-        <div className="container hero-container">
-          <div className="hero-content">
-            <h1>{homeData.title}</h1>
-            <h2>{homeData.subtitle}</h2>
-            <p>{homeData.intro_text}</p>
-            <Link to={homeData.button_link} className="btn hero-btn">
-              {homeData.button_text}
-            </Link>
-          </div>
-          <div className="hero-image">
-            <img src={homeData.hero_image || "/placeholder.svg"} alt="Hero" />
-          </div>
-        </div>
-      </div>
+
+      <HeroSection />
 
       <section className="section features-section">
         <div className="container">
-          <h2 className="section-title">Why Choose Us</h2>
+          <h2 className="section-title">Why Choose Our CRM & Marketing Solutions</h2>
           <div className="features-grid">
             <div className="feature-card">
               <div className="feature-icon">
                 <i className="fas fa-rocket"></i>
               </div>
-              <h3>Fast Implementation</h3>
+              <h3>Efficient Lead Management</h3>
               <p>
-                Quick deployment of solutions to get your business up and
-                running in no time.
+                Organize and track your leads seamlessly to improve conversion rates.
               </p>
             </div>
+
             <div className="feature-card">
               <div className="feature-icon">
                 <i className="fas fa-shield-alt"></i>
               </div>
-              <h3>Secure & Reliable</h3>
+              <h3>Targeted Digital Marketing</h3>
               <p>
-                Enterprise-grade security measures to protect your valuable
-                data.
+                Reach your audience effectively with tailored campaigns across channels.
               </p>
             </div>
+
             <div className="feature-card">
               <div className="feature-icon">
                 <i className="fas fa-cogs"></i>
               </div>
-              <h3>Customizable</h3>
+              <h3>Data-Driven Insights</h3>
               <p>
-                Tailor-made solutions that adapt to your specific business
-                requirements.
+                Analyze customer behavior and campaign performance to optimize ROI.
               </p>
             </div>
+
             <div className="feature-card">
               <div className="feature-icon">
                 <i className="fas fa-headset"></i>
               </div>
-              <h3>24/7 Support</h3>
-              <p>Round-the-clock assistance to ensure smooth operations.</p>
+              <h3>Dedicated Support Team</h3>
+              <p>
+                Our experts provide ongoing support to help you succeed every step of the way.
+              </p>
             </div>
           </div>
+
         </div>
-      </section>
+
+      </section >
 
       <section className="section cta-section">
         <div className="container">
-          <h2>Ready to transform your business?</h2>
+          <h2>Ready to elevate your business with CRM and Digital Marketing?</h2>
           <p>
-            Schedule a demo today and see how our solutions can help you achieve
-            your goals.
+            Schedule a demo today and discover how our integrated solutions can accelerate your growth.
           </p>
           <Link to="/request-demo" className="btn">
             Request a Demo
@@ -106,7 +81,7 @@ const HomePage = () => {
         </div>
 
       </section>
-    </div>
+    </div >
   );
 };
 

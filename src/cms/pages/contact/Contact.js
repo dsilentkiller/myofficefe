@@ -1,18 +1,17 @@
-"use client";
+// "use client";
 
-import React, { useState } from "react";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+// import React, { useState } from "react";
+// import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import "../../css/contact/contact.css"; // Import the CSS file for styling
-import Footer from "../../components/footer/Footer";
-// import Topbar from "../../components/topbar/Topbar"; // Import Topbar component
-import Navbar from "../../components/navbar/Navbar"; // Import Navbar component
-import backgroundImage from "../../assets/img/hero-section/background-image.jpg"; // adjust path as needed
+
+import backgroundImage from "../../assets/img/hero-section/4680.jpg";
+
 const Contact = () => {
   // Contact page data
   const contactData = {
-    pri_phone: "+1 (123) 456-7890",
-    email: "info@company.com",
-    address: "123 Business Street, Suite 100, City, State 12345",
+    pri_phone: "9828889263",
+    email: "pathibharapulse@gmail.com",
+    address: "Tinkune 35 Kathmandu, Nimisha girls hostel building",
     social_media_links: {
       facebook: "https://facebook.com",
       twitter: "https://twitter.com",
@@ -35,22 +34,41 @@ const Contact = () => {
       <div className="contact-page">
         <div
           className="contact-header"
+
           style={{
-            backgroundImage: `url(${backgroundImage})`,
+            backgroundImage: `url(${backgroundImage})`, // Use your glowing background
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
-            height: "400px", // or any preferred height
+            height: "400px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#fff", // optional: text color contrast
             textAlign: "center",
+            backdropFilter: "brightness(0.6)", // Optional darken filter for better text contrast
           }}
+
         >
           <div className="container">
-            <h1 className="section-title">Contact Us</h1>
-            <p className="section-subtitle">
+            <h1 className="section-title"
+              style={{
+                color: "#F1F5F9",             // White font
+                fontSize: "3rem",             // Large font size like the image
+                fontWeight: "bold",           // Bold font weight
+                fontFamily: "'Segoe UI', Poppins, Inter, Lato, sans-serif"
+
+                // textShadow: "0 2px 8px rgba(242, 242, 243, 0.93)", // Subtle glow
+              }}>Contact Us</h1>
+            <p className="section-subtitle"
+
+              style={{
+                color: "#F1F5F9",             // White font
+                fontSize: "2rem",             // Large font size like the image
+                fontWeight: "bold",           // Bold font weight
+                fontFamily: "'Segoe UI', Poppins, Inter, Lato, sans-serif"
+
+                // textShadow: "0 2px 8px rgba(242, 242, 243, 0.93)", // Subtle glow
+              }}>
               Get in touch with our team for any inquiries or support
             </p>
           </div>
@@ -59,7 +77,8 @@ const Contact = () => {
         <section className="section contact-section">
           <div className="container">
             <div className="contact-grid">
-              <div className="contact-info">
+              <div className="contact-info"
+              >
                 <h2>Contact Information</h2>
                 <p>
                   We're here to help! Reach out to us through any of the
@@ -173,10 +192,19 @@ const Contact = () => {
             <div className="map-container">
               {/* In a real application, you would embed a Google Map or similar here */}
               <div className="map-placeholder">
-                <img
-                  src="https://via.placeholder.com/1200x400?text=Google+Map+Would+Be+Here"
-                  alt="Map"
-                />
+                <div className="map-container" style={{ marginTop: '2rem' }}>
+                  <iframe
+                    src="https://www.google.com/maps?q=M8PW%2BHJ+Kathmandu,+Nepal&z=16&output=embed"
+                    width="100%"
+                    height="400"
+                    style={{ border: 0 }}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Pathibhara Pulse Location"
+                  ></iframe>
+                </div>
+
               </div>
             </div>
           </div>

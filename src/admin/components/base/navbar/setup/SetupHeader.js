@@ -12,7 +12,7 @@ import {
   // AttachMoney as TaxIcon,
   Search as SearchIcon,
 } from "@mui/icons-material";
-import {AccountBox} from '@mui/icons-material';
+import { AccountBox } from '@mui/icons-material';
 // import "../../../../css/base/setup_header/setupHeader.css"
 
 import { Link } from "react-router-dom";
@@ -30,50 +30,50 @@ const SetupHeader = () => {
     { name: "working", title: "Working", icon: <WorkingIcon /> },
     { name: "day", title: "Day", icon: <DayIcon /> },
     // { name: "tax", title: "Tax", icon: <TaxIcon /> },
-    { name: "organization/detail", title: "Organization", icon: <AccountBox /> },
+    { name: "organization/create/", title: "OrganizationSettings", icon: <AccountBox /> },
   ];
 
   return (
-       <>
-     <div className="content-wrapper" style={{  padding: 0 }}>
- 
-        <AppBar position="static" sx={{ backgroundColor: "white", color: "black" }}>
-          <Toolbar>
-            {/* Left Navigation Buttons */}
-            {menuItems.map((item) => (
-              <Button
-                key={item.name}
-                component={Link}
-                to={`/dashboard/setup/${item.name}`}
-                onClick={() => setActiveButton(item.name)}
-                sx={{
-                  color: activeButton === item.name ? "white" : "black",
-                  backgroundColor: activeButton === item.name ? "#3f51b5" : "transparent",
-                  marginRight: 2,
-                  textTransform: "capitalize",
-                  fontWeight: "bold",
-                  "&:hover": {
-                    backgroundColor: activeButton === item.name ? "#3f51b5" : "rgba(0, 0, 0, 0.1)",
-                  },
-                }}
-                startIcon={item.icon} // Include the icon here
-              >
-                {item.title}
-              </Button>
-            ))}
+    <>
+      {/* <div className="content-wrapper" style={{  padding: 0 }}> */}
 
-            {/* Right Search Icon */}
-            <IconButton
-              color="inherit"
-              sx={{ marginLeft: "auto" }}
-              onClick={() => console.log("Search clicked")}
+      <AppBar position="static" sx={{ backgroundColor: "white", color: "black" }}>
+        <Toolbar>
+          {/* Left Navigation Buttons */}
+          {menuItems.map((item) => (
+            <Button
+              key={item.name}
+              component={Link}
+              to={`/dashboard/setup/${item.name}`}
+              onClick={() => setActiveButton(item.name)}
+              sx={{
+                color: activeButton === item.name ? "white" : "black",
+                backgroundColor: activeButton === item.name ? "#3f51b5" : "transparent",
+                marginRight: 2,
+                textTransform: "capitalize",
+                fontWeight: "bold",
+                "&:hover": {
+                  backgroundColor: activeButton === item.name ? "#3f51b5" : "rgba(0, 0, 0, 0.1)",
+                },
+              }}
+              startIcon={item.icon} // Include the icon here
             >
-              <SearchIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-     </div>
-     </>
+              {item.title}
+            </Button>
+          ))}
+
+          {/* Right Search Icon */}
+          <IconButton
+            color="inherit"
+            sx={{ marginLeft: "auto" }}
+            onClick={() => console.log("Search clicked")}
+          >
+            <SearchIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      {/* </div> */}
+    </>
   );
 };
 

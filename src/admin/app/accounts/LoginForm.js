@@ -15,6 +15,11 @@ import {
   Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Checkbox, FormControlLabel } from "@mui/material";
+import loginBackground from "../../../cms/assets/img/login/login.jpeg";
+import logoImage from "../../../cms/assets/img/logo/logo.jpeg";
+
+
 
 const LoginForm = () => {
   const dispatch = useDispatch();
@@ -35,6 +40,8 @@ const LoginForm = () => {
   const [openToast, setOpenToast] = useState(false);
   const [error, setError] = useState("");
   const [errorToastOpen, setErrorToastOpen] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
 
   // ✅ Step 1: Prevent accessing login if already logged in
   const [hasNavigated, setHasNavigated] = useState(false); // ✅ prevents repeated redirects
@@ -50,6 +57,13 @@ const LoginForm = () => {
   // ✅ Step 3: Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (rememberMe) {
+      localStorage.setItem("rememberEmail", email);
+      localStorage.setItem("rememberCode", code);
+    } else {
+      localStorage.removeItem("rememberEmail");
+      localStorage.removeItem("rememberCode");
+    }
 
     if (!email || !password || !code) {
       setError("All fields are required.");
@@ -111,7 +125,15 @@ const LoginForm = () => {
       {error}
     </Alert>
   </Snackbar>;
-
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("rememberEmail");
+    const storedCode = localStorage.getItem("rememberCode");
+    if (storedEmail && storedCode) {
+      setEmail(storedEmail);
+      setCode(storedCode);
+      setRememberMe(true);
+    }
+  }, []);
   return (
     <Box
       sx={{
@@ -119,7 +141,10 @@ const LoginForm = () => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        background: "linear-gradient(to right, #4A90E2, #142850)",
+        backgroundImage: `url(${loginBackground})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         padding: 2,
       }}
     >
@@ -132,9 +157,13 @@ const LoginForm = () => {
           borderRadius: 3,
         }}
       >
-        <Typography variant="h4" fontWeight="bold" color="primary">
-          MyOffice
-        </Typography>
+        <Box display="flex" alignItems="center" justifyContent="center" mb={1}>
+          <img src={logoImage} alt="Logo" style={{ height: 40, marginRight: 8 }} />
+          <Typography variant="h4" fontWeight="bold" color="primary">
+            MyOffice
+          </Typography>
+        </Box>
+
         <Typography variant="subtitle1" color="textSecondary">
           Manage your office seamlessly
         </Typography>
@@ -186,6 +215,17 @@ const LoginForm = () => {
           >
             {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
           </Button>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Remember Me"
+          />
+
         </form>
 
         {/* ✅ Success Toast */}
@@ -204,6 +244,216 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+
+
+
+// /===================old working well =============================================
+// import React, { useState, useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import {
+//   loginVendor,
+//   verifyToken,
+// } from "../../../redux/slice/admin/accounts/authSlice";
+// import {
+//   TextField,
+//   Button,
+//   CircularProgress,
+//   Snackbar,
+//   Alert,
+//   Typography,
+//   Paper,
+//   Box,
+// } from "@mui/material";
+// import { useNavigate } from "react-router-dom";
+
+// const LoginForm = () => {
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+
+//   // Redux state
+//   const {
+//     user,
+//     token,
+//     loading,
+//     error: authError,
+//   } = useSelector((state) => state.auth || {});
+
+//   // Local component states
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [code, setCode] = useState("");
+//   const [openToast, setOpenToast] = useState(false);
+//   const [error, setError] = useState("");
+//   const [errorToastOpen, setErrorToastOpen] = useState(false);
+
+//   // ✅ Step 1: Prevent accessing login if already logged in
+//   const [hasNavigated, setHasNavigated] = useState(false); // ✅ prevents repeated redirects
+
+//   // ✅ Step 2: Navigate once after successful login
+//   useEffect(() => {
+//     if (token && user) {
+//       setOpenToast(true); // Optional: show success
+//       setTimeout(() => navigate("/dashboard"), 1500); // Navigate after a short delay
+//     }
+//   }, [token, user]);
+
+//   // ✅ Step 3: Handle form submission
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     if (!email || !password || !code) {
+//       setError("All fields are required.");
+//       return;
+//     }
+
+//     try {
+//       await dispatch(loginVendor({ email, password, code })).unwrap();
+//       console.log("✅ Login dispatched");
+//     } catch (err) {
+//       console.error("❌ Raw Error:", err);
+
+//       let errorMsg = "Login failed";
+//       const resData = err?.response?.data;
+
+//       if (resData) {
+//         if (typeof resData === "string") {
+//           errorMsg = resData;
+//         } else if (resData.detail) {
+//           errorMsg = resData.detail;
+//         } else if (resData.non_field_errors) {
+//           errorMsg = resData.non_field_errors.join(" ");
+//         } else {
+//           errorMsg = JSON.stringify(resData);
+//         }
+//       } else if (err.message) {
+//         errorMsg = err.message;
+//       }
+
+//       setError(errorMsg);
+//       setErrorToastOpen(true);
+//     }
+//   };
+//   useEffect(() => {
+//     dispatch(verifyToken());
+//   }, []);
+
+//   {
+//     /* ✅ Success Toast */
+//   }
+//   <Snackbar
+//     open={openToast}
+//     autoHideDuration={3000}
+//     onClose={() => setOpenToast(false)}
+//   >
+//     <Alert onClose={() => setOpenToast(false)} severity="success">
+//       Login Successful! Redirecting...
+//     </Alert>
+//   </Snackbar>;
+//   {
+//     /* ❌ Error Toast */
+//   }
+//   <Snackbar
+//     open={errorToastOpen}
+//     autoHideDuration={4000}
+//     onClose={() => setErrorToastOpen(false)}
+//   >
+//     <Alert onClose={() => setErrorToastOpen(false)} severity="error">
+//       {error}
+//     </Alert>
+//   </Snackbar>;
+
+//   return (
+//     <Box
+//       sx={{
+//         display: "flex",
+//         justifyContent: "center",
+//         alignItems: "center",
+//         minHeight: "100vh",
+//         background: "linear-gradient(to right, #4A90E2, #142850)",
+//         padding: 2,
+//       }}
+//     >
+//       <Paper
+//         elevation={6}
+//         sx={{
+//           p: 4,
+//           width: { xs: "90%", sm: 400 },
+//           textAlign: "center",
+//           borderRadius: 3,
+//         }}
+//       >
+//         <Typography variant="h4" fontWeight="bold" color="primary">
+//           MyOffice
+//         </Typography>
+//         <Typography variant="subtitle1" color="textSecondary">
+//           Manage your office seamlessly
+//         </Typography>
+
+//         {/* Display validation or auth error */}
+//         {(error || authError) && (
+//           <Alert severity="error" sx={{ mt: 2 }}>
+//             {error || authError}
+//           </Alert>
+//         )}
+
+//         {/* ✅ Login Form */}
+//         <form onSubmit={handleSubmit}>
+//           <TextField
+//             label="Email"
+//             fullWidth
+//             margin="normal"
+//             value={email}
+//             onChange={(e) => setEmail(e.target.value)}
+//             required
+//           />
+//           <TextField
+//             label="Password"
+//             type="password"
+//             fullWidth
+//             margin="normal"
+//             value={password}
+//             onChange={(e) => setPassword(e.target.value)}
+//             required
+//           />
+//           <TextField
+//             label="Vendor Code"
+//             fullWidth
+//             margin="normal"
+//             value={code}
+//             onChange={(e) => setCode(e.target.value)}
+//             required
+//           />
+//           <Button
+//             type="submit"
+//             variant="contained"
+//             fullWidth
+//             sx={{
+//               mt: 2,
+//               bgcolor: "#4A90E2",
+//               "&:hover": { bgcolor: "#357ABD" },
+//             }}
+//             disabled={loading}
+//           >
+//             {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+//           </Button>
+//         </form>
+
+//         {/* ✅ Success Toast */}
+//         <Snackbar
+//           open={openToast}
+//           autoHideDuration={3000}
+//           onClose={() => setOpenToast(false)}
+//         >
+//           <Alert onClose={() => setOpenToast(false)} severity="success">
+//             Login Successful! Redirecting...
+//           </Alert>
+//         </Snackbar>
+//       </Paper>
+//     </Box>
+//   );
+// };
+
+// export default LoginForm;
 
 // import React, { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux"; // Import useDispatch and useSelector hooks

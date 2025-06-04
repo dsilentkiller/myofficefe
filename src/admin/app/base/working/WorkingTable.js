@@ -8,6 +8,9 @@ import {
   // updateStatus,
   // updateError,
 } from "../../../../redux/slice/admin/base/workingSlice";
+import { IconButton } from "@mui/material";
+import { Edit, Save, Delete } from "@mui/icons-material";
+
 // import WorkingForm from "./WorkingForm"
 import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for Edit and Delete
 // import Deleteworking from "./WorkingDelete";
@@ -150,7 +153,8 @@ const WorkingTable = () => {
   };
 
   return (
-    <div className="content-wrapper">
+    <>
+      {/* div className="content-wrapper" */}
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="card">
@@ -180,8 +184,8 @@ const WorkingTable = () => {
                           <thead>
                             <th>#</th>
                             <th>Name</th>
-                            <th>Created</th>
-                            <th>Updated</th>
+                            {/* <th>Created</th> */}
+                            {/* <th>Updated</th> */}
                             <th>Action</th>
                           </thead>
                           <tbody>
@@ -196,8 +200,8 @@ const WorkingTable = () => {
                                   <td>{index + 1}</td>
 
                                   <td>{working.name}</td>
-                                  <td>{working.created}</td>
-                                  <td>{working.updated}</td>
+                                  {/* <td>{working.created}</td> */}
+                                  {/* <td>{working.updated}</td> */}
                                   <td>
                                     {editId === working.id ? (
                                       <input
@@ -212,6 +216,26 @@ const WorkingTable = () => {
                                     )}
                                   </td>
                                   <td>
+                                    <div style={{ display: "flex", gap: "8px" }}>
+                                      {editId === working.id ? (
+                                        <IconButton color="success" onClick={handleUpdate}>
+                                          <Save fontSize="small" />
+                                        </IconButton>
+                                      ) : (
+                                        <IconButton
+                                          color="primary"
+                                          onClick={() => handleEdit(working.id, working.name || "")}
+                                        >
+                                          <Edit fontSize="small" />
+                                        </IconButton>
+                                      )}
+                                      <IconButton color="error" onClick={() => handleDelete(working.id)}>
+                                        <Delete fontSize="small" />
+                                      </IconButton>
+                                    </div>
+                                  </td>
+
+                                  {/* <td>
                                     {editId === working.id ? (
                                       <button
                                         onClick={handleUpdate}
@@ -236,7 +260,7 @@ const WorkingTable = () => {
                                     >
                                       <FaTrash />
                                     </button>
-                                  </td>
+                                  </td> */}
                                 </tr>
                               ))}
                           </tbody>
@@ -250,7 +274,7 @@ const WorkingTable = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

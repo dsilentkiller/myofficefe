@@ -1,6 +1,6 @@
 
 
-import  { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom"; // Use Link to route
 // import Footer from "../admin/components/footer/Footer";
 // import DefaultHeader from "../admin/components/navbar/DefaultHeader";
@@ -14,76 +14,76 @@ const AdminDashboard = () => {
   const [hrCount, setHrCount] = useState(10); // For example, HR staff count
 
   return (
-    <div className="container-wrapper">
-   
-        <div className="flex-grow-1 bg-light">
-      
+    <>
 
-          <div className="content-wrapper mt-6 marginTop:20">
-            <div className="row" style={{ padding: "0 20px" }}>
-              {/* Enquiries Card */}
-              <Box className="col-lg-3 col-md-4 col-6 mb-4">
-                <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+      <div className="flex-grow-1 bg-light">
+
+
+        <div className="content-wrapper mt-6 marginTop:20">
+          <div className="row" style={{ padding: "0 20px" }}>
+            {/* Enquiries Card */}
+            <Box className="col-lg-3 col-md-4 col-6 mb-4">
+              <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
                 <CardActionArea
-                        component={Link}
-                        to="/dashboard/crm"
-                        sx={{ display: "flex", flexDirection: "column", alignItems: "center", textDecoration: "none", color: "inherit" }}
-                      >
+                  component={Link}
+                  to="/dashboard/crm"
+                  sx={{ display: "flex", flexDirection: "column", alignItems: "center", textDecoration: "none", color: "inherit" }}
+                >
                   {/* <CardActionArea component={Link} to="/dashboard/crm/enquiry/" sx={{ display: "flex", flexDirection: "column", alignItems: "center", textDecoration: "none", color: "inherit" }}> */}
-                    <CardContent sx={{ textAlign: "center", padding: "16px" }}>
-                      <AccountCircle sx={{ fontSize: 40, color: "#FFB74D" }} />
-                      <Typography variant="h4" sx={{ fontWeight: 600, marginTop: 2, color: "#FFB74D" }}>
-                        {enquiriesCount}
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 500, marginTop: 1, color: "#FFB74D" }}>
-                        CRM
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Box>
+                  <CardContent sx={{ textAlign: "center", padding: "16px" }}>
+                    <AccountCircle sx={{ fontSize: 40, color: "#FFB74D" }} />
+                    <Typography variant="h4" sx={{ fontWeight: 600, marginTop: 2, color: "#FFB74D" }}>
+                      {enquiriesCount}
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 500, marginTop: 1, color: "#FFB74D" }}>
+                      CRM
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Box>
 
 
 
-              {/* Clients Card */}
-              <Box className="col-lg-3 col-md-4 col-6 mb-4">
-                <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
-                  <CardActionArea component={Link} to="/dashboard/customer/customer-list/" sx={{ display: "flex", flexDirection: "column", alignItems: "center", textDecoration: "none", color: "inherit" }}>
-                    <CardContent sx={{ textAlign: "center", padding: "16px" }}>
-                      <People sx={{ fontSize: 40, color: "#EF5350" }} />
-                      <Typography variant="h4" sx={{ fontWeight: 600, marginTop: 2, color: "#EF5350" }}>
-                        {clientsCount}
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 500, marginTop: 1, color: "#EF5350" }}>
-                        Clients
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Box>
+            {/* Clients Card */}
+            <Box className="col-lg-3 col-md-4 col-6 mb-4">
+              <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+                <CardActionArea component={Link} to="/dashboard/customer/customer-list/" sx={{ display: "flex", flexDirection: "column", alignItems: "center", textDecoration: "none", color: "inherit" }}>
+                  <CardContent sx={{ textAlign: "center", padding: "16px" }}>
+                    <People sx={{ fontSize: 40, color: "#EF5350" }} />
+                    <Typography variant="h4" sx={{ fontWeight: 600, marginTop: 2, color: "#EF5350" }}>
+                      {clientsCount}
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 500, marginTop: 1, color: "#EF5350" }}>
+                      Clients
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Box>
 
-              {/* HR Card */}
-              <Box className="col-lg-3 col-md-4 col-6 mb-4">
-                <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
-                  <CardActionArea component={Link} to="/dashboard/hrm" sx={{ display: "flex", flexDirection: "column", alignItems: "center", textDecoration: "none", color: "inherit" }}>
-                    <CardContent sx={{ textAlign: "center", padding: "16px" }}>
-                      <Work sx={{ fontSize: 40, color: "#64B5F6" }} />
-                      <Typography variant="h4" sx={{ fontWeight: 600, marginTop: 2, color: "#64B5F6" }}>
-                        {hrCount}
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 500, marginTop: 1, color: "#64B5F6" }}>
-                        HRM
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Box>
-            </div>
+            {/* HR Card */}
+            <Box className="col-lg-3 col-md-4 col-6 mb-4">
+              <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+                <CardActionArea component={Link} to="/dashboard/hrm" sx={{ display: "flex", flexDirection: "column", alignItems: "center", textDecoration: "none", color: "inherit" }}>
+                  <CardContent sx={{ textAlign: "center", padding: "16px" }}>
+                    <Work sx={{ fontSize: 40, color: "#64B5F6" }} />
+                    <Typography variant="h4" sx={{ fontWeight: 600, marginTop: 2, color: "#64B5F6" }}>
+                      {hrCount}
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 500, marginTop: 1, color: "#64B5F6" }}>
+                      HRM
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Box>
           </div>
-
- 
         </div>
+
+
       </div>
+    </>
 
   );
 };

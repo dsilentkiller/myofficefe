@@ -61,7 +61,7 @@ const Sidebar = ({ activeSection }) => {
             alignItems: "center",
           }}
         >
-          <Link to="/dashboard/profile" style={{ textDecoration: "none" }}>
+          {/* <Link to="/dashboard/profile" style={{ textDecoration: "none" }}>
             <Typography
               variant="h6"
               sx={{
@@ -74,9 +74,9 @@ const Sidebar = ({ activeSection }) => {
               <PersonIcon sx={{ marginRight: 1, color: "#FFFFFF" }} />{" "}
               {/* User Icon */}
               {/* {vendorName ? vendorName : "Loading..."} Display vendor name here */}
-              Paaru
+              {/* Paaru
             </Typography>
-          </Link>
+          </Link>  */}
         </div>
         <Divider sx={{ backgroundColor: "#34495E" }} />
 
@@ -107,29 +107,7 @@ const Sidebar = ({ activeSection }) => {
             <ListItemText primary="Dashboard" sx={{ color: "#BDC3C7" }} />
           </ListItem>
 
-          {/* HRM Section */}
-          <ListItem
-            button
-            component={Link}
-            to="/dashboard/hrm"
-            sx={{
-              color: "#BDC3C7",
-              fontSize: "16px",
-              padding: "10px 16px",
-              "&:hover": {
-                backgroundColor: "#1ABC9C",
-                color: "#FFFFFF",
-              },
-              backgroundColor: activeSection === "hrm" ? "#1ABC9C" : "#34495E", // Active background color
-              borderRadius: "8px",
-              marginBottom: "10px",
-            }}
-          >
-            <ListItemIcon sx={{ color: "#BDC3C7" }}>
-              <PersonIcon />
-            </ListItemIcon>
-            <ListItemText primary="HRM" sx={{ color: "#BDC3C7" }} />
-          </ListItem>
+         
 
           {/* CRM Section */}
           <ListItem
@@ -201,6 +179,31 @@ const Sidebar = ({ activeSection }) => {
               <SettingsIcon />
             </ListItemIcon>
             <ListItemText primary="Settings" sx={{ color: "#BDC3C7" }} />
+          </ListItem>
+
+      
+           {/* HRM Section */}
+          <ListItem
+            button
+            component={Link}
+            to="/dashboard/hrm"
+            sx={{
+              color: "#BDC3C7",
+              fontSize: "16px",
+              padding: "10px 16px",
+              "&:hover": {
+                backgroundColor: "#1ABC9C",
+                color: "#FFFFFF",
+              },
+              backgroundColor: activeSection === "hrm" ? "#1ABC9C" : "#34495E", // Active background color
+              borderRadius: "8px",
+              marginBottom: "10px",
+            }}
+          >
+            <ListItemIcon sx={{ color: "#BDC3C7" }}>
+              <PersonIcon />
+            </ListItemIcon>
+            <ListItemText primary="HRM" sx={{ color: "#BDC3C7" }} />
           </ListItem>
         </List>
       </Drawer>

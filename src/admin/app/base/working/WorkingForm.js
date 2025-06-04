@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { createWorking } from "../../redux/slice/base/workingSlice";
+import { createWorking } from "../../../../redux/slice/admin/base/workingSlice";
 const WorkingForm = () => {
-  // State to manage form data
+  // State to manage form data company name kunama .. view charm attractive
   const [name, setName] = useState("");
   const [workingdays, setWorkingDays] = useState([]);
 
@@ -38,7 +38,8 @@ const WorkingForm = () => {
   };
 
   return (
-    <div className="content-wrapper">
+    <>
+      {/* div className="content-wrapper" */}
       <div className="container">
         <div className="container-fluid">
           <div className="card">
@@ -81,7 +82,7 @@ const WorkingForm = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

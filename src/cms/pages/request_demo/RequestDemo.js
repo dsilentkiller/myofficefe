@@ -1,21 +1,22 @@
-"use client";
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // For handling redirection after submission
+
+// import Footer from "../../components/footer/Footer";
+// import Topbar from "../../components/topbar/Topbar";
+// import Navbar from "../../components/navbar/Navbar";
+// import backgroundImage from "../../assets/img/hero-section/background-image.jpg"; // adjust path as needed
+// import { useNavigate } from "react-router-dom"; // For handling redirection after submission
+import { useState } from "react";
 import "../../css/request-demo/request_demo.css"; // Import the CSS file for styling
-import Footer from "../../components/footer/Footer";
-import Topbar from "../../components/topbar/Topbar";
-import Navbar from "../../components/navbar/Navbar";
-import backgroundImage from "../../assets/img/hero-section/background-image.jpg"; // adjust path as needed
+import backgroundImage from "../../assets/img/hero-section/4680.jpg";
 const RequestDemo = () => {
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
     company_name: "",
     pri_phone: "",
-    preferred_demo_time :"",
-     priority: "normal",
-    
+    preferred_demo_time: "",
+    priority: "normal",
+
     request_date: "",
     priority: "normal",
     message: "",
@@ -45,7 +46,7 @@ const RequestDemo = () => {
 
   return (
     <>
- 
+
       <div className="request-demo-page">
         <div
           className="demo-header"
@@ -54,17 +55,27 @@ const RequestDemo = () => {
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
-            height: "400px", // or any preferred height
+            height: "400px",
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#fff", // optional: text color contrast
-            textAlign: "center",
+            backdropFilter: "brightness(0.6)",
           }}
         >
           <div className="container">
-            <h1 className="section-title">Request a Demo</h1>
-            <p className="section-subtitle">
+            <h1 className="section-title"
+              style={{
+                color: "#F1F5F9",
+                fontSize: "3rem",
+                fontWeight: "bold",
+                fontFamily: "'Segoe UI', Poppins, Inter, Lato, sans-serif",
+              }}>Request a Demo</h1>
+            <p className="section-subtitle"
+              style={{
+                color: "#F1F5F9",
+                fontSize: "2rem",
+                fontWeight: "bold",
+                fontFamily: "'Segoe UI', Poppins, Inter, Lato, sans-serif",
+              }}
+            >
               See our solutions in action and discover how they can benefit your
               business
             </p>

@@ -135,7 +135,7 @@ const ProvinceList = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="content-wrapper">
+    <>
       {/* <div className="row justify-content-center"> */}
       <div className="col-lg-12">
         <div className="card">
@@ -296,7 +296,7 @@ const ProvinceList = () => {
           onClose={() => setProvinceToDelete(null)}
         />
       )}
-    </div>
+    </>
   );
 };
 

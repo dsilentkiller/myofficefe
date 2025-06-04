@@ -2,6 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import axiosInstance from "../../../../admin/api/axiosInstance";
 
+
+
 // API requests
 export const fetchDistrictsByOrganization = createAsyncThunk(
   "districts/fetchDistrictsByOrganization",
@@ -53,7 +55,8 @@ export const fetchOrganizationById = createAsyncThunk(
       const response = await axiosInstance.get(
         `api/setup/organization/detail/${id}/`
       );
-      return response.data.result.data;
+      console.log('axios data ', response)
+      return response.data.result;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.result?.data || error.message);
     }
@@ -85,7 +88,23 @@ export const updateOrganization = createAsyncThunk(
     }
   }
 );
+export const OrganizationDetail = createAsyncThunk(
+  "organizationDetail/fetch",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        `api/setup/organization/detail/${id}/`
+      );
+      console.log('data ', response)
+      return response.data.result;
 
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.result?.data || error.message
+      );
+    }
+  }
+);
 export const searchOrganization = createAsyncThunk(
   "organizations/searchOrganization",
   async (searchTerm) => {
@@ -160,6 +179,19 @@ const organizationSlice = createSlice({
         state.createStatus = "failed";
         state.createError = action.payload || action.error.message;
       })
+      // Fetch detail
+      // .addCase(fetchOrganizationDetail.pending, (state) => {
+      //   state.isLoading = true;
+      //   state.error = null;
+      // })
+      // .addCase(fetchOrganizationDetail.fulfilled, (state, action) => {
+      //   state.isLoading = false;
+      //   state.data = action.payload;
+      // })
+      // .addCase(fetchOrganizationDetail.rejected, (state, action) => {
+      //   state.isLoading = false;
+      //   state.error = action.payload || action.error.message;
+      // })
 
       // Fetch organization by ID
       .addCase(fetchOrganizationById.pending, (state) => {
@@ -169,7 +201,7 @@ const organizationSlice = createSlice({
       .addCase(fetchOrganizationById.fulfilled, (state, action) => {
         state.isLoading = false;
         state.currentOrganization = action.payload;
-     
+
       })
       .addCase(fetchOrganizationById.rejected, (state, action) => {
         state.isLoading = false;

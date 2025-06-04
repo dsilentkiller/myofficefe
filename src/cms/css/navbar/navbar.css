@@ -4,15 +4,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  position: fixed; /* changed from sticky to fixed to make navbar fixed */
-  top:10;
-  left:0;
-  right:0;
-  width:100%;
+  position: fixed;
+  /* changed from sticky to fixed to make navbar fixed */
+  top: 10;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 999;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
-  font-family: "Montserrat", "Segoe UI", sans-serif; /* Professional font */
+  font-family: "Montserrat", "Segoe UI", sans-serif;
+  /* Professional font */
 }
 
 .navbar.scrolled {
@@ -34,7 +36,8 @@
 .navbar-logo {
   display: flex;
   align-items: center;
-  order: 1; /* Push to left */
+  order: 1;
+  /* Push to left */
 }
 
 .navbar-logo img {
@@ -44,7 +47,8 @@
 
 /* Navigation links container (right side) */
 .nav-links-container {
-  order: 2; /* Push to right */
+  order: 2;
+  /* Push to right */
 }
 
 /* Navigation links */
@@ -64,12 +68,15 @@
   color: #333;
   text-decoration: none;
   font-size: 0.95rem;
-  font-weight: 600; /* More professional, slightly bolder */
+  font-weight: 600;
+  /* More professional, slightly bolder */
   padding: 8px 0;
   position: relative;
   transition: all 0.3s ease;
-  letter-spacing: 0.3px; /* Improved readability */
-  text-transform: uppercase; /* Professional look */
+  letter-spacing: 0.3px;
+  /* Improved readability */
+  text-transform: uppercase;
+  /* Professional look */
 }
 
 .nav-link:hover,
@@ -121,7 +128,8 @@
 .menu-toggle {
   display: none;
   cursor: pointer;
-  order: 3; /* After logo and nav links */
+  order: 3;
+  /* After logo and nav links */
 }
 
 .hamburger {
@@ -177,7 +185,8 @@
   .nav-links {
     position: fixed;
     top: 80px;
-    right: -100%; /* Changed from left to right for slide-in from right */
+    right: -100%;
+    /* Changed from left to right for slide-in from right */
     flex-direction: column;
     background-color: white;
     width: 100vw;
@@ -191,7 +200,8 @@
   }
 
   .nav-links.active {
-    right: 0; /* Changed from left to right */
+    right: 0;
+    /* Changed from left to right */
   }
 
   .nav-item {
@@ -211,4 +221,21 @@
   .navbar-logo img {
     height: 40px;
   }
+}
+
+.navbar-social-icons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-left: 1.5rem;
+}
+
+.navbar-social-icons a {
+  color: #333;
+  font-size: 1.1rem;
+  transition: color 0.3s;
+}
+
+.navbar-social-icons a:hover {
+  color: #007bff;
 }

@@ -65,7 +65,8 @@ const DepartmentForm = () => {
   };
 
   return (
-    <div className="content-wrapper">
+    <>
+
       <div className="container">
         <div className="container-fluid">
           <div className="card">
@@ -96,7 +97,8 @@ const DepartmentForm = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
+
   );
 };
 

@@ -161,7 +161,8 @@ const DesignationTable = () => {
   };
 
   return (
-    <div className="content-wrapper">
+    <>
+      {/* // <div className="content-wrapper"> */}
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="card">
@@ -265,7 +266,8 @@ const DesignationTable = () => {
 
         </div>
       </div>
-    </div>
+      {/* </div> */}
+    </>
   );
 };
 

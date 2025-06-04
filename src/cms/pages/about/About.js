@@ -1,26 +1,21 @@
-// import React from "react";
+import backgroundImage from "../../assets/img/hero-section/4680.jpg";
 
-import React from "react";
-
-// Import layout components
-import Navbar from "../../components/navbar/Navbar";
-import Footer from "../../components/footer/Footer";
 
 // Import CSS for About Page
 import "../../css/about/about.css"; // Make sure this path is correct
-import backgroundImage from "../../assets/img/hero-section/background-image.jpg"; // adjust path as needed
+import aboutUS from "../../assets/img/about-us.jpeg"
 // About component
 const About = () => {
   // About page static data
   const aboutData = {
-    title: "About Our Company",
+    title: "Accelerating Success with Smart Software & Marketing",
     content:
-      "Founded in 2010, our company has been at the forefront of technological innovation, helping businesses of all sizes transform their operations through cutting-edge solutions. With a team of experienced professionals and a passion for excellence, we've successfully delivered hundreds of projects across various industries.",
-    image: "https://via.placeholder.com/800x600", // Ensure this URL works; replace with your real image URL if needed
+      "Pathibhara Pulse is an AI-based company dedicated to building intelligent software solutions. We also specialize in digital marketing and social media management. Founded in 2025, we are a dynamic startup on a mission to shape the future with AI-driven innovation. We are also official resellers of Restorma, Hospital Management Software, eSolution, Gym Management, HRM systems, and many more. We provide a dedicated experienced team according to your business requirements.",
+    image: aboutUS,
     mission:
-      "Our mission is to empower businesses with innovative technology solutions that drive growth, efficiency, and competitive advantage in an increasingly digital world.",
+      "To revolutionize industries through AI-powered solutions and support digital growth for businesses worldwide.",
     vision:
-      "We envision a future where every business, regardless of size, can leverage advanced technology to achieve their full potential and make a positive impact on the world.",
+      "To become a global leader in AI technology, enabling every organization to achieve operational excellence and digital impact.",
   };
 
   return (
@@ -29,27 +24,51 @@ const About = () => {
 
       {/* About Page Main Content */}
       <div className="about-page">
-        {/* Header Section */}
 
         <div
           className="about-header"
+
           style={{
-            backgroundImage: `url(${backgroundImage})`,
+            backgroundImage: `url(${backgroundImage})`, // Use your glowing background
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
-            height: "400px", // or any preferred height
+            height: "400px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#fff", // optional: text color contrast
             textAlign: "center",
+            backdropFilter: "brightness(0.6)", // Optional darken filter for better text contrast
           }}
         >
-          <div className="container">
-            <h1 className="section-title">{aboutData.title}</h1>
+          <div className="container hero-content" >
+            <h1 className="section-title"
+              style={{
+                color: "#F1F5F9",             // White font
+                fontSize: "3rem",             // Large font size like the image
+                fontWeight: "bold",           // Bold font weight
+                fontFamily: "'Segoe UI', Poppins, Inter, Lato, sans-serif"
+
+                // textShadow: "0 2px 8px rgba(242, 242, 243, 0.93)", // Subtle glow
+              }}
+
+            >About Us</h1>
+            {/* <h1 className="section-title">{aboutData.title}</h1> */}
+            <h2 className="section-subtitle"
+              style={{
+                color: "#F1F5F9",             // White font
+                fontSize: "2rem",             // Large font size like the image
+                fontWeight: "bold",           // Bold font weight
+                fontFamily: "'Segoe UI', Poppins, Inter, Lato, sans-serif"
+
+                // textShadow: "0 2px 8px rgba(242, 242, 243, 0.93)", // Subtle glow
+              }}
+            >{aboutData.title}</h2>
+
           </div>
         </div>
+
+
 
         {/* About Content Section */}
         <section className="section about-content">
@@ -79,7 +98,7 @@ const About = () => {
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src =
-                      "/assets/img/hero-section/background-image.jpeg";
+                      aboutUS;
                   }}
                 />
               </div>
@@ -88,12 +107,12 @@ const About = () => {
         </section>
 
         {/* Leadership Team Section */}
-        <section className="section team-section">
+        {/* <section className="section team-section">
           <div className="container">
             <h2 className="section-title">Our Leadership Team</h2>
             <div className="team-grid">
               {/* Team Members */}
-              {[
+        {/* {[
                 {
                   name: "John Doe",
                   position: "CEO & Founder",
@@ -121,20 +140,20 @@ const About = () => {
                   <p className="member-position">{member.position}</p>
                   <p className="member-bio">{member.bio}</p>
                 </div>
-              ))}
+              ))} 
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Statistics Section */}
         <section className="section stats-section">
           <div className="container">
             <div className="stats-grid">
               {[
-                { value: "10+", label: "Years of Experience" },
-                { value: "500+", label: "Projects Completed" },
-                { value: "200+", label: "Happy Clients" },
-                { value: "50+", label: "Team Members" },
+                { value: "1+", label: "Years of Experience" },
+                { value: "10+", label: "Projects Completed" },
+                { value: "10+", label: "Happy Clients" },
+                { value: "5+", label: "Team Members" },
               ].map((stat, index) => (
                 <div className="stat-box" key={index}>
                   <h3>{stat.value}</h3>
@@ -146,7 +165,7 @@ const About = () => {
         </section>
       </div>
 
-   
+
     </>
   );
 };

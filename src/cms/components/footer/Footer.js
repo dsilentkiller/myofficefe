@@ -1,5 +1,3 @@
-// import { Link } from "react-router-dom";
-
 import { Link } from "react-router-dom";
 import "../../css/footer/footer.css";
 import "../../css/global.css";
@@ -16,72 +14,92 @@ import {
 import { Container, Row, Col, Nav } from "react-bootstrap";
 
 const Footer = () => {
+  const quickLinks = [
+    { label: "Home", path: "/" },
+    { label: "About Us", path: "/aboutus" },
+    { label: "Services", path: "/services" },
+    { label: "Packages", path: "/packages" },
+    { label: "Contact Us", path: "/contactus" },
+    { label: "Team", path: "/team" },
+    { label: "Career", path: "/career" },
+    { label: "Blog", path: "/blog" },
+    { label: "Privacy Policy", path: "/privacypolicy" },
+  ];
+
+  const socialLinks = [
+    { icon: <FaFacebookF />, url: "https://facebook.com", label: "Facebook" },
+    { icon: <FaInstagram />, url: "https://instagram.com", label: "Instagram" },
+    { icon: <FaLinkedinIn />, url: "https://linkedin.com", label: "LinkedIn" },
+    { icon: <FaTwitter />, url: "https://twitter.com", label: "Twitter" },
+    { icon: <FaYoutube />, url: "https://youtube.com", label: "YouTube" },
+  ];
+
+  const recentUpdates = [
+    {
+      title: "Why Our Clients Love Pathibhara Pulse",
+      date: "03 Dec 2024",
+    },
+    {
+      title: "Enhancing Business with Our CRM Solutions",
+      date: "27 Jan 2023",
+    },
+  ];
+
   return (
-    <footer className="footer bg-dark text-light pt-5">
+    <footer
+      className="footer bg-dark text-light pt-5"
+      role="contentinfo"
+      aria-label="Footer"
+    >
       <Container>
         <Row className="justify-content-between align-items-start">
           {/* About Us */}
           <Col md={4} className="mb-4">
-            <h4 className="footer-title">About Pathibhara Pulse</h4>
-            <p className="footer-desc">
-              We are a passionate IT company delivering advanced CRM systems,
-              tailored business solutions, and exceptional support. Our CRM
-              includes features like enquiry tracking, follow-ups, automation,
-              and much more to grow your business efficiently.
+            <h4 className="footer-title  text-uppercase">
+              About PathibharaPulse
+            </h4>
+            <p className="footer-desc mb-4 fs-6 text-secondary">
+              Pathibhara Pulse is a dedicated IT company delivering advanced CRM
+              systems and tailored business solutions to help your business
+              grow efficiently with automation, enquiry tracking, follow-ups,
+              and more.
             </p>
-            <ul className="footer-contact list-unstyled">
-              <li>
-                <FaPhone /> <strong>Phone:</strong> +977-9828889263
+            <ul className="footer-contact list-unstyled mb-3">
+              <li className="mb-2 d-flex align-items-center">
+                <FaPhone aria-hidden="true" className="me-2 text-primary" />
+                <strong className="me-1">Phone:</strong>
+                <a href="tel:+9779828889263" className="text-light text-decoration-none fw-semibold">
+                  +977-9828889263
+                </a>
               </li>
-              <li>
-                <FaEnvelope /> <strong>Email:</strong> paarurawal@gmail.com
+              <li className="mb-2 d-flex align-items-center">
+                <FaEnvelope aria-hidden="true" className="me-2 text-primary" />
+                <strong className="me-1">Email:</strong>
+                <a
+                  href="mailto:paarurawal@gmail.com"
+                  className="text-light text-decoration-none fw-semibold"
+                >
+                  paarurawal@gmail.com
+                </a>
               </li>
-              <li>
-                <FaMapMarkerAlt /> <strong>Location:</strong> Koteswor,
-                Kathmandu
+              <li className="d-flex align-items-center">
+                <FaMapMarkerAlt aria-hidden="true" className="me-2 text-primary" />
+                <strong className="me-1">Location:</strong> Koteswor, Kathmandu
               </li>
             </ul>
-            <div className="footer-social-icons mt-3">
-              <Nav className="gap-2">
-                <Nav.Link href="https://facebook.com" target="_blank">
-                  <FaFacebookF />
-                </Nav.Link>
-                <Nav.Link href="https://instagram.com" target="_blank">
-                  <FaInstagram />
-                </Nav.Link>
-                <Nav.Link href="https://linkedin.com" target="_blank">
-                  <FaLinkedinIn />
-                </Nav.Link>
-                <Nav.Link href="https://twitter.com" target="_blank">
-                  <FaTwitter />
-                </Nav.Link>
-                <Nav.Link href="https://youtube.com" target="_blank">
-                  <FaYoutube />
-                </Nav.Link>
-              </Nav>
-            </div>
           </Col>
+
 
           {/* Quick Links */}
           <Col md={4} className="mb-4">
-            <h4 className="footer-title text-center">Quick Links</h4>
+            <h4 className="footer-title mb-3 text-center">Quick Links</h4>
             <Nav className="flex-column text-center">
-              {[
-                "Home",
-                "About Us",
-                "Services",
-                "Packages",
-                "Contact Us",
-                "Team",
-                "Career",
-                "Blog",
-                "Privacy Policy",
-              ].map((label, idx) => (
+              {quickLinks.map(({ label, path }, idx) => (
                 <Nav.Link
                   key={idx}
                   as={Link}
-                  to={`/${label.toLowerCase().replace(/\s+/g, "")}`}
-                  className="footer-link"
+                  to={path}
+                  className="footer-link py-1"
                 >
                   {label}
                 </Nav.Link>
@@ -91,32 +109,26 @@ const Footer = () => {
 
           {/* Recent Updates */}
           <Col md={4} className="mb-4">
-            <h4 className="footer-title text-end">Recent Updates</h4>
+            <h4 className="footer-title mb-3 text-end">Recent Updates</h4>
             <div className="recent-updates text-end">
-              <div className="update-item mb-3">
-                <h6 className="update-title">
-                  Why Our Clients Love Pathibhara Pulse
-                </h6>
-                <small className="update-date">03 Dec 2024</small>
-              </div>
-              <div className="update-item">
-                <h6 className="update-title">
-                  Enhancing Business with Our CRM Solutions
-                </h6>
-                <small className="update-date">27 Jan 2023</small>
-              </div>
+              {recentUpdates.map(({ title, date }, idx) => (
+                <div key={idx} className="update-item mb-3">
+                  <h6 className="update-title">{title}</h6>
+                  <small className="update-date text-muted">{date}</small>
+                </div>
+              ))}
             </div>
           </Col>
         </Row>
 
-        <hr className="footer-divider" />
+        <hr className="footer-divider border-secondary" />
 
         {/* Bottom Row */}
-        <Row className="text-center">
-          <Col>
-            <p className="footer-bottom-text mb-0">
-              &copy; {new Date().getFullYear()} All rights reserved. Designed &
-              Developed by <strong>Pathibhara Pulse Pvt. Ltd</strong>
+        <Row>
+          <Col className="text-center">
+            <p className="footer-bottom-text mb-0 small text-muted">
+              &copy; {new Date().getFullYear()} PathibharaPulse  All
+              rights reserved.
             </p>
           </Col>
         </Row>
@@ -126,6 +138,133 @@ const Footer = () => {
 };
 
 export default Footer;
+
+// import { Link } from "react-router-dom";
+// import "../../css/footer/footer.css";
+// import "../../css/global.css";
+// import {
+//   FaFacebookF,
+//   FaInstagram,
+//   FaLinkedinIn,
+//   FaTwitter,
+//   FaYoutube,
+//   FaPhone,
+//   FaEnvelope,
+//   FaMapMarkerAlt,
+// } from "react-icons/fa";
+// import { Container, Row, Col, Nav } from "react-bootstrap";
+
+// const Footer = () => {
+//   return (
+//     <footer className="footer bg-dark text-light pt-5">
+//       <Container>
+//         <Row className="justify-content-between align-items-start">
+//           {/* About Us */}
+//           <Col md={4} className="mb-4">
+//             <h4 className="footer-title">About Pathibhara Pulse</h4>
+//             <p className="footer-desc">
+//               We are a passionate IT company delivering advanced CRM systems,
+//               tailored business solutions, and exceptional support. Our CRM
+//               includes features like enquiry tracking, follow-ups, automation,
+//               and much more to grow your business efficiently.
+//             </p>
+//             <ul className="footer-contact list-unstyled">
+//               <li>
+//                 <FaPhone /> <strong>Phone:</strong> +977-9828889263
+//               </li>
+//               <li>
+//                 <FaEnvelope /> <strong>Email:</strong> paarurawal@gmail.com
+//               </li>
+//               <li>
+//                 <FaMapMarkerAlt /> <strong>Location:</strong> Koteswor,
+//                 Kathmandu
+//               </li>
+//             </ul>
+//             <div className="footer-social-icons mt-3">
+//               <Nav className="gap-2">
+//                 <Nav.Link href="https://facebook.com" target="_blank">
+//                   <FaFacebookF />
+//                 </Nav.Link>
+//                 <Nav.Link href="https://instagram.com" target="_blank">
+//                   <FaInstagram />
+//                 </Nav.Link>
+//                 <Nav.Link href="https://linkedin.com" target="_blank">
+//                   <FaLinkedinIn />
+//                 </Nav.Link>
+//                 <Nav.Link href="https://twitter.com" target="_blank">
+//                   <FaTwitter />
+//                 </Nav.Link>
+//                 <Nav.Link href="https://youtube.com" target="_blank">
+//                   <FaYoutube />
+//                 </Nav.Link>
+//               </Nav>
+//             </div>
+//           </Col>
+
+//           {/* Quick Links */}
+//           <Col md={4} className="mb-4">
+//             <h4 className="footer-title text-center">Quick Links</h4>
+//             <Nav className="flex-column text-center">
+//               {[
+//                 "Home",
+//                 "About Us",
+//                 "Services",
+//                 "Packages",
+//                 "Contact Us",
+//                 "Team",
+//                 "Career",
+//                 "Blog",
+//                 "Privacy Policy",
+//               ].map((label, idx) => (
+//                 <Nav.Link
+//                   key={idx}
+//                   as={Link}
+//                   to={`/${label.toLowerCase().replace(/\s+/g, "")}`}
+//                   className="footer-link"
+//                 >
+//                   {label}
+//                 </Nav.Link>
+//               ))}
+//             </Nav>
+//           </Col>
+
+//           {/* Recent Updates */}
+//           <Col md={4} className="mb-4">
+//             <h4 className="footer-title text-end">Recent Updates</h4>
+//             <div className="recent-updates text-end">
+//               <div className="update-item mb-3">
+//                 <h6 className="update-title">
+//                   Why Our Clients Love Pathibhara Pulse
+//                 </h6>
+//                 <small className="update-date">03 Dec 2024</small>
+//               </div>
+//               <div className="update-item">
+//                 <h6 className="update-title">
+//                   Enhancing Business with Our CRM Solutions
+//                 </h6>
+//                 <small className="update-date">27 Jan 2023</small>
+//               </div>
+//             </div>
+//           </Col>
+//         </Row>
+
+//         <hr className="footer-divider" />
+
+//         {/* Bottom Row */}
+//         <Row className="text-center">
+//           <Col>
+//             <p className="footer-bottom-text mb-0">
+//               &copy; {new Date().getFullYear()} All rights reserved. Designed &
+//               Developed by <strong>Pathibhara Pulse Pvt. Ltd</strong>
+//             </p>
+//           </Col>
+//         </Row>
+//       </Container>
+//     </footer>
+//   );
+// };
+
+// export default Footer;
 
 // import "../../css/footer/footer.css";
 // import {

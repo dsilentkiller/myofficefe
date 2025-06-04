@@ -1,168 +1,366 @@
-import  { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchOrganizationById,
-  updateOrganizationStatus,
-} from "../../../../redux/slice/admin/base/organizationSlice";
-import { useParams, Link } from "react-router-dom";
-import { toast } from "react-toastify";
-import { Button, Card, Col, Form, Row, Spinner } from "react-bootstrap";
+// import { useEffect, useState } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import {
+//   fetchOrganizationById,
+//   updateOrganizationStatus,
+// } from "../../../../redux/slice/admin/base/organizationSlice";
+// import { useParams, Link } from "react-router-dom";
+// import { toast } from "react-toastify";
+// import { Button, Card, Col, Form, Row, Spinner } from "react-bootstrap";
 
-const statusOptions = [
-  { value: "active", label: "Active" },
-  { value: "inactive", label: "Inactive" },
-  { value: "suspended", label: "Suspended" },
-];
-const OrganizationDetail = () => {
+// const statusOptions = [
+//   { value: "active", label: "Active" },
+//   { value: "inactive", label: "Inactive" },
+//   { value: "suspended", label: "Suspended" },
+// ];
+
+
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchOrganizationById, updateOrganization }  from "../../../../redux/slice/admin/base/organizationSlice";
+import { Form, Button, Card, Col, Row } from "react-bootstrap";
+import { toast } from "react-toastify";
+ import { useParams, Link } from "react-router-dom";
+
+const OrganizationSettings = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  // Redux state: organization, loading, and error
-  const organization = useSelector((state) => state.organizations.currentOrganization);
-  const loading = useSelector((state) => state.organizations.loading);
-  const error = useSelector((state) => state.organizations.error);
+  // Local state to manage form inputs
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    pri_phone: "",
+    sec_phone: "",
+    province: "",
+    district: "",
+    municipality: "",
+    street_name: "",
+    pan_vat: "",
+    registration_no: "",
+  });
 
-  const [status, setStatus] = useState("");
+  const { organization, loading, error } = useSelector((state) => state.organizations);
 
-  // Fetch organization details by ID
   useEffect(() => {
     if (id) {
       dispatch(fetchOrganizationById(id))
         .unwrap()
-        .then((data) => {
-          console.log("Organization fetched:", data);
-        })
-        .catch((error) => {
-          console.error("Error fetching organization:", error);
-        });
+        .then((data) => setFormData(data))
+        .catch((err) => console.error("Error fetching organization:", err));
     }
   }, [dispatch, id]);
 
-  // Set status when organization is fetched
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
   useEffect(() => {
-    if (organization && organization.status) {
-      setStatus(organization.status);
-    }
-  }, [organization]);
+  console.log("ORGANIZATION STATE:", organization);
+}, [organization]);
 
-  const handleStatusChange = (e) => {
-    setStatus(e.target.value);
-  };
 
-  const handleStatusUpdate = () => {
-    if (!organization) return;
-
-    if (status === organization.status) {
-      toast.info("No change in status.");
-      return;
-    }
-
-    dispatch(updateOrganizationStatus({ id: organization.id, status }))
+  const handleUpdate = () => {
+    dispatch(updateOrganization({ id, data: formData }))
       .unwrap()
-      .then(() => {
-        toast.success("Organization status updated successfully!");
-      })
-      .catch((error) => {
-        toast.error(`Error updating status: ${error.message}`);
-      });
+      .then(() => toast.success("Organization updated successfully!"))
+      .catch((err) => toast.error(`Error updating organization: ${err.message}`));
   };
 
-  // Loading and error handling UI
-  if (loading) {
-    return (
-      <div className="text-center mt-5">
-        <Spinner animation="border" role="status" />
-        <p className="mt-2">Loading organization details...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center mt-5">
-        <p className="mt-2 text-danger">Error fetching organization: {error}</p>
-      </div>
-    );
-  }
-
-  // Organization data not yet loaded
-  if (!organization) {
-    return (
-      <div className="text-center mt-5">
-        <p className="mt-2">Organization not found.</p>
-      </div>
-    );
-  }
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error loading organization details: {error}</p>;
 
   return (
-    <div className="content-wrapper">
-      <div className="container-fluid">
-        <div className="row justify-content-center">
-          <Col md={8}>
-            <Card className="shadow-sm mb-4">
-              <Card.Header as="h5" className="bg-primary text-white">
-                Organization Details
-              </Card.Header>
-              <Card.Body>
-                {/* Form to display organization details */}
-                <Row>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Organization Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={organization?.name || ""}
-                        readOnly
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Email</Form.Label>
-                      <Form.Control
-                        type="email"
-                        value={organization?.email || ""}
-                        readOnly
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-                {/* Other fields... */}
-                <Row>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Status</Form.Label>
-                      <Form.Control as="select" value={status} onChange={handleStatusChange}>
-                        {statusOptions.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </Form.Control>
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <Row className="mt-3">
-                  <Col>
-                    <Button variant="success" onClick={handleStatusUpdate}>
-                      Update Status
-                    </Button>
-                    <Link
-                      to="/dashboard/crm/organization"
-                      className="btn btn-secondary ml-2"
-                    >
-                      Back to Organizations
-                    </Link>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
+    <Card className="shadow-sm mb-4">
+      <Card.Header as="h5" className="bg-primary text-white">
+        Organization Settings
+      </Card.Header>
+      <Card.Body>
+        <Row>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Organization Name</Form.Label>
+              <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} />
+            </Form.Group>
           </Col>
-        </div>
-      </div>
-    </div>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Email</Form.Label>
+              <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} />
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Primary Phone</Form.Label>
+              <Form.Control type="text" name="pri_phone" value={formData.pri_phone} onChange={handleChange} />
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Secondary Phone</Form.Label>
+              <Form.Control type="text" name="sec_phone" value={formData.sec_phone} onChange={handleChange} />
+            </Form.Group>
+          </Col>
+        </Row>
+        <Button variant="success" onClick={handleUpdate} className="mt-3">
+          Update Organization
+        </Button>
+      </Card.Body>
+    </Card>
   );
 };
+
+export default OrganizationSettings;
+
+// const OrganizationDetail = () => {
+//   const { id } = useParams();
+//   const dispatch = useDispatch();
+
+//   // Redux state: organization, loading, and error
+//   // const organization = useSelector((state) => state.organizations.currentOrganization);
+//   // const organization = useSelector((state) => state.organizations.currentOrganization);
+//   const {
+//     list: organizations = [],
+//     isLoading,
+//     // error,
+
+//   } = useSelector((state) => state.organizations || {});
+
+//   // console.log('organization data', organizations)
+//   const loading = useSelector((state) => state.organizations.loading);
+//   const error = useSelector((state) => state.organizations.error);
+
+//   const [status, setStatus] = useState("");
+
+//   // Fetch organization details by ID
+//   useEffect(() => {
+//     if (id) {
+//       dispatch(fetchOrganizationById(id))
+//         .unwrap()
+//         .then((data) => {
+//           console.log("Organization fetched:", data);
+//         })
+//         .catch((error) => {
+//           console.error("Error fetching organization:", error);
+//         });
+//     }
+//   }, [dispatch, id]);
+
+//   // Set status when organization is fetched
+//   // useEffect(() => {
+//   //   if (organization && organization.status) {
+//   //     setStatus(organization.status);
+//   //   }
+//   // }, [organization]);
+
+//   const handleStatusChange = (e) => {
+//     setStatus(e.target.value);
+//   };
+
+//   const handleStatusUpdate = () => {
+//     if (!organization) return;
+
+//     if (status === organization.status) {
+//       toast.info("No change in status.");
+//       return;
+//     }
+
+//     dispatch(updateOrganizationStatus({ id: organization.id, status }))
+//       .unwrap()
+//       .then(() => {
+//         toast.success("Organization status updated successfully!");
+//       })
+//       .catch((error) => {
+//         toast.error(`Error updating status: ${error.message}`);
+//       });
+//   };
+
+//   // Loading and error handling UI
+//   if (loading) {
+//     return (
+//       <div className="text-center mt-5">
+//         <Spinner animation="border" role="status" />
+//         <p className="mt-2">Loading organization details...</p>
+//       </div>
+//     );
+//   }
+
+//   if (error) {
+//     return (
+//       <div className="text-center mt-5">
+//         <p className="mt-2 text-danger">Error fetching organization: {error}</p>
+//       </div>
+//     );
+//   }
+
+
+
+//   return (
+//     <>
+//       <div className="container-fluid">
+//         <div className="row justify-content-center">
+//           <Col md={8}>
+//             <Card className="shadow-sm mb-4">
+//               <Card.Header as="h5" className="bg-primary text-white">
+//                 Organization Details
+//               </Card.Header>
+//               <Card.Body>
+//                 {/* Form to display organization details */}
+//                 <Row>
+//                   <Col md={6}>
+//                     <Form.Group>
+//                       <Form.Label>Organization Name</Form.Label>
+//                       <Form.Control
+//                         type="text"
+//                         value={organization?.name || ""}
+//                         readOnly
+//                       />
+//                     </Form.Group>
+//                   </Col>
+
+
+//                   <Col md={6}>
+//                     <Form.Group>
+//                       <Form.Label>Province</Form.Label>
+//                       <Form.Control
+//                         type="text"
+//                         value={organization?.province || ""}
+//                         readOnly
+//                       />
+//                     </Form.Group>
+//                   </Col>
+//                 </Row>
+//                 <Row>
+//                   <Col md={6}>
+//                     <Form.Group>
+//                       <Form.Label>District</Form.Label>
+//                       <Form.Control
+//                         type="text"
+//                         value={organization?.district || ""}
+//                         readOnly
+//                       />
+//                     </Form.Group>
+//                   </Col>
+//                   <Col md={6}>
+//                     <Form.Group>
+//                       <Form.Label>Municipality</Form.Label>
+//                       <Form.Control
+//                         type="text"
+//                         value={organization?.municipality || ""}
+//                         readOnly
+//                       />
+//                     </Form.Group>
+//                   </Col>
+//                 </Row>
+//                 <Row>
+
+//                   <Col md={6}>
+//                     <Form.Group>
+//                       <Form.Label>Street Name</Form.Label>
+//                       <Form.Control
+//                         type="text"
+//                         value={organization?.street_name || ""}
+//                         readOnly
+//                       />
+//                     </Form.Group>
+//                   </Col>
+
+//                   <Col md={6}>
+//                     <Form.Group>
+//                       <Form.Label>Email</Form.Label>
+//                       <Form.Control
+//                         type="email"
+//                         value={organization?.email || ""}
+//                         readOnly
+//                       />
+//                     </Form.Group>
+//                   </Col>
+
+
+//                   <Col md={6}>
+//                     <Form.Group>
+//                       <Form.Label>Primary Phone</Form.Label>
+//                       <Form.Control
+//                         type="text"
+//                         value={organization?.pri_phone || ""}
+//                         readOnly
+//                       />
+//                     </Form.Group>
+//                   </Col>
+//                   <Col md={6}>
+//                     <Form.Group>
+//                       <Form.Label>Secondary Phone</Form.Label>
+//                       <Form.Control
+//                         type="text"
+//                         value={organization?.sec_phone || ""}
+//                         readOnly
+//                       />
+//                     </Form.Group>
+//                   </Col>
+//                 </Row>
+//                 {/* <Row>
+                 
+//                 </Row> */}
+
+//                 <Row>
+//                   <Col md={6}>
+//                     <Form.Group>
+//                       <Form.Label>PAN / VAT</Form.Label>
+//                       <Form.Control
+//                         type="text"
+//                         value={organization?.pan_vat || ""}
+//                         readOnly
+//                       />
+//                     </Form.Group>
+//                   </Col>
+//                   <Col md={6}>
+//                     <Form.Group>
+//                       <Form.Label>Registration Number</Form.Label>
+//                       <Form.Control
+//                         type="text"
+//                         value={organization?.registration_no || ""}
+//                         readOnly
+//                       />
+//                     </Form.Group>
+//                   </Col>
+//                 </Row>
+//                 <Row>
+//                   <Col md={6}>
+//                     <Form.Group>
+//                       <Form.Label>Status</Form.Label>
+//                       <Form.Control as="select" value={status} onChange={handleStatusChange}>
+//                         {statusOptions.map((option) => (
+//                           <option key={option.value} value={option.value}>
+//                             {option.label}
+//                           </option>
+//                         ))}
+//                       </Form.Control>
+//                     </Form.Group>
+//                   </Col>
+//                 </Row>
+//                 <Row className="mt-3">
+//                   <Col>
+//                     <Button variant="success" onClick={handleStatusUpdate}>
+//                       Update Status
+//                     </Button>
+//                     <Link
+//                       to="/dashboard/setup/organization/create"
+//                       className="btn btn-secondary ml-2"
+//                     >
+//                       Create Organization
+//                     </Link>
+//                   </Col>
+//                 </Row>
+//               </Card.Body>
+//             </Card>
+//           </Col>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };
+// export default OrganizationDetail;
 // const OrganizationDetail = () => {
 //   const { id } = useParams();
 //   const dispatch = useDispatch();
@@ -326,7 +524,7 @@ const OrganizationDetail = () => {
 //   );
 // };
 
-export default OrganizationDetail;
+// export default OrganizationDetail;
 
 
 // import React, { useEffect, useState } from "react";

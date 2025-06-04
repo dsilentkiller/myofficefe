@@ -58,7 +58,7 @@ const CategoryForm = () => {
       (category) =>
         category?.category_name && // Ensure category is defined and has category_name
         category.category_name.trim().toLowerCase() ===
-          trimmedName.toLowerCase()
+        trimmedName.toLowerCase()
     );
 
     if (existingCategory) {
@@ -77,7 +77,7 @@ const CategoryForm = () => {
   };
 
   return (
-    <div className="content-wrapper">
+    <>
       <div className="container">
         <div className="container-fluid">
           <div className="card">
@@ -108,7 +108,7 @@ const CategoryForm = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

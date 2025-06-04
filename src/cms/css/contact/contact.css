@@ -26,7 +26,7 @@
   font-size: 1.8rem;
 }
 
-.contact-info > p {
+.contact-info>p {
   margin-bottom: 30px;
   color: #666;
 }
@@ -47,13 +47,23 @@
   color: #666;
 }
 
+
+/* Centering Social Media Section */
+.social-links {
+  text-align: center;
+  margin-top: 30px;
+}
+
 .social-links h3 {
   margin-bottom: 15px;
   font-size: 1.2rem;
+  color: #333;
 }
 
 .social-icons {
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 15px;
 }
 
@@ -66,13 +76,16 @@
   background-color: #4a90e2;
   color: white;
   border-radius: 50%;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-size: 1.2rem;
 }
 
 .social-icons a:hover {
   background-color: #357abd;
   transform: translateY(-3px);
 }
+
 
 .contact-form-container {
   background-color: white;
@@ -149,6 +162,7 @@
   object-fit: cover;
   opacity: 0.7;
 }
+
 .map-loading-text {
   position: absolute;
   top: 50%;
@@ -166,6 +180,7 @@
 }
 
 @media screen and (max-width: 768px) {
+
   .contact-info,
   .contact-form-container {
     padding: 30px 20px;

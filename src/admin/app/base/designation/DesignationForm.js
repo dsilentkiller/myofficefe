@@ -63,7 +63,8 @@ const DesignationForm = () => {
   };
 
   return (
-    <div className="content-wrapper">
+    <>
+
       <div className="container">
         <div className="container-fluid">
           <div className="card">
@@ -94,7 +95,8 @@ const DesignationForm = () => {
           </div>
         </div>
       </div>
-    </div>
+
+    </>
   );
 };
 

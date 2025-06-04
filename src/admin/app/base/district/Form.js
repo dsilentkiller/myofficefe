@@ -78,7 +78,7 @@ const DistrictForm = () => {
   }, [createStatus, createError, navigate, districtId]);
 
   return (
-    <div className="content-wrapper">
+    <>
       <div className="section">
         <div className="container">
           <div className="container-fluid">
@@ -135,7 +135,7 @@ const DistrictForm = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

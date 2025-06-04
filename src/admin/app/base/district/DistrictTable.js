@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchDistricts, updateDistrict } from "../../../../redux/slice/admin/base/districtSlice";
 import { fetchProvinces } from "../../../../redux/slice/admin/base/provinceSlice";
 import { Link } from "react-router-dom";
-import { IconButton, TableBody,  TableRow, Select, MenuItem, Paper,Button, InputAdornment, TextField  } from "@mui/material";
-import { Edit, Delete, Save, Add ,search } from "@mui/icons-material";
+import { IconButton, TableBody, TableRow, Select, MenuItem, Paper, Button, InputAdornment, TextField } from "@mui/material";
+import { Edit, Delete, Save, Add, search } from "@mui/icons-material";
 import DeleteDistrict from "./DeleteDistrict";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -61,11 +61,11 @@ const DistrictList = () => {
     setNewDistrictName(name);
     setNewProvinceName(province);
   };
-//   //--- handle searchitem in a table ----
+  //   //--- handle searchitem in a table ----
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
-//   //--co
+  //   //--co
   const handleUpdate = (e) => {
     e.preventDefault();
     if (editId !== null) {
@@ -158,177 +158,177 @@ const DistrictList = () => {
   };
 
   if (isLoading) return <div>Loading...</div>;
- if (error) return <div>Error: {typeof error === "string" ? error : JSON.stringify(error)}</div>;
+  if (error) return <div>Error: {typeof error === "string" ? error : JSON.stringify(error)}</div>;
 
 
   return (
-    <div className="content-wrapper">
+    <>
       <div className="col-lg-12">
-    
-      <Paper elevation={3} className="card" style={{ padding: 16 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-    
-      <h5 style={{ margin: 0, flexShrink: 0 }}>District List</h5>
-    
-        {/* Right-side controls all in one flex container */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', flexGrow: 1, justifyContent: 'flex-end' }}>
-     
-  
-         {/* Search Bar */}
-                   <div className="d-flex align-items-center" style={{ gap: "1rem", maxWidth: "600px" }}>
-                        <Link to="create" style={{ textDecoration: 'none' }}>
-                            <Button variant="contained" color="primary" startIcon={<Add />} size="medium">
-                              Add District
-                            </Button>
-                          </Link> 
 
-                            {/* Search Bar */}
-                            <form
-                              onSubmit={(e) => {
-                                e.preventDefault();
-                                setSearchTerm(e.target.search_term.value);
-                              }}
-                              style={{ flexGrow: 1, maxWidth: "300px" }}
-                            >
-                              <TextField
-                                id="default-search"
-                                name="search_term"
-                                value={searchTerm}
-                                placeholder="Search Municipalities..."
-                                onChange={handleSearchChange}
-                                required
-                                size="medium"  // same size as Button
-                                InputProps={{
-                                  
-                                  style: { height: "40px", boxSizing: "border-box" },  // force TextField height same as button
-                                }}
-                                // Remove fullWidth so width is constrained by parent flex container
-                                style={{ width: "100%" }} // fill parent maxWidth
-                              />
-                            </form>
-                      </div>
-                                                  
-                                    <Button
-                                                    variant="outlined"
-                                                    startIcon={<FileUploadIcon />}
-                                                    component="label"
-                                                    size="medium"
-                                                  >
-                                                    Import File
-                                                    <input
-                                                      type="file"
-                                                      accept=".xlsx, .xls, .csv"
-                                                      hidden
-                                                      onChange={handleFileImport}
-                                                    />
-                                                  </Button>
-                                                  
-                                                  <Button
-                                                    variant="outlined"
-                                                    startIcon={<DownloadIcon />}
-                                                    onClick={() => handleFileExport("csv")}
-                                                    size="medium"
-                                                  >
-                                                    Export as CSV
-                                                  </Button>
-                                                  
-                                                  <Button
-                                                    variant="outlined"
-                                                    startIcon={<DownloadIcon />}
-                                                    onClick={handlePdfExport}
-                                                    size="medium"
-                                                  >
-                                                    Export as PDF
-                                                  </Button>
-                                                </div>
-                                              </div>
-                                              
-                    {/* Your table below */}
-                    <div className="table-container" style={{ marginTop: 16 }}>
-                      <table className="table table-bordered">
-                  
+        <Paper elevation={3} className="card" style={{ padding: 16 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
 
-  
-                          <thead>
-                            <tr>
-                              <th>#</th>
-                              <th>District</th>
-                              <th>Province</th>
-                              <th>Actions</th>
-                            </tr>
-                          </thead>
-                          <TableBody>
-                            {filteredDistricts.length > 0 ? (
-                              filteredDistricts.map((district, index) => (
-                                <TableRow key={district.id}>
-                                  <td>{index + 1}</td>
-                                  <td>
-                                    {editId === district.id ? (
-                                      <TextField
-                                        size="small"
-                                        value={newDistrictName}
-                                        onChange={(e) => setNewDistrictName(e.target.value)}
-                                      />
-                                    ) : (
-                                      formatName(district.name)
-                                    )}
-                                  </td>
-                                  <td>
-                                    {editId === district.id ? (
-                                      <Select
-                                        size="small"
-                                        value={newProvinceName || ""}
-                                        onChange={(e) => setNewProvinceName(e.target.value)}
-                                        fullWidth
-                                      >
-                                        <MenuItem value="">Select Province</MenuItem>
-                                        {provinces.map((province) => (
-                                          <MenuItem key={province.id} value={province.name}>
-                                            {province.name}
-                                          </MenuItem>
-                                        ))}
-                                      </Select>
-                                    ) : (
-                                      formatName(district.province_name)
-                                    )}
-                                  </td>
-                                  <td>
-                                    <div style={{ display: "flex", gap: "8px" }}>
-                                            {editId === district.id ? (
-                                              <IconButton color="success" onClick={handleUpdate}>
-                                                <Save />
-                                              </IconButton>
-                                            ) : (
-                                              <IconButton color="primary" onClick={() => handleEdit(district.id, district.name, district.province)}>
-                                                <Edit />
-                                              </IconButton>
-                                            )}
-                                            <IconButton color="error" onClick={() => setDistrictToDelete(district.id)}>
-                                              <Delete />
-                                            </IconButton>
-                                    </div>
-                                  </td>
-                                </TableRow>
-                              ))
-                            ) : (
-                              <TableRow>
-                                <td colSpan={4} align="center">
-                                  No districts found
-                                </td>
-                              </TableRow>
-                            )}
-                          </TableBody>
-                        </table>
+            <h5 style={{ margin: 0, flexShrink: 0 }}>District List</h5>
+
+            {/* Right-side controls all in one flex container */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', flexGrow: 1, justifyContent: 'flex-end' }}>
+
+
+              {/* Search Bar */}
+              <div className="d-flex align-items-center" style={{ gap: "1rem", maxWidth: "600px" }}>
+                <Link to="create" style={{ textDecoration: 'none' }}>
+                  <Button variant="contained" color="primary" startIcon={<Add />} size="medium">
+                    Add District
+                  </Button>
+                </Link>
+
+                {/* Search Bar */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setSearchTerm(e.target.search_term.value);
+                  }}
+                  style={{ flexGrow: 1, maxWidth: "300px" }}
+                >
+                  <TextField
+                    id="default-search"
+                    name="search_term"
+                    value={searchTerm}
+                    placeholder="Search Municipalities..."
+                    onChange={handleSearchChange}
+                    required
+                    size="medium"  // same size as Button
+                    InputProps={{
+
+                      style: { height: "40px", boxSizing: "border-box" },  // force TextField height same as button
+                    }}
+                    // Remove fullWidth so width is constrained by parent flex container
+                    style={{ width: "100%" }} // fill parent maxWidth
+                  />
+                </form>
+              </div>
+
+              <Button
+                variant="outlined"
+                startIcon={<FileUploadIcon />}
+                component="label"
+                size="medium"
+              >
+                Import File
+                <input
+                  type="file"
+                  accept=".xlsx, .xls, .csv"
+                  hidden
+                  onChange={handleFileImport}
+                />
+              </Button>
+
+              <Button
+                variant="outlined"
+                startIcon={<DownloadIcon />}
+                onClick={() => handleFileExport("csv")}
+                size="medium"
+              >
+                Export as CSV
+              </Button>
+
+              <Button
+                variant="outlined"
+                startIcon={<DownloadIcon />}
+                onClick={handlePdfExport}
+                size="medium"
+              >
+                Export as PDF
+              </Button>
             </div>
-          
-          </Paper>
           </div>
-   
-    
+
+          {/* Your table below */}
+          <div className="table-container" style={{ marginTop: 16 }}>
+            <table className="table table-bordered">
+
+
+
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>District</th>
+                  <th>Province</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <TableBody>
+                {filteredDistricts.length > 0 ? (
+                  filteredDistricts.map((district, index) => (
+                    <TableRow key={district.id}>
+                      <td>{index + 1}</td>
+                      <td>
+                        {editId === district.id ? (
+                          <TextField
+                            size="small"
+                            value={newDistrictName}
+                            onChange={(e) => setNewDistrictName(e.target.value)}
+                          />
+                        ) : (
+                          formatName(district.name)
+                        )}
+                      </td>
+                      <td>
+                        {editId === district.id ? (
+                          <Select
+                            size="small"
+                            value={newProvinceName || ""}
+                            onChange={(e) => setNewProvinceName(e.target.value)}
+                            fullWidth
+                          >
+                            <MenuItem value="">Select Province</MenuItem>
+                            {provinces.map((province) => (
+                              <MenuItem key={province.id} value={province.name}>
+                                {province.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        ) : (
+                          formatName(district.province_name)
+                        )}
+                      </td>
+                      <td>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                          {editId === district.id ? (
+                            <IconButton color="success" onClick={handleUpdate}>
+                              <Save />
+                            </IconButton>
+                          ) : (
+                            <IconButton color="primary" onClick={() => handleEdit(district.id, district.name, district.province)}>
+                              <Edit />
+                            </IconButton>
+                          )}
+                          <IconButton color="error" onClick={() => setDistrictToDelete(district.id)}>
+                            <Delete />
+                          </IconButton>
+                        </div>
+                      </td>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <td colSpan={4} align="center">
+                      No districts found
+                    </td>
+                  </TableRow>
+                )}
+              </TableBody>
+            </table>
+          </div>
+
+        </Paper>
+      </div>
+
+
       {districtToDelete !== null && (
         <DeleteDistrict id={districtToDelete} onClose={() => setDistrictToDelete(null)} />
       )}
-    </div>
+    </>
   );
 };
 
@@ -719,9 +719,9 @@ export default DistrictList;
 //               </div>
 //             </nav>
 //             <div className="card-body">
-              // <div className="table-container">
-              //   <table className="table table-bordered">
-              //     <thead>
+// <div className="table-container">
+//   <table className="table table-bordered">
+//     <thead>
 //                     <tr>
 //                       <th>#</th>
 //                       <th>Name</th>

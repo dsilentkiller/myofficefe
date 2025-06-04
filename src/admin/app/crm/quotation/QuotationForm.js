@@ -444,11 +444,7 @@ const QuotationForm = ({ existingQuotation = {} }) => {
             {/* Display Totals */}
 
 
-            <Box textAlign="center" mt={4}>
-              <Button variant="contained" color="primary" onClick={handleSubmit}>
-                Send Quotation
-              </Button>
-            </Box>
+
           </Box>
         </Paper>
       </Box>

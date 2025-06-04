@@ -126,10 +126,10 @@ const MunicipalityTable = () => {
           const updatedMunicipalities = municipalities.map((municipality) =>
             municipality.id === editId
               ? {
-                  ...municipality,
-                  name: newMunicipalityName,
-                  district_name: newDistrictName,
-                }
+                ...municipality,
+                name: newMunicipalityName,
+                district_name: newDistrictName,
+              }
               : municipality
           );
           setFilteredMunicipalities(updatedMunicipalities); // Update filtered municipalities
@@ -162,8 +162,7 @@ const MunicipalityTable = () => {
       .catch((error) => {
         console.error("Delete Error:", error);
         toast.error(
-          `Failed to delete municipality: ${
-            error?.message || deleteError?.message || "Unknown error"
+          `Failed to delete municipality: ${error?.message || deleteError?.message || "Unknown error"
           }`
         );
       });
@@ -185,22 +184,22 @@ const MunicipalityTable = () => {
     if (searchTerm) {
       setFilteredMunicipalities(
         (municipalities || []).filter((municipality) =>
-          //     municipality.name &&
-          //     municipality.name.toLowerCase().includes(searchTerm.toLowerCase())
-          {
-            // Ensure district.name and district.province are defined before calling toLowerCase()
-            const municipalityName = municipality.name
-              ? municipality.name.toLowerCase()
-              : "";
-            const districtName = municipality.district
-              ? municipality.district.toLowerCase()
-              : "";
+        //     municipality.name &&
+        //     municipality.name.toLowerCase().includes(searchTerm.toLowerCase())
+        {
+          // Ensure district.name and district.province are defined before calling toLowerCase()
+          const municipalityName = municipality.name
+            ? municipality.name.toLowerCase()
+            : "";
+          const districtName = municipality.district
+            ? municipality.district.toLowerCase()
+            : "";
 
-            return (
-              municipalityName.includes(searchTerm.toLowerCase()) ||
-              districtName.includes(searchTerm.toLowerCase())
-            );
-          }
+          return (
+            municipalityName.includes(searchTerm.toLowerCase()) ||
+            districtName.includes(searchTerm.toLowerCase())
+          );
+        }
         )
       );
     } else {
@@ -265,103 +264,103 @@ const MunicipalityTable = () => {
   };
 
   return (
-    <div className="content-wrapper">
+    <>
       <div className="row justify-content-center">
         <div className="col-lg-10">
           <div className="card">
-                <div className="container-fluid d-flex align-items-center justify-content-between" style={{ flexWrap: 'wrap', gap: '1rem' }}>
-                      {/* Brand Name */}
-                      <h5 className="navbar-brand">Municipalities</h5>         
+            <div className="container-fluid d-flex align-items-center justify-content-between" style={{ flexWrap: 'wrap', gap: '1rem' }}>
+              {/* Brand Name */}
+              <h5 className="navbar-brand">Municipalities</h5>
 
-                      {/* Search Bar */}
-                   <div className="d-flex align-items-center" style={{ gap: "1rem", maxWidth: "600px" }}>
-                            {/* Add Municipality Button */}
-                            <Button
-                              variant="contained"
-                              component={Link}
-                              to="create"
-                              color="primary"
-                              startIcon={<AddCircleOutlineIcon />}
-                              size="medium"  // set size explicitly
-                              style={{ height: "40px" }} // optional fixed height to match TextField
-                            >
-                              Add Municipality
-                            </Button>
+              {/* Search Bar */}
+              <div className="d-flex align-items-center" style={{ gap: "1rem", maxWidth: "600px" }}>
+                {/* Add Municipality Button */}
+                <Button
+                  variant="contained"
+                  component={Link}
+                  to="create"
+                  color="primary"
+                  startIcon={<AddCircleOutlineIcon />}
+                  size="medium"  // set size explicitly
+                  style={{ height: "40px" }} // optional fixed height to match TextField
+                >
+                  Add Municipality
+                </Button>
 
-                            {/* Search Bar */}
-                            <form
-                              onSubmit={(e) => {
-                                e.preventDefault();
-                                setSearchTerm(e.target.search_term.value);
-                              }}
-                              style={{ flexGrow: 1, maxWidth: "300px" }}
-                            >
-                              <TextField
-                                id="default-search"
-                                name="search_term"
-                                value={searchTerm}
-                                placeholder="Search Municipalities..."
-                                onChange={handleSearchChange}
-                                required
-                                size="medium"  // same size as Button
-                                InputProps={{
-                                  startAdornment: (
-                                    <InputAdornment position="start">
-                                      <SearchIcon />
-                                    </InputAdornment>
-                                  ),
-                                  style: { height: "40px", boxSizing: "border-box" },  // force TextField height same as button
-                                }}
-                                // Remove fullWidth so width is constrained by parent flex container
-                                style={{ width: "100%" }} // fill parent maxWidth
-                              />
-                            </form>
-                          </div>
+                {/* Search Bar */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setSearchTerm(e.target.search_term.value);
+                  }}
+                  style={{ flexGrow: 1, maxWidth: "300px" }}
+                >
+                  <TextField
+                    id="default-search"
+                    name="search_term"
+                    value={searchTerm}
+                    placeholder="Search Municipalities..."
+                    onChange={handleSearchChange}
+                    required
+                    size="medium"  // same size as Button
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                      style: { height: "40px", boxSizing: "border-box" },  // force TextField height same as button
+                    }}
+                    // Remove fullWidth so width is constrained by parent flex container
+                    style={{ width: "100%" }} // fill parent maxWidth
+                  />
+                </form>
+              </div>
 
-                      {/* Export and Import Buttons */}
-                      <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
-                        <Button
-                          variant="outlined"
-                          color="info"
-                          startIcon={<FileDownloadIcon />}
-                          onClick={exportToExcel}
-                        >
-                          Export Excel
-                        </Button>
+              {/* Export and Import Buttons */}
+              <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
+                <Button
+                  variant="outlined"
+                  color="info"
+                  startIcon={<FileDownloadIcon />}
+                  onClick={exportToExcel}
+                >
+                  Export Excel
+                </Button>
 
-                        <Button
-                          variant="outlined"
-                          color="info"
-                          startIcon={<PictureAsPdfIcon />}
-                          onClick={exportToPDF}
-                        >
-                          Export PDF
-                        </Button>
+                <Button
+                  variant="outlined"
+                  color="info"
+                  startIcon={<PictureAsPdfIcon />}
+                  onClick={exportToPDF}
+                >
+                  Export PDF
+                </Button>
 
-                        <Button
-                          variant="contained"
-                          component="label"
-                          sx={{
-                            backgroundColor: "#3f51b5",
-                            color: "white",
-                            "&:hover": {
-                              backgroundColor: "#303f9f",
-                            },
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <FileUploadIcon sx={{ marginRight: 1 }} />
-                          Import Excel
-                          <input
-                            type="file"
-                            accept=".xlsx, .xls"
-                            hidden
-                            onChange={importExcel}
-                          />
-                        </Button>
-                      </div>
-                </div>
+                <Button
+                  variant="contained"
+                  component="label"
+                  sx={{
+                    backgroundColor: "#3f51b5",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "#303f9f",
+                    },
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <FileUploadIcon sx={{ marginRight: 1 }} />
+                  Import Excel
+                  <input
+                    type="file"
+                    accept=".xlsx, .xls"
+                    hidden
+                    onChange={importExcel}
+                  />
+                </Button>
+              </div>
+            </div>
 
 
             <div className="card-body">
@@ -437,34 +436,34 @@ const MunicipalityTable = () => {
                                           )}
                                         </td>
 
-                                      <td>
-                                              <div style={{ display: "flex", gap: "8px" }}>
-                                                {editId === municipality.id ? (
-                                                  <IconButton color="success" onClick={handleUpdate}>
-                                                    <Save />
-                                                  </IconButton>
-                                                ) : (
-                                                  <IconButton
-                                                    color="primary"
-                                                    onClick={() =>
-                                                      handleEdit(
-                                                        municipality.id,
-                                                        municipality.name,
-                                                        municipality.district
-                                                      )
-                                                    }
-                                                  >
-                                                    <Edit />
-                                                  </IconButton>
-                                                )}
-                                                <IconButton
-                                                  color="error"
-                                                  onClick={() => confirmDelete(municipality.id)}
-                                                >
-                                                  <Delete />
-                                                </IconButton>
-                                              </div>
-                                            </td>
+                                        <td>
+                                          <div style={{ display: "flex", gap: "8px" }}>
+                                            {editId === municipality.id ? (
+                                              <IconButton color="success" onClick={handleUpdate}>
+                                                <Save />
+                                              </IconButton>
+                                            ) : (
+                                              <IconButton
+                                                color="primary"
+                                                onClick={() =>
+                                                  handleEdit(
+                                                    municipality.id,
+                                                    municipality.name,
+                                                    municipality.district
+                                                  )
+                                                }
+                                              >
+                                                <Edit />
+                                              </IconButton>
+                                            )}
+                                            <IconButton
+                                              color="error"
+                                              onClick={() => confirmDelete(municipality.id)}
+                                            >
+                                              <Delete />
+                                            </IconButton>
+                                          </div>
+                                        </td>
 
                                       </tr>
                                     )
@@ -504,7 +503,7 @@ const MunicipalityTable = () => {
           onClose={() => setMunicipalityToDelete(null)}
         />
       )}
-    </div>
+    </>
   );
 };
 

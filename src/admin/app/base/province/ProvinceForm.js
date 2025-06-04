@@ -69,7 +69,7 @@ const ProvinceForm = () => {
   };
 
   return (
-    <div className="content-wrapper">
+    <>
       <div className="section">
         <div className="container">
           <div className="container-fluid">
@@ -111,7 +111,7 @@ const ProvinceForm = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

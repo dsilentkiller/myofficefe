@@ -95,7 +95,7 @@ import ServiceQuotationForm from "./admin/app/crm/quotation/ServiceQuotationForm
 import ProductQuotationForm from "./admin/app/crm/quotation/ProductQuotationForm";
 import Letterhead from "./admin/app/base/letterhead/Letterhead";
 import QuotationTable from "./admin/app/crm/quotation/QuotationTable";
-import OrganizationForm from "./admin/app/base/organization/Form.js";
+import OrganizationSettings from "./admin/app/base/organization/Form.js";
 import ServiceQuotationDetail from "./admin/app/crm/quotation/ServiceQuotationDetail";
 import ProductQuotationDetail from "./admin/app/crm/quotation/ProductQuotationDetail1";
 import ProposalForm from "./admin/app/crm/proposal/ProposalForm";
@@ -104,6 +104,8 @@ import ProposalDetail from "./admin/app/crm/proposal/ProposalDetail";
 import OrganizationDetail from "./admin/app/base/organization/OrganizationDetail";
 // import AIChat from "./admin/ai_agent/AIChat";
 import WorkingTable from "./admin/app/base/working/WorkingTable.js";
+import WorkingForm from "./admin/app/base/working/WorkingForm.js"
+import WorkingDelete from "./admin/app/base/working/WorkingTable.js"
 
 import Homepage from "./cms/pages/home/HomePage.js";
 import About from "./cms/pages/about/About";
@@ -268,16 +270,17 @@ function App() {
                   <Route path="update/:id/" element={<CustomerForm />} />
                   <Route path="detail/:id/" element={<CustomerDetail />} />
                 </Route>
-                {/* aichat */}
-                {/* <Route path="ai" element={<ClientDashboard />}>
+              </Route>
+              {/* aichat */}
+              {/* <Route path="ai" element={<ClientDashboard />}>
                     <Route path="customer-list" element={<CustomerTable />} />
                     <Route path="create" element={<CustomerForm />} />
                     <Route path="update/:id/" element={<CustomerForm />} />
                     <Route path="detail/:id/" element={<CustomerDetail />} />
                   </Route> */}
 
-                {/* HRM Routes */}
-                {/* <Route path="hrm" element={<HrmDashboard />}>
+              {/* HRM Routes */}
+              {/* <Route path="hrm" element={<HrmDashboard />}>
                     <Route
                       path="employee/employee-list"
                       element={<EmployeeList />}
@@ -287,16 +290,16 @@ function App() {
                     <Route path="leave" element={<LeaveDashboard />}>
                       <Route index element={<LeaveList />} />
                       {/* // Default leave page */}
-                {/* <Route path="list" element={<LeaveList />} /> */}
-                {/* <Route path="create" element={<LeaveForm />} />
+              {/* <Route path="list" element={<LeaveList />} /> */}
+              {/* <Route path="create" element={<LeaveForm />} />
                       <Route path="category/list" element={<LeaveCategoryList />} />
                       <Route
                         path="category/create"
                         element={<LeaveCategoryForm />}
                       />
                     </Route> */}
-                {/* hrm/asset */}
-                {/* <Route path="asset">
+              {/* hrm/asset */}
+              {/* <Route path="asset">
                       <Route path="list" element={<AssetsList />} />
                       <Route path="create" element={<AssetsForm />} />
 
@@ -307,76 +310,76 @@ function App() {
                     <Route path="attendance">
                       <Route path="list" element={<AssetsList />} />
                       <Route path="create" element={<AssetsForm />} />
-                    </Route>
-                  </Route>  */}
+                    </Route>*/}
 
-                {/* Setup Routes */}
-                <Route path="setup/" element={<SetupDashboard />}>
-                  <Route path="designation" element={<DesignationTable />} />
-                  <Route
-                    path="designation/create"
-                    element={<DesignationForm />}
-                  />
-                  <Route path="department" element={<DepartmentTable />} />
-                  <Route path="department/create" element={<DepartmentForm />} />
-                  <Route
-                    path="department/delete/:id"
-                    element={<DepartmentDelete />}
-                  />
-                  <Route path="district" element={<DistrictTable />} />
-                  <Route path="district/create/" element={<DistrictForm />} />
-                  <Route
-                    path="district/update/:id/"
-                    element={<UpdateDistrict />}
-                  />
-                  <Route
-                    path="district/delete/:id/"
-                    element={<DeleteDistrict />}
-                  />
-                  <Route path="municipality" element={<MunicipalityTable />} />
-                  <Route
-                    path="municipality/create"
-                    element={<MunicipalityForm />}
-                  />
-                  <Route
-                    path="municipality/update/:id"
-                    element={<UpdateMunicipality />}
-                  />
-                  <Route
-                    path="municipality/delete/:id"
-                    element={<DeleteMunicipality />}
-                  />
-                  <Route path="province" element={<ProvinceList />} />
-                  <Route path="province/create/" element={<ProvinceForm />} />
-                  <Route
-                    path="province/update/:id"
-                    element={<UpdateProvince />}
-                  />
-                  <Route
-                    path="province/delete/:id"
-                    element={<DeleteProvince />}
-                  />
-                  {/* Working day */}
-                  <Route path="working/" element={<WorkingTable />} />
-                  {/* <Route path="working/create" element={<WorkingForm />} />
-                    <Route path="working/delete/:id" element={<WorkingDelete />} /> */}
-                  {/* day */}
-                  <Route path="day" element={<DayTable />} />
-                  <Route path="day/create" element={<DayForm />} />
-                  <Route path="day/delete/:id" element={<DayDelete />} />
-                  {/* <Route path="letterhead/create" element={<Letterhead />} /> */}
-                  {/* <Route
-                      path="organization/create"
-                      element={<OrganizationForm />}
-                    /> */}
-                  <Route
-                    path="organization/detail/"
-                    element={<OrganizationDetail />}
-                  />
-                </Route>
+
+              {/* Setup Routes */}
+              <Route path="setup/" element={<SetupDashboard />}>
+                <Route path="designation" element={<DesignationTable />} />
+                <Route
+                  path="designation/create"
+                  element={<DesignationForm />}
+                />
+                <Route path="department" element={<DepartmentTable />} />
+                <Route path="department/create" element={<DepartmentForm />} />
+                <Route
+                  path="department/delete/:id"
+                  element={<DepartmentDelete />}
+                />
+                <Route path="district" element={<DistrictTable />} />
+                <Route path="district/create/" element={<DistrictForm />} />
+                <Route
+                  path="district/update/:id/"
+                  element={<UpdateDistrict />}
+                />
+                <Route
+                  path="district/delete/:id/"
+                  element={<DeleteDistrict />}
+                />
+                <Route path="municipality" element={<MunicipalityTable />} />
+                <Route
+                  path="municipality/create"
+                  element={<MunicipalityForm />}
+                />
+                <Route
+                  path="municipality/update/:id"
+                  element={<UpdateMunicipality />}
+                />
+                <Route
+                  path="municipality/delete/:id"
+                  element={<DeleteMunicipality />}
+                />
+                <Route path="province" element={<ProvinceList />} />
+                <Route path="province/create/" element={<ProvinceForm />} />
+                <Route
+                  path="province/update/:id"
+                  element={<UpdateProvince />}
+                />
+                <Route
+                  path="province/delete/:id"
+                  element={<DeleteProvince />}
+                />
+                {/* Working day */}
+                <Route path="working/" element={<WorkingTable />} />
+                <Route path="working/create" element={<WorkingForm />} />
+                <Route path="working/delete/:id" element={<WorkingDelete />} />
+                {/* day */}
+                <Route path="day" element={<DayTable />} />
+                <Route path="day/create" element={<DayForm />} />
+                <Route path="day/delete/:id" element={<DayDelete />} />
+                {/* <Route path="letterhead/create" element={<Letterhead />} /> */}
+                <Route
+                  path="organization/create"
+                  element={<OrganizationSettings />}
+                />
+                {/* <Route
+                  path="organization/organization-setting/detail/"
+                  element={<OrganizationSettings />}
+                /> */}
               </Route>
-
             </Route>
+
+            {/* </Route> */}
           </Route>
           {/* Logout Route */}
           {/* <Route path="/logout" element={<Logout />} /> */}
@@ -386,7 +389,7 @@ function App() {
           {/* <Route path="*" element={<Navigate to={userRole === "admin" ? "/dashboard" : "/login"} />} /> */}
         </Routes>
       </BrowserRouter>
-    </div>
+    </div >
   );
 }
 
