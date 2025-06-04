@@ -1,0 +1,43 @@
+##   1>>>>Key Requirements Breakdown
+            Domain Check (abc.localhost3000.com):
+            Ensure user-specific logic is only applied when running under this domain.
+
+            Feature Lock/Unlock (CRM, HRM, Customer):
+            Dynamically show/hide or disable sidebar items based on feature permissions.
+
+            Professional Sidebar Style:
+
+            Add support for a professional blue theme.
+
+            Active tab should be highlighted clearly.
+
+            Fonts must look clean and readable.
+
+>>>>>>>>> step 2 >>>>>>>>> What we're Building
+        we’re building a multi-tenant SaaS web app where:
+
+        Each customer (tenant) has their own subdomain (like abc.localhost:3000).
+
+        Each tenant can have different features unlocked, like:
+
+        ✅ CRM
+
+        ✅ HRM
+
+        ✅ Customer
+
+        ❌ Locked ones are hidden or disabled from sidebar.
+
+## >> 🧠 Concept in Simple Words
+🔹 Subdomain = Customer
+abc.localhost:3000 → customer abc
+
+xyz.localhost:3000 → customer xyz
+
+You detect which customer is using the app by reading the subdomain.
+## 🔹 Each customer has custom features
+You store the feature settings (what to show/hide) in the backend:
+
+Customer	CRM	HRM	Customer
+abc	✅	❌	✅
+xyz	✅	✅	❌
