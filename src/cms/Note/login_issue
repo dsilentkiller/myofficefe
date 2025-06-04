@@ -1,0 +1,9 @@
+<!-- #1 What Does “Isolate Auth per Subdomain” Mean? -->
+When you use multiple tenants like abc.localhost and mkf.localhost, they might share the same localStorage or cookies, especially during development on localhost.
+
+🔴 Example of the Problem:
+You log in as mkf.localhost, store token in access_token
+
+Then open abc.localhost, it also reads the same access_token
+
+That's why abc.localhost is using mkf.localhost's token
