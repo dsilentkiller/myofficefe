@@ -1,15 +1,17 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../../../admin/api/axiosInstance"; // use shared axiosInstance Multi-tenant aware
+// Helper function to extract error
+const getErrorPayload = (error) =>
+  error.response?.data || { message: "An unexpected error occurred" };
 
-// API URL
-// const API_URL = "api/";
-
-// Async thunk for fetching events
-export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
-  const response = await axiosInstance.get("api/event/event-list/");
-  return response.data.result;
+export const fetchEvents = createAsyncThunk("events/fetchEvents", async (_, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.get("api/event/event-list/");
+    return response.data.result;
+  } catch (error) {
+    return rejectWithValue(getErrorPayload(error));
+  }
 });
-
 export const updateEventStatus = createAsyncThunk(
   "events/updateStatus",
   async ({ id, status }, { rejectWithValue }) => {
@@ -24,14 +26,20 @@ export const updateEventStatus = createAsyncThunk(
   }
 );
 // Async action to fetch event details by ID
+
 export const fetchEventById = createAsyncThunk(
   "events/fetchEventById",
-  async (id) => {
-    const response = await axiosInstance.fetch(`api/event/detail/${id}/`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch event");
+  async (id, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(
+        `api/event/detail/${id}/`
+      );
+      console.log('API Response:', response); // Log the response data
+      return response.data.result; // Make sure the API returns the correct structure
+      // console.log('API Response:', response); // Log the response data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
-    return await response.json(); // Assuming the API returns the event data
   }
 );
 
@@ -138,6 +146,7 @@ const eventSlice = createSlice({
         state.loading = false;
         state.currentEvent = action.payload; // Correct case
         state.selectedEvent = action.payload;
+
       })
       .addCase(fetchEventById.rejected, (state, action) => {
         state.loading = false;
