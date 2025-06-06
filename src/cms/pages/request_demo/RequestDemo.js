@@ -5,9 +5,14 @@
 // import Navbar from "../../components/navbar/Navbar";
 // import backgroundImage from "../../assets/img/hero-section/background-image.jpg"; // adjust path as needed
 // import { useNavigate } from "react-router-dom"; // For handling redirection after submission
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createRequestDemo } from "../../../redux/slice/cms/demo/requestDemoSlice";
 import "../../css/request-demo/request_demo.css"; // Import the CSS file for styling
 import backgroundImage from "../../assets/img/hero-section/4680.jpg";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const RequestDemo = () => {
   const [formData, setFormData] = useState({
     full_name: "",
@@ -29,15 +34,46 @@ const RequestDemo = () => {
       [name]: value,
     }));
   };
+  const dispatch = useDispatch();
+  const demos = useSelector(state => state.requestDemo || {});
 
-  const handleSubmit = (e) => {
+  const loading = useSelector((state) => state.requestDemo?.loading || false);
+  const error = useSelector((state) => state.requestDemo?.error || null);
+
+
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In a real application, you would handle form submission here
-    console.log(formData);
-    alert(
-      "Demo request submitted! In a real application, this would schedule your demo."
-    );
+
+    try {
+      await dispatch(createRequestDemo(formData)).unwrap();
+      toast.success("Demo request submitted successfully!");
+
+      setFormData({
+        full_name: "",
+        email: "",
+        company_name: "",
+        pri_phone: "",
+        preferred_demo_time: "",
+        request_date: "",
+        priority: "normal",
+        message: "",
+      });
+    } catch (err) {
+      toast.error("Submission failed: " + (err?.detail || "Something went wrong"));
+    }
   };
+
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   // In a real application, you would handle form submission here
+  //   console.log(formData);
+  //   alert(
+  //     "Demo request submitted! In a real application, this would schedule your demo."
+  //   );
+  // };
 
   // Get tomorrow's date in YYYY-MM-DD format for the date input min attribute
   const tomorrow = new Date();
@@ -232,13 +268,18 @@ const RequestDemo = () => {
                       placeholder="Tell us about your specific needs or questions"
                     ></textarea>
                   </div>
-
-                  <button type="submit" className="btn submit-btn">
-                    Request Demo
+                  <button type="submit" className="btn submit-btn" disabled={loading}>
+                    {loading ? "Submitting..." : "Request Demo"}
                   </button>
+
+                  {/* <button type="submit" className="btn submit-btn">
+                    Request Demo
+                  </button> */}
                 </form>
               </div>
             </div>
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+
           </div>
         </section>
 
