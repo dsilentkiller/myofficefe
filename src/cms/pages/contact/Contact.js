@@ -3,10 +3,13 @@
 // import React, { useState } from "react";
 // import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import "../../css/contact/contact.css"; // Import the CSS file for styling
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import backgroundImage from "../../assets/img/hero-section/4680.jpg";
-
+import { useDispatch, useSelector } from "react-redux";
+import { createContact } from "../../../redux/slice/cms/contact/contactSlice";
 const Contact = () => {
+  const dispatch = useDispatch();
   // Contact page data
   const contactData = {
     pri_phone: "9828889263",
@@ -20,12 +23,25 @@ const Contact = () => {
     },
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In a real application, you would handle form submission here
-    alert(
-      "Form submitted! In a real application, this would send your message to our team."
-    );
+
+    const formData = {
+      full_name: e.target.full_name.value,
+      email: e.target.email.value,
+      pri_phone: e.target.pri_phone.value,
+      subject: e.target.subject.value,
+      message: e.target.message.value,
+    };
+
+    try {
+      await dispatch(createContact(formData)).unwrap();
+      toast.success("Form submitted successfully! We will get back to you soon.");
+      e.target.reset(); // Clear form after submission
+    } catch (err) {
+      console.error("Submission error:", err);
+      toast.error("Failed to submit the form. Please try again.");
+    }
   };
 
   return (
@@ -149,7 +165,7 @@ const Contact = () => {
                 <form className="contact-form" onSubmit={handleSubmit}>
                   <div className="form-group">
                     <label htmlFor="name">Full Name</label>
-                    <input type="text" id="name" name="name" required />
+                    <input type="text" id="name" name="full_name" required />
                   </div>
 
                   <div className="form-group">
@@ -159,7 +175,7 @@ const Contact = () => {
 
                   <div className="form-group">
                     <label htmlFor="phone">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" />
+                    <input type="tel" id="phone" name="pri_phone" />
                   </div>
 
                   <div className="form-group">
@@ -183,6 +199,7 @@ const Contact = () => {
                 </form>
               </div>
             </div>
+            <ToastContainer position="top-right" autoClose={3000} />
           </div>
         </section>
 
