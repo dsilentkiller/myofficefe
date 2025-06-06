@@ -46,52 +46,41 @@ const Footer = () => {
   ];
 
   return (
-    <footer
-      className="footer bg-dark text-light pt-5"
-      role="contentinfo"
-      aria-label="Footer"
-    >
+    <footer className="footer bg-dark text-light pt-5" role="contentinfo" aria-label="Footer">
       <Container>
-        <Row className="justify-content-between align-items-start">
+        <Row className="justify-content-between">
           {/* About Us */}
-          <Col md={4} className="mb-4">
-            <h4 className="footer-title  text-uppercase">
-              About PathibharaPulse
-            </h4>
-            <p className="footer-desc mb-4 fs-6 text-secondary">
+          <Col md={4} className="mb-4 mb-md-0 text-center text-md-start">
+            <h4 className="footer-title text-uppercase">About PathibharaPulse</h4>
+            <p className="footer-desc mb-3 fs-6 text-secondary">
               Pathibhara Pulse is a dedicated IT company delivering advanced CRM
               systems and tailored business solutions to help your business
-              grow efficiently with automation, enquiry tracking, follow-ups,
-              and more.
+              grow efficiently with automation, enquiry tracking, follow-ups, and more.
             </p>
-            <ul className="footer-contact list-unstyled mb-3">
-              <li className="mb-2 d-flex align-items-center">
-                <FaPhone aria-hidden="true" className="me-2 text-primary" />
+            <ul className="footer-contact list-unstyled">
+              <li className="mb-2 d-flex justify-content-center justify-content-md-start align-items-center">
+                <FaPhone className="me-2 text-primary" aria-hidden="true" />
                 <strong className="me-1">Phone:</strong>
                 <a href="tel:+9779828889263" className="text-light text-decoration-none fw-semibold">
                   +977-9828889263
                 </a>
               </li>
-              <li className="mb-2 d-flex align-items-center">
-                <FaEnvelope aria-hidden="true" className="me-2 text-primary" />
+              <li className="mb-2 d-flex justify-content-center justify-content-md-start align-items-center">
+                <FaEnvelope className="me-2 text-primary" aria-hidden="true" />
                 <strong className="me-1">Email:</strong>
-                <a
-                  href="mailto:paarurawal@gmail.com"
-                  className="text-light text-decoration-none fw-semibold"
-                >
+                <a href="mailto:paarurawal@gmail.com" className="text-light text-decoration-none fw-semibold">
                   paarurawal@gmail.com
                 </a>
               </li>
-              <li className="d-flex align-items-center">
-                <FaMapMarkerAlt aria-hidden="true" className="me-2 text-primary" />
+              <li className="d-flex justify-content-center justify-content-md-start align-items-center">
+                <FaMapMarkerAlt className="me-2 text-primary" aria-hidden="true" />
                 <strong className="me-1">Location:</strong> Koteswor, Kathmandu
               </li>
             </ul>
           </Col>
 
-
           {/* Quick Links */}
-          <Col md={4} className="mb-4">
+          <Col md={4} className="mb-4 mb-md-0">
             <h4 className="footer-title mb-3 text-center">Quick Links</h4>
             <Nav className="flex-column text-center">
               {quickLinks.map(({ label, path }, idx) => (
@@ -99,7 +88,7 @@ const Footer = () => {
                   key={idx}
                   as={Link}
                   to={path}
-                  className="footer-link py-1"
+                  className="footer-link py-1 text-light"
                 >
                   {label}
                 </Nav.Link>
@@ -108,28 +97,41 @@ const Footer = () => {
           </Col>
 
           {/* Recent Updates */}
-          <Col md={4} className="mb-4">
-            <h4 className="footer-title mb-3 text-end">Recent Updates</h4>
-            <div className="recent-updates text-end">
-              {recentUpdates.map(({ title, date }, idx) => (
-                <div key={idx} className="update-item mb-3">
-                  <h6 className="update-title">{title}</h6>
-                  <small className="update-date text-muted">{date}</small>
-                </div>
-              ))}
-            </div>
+          <Col md={4} className="mb-4 mb-md-0 text-center text-md-end">
+            <h4 className="footer-title mb-3">Recent Updates</h4>
+            {recentUpdates.map(({ title, date }, idx) => (
+              <div key={idx} className="update-item mb-3">
+                <h6 className="update-title mb-1">{title}</h6>
+                <small className="update-date text-muted">{date}</small>
+              </div>
+            ))}
           </Col>
         </Row>
 
-        <hr className="footer-divider border-secondary" />
+        <hr className="footer-divider border-secondary my-4" />
 
         {/* Bottom Row */}
-        <Row>
-          <Col className="text-center">
-            <p className="footer-bottom-text mb-0 small text-muted">
-              &copy; {new Date().getFullYear()} PathibharaPulse  All
-              rights reserved.
+        <Row className="text-center">
+          <Col>
+            <p className="footer-bottom-text mb-2 small text-muted">
+              &copy; {new Date().getFullYear()} PathibharaPulse. All rights reserved.
             </p>
+
+            {/* Social Media Links (Optional) */}
+            <div className="d-flex justify-content-center gap-3">
+              {socialLinks.map(({ icon, url, label }, idx) => (
+                <a
+                  key={idx}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="text-light fs-5"
+                >
+                  {icon}
+                </a>
+              ))}
+            </div>
           </Col>
         </Row>
       </Container>
@@ -138,6 +140,150 @@ const Footer = () => {
 };
 
 export default Footer;
+
+
+
+
+// import { Link } from "react-router-dom";
+// import "../../css/footer/footer.css";
+// import "../../css/global.css";
+// import {
+//   FaFacebookF,
+//   FaInstagram,
+//   FaLinkedinIn,
+//   FaTwitter,
+//   FaYoutube,
+//   FaPhone,
+//   FaEnvelope,
+//   FaMapMarkerAlt,
+// } from "react-icons/fa";
+// import { Container, Row, Col, Nav } from "react-bootstrap";
+
+// const Footer = () => {
+//   const quickLinks = [
+//     { label: "Home", path: "/" },
+//     { label: "About Us", path: "/aboutus" },
+//     { label: "Services", path: "/services" },
+//     { label: "Packages", path: "/packages" },
+//     { label: "Contact Us", path: "/contactus" },
+//     { label: "Team", path: "/team" },
+//     { label: "Career", path: "/career" },
+//     { label: "Blog", path: "/blog" },
+//     { label: "Privacy Policy", path: "/privacypolicy" },
+//   ];
+
+//   const socialLinks = [
+//     { icon: <FaFacebookF />, url: "https://facebook.com", label: "Facebook" },
+//     { icon: <FaInstagram />, url: "https://instagram.com", label: "Instagram" },
+//     { icon: <FaLinkedinIn />, url: "https://linkedin.com", label: "LinkedIn" },
+//     { icon: <FaTwitter />, url: "https://twitter.com", label: "Twitter" },
+//     { icon: <FaYoutube />, url: "https://youtube.com", label: "YouTube" },
+//   ];
+
+//   const recentUpdates = [
+//     {
+//       title: "Why Our Clients Love Pathibhara Pulse",
+//       date: "03 Dec 2024",
+//     },
+//     {
+//       title: "Enhancing Business with Our CRM Solutions",
+//       date: "27 Jan 2023",
+//     },
+//   ];
+
+//   return (
+//     <footer
+//       className="footer bg-dark text-light pt-5"
+//       role="contentinfo"
+//       aria-label="Footer"
+//     >
+//       <Container>
+//         <Row className="justify-content-between align-items-start">
+//           {/* About Us */}
+//           <Col md={4} className="mb-4">
+//             <h4 className="footer-title  text-uppercase">
+//               About PathibharaPulse
+//             </h4>
+//             <p className="footer-desc mb-4 fs-6 text-secondary">
+//               Pathibhara Pulse is a dedicated IT company delivering advanced CRM
+//               systems and tailored business solutions to help your business
+//               grow efficiently with automation, enquiry tracking, follow-ups,
+//               and more.
+//             </p>
+//             <ul className="footer-contact list-unstyled mb-3">
+//               <li className="mb-2 d-flex align-items-center">
+//                 <FaPhone aria-hidden="true" className="me-2 text-primary" />
+//                 <strong className="me-1">Phone:</strong>
+//                 <a href="tel:+9779828889263" className="text-light text-decoration-none fw-semibold">
+//                   +977-9828889263
+//                 </a>
+//               </li>
+//               <li className="mb-2 d-flex align-items-center">
+//                 <FaEnvelope aria-hidden="true" className="me-2 text-primary" />
+//                 <strong className="me-1">Email:</strong>
+//                 <a
+//                   href="mailto:paarurawal@gmail.com"
+//                   className="text-light text-decoration-none fw-semibold"
+//                 >
+//                   paarurawal@gmail.com
+//                 </a>
+//               </li>
+//               <li className="d-flex align-items-center">
+//                 <FaMapMarkerAlt aria-hidden="true" className="me-2 text-primary" />
+//                 <strong className="me-1">Location:</strong> Koteswor, Kathmandu
+//               </li>
+//             </ul>
+//           </Col>
+
+
+//           {/* Quick Links */}
+//           <Col md={4} className="mb-4">
+//             <h4 className="footer-title mb-3 text-center">Quick Links</h4>
+//             <Nav className="flex-column text-center">
+//               {quickLinks.map(({ label, path }, idx) => (
+//                 <Nav.Link
+//                   key={idx}
+//                   as={Link}
+//                   to={path}
+//                   className="footer-link py-1"
+//                 >
+//                   {label}
+//                 </Nav.Link>
+//               ))}
+//             </Nav>
+//           </Col>
+
+//           {/* Recent Updates */}
+//           <Col md={4} className="mb-4">
+//             <h4 className="footer-title mb-3 text-end">Recent Updates</h4>
+//             <div className="recent-updates text-end">
+//               {recentUpdates.map(({ title, date }, idx) => (
+//                 <div key={idx} className="update-item mb-3">
+//                   <h6 className="update-title">{title}</h6>
+//                   <small className="update-date text-muted">{date}</small>
+//                 </div>
+//               ))}
+//             </div>
+//           </Col>
+//         </Row>
+
+//         <hr className="footer-divider border-secondary" />
+
+//         {/* Bottom Row */}
+//         <Row>
+//           <Col className="text-center">
+//             <p className="footer-bottom-text mb-0 small text-muted">
+//               &copy; {new Date().getFullYear()} PathibharaPulse  All
+//               rights reserved.
+//             </p>
+//           </Col>
+//         </Row>
+//       </Container>
+//     </footer>
+//   );
+// };
+
+// export default Footer;
 
 // import { Link } from "react-router-dom";
 // import "../../css/footer/footer.css";
