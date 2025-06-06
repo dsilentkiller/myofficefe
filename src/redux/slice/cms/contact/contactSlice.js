@@ -1,13 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import axiosInstance from "../../../../admin/api/axiosInstance"
 
 // Fetch all contacts action
 export const fetchContact = createAsyncThunk(
   "contacts/fetchContact",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/website/contact/"
+      const response = await axiosInstance.get(
+        "api/cms/contact/"
       );
       return response.data.result;
     } catch (error) {
@@ -21,8 +21,8 @@ export const createContact = createAsyncThunk(
   "contacts/createContact",
   async (formData, thunkAPI) => {
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/website/contact/create/",
+      const response = await axiosInstance.post(
+        "api/cms/contact/create/",
         formData
       );
       return response.data.result;
@@ -38,8 +38,8 @@ export const fetchContactById = createAsyncThunk(
   "contacts/fetchContactById",
   async (id, thunkAPI) => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/website/contact/update/${id}/`
+      const response = await axiosInstance.get(
+        `api/cms/contact/update/${id}/`
       );
       return response.data.result; // Make sure the API returns the correct structure
     } catch (error) {
@@ -52,8 +52,8 @@ export const fetchContactById = createAsyncThunk(
 export const updateContactStatus = createAsyncThunk(
   "contacts/updateStatus",
   async ({ id, status }) => {
-    const response = await axios.put(
-      `http://127.0.0.1:8000/api/website/contact/${id}/`,
+    const response = await axiosInstance.put(
+      `api/cms/contact/${id}/`,
       { status }
     );
     return response.data.result;
@@ -63,8 +63,8 @@ export const updateContact = createAsyncThunk(
   "contacts/updateContact",
   async ({ id, ...data }, thunkAPI) => {
     try {
-      const response = await axios.put(
-        `http://127.0.0.1:8000/api/website/contact/update/${id}/`,
+      const response = await axiosInstance.put(
+        `api/cms/contact/update/${id}/`,
         data
       );
       return response.data.result; // Ensure this returns the updated contact data
@@ -79,8 +79,8 @@ export const deleteContact = createAsyncThunk(
   "contacts/deleteContact",
   async (id, thunkAPI) => {
     try {
-      await axios.delete(
-        `http://127.0.0.1:8000/api/website/contact/delete/${id}/`
+      await axiosInstance.delete(
+        `api/cms/contact/delete/${id}/`
       );
       return id;
     } catch (error) {
@@ -94,8 +94,8 @@ export const searchContact = createAsyncThunk(
   "contacts/searchContact",
   async (searchTerm, thunkAPI) => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/website/contact/?search=${searchTerm}`
+      const response = await axiosInstance.get(
+        `api/cms/contact/?search=${searchTerm}`
       );
       return response.data.result.data;
     } catch (error) {
